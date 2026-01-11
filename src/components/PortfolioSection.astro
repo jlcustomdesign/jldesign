@@ -119,11 +119,13 @@ const portfolio = [
 
     if (!wrapper || !gallery) return;
 
-    // Mobile: Native CSS Scroll (Skip GSAP)
-    if (window.innerWidth < 1024) return;
+    // Critical: Save CSS styles (native scroll) before GSAP touches them
+    ScrollTrigger.saveStyles("#portfolio-gallery, #portfolio-wrapper");
 
-    // Desktop: GSAP Horizontal Scroll
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+
+    // Desktop: Pinning & Horizontal Scroll
+    mm.add("(min-width: 1024px)", () => {
       const getScrollAmount = () => {
         let galleryWidth = (gallery as HTMLElement).scrollWidth;
         return -(galleryWidth - window.innerWidth + 100);
@@ -141,9 +143,14 @@ const portfolio = [
           invalidateOnRefresh: true,
         },
       });
-    }, wrapper);
+    });
 
-    // Refresh to ensure pinning calculations are correct
-    ScrollTrigger.refresh();
+    // Cleanup logic
+    const cleanup = () => {
+      mm.revert();
+      document.removeEventListener("astro:before-preparation", cleanup);
+    };
+    document.addEventListener("astro:before-preparation", cleanup);
   }
 </script>
+```
