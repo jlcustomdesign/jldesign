@@ -52,7 +52,7 @@ const faqs = [
         <div class="space-y-4">
           {
             faqs.map((faq, index) => (
-              <div class="group pb-4 faq-item-v2 cursor-pointer relative">
+              <div class="group pb-4 faq-item-v2 cursor-pointer relative will-change-transform will-change-opacity">
                 <button
                   class="w-full flex justify-between items-center py-4 text-left focus:outline-none faq-trigger-v2"
                   aria-expanded="false"
@@ -133,15 +133,22 @@ const faqs = [
       }
     });
 
+    // Check mobile
+    const isMobile = window.innerWidth < 1024;
+
     // 1. Header Reveal (Use fromTo for guaranteed start state)
     if (faqHeader) {
       scrubTl.fromTo(
         faqHeader.querySelectorAll("span span"),
-        { y: 20, opacity: 0, filter: "blur(10px)" }, // Initial State
+        { 
+            y: 20, 
+            opacity: 0, 
+            filter: isMobile ? "none" : "blur(10px)" 
+        }, 
         {
           y: 0,
           opacity: 1,
-          filter: "blur(0px)",
+          filter: isMobile ? "none" : "blur(0px)",
           duration: 2,
           stagger: 0.1,
           ease: "power2.out",
@@ -154,14 +161,21 @@ const faqs = [
       faqItemsList.forEach((item, i) => {
          const line = item.querySelector(".faq-line");
          
+         // Check mobile
+         const isMobile = window.innerWidth < 1024;
+
          // Animate Item Opacity/Blur (fromTo)
          scrubTl.fromTo(
            item,
-           { y: 20, opacity: 0, filter: "blur(5px)" },
+           { 
+             y: 20, 
+             opacity: 0, 
+             filter: isMobile ? "none" : "blur(5px)" // Disable expensive blur on mobile
+           },
            {
             y: 0,
             opacity: 1,
-            filter: "blur(0px)",
+            filter: isMobile ? "none" : "blur(0px)",
             duration: 2,
             ease: "power2.out"
            },
