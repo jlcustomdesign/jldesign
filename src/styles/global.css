@@ -25,22 +25,3 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari, Opera */
 }
-
-/* Prevent white flash on mobile by showing hero content immediately */
-@media (max-width: 1023px) {
-  #mySVG {
-    opacity: 1 !important;
-  }
-  #navbar-container {
-    opacity: 1 !important;
-    transform: scale(1) !important;
-  }
-  .hero-subtitle {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-  }
-  .hero-cta {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-  }
-}
