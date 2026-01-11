@@ -237,6 +237,39 @@ const services = [
       );
     }
 
+    // Navigation Helpers
+    const goPrev = () => {
+      if (currentIndex > 0) {
+        gotoSlide(currentIndex - 1, -1);
+      } else {
+        // Exit Up
+        const st = ScrollTrigger.getById("services-pin");
+        if (st) {
+          gsap.to(window, {
+            scrollTo: st.start - 10,
+            duration: 0.5,
+            overwrite: true,
+          });
+        }
+      }
+    };
+
+    const goNext = () => {
+      if (currentIndex < totalSlides - 1) {
+        gotoSlide(currentIndex + 1, 1);
+      } else {
+        // Exit Down
+        const st = ScrollTrigger.getById("services-pin");
+        if (st) {
+          gsap.to(window, {
+            scrollTo: st.end + 10,
+            duration: 0.5,
+            overwrite: true,
+          });
+        }
+      }
+    };
+
     // Intro Trigger
     ScrollTrigger.create({
       trigger: wrapper,
@@ -253,41 +286,28 @@ const services = [
       type: "wheel,touch,pointer",
       lockAxis: true, // Forces single-axis processing, preventing bleed-through
       onUp: (self: any) => {
-        // Reverted to Standard Logic: Swipe Down / Wheel Up -> Previous Slide
         if (isAnimating) return;
+        // Check if event is from mouse wheel or touch
+        const isWheel = self.event.type === "wheel";
 
-        if (currentIndex > 0) {
-          gotoSlide(currentIndex - 1, -1);
+        // Desktop (Wheel Up) -> Previous
+        // Mobile (Swipe Down / Touch "Up" signal) -> Next (Inverted)
+        if (isWheel) {
+          goPrev();
         } else {
-          // Allow scrolling up (exit section)
-          const st = ScrollTrigger.getById("services-pin");
-          if (st) {
-            // Programmatically scroll just before the trigger
-            gsap.to(window, {
-              scrollTo: st.start - 10,
-              duration: 0.5,
-              overwrite: true,
-            });
-          }
+          goNext();
         }
       },
       onDown: (self: any) => {
-        // Standard Logic: Swipe Up / Wheel Down -> Next Slide
         if (isAnimating) return;
+        const isWheel = self.event.type === "wheel";
 
-        if (currentIndex < totalSlides - 1) {
-          gotoSlide(currentIndex + 1, 1);
+        // Desktop (Wheel Down) -> Next
+        // Mobile (Swipe Up / Touch "Down" signal) -> Previous (Inverted)
+        if (isWheel) {
+          goNext();
         } else {
-          // Allow scrolling down (exit section)
-          const st = ScrollTrigger.getById("services-pin");
-          if (st) {
-            // Programmatically scroll just after the trigger
-            gsap.to(window, {
-              scrollTo: st.end + 10,
-              duration: 0.5,
-              overwrite: true,
-            });
-          }
+          goPrev();
         }
       },
       tolerance: 20, // Increased tolerance to filter out micro-movements on mobile
