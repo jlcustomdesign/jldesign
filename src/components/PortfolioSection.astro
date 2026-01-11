@@ -124,6 +124,9 @@ const portfolio = [
     // Enable GSAP Horizontal Scroll for ALL devices
     // User explicitly requested "Scroll Lock/Pin" behavior on mobile too.
     const ctx = gsap.context(() => {
+      // Mobile detection for performance tuning
+      const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
+
       const getScrollAmount = () => {
         let galleryWidth = (gallery as HTMLElement).scrollWidth;
         return -(galleryWidth - window.innerWidth + 100);
@@ -135,9 +138,11 @@ const portfolio = [
         scrollTrigger: {
           trigger: wrapper,
           start: "top top",
-          end: "+=3000",
+          // Shorter scroll distance on mobile for faster response
+          end: isMobile ? "+=2000" : "+=3000",
           pin: true,
-          scrub: 1,
+          // Lower scrub value on mobile for more responsive feel
+          scrub: isMobile ? 0.3 : 1,
           invalidateOnRefresh: true,
         },
       });
