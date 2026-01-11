@@ -123,14 +123,13 @@ const portfolio = [
   document.addEventListener("astro:page-load", initPortfolioAnim);
 
   function initPortfolioAnim() {
-    // Only verify elements prompt existence
     const wrapper = document.querySelector("#portfolio-wrapper");
     const gallery = document.querySelector("#portfolio-gallery");
 
     if (!wrapper || !gallery) return;
 
-    // Mobile detection for performance tuning
-    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
+    // Simple mobile detection by screen width only
+    const isMobile = window.innerWidth < 1024;
 
     // Critical: Save CSS styles before GSAP touches them
     ScrollTrigger.saveStyles("#portfolio-gallery, #portfolio-wrapper");
@@ -148,21 +147,21 @@ const portfolio = [
         scrollTrigger: {
           trigger: wrapper,
           start: "top top",
-          // Shorter scroll distance on mobile for snappier feel
+          // Shorter on mobile for faster section
           end: isMobile ? "+=1500" : "+=3000",
           pin: true,
-          // Pin optimizations for iOS
-          pinType: "transform",
           anticipatePin: 1,
-          // Faster scrub on mobile for less "fighting"
-          scrub: isMobile ? 0.1 : 1,
+          // Very low scrub for near-instant response on mobile
+          scrub: isMobile ? 0.05 : 1,
           invalidateOnRefresh: true,
         },
       });
     }, wrapper);
 
-    // Refresh to ensure pinning calculations are correct
-    ScrollTrigger.refresh();
+    // Refresh after short delay to ensure layout is stable
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+    });
 
     // Cleanup logic
     const cleanup = () => {
