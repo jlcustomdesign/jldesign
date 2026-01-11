@@ -1,0 +1,137 @@
+---
+import BubbleButton from "./ui/BubbleButton.astro";
+
+const steps = [
+  {
+    step: "01",
+    title: "Consultanță",
+    desc: "Discutăm viziunea ta. Luăm măsurători precise și înțelegem fluxul spațiului.",
+    img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=800",
+  },
+  {
+    step: "02",
+    title: "Proiectare 3D",
+    desc: "Randări fotorealiste. Vezi exact cum va arăta mobilierul în casa ta.",
+    img: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=800",
+  },
+  {
+    step: "03",
+    title: "Producție",
+    desc: "Folosim utilaje CNC de ultimă generație și finisaje manuale pentru detalii impecabile.",
+    img: "https://images.unsplash.com/photo-1620613907042-32a2eb6be638?q=80&w=800",
+  },
+  {
+    step: "04",
+    title: "Montaj",
+    desc: "Echipa noastră instalează totul, reglează feroneria și lasă totul curat.",
+    img: "https://images.unsplash.com/photo-1584622050111-993a426fbf0a?q=80&w=800",
+  },
+];
+---
+
+<section
+  class="bg-secondary py-24 overflow-hidden relative"
+  id="process-section-v2"
+  data-theme="light"
+>
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="text-center mb-16 md:mb-24">
+      <h2 class="font-serif font-bold text-4xl md:text-6xl text-primary mb-6">
+        Procesul Nostru
+      </h2>
+      <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+        De la schiță la realitate în patru pași simpli.
+      </p>
+    </div>
+
+    <!-- Layout Container -->
+    <div class="flex flex-col lg:grid lg:grid-cols-[1fr_minmax(400px,800px)_1fr] gap-8 items-center justify-center relative">
+      
+      <!-- Center: Image Grid (2x2) -->
+      <!-- Order-first on mobile? No, images usually central. Maybe Text -> Image -> Text on mobile stack. -->
+      <!-- But on desktop it's Middle Column. -->
+      
+      <!-- DESKTOP STRUCTURE -->
+      
+      <!-- Left Column Texts (Steps 1 & 3) -->
+      <div class="hidden lg:flex flex-col justify-between h-full py-12 text-right pr-8 gap-32">
+        <!-- Step 1 Text -->
+        <div class="group/text">
+           <span class="text-6xl font-serif text-accent/20 font-bold block mb-2">{steps[0].step}</span>
+           <h3 class="font-serif text-2xl text-primary font-bold mb-3">{steps[0].title}</h3>
+           <p class="text-gray-500 text-sm leading-relaxed">{steps[0].desc}</p>
+        </div>
+        <!-- Step 3 Text -->
+        <div class="group/text">
+           <span class="text-6xl font-serif text-accent/20 font-bold block mb-2">{steps[2].step}</span>
+           <h3 class="font-serif text-2xl text-primary font-bold mb-3">{steps[2].title}</h3>
+           <p class="text-gray-500 text-sm leading-relaxed">{steps[2].desc}</p>
+        </div>
+      </div>
+
+      <!-- Center Column: Images (2x2 Grid) -->
+      <div class="relative w-full aspect-square md:aspect-auto md:h-[600px] grid grid-cols-2 gap-4 p-4 group/images">
+         {steps.map((step, index) => (
+             <div class="w-full h-full relative overflow-hidden rounded-2xl transition-all duration-500 ease-out 
+                         transform hover:scale-105 hover:z-10 focus-image
+                         grayscale hover:grayscale-0"
+             >
+                <img 
+                    src={step.img} 
+                    alt={step.title} 
+                    class="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
+                    loading="lazy"
+                />
+                <!-- Mobile Overlay Text (Visible only on small screens) -->
+                <div class="lg:hidden absolute inset-0 bg-black/60 flex flex-col justify-end p-6 text-white transition-opacity duration-300">
+                     <span class="text-accent text-sm font-bold opacity-80 mb-1">{step.step}</span>
+                     <h3 class="font-serif text-xl font-bold mb-2">{step.title}</h3>
+                     <p class="text-white/80 text-xs line-clamp-2">{step.desc}</p>
+                </div>
+             </div>
+         ))}
+      </div>
+
+      <!-- Right Column Texts (Steps 2 & 4) -->
+      <div class="hidden lg:flex flex-col justify-between h-full py-12 pl-8 gap-32">
+        <!-- Step 2 Text -->
+        <div class="group/text">
+           <span class="text-6xl font-serif text-accent/20 font-bold block mb-2">{steps[1].step}</span>
+           <h3 class="font-serif text-2xl text-primary font-bold mb-3">{steps[1].title}</h3>
+           <p class="text-gray-500 text-sm leading-relaxed">{steps[1].desc}</p>
+        </div>
+        <!-- Step 4 Text -->
+        <div class="group/text">
+           <span class="text-6xl font-serif text-accent/20 font-bold block mb-2">{steps[3].step}</span>
+           <h3 class="font-serif text-2xl text-primary font-bold mb-3">{steps[3].title}</h3>
+           <p class="text-gray-500 text-sm leading-relaxed">{steps[3].desc}</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- CTA -->
+    <div class="mt-20 text-center">
+        <BubbleButton href="/contact" class="!px-10 !py-4">Începe Proiectul</BubbleButton>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Focus Effect Logic */
+  
+  /* When hovering the container, blur all images */
+  .group\/images:hover .focus-image {
+     filter: blur(4px) grayscale(100%);
+     opacity: 0.6;
+     transform: scale(0.95);
+  }
+
+  /* But restore the specific hovered image */
+  .group\/images .focus-image:hover {
+     filter: blur(0px) grayscale(0%);
+     opacity: 1;
+     transform: scale(1.15); /* Make it pop significantly */
+     z-index: 20;
+     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+</style>
