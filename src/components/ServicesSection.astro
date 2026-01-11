@@ -337,11 +337,14 @@ const services = [
     };
 
     // We only enable this observer when the section is PINNED/ACTIVE
+    // Pin distance scaled to number of slides for quicker exit
+    const pinDistance = totalSlides * 200; // 200px per slide
+
     ScrollTrigger.create({
       id: "services-pin",
       trigger: wrapper,
       start: "top top",
-      end: "+=5000", // Increased pin duration for safety
+      end: `+=${pinDistance}`,
       pin: true,
       onEnter: () => {
         killMomentum();
