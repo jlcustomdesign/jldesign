@@ -86,14 +86,42 @@ export function initThemeTransition() {
             id: "theme-enter"
         });
 
+        // Create Scoped Footer Timeline (Dark -> Light)
+        // Optimization: Only animate elements visible near the footer to reduce simple recalc overhead on mobile.
+        const footerTl = gsap.timeline({ paused: true });
+        
+        // 1. Backgrounds (Visible) to White
+        // We only care about Body and Footer here. Portfolio/Process are off-screen.
+        footerTl.to("body, footer", { backgroundColor: "#ffffff", duration: duration, ease: ease }, 0);
+        
+        // 2. Navbar (Visible) to Black
+        const navTexts = document.querySelectorAll(".nav-text");
+        navTexts.forEach(el => {
+             footerTl.to(el, { color: "#1a1a1a", duration: duration, ease: ease }, 0);
+        });
+
+        // 3. FAQ Text (Visible) to Black
+        // Filter the main list to only include FAQ elements
+        const faqTexts = textElementsToWhite.filter(el => el.closest("#faq-section-v2"));
+        
+        faqTexts.forEach(el => {
+             footerTl.to(el, { color: "#1a1a1a", duration: duration, ease: ease }, 0);
+             if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
+                 footerTl.to(el, { stroke: "#1a1a1a", fill: "transparent", duration: duration, ease: ease }, 0);
+             }
+        });
+        
+        // FAQ Borders
+        faqItems.forEach(item => {
+             footerTl.to(item, { borderColor: "#e5e7eb", duration: duration, ease: ease }, 0);
+        });
+
         // Trigger 2: Footer Entry
-        // Use the SAME timeline (tl) but reverse it to go back to Light Mode.
-        // This ensures zero conflict and reuses the exact same performance profile.
         ScrollTrigger.create({
             trigger: footer,
             start: "top 90%",
-            onEnter: () => tl.reverse(), // Reverse to Start (Light)
-            onLeaveBack: () => tl.play(), // Play to End (Dark)
+            onEnter: () => footerTl.play(),
+            onLeaveBack: () => footerTl.reverse(),
             id: "theme-footer-override"
         });
 

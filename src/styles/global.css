@@ -16,3 +16,9 @@
   --font-serif: "Grift", serif;
   --font-sans: "Grift", sans-serif;
 }
+
+/* Performance: Skip rendering off-screen content */
+section, footer {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px;
+}
