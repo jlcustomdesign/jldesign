@@ -171,47 +171,42 @@ const links = [
   function initHeroObserver() {
     const navContainer = document.querySelector("#navbar-container");
     const hero = document.querySelector("#hero-section");
-    const aboutSection = document.querySelector("#about-section");
 
     if (!navContainer) return;
 
-    // Scenario A: No Hero (Subpages) -> Always Light
-    if (!hero) {
-      navContainer.classList.add("nav-light");
-      navContainer.classList.remove("nav-dark");
-      return;
-    }
+    // Default to Light Theme (Black text) initially - safest default
+    navContainer.classList.add("nav-light");
+    navContainer.classList.remove("nav-dark");
 
-    // Start with dark theme (hero visible)
-    navContainer.classList.add("nav-dark");
-    navContainer.classList.remove("nav-light");
+    // Scenario A: No Hero (Subpages) -> Stay Light and return
+    if (!hero) return;
 
-    // Scenario B: Watch About section instead of Hero
-    // When About enters viewport significantly, switch to light theme
-    // This works better with pinned Hero (parallax reveal)
-    if (aboutSection) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
-              // About section significantly visible -> Light theme (black text)
-              navContainer.classList.add("nav-light");
-              navContainer.classList.remove("nav-dark");
-            } else if (!entry.isIntersecting) {
-              // About section not visible -> Dark theme (white text)
-              navContainer.classList.add("nav-dark");
-              navContainer.classList.remove("nav-light");
-            }
-          });
-        },
-        {
-          root: null,
-          threshold: [0, 0.1, 0.2], // Multiple thresholds for smoother detection
-          rootMargin: "-80px 0px 0px 0px", // Account for navbar height
-        }
-      );
-
-      observer.observe(aboutSection);
-    }
+    // Scenario B: Hero Exists -> Use ScrollTrigger to toggle theme
+    // We want Dark Theme (White Text) ONLY when we are IN the Hero section
+    ScrollTrigger.create({
+      trigger: hero,
+      start: "top top", // When hero starts
+      end: "bottom top+=80", // When hero bottom passes top (plus buffer for nav height)
+      onEnter: () => {
+        // Enters Hero -> Dark Theme
+        navContainer.classList.add("nav-dark");
+        navContainer.classList.remove("nav-light");
+      },
+      onLeave: () => {
+        // Leaves Hero (scrolling down) -> Light Theme
+        navContainer.classList.add("nav-light");
+        navContainer.classList.remove("nav-dark");
+      },
+      onEnterBack: () => {
+        // Re-enters Hero (scrolling up) -> Dark Theme
+        navContainer.classList.add("nav-dark");
+        navContainer.classList.remove("nav-light");
+      },
+      onLeaveBack: () => {
+        // Leaves Hero (scrolling up past top?) -> Light Theme (rare but safe)
+        navContainer.classList.add("nav-light");
+        navContainer.classList.remove("nav-dark");
+      },
+    });
   }
 </script>

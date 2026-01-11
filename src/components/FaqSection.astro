@@ -103,7 +103,8 @@ const faqs = [
   initFAQv2();
 
   function initFAQv2() {
-    // Helper: Split text
+    // Helper: Split text into words for animation
+    // Wraps each word in spans for blur/opacity control
     const splitTextToWords = (element: Element | null) => {
       if (!element) return;
       const text = element.textContent?.trim() || "";
@@ -116,89 +117,81 @@ const faqs = [
         .join("");
     };
 
-    // Animate Header (Triggered)
-    const faqHeader = document.querySelector("#faq-sidebar-v2 h2");
-    splitTextToWords(faqHeader);
-
-    // Animate FAQ Items (Triggered List)
-    const faqItemsList = document.querySelectorAll(".faq-item-v2");
-    
-    // Master Scrub Timeline (Matched to About Section logic)
-    const scrubTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#faq-section-v2",
-        start: "top bottom", // Start as soon as section enters viewport
-        end: "center 60%",   // Finish when section center is at 60% viewport
-        scrub: 1,
-      }
-    });
-
-    // Check mobile
     const isMobile = window.innerWidth < 1024;
 
-    // 1. Header Reveal (Use fromTo for guaranteed start state)
+    // --- 1. Header Reveal (One-time trigger) ---
+    const faqHeader = document.querySelector("#faq-sidebar-v2 h2");
+    splitTextToWords(faqHeader);
+    
     if (faqHeader) {
-      scrubTl.fromTo(
-        faqHeader.querySelectorAll("span span"),
-        { 
-            y: 20, 
-            opacity: 0, 
-            filter: isMobile ? "none" : "blur(10px)" 
-        }, 
-        {
-          y: 0,
-          opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
-          duration: 2,
-          stagger: 0.1,
-          ease: "power2.out",
-        }
-      );
-    }
-
-    // 2. Items & Lines Reveal
-    if (faqItemsList.length) {
-      faqItemsList.forEach((item, i) => {
-         const line = item.querySelector(".faq-line");
-         
-         // Check mobile
-         const isMobile = window.innerWidth < 1024;
-
-         // Animate Item Opacity/Blur (fromTo)
-         scrubTl.fromTo(
-           item,
-           { 
-             y: 20, 
-             opacity: 0, 
-             filter: isMobile ? "none" : "blur(5px)" // Disable expensive blur on mobile
-           },
-           {
+      ScrollTrigger.create({
+        trigger: "#faq-section-v2",
+        start: "top 80%", // Trigger when section comes into view
+        onEnter: () => {
+          gsap.to(faqHeader.querySelectorAll("span span"), {
             y: 0,
             opacity: 1,
             filter: isMobile ? "none" : "blur(0px)",
-            duration: 2,
-            ease: "power2.out"
-           },
-           "-=1.5"
-         );
-
-         // Animate Line Expansion (fromTo)
-         if(line) {
-             scrubTl.fromTo(
-               line,
-               { scaleX: 0 },
-               {
-                 scaleX: 1,
-                 duration: 3,
-                 ease: "none"
-               },
-               "<"
-             );
-         }
+            duration: 1.5,
+            stagger: 0.1,
+            ease: "power3.out",
+          });
+        }
       });
     }
 
-    // 1. Accordion Logic (No changes, works well)
+    // --- 2. Questions Progressive Reveal (Scrub) ---
+    // Questions reveal (blur -> focus) as they move up the viewport
+    const faqItemsList = document.querySelectorAll(".faq-item-v2");
+
+    if (faqItemsList.length) {
+      faqItemsList.forEach((item) => {
+        const questionText = item.querySelector("span.text-2xl"); // The question text
+        const line = item.querySelector(".faq-line");
+
+        // Animate Line (Scrub)
+        if (line) {
+          gsap.fromTo(line, 
+            { scaleX: 0, transformOrigin: "left" },
+            {
+              scaleX: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: item,
+                start: "top bottom", // Start when item enters bottom
+                end: "top 70%",      // Finish when item is 70% up
+                scrub: 1,
+              }
+            }
+          );
+        }
+
+        // Animate Question Text opacity/blur (Scrub)
+        if (questionText) {
+          gsap.fromTo(questionText,
+            { 
+              opacity: 0.2, 
+              filter: isMobile ? "none" : "blur(4px)",
+              y: 20 
+            },
+            {
+              opacity: 1, 
+              filter: isMobile ? "none" : "blur(0px)",
+              y: 0,
+              ease: "none",
+              scrollTrigger: {
+                trigger: item,
+                start: "top bottom", 
+                end: "top 60%",    // Fully visible when 60% down viewport
+                scrub: 1,
+              }
+            }
+          );
+        }
+      });
+    }
+
+    // --- 3. Accordion Logic with Perspective Reveal ---
     const items = document.querySelectorAll(".faq-item-v2");
 
     if (items.length) {
@@ -206,8 +199,13 @@ const faqs = [
         const trigger = item.querySelector(".faq-trigger-v2");
         const content = item.querySelector(".faq-content-v2");
         const icon = item.querySelector(".faq-icon-v2");
+        const answerTextP = item.querySelector("p"); // The P tag inside content
 
-        if (!trigger || !content || !icon) return;
+        if (!trigger || !content || !icon || !answerTextP) return;
+
+        // Save original text for restoring if needed (though we just overwrite here)
+        /* @ts-ignore */
+        if (!answerTextP._originalText) answerTextP._originalText = answerTextP.innerHTML;
 
         trigger.addEventListener("click", () => {
           const isOpen = content.clientHeight > 0;
@@ -231,6 +229,8 @@ const faqs = [
           });
 
           if (!isOpen) {
+            // OPENING
+            // 1. Expand Height
             gsap.to(content, {
               height: "auto",
               opacity: 1,
@@ -239,7 +239,33 @@ const faqs = [
               onComplete: () => ScrollTrigger.refresh(),
             });
             gsap.to(icon, { rotation: 45, duration: 0.2 });
+
+            // 2. Animate Answer Text (Perspective Reveal)
+            // Use split words approach for 3D effect
+            /* @ts-ignore */
+            answerTextP.innerHTML = answerTextP._originalText; // Reset
+            
+            // Only do expensive word split on desktop
+            if (!isMobile) {
+                const words = answerTextP.innerText.split(" ");
+                answerTextP.innerHTML = words.map(w => `<span class="inline-block opacity-0" style="transform-origin: 50% 50%; transform: rotateX(90deg) translateY(10px)">${w}&nbsp;</span>`).join("");
+                
+                gsap.to(answerTextP.querySelectorAll("span"), {
+                    opacity: 1,
+                    rotateX: 0,
+                    translateY: 0,
+                    duration: 0.5,
+                    stagger: 0.01,
+                    ease: "back.out(1.5)",
+                    delay: 0.1 // Wait for height expansion slightly
+                });
+            } else {
+                // Mobile: Simple fade
+                 gsap.fromTo(answerTextP, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, delay: 0.1 });
+            }
+
           } else {
+            // CLOSING
             gsap.to(content, {
               height: 0,
               opacity: 0,
@@ -253,48 +279,22 @@ const faqs = [
       });
     }
 
-    // 2. Manual "Sticky" Logic using GSAP Scrub (1:1 Movement)
-    // This replicates sticky behavior by animating Y position to exactly match scroll distance
-    if (window.innerWidth >= 1024) {
-      setTimeout(() => {
-        const sidebar = document.querySelector(
-          "#faq-sidebar-v2"
-        ) as HTMLElement;
-        const content = document.querySelector("#faq-list-v2") as HTMLElement;
-        const wrapper = document.querySelector(".wrapper-v2") as HTMLElement;
+    // --- 4. Sidebar Sticky Logic ---
+    const sidebar = document.querySelector("#faq-sidebar-v2") as HTMLElement;
+    const content = document.querySelector("#faq-list-v2") as HTMLElement;
+    const wrapper = document.querySelector(".wrapper-v2") as HTMLElement;
 
-        if (sidebar && content && wrapper) {
-          // Cleanup
-          ScrollTrigger.getAll().forEach((st) => {
-            if (st.vars.trigger === sidebar || st.vars.trigger === wrapper)
-              st.kill();
-          });
-
-          // We use function-based values so they recalculate when the Accordion changes size
-          // and ScrollTrigger.refresh() is called.
-
-          // The tween: Move sidebar down by (ContentHeight - SidebarHeight)
-          gsap.to(sidebar, {
-            y: () => {
-              const diff = content.offsetHeight - sidebar.offsetHeight;
-              return diff > 0 ? diff : 0;
-            },
-            ease: "none", // Linear, 1:1 with scroll
-            scrollTrigger: {
-              trigger: wrapper,
-              start: "top top+=120", // Pin starts when wrapper hits this point
-              // The duration of the scroll (end) MUST match the distance we move (y)
-              // relative to the viewport movement for it to appear "pinned".
-              end: () => {
-                const diff = content.offsetHeight - sidebar.offsetHeight;
-                return "+=" + (diff > 0 ? diff : 0);
-              },
-              scrub: true, // Tie animation strictly to scroll position, instant response
-              invalidateOnRefresh: true, // Important: Recalculate values on resize/refresh
-            },
-          });
-        }
-      }, 500);
+    if (sidebar && content && wrapper) {
+        ScrollTrigger.create({
+            trigger: wrapper,
+            start: "top top+=120", // 120px offset from top
+            end: "bottom bottom",
+            pin: sidebar, // Pin the sidebar
+            pinSpacing: false, // Don't push content down
+            // On mobile, native CSS sticky is often better, but user asked for this specific behavior?
+            // User asked: "stay fixed on mobile, up, it shouldn't scroll down on scrol, but only on mobile"
+            // Actually, for mobile the requested behavior implies simple CSS sticky.
+        });
     }
   }
 </script>
