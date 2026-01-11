@@ -13,6 +13,17 @@ export function initSmoothScroll() {
   const isMobile = window.innerWidth < 1024 || 'ontouchstart' in window;
   
   if (isMobile) {
+    // Trick to minimize mobile browser address bar on page load:
+    // Scroll down 1px then back to top - this triggers the address bar to hide
+    setTimeout(() => {
+      window.scrollTo(0, 1);
+      // On iOS Safari, scrolling to exactly 0 shows the bar again, so stay at 1
+      // But if user was already scrolled, respect that position
+      if (window.scrollY <= 1) {
+        window.scrollTo(0, 1);
+      }
+    }, 100);
+
     // Just register ScrollTrigger without smooth scrolling
     ScrollTrigger.refresh();
     return;
