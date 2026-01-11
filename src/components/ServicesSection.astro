@@ -205,11 +205,8 @@ const services = [
         0
       );
 
-      // Previous slide exit
-      // We fade out the previous CONTAINER to reveal the white background behind it
-      if (!isIntro) {
-        tl.to(prevBg, { autoAlpha: 0, duration: 0.5 }, 0);
-      }
+      // Previous slide exit: REMOVED early fade-out.
+      // We keep prevBg visible underneath the rising slices to prevent "blank" gaps.
 
       // 2. Content
       if (!isIntro) {
