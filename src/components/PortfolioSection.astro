@@ -114,56 +114,36 @@ const portfolio = [
   document.addEventListener("astro:page-load", initPortfolioAnim);
 
   function initPortfolioAnim() {
-    // Cleanup previous listener to be safe (though removed in cleanup function usually)
-    // We rely on the event listener removal in the cleanup function.
-
     const wrapper = document.querySelector("#portfolio-wrapper");
     const gallery = document.querySelector("#portfolio-gallery");
 
     if (!wrapper || !gallery) return;
 
-    // Use a small delay to ensure layout (images/css) is stable
-    setTimeout(() => {
-      const mm = gsap.matchMedia();
+    // Mobile: Native CSS Scroll (Skip GSAP)
+    if (window.innerWidth < 1024) return;
 
-      // Desktop Logic
-      mm.add("(min-width: 1024px)", () => {
-        // Calculate scroll amount dynamically
-        const getScrollAmount = () => {
-          let galleryWidth = (gallery as HTMLElement).scrollWidth;
-          let viewportWidth = window.innerWidth;
-          // Diagnostic log
-          console.log("Portfolio Scroll Calc:", {
-            galleryWidth,
-            viewportWidth,
-          });
-          return -(galleryWidth - viewportWidth + 100);
-        };
-
-        gsap.to(gallery, {
-          x: getScrollAmount,
-          ease: "none",
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "top top",
-            end: "+=3000", // Distance to scroll
-            pin: true,
-            scrub: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        // Force refresh after setting up
-        ScrollTrigger.refresh();
-      });
-
-      // Clean up on page navigation
-      const cleanup = () => {
-        mm.revert();
-        console.log("Portfolio Cleanup");
-        document.removeEventListener("astro:before-preparation", cleanup);
+    // Desktop: GSAP Horizontal Scroll
+    const ctx = gsap.context(() => {
+      const getScrollAmount = () => {
+        let galleryWidth = (gallery as HTMLElement).scrollWidth;
+        return -(galleryWidth - window.innerWidth + 100);
       };
-      document.addEventListener("astro:before-preparation", cleanup);
-    }, 100);
+
+      gsap.to(gallery, {
+        x: getScrollAmount,
+        ease: "none",
+        scrollTrigger: {
+          trigger: wrapper,
+          start: "top top",
+          end: "+=3000",
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+    }, wrapper);
+
+    // Refresh to ensure pinning calculations are correct
+    ScrollTrigger.refresh();
   }
 </script>
