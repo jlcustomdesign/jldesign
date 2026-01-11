@@ -32,12 +32,13 @@ export function initThemeTransition() {
         // --- B. Collect Text Elements ---
         if (main) {
             // Selectors for text in Portfolio, Process, FAQ
-            // NOTE: Removed .nav-text to avoid conflict with Navbar.astro's own theme observer
+            // Re-added .nav-text to ensure Global Theme Sync (First Transition & Footer)
             const selectors = [
                 "#portfolio-section h2", "#portfolio-section h3", "#portfolio-section p", "#portfolio-section span", "#portfolio-section .text-primary",
                 // Process: Only target the intro text, not the cards (which stay white)
                 "#process-section > .container h2", "#process-section > .container p", 
-                "#faq-section-v2 h2", "#faq-section-v2 button", "#faq-section-v2 span", "#faq-section-v2 p", "#faq-section-v2 svg"
+                "#faq-section-v2 h2", "#faq-section-v2 button", "#faq-section-v2 span", "#faq-section-v2 p", "#faq-section-v2 svg",
+                ".nav-text" // Added back
             ].join(", ");
 
             const elements = document.querySelectorAll(selectors);
@@ -85,67 +86,36 @@ export function initThemeTransition() {
             id: "theme-enter"
         });
 
-        // Trigger 2: Footer Entry (Explicit Override)
-        // When Footer enters, force theme to Light (White BG, Black Text)
+        // Create Footer Timeline (Dark -> Light)
+        const footerTl = gsap.timeline({ paused: true });
+        
+        // Backgrounds to White
+        backgroundElementsToBlack.forEach(el => {
+             // We animate TO white. The starting state is presumed Black from previous trigger.
+             footerTl.to(el, { backgroundColor: "#ffffff", duration: duration, ease: ease }, 0);
+        });
+        footerTl.to("body", { backgroundColor: "#ffffff", duration: duration, ease: ease }, 0);
+
+        // Text to Black (including Navbar)
+        // nav-text is now in textElementsToWhite
+        textElementsToWhite.forEach(el => {
+             footerTl.to(el, { color: "#1a1a1a", duration: duration, ease: ease }, 0);
+             if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
+                 footerTl.to(el, { stroke: "#1a1a1a", fill: "transparent", duration: duration, ease: ease }, 0);
+             }
+        });
+        
+        // FAQ Borders
+        faqItems.forEach(item => {
+             footerTl.to(item, { borderColor: "#e5e7eb", duration: duration, ease: ease }, 0);
+        });
+
+        // Trigger 2: Footer Entry
         ScrollTrigger.create({
             trigger: footer,
-            start: "top 90%", // Trigger slightly before full view
-            onEnter: () => {
-                // Force Light Mode
-                gsap.to("body, #portfolio-section, #process-section, #faq-section-v2, footer", { 
-                    backgroundColor: "#ffffff", 
-                    duration: 0.5, 
-                    ease: "power2.out",
-                    overwrite: true 
-                });
-
-                // Animate Text (Process/FAQ + Navbar) to Black
-                const navTexts = document.querySelectorAll(".nav-text");
-                const allTextTargets = [...textElementsToWhite, ...Array.from(navTexts)];
-                
-                gsap.to(allTextTargets, { 
-                    color: "#1a1a1a", // Black text
-                    duration: 0.5, 
-                    ease: "power2.out",
-                    overwrite: true 
-                });
-                 // Handle SVG/Path specifically if needed (invert back)
-                 textElementsToWhite.forEach(el => {
-                    if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
-                        gsap.to(el, { stroke: "#1a1a1a", fill: "transparent", duration: 0.5, overwrite: true });
-                    }
-                 });
-                 // FAQ Borders back to light gray
-                 gsap.to(".faq-item-v2", { borderColor: "#e5e7eb", duration: 0.5, overwrite: true });
-            },
-            onLeaveBack: () => {
-                 // Force Dark Mode (Revert) explicitly
-                 // We cannot rely on tl.play() because overwrites occurred
-                 gsap.to("body, #portfolio-section, #process-section, #faq-section-v2, footer", { 
-                    backgroundColor: "#050505", 
-                    duration: 0.5, 
-                    ease: "power2.out",
-                    overwrite: true 
-                });
-
-                const navTexts = document.querySelectorAll(".nav-text");
-                const allTextTargets = [...textElementsToWhite, ...Array.from(navTexts)];
-
-                gsap.to(allTextTargets, { 
-                    color: "#ffffff", // White text
-                    duration: 0.5, 
-                    ease: "power2.out",
-                    overwrite: true 
-                });
-                 // Handle SVG/Path inverted back to white
-                 textElementsToWhite.forEach(el => {
-                    if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
-                        gsap.to(el, { stroke: "#ffffff", fill: "transparent", duration: 0.5, overwrite: true });
-                    }
-                 });
-                 // FAQ Borders back to dark
-                 gsap.to(".faq-item-v2", { borderColor: "#333333", duration: 0.5, overwrite: true });
-            },
+            start: "top 90%",
+            onEnter: () => footerTl.play(),
+            onLeaveBack: () => footerTl.reverse(),
             id: "theme-footer-override"
         });
 
