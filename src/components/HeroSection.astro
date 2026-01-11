@@ -168,8 +168,22 @@ const heroImage = "/Images/Imagine hero section.png";
     initHeroAnim();
   });
 
-  // Also run on initial load
-  initHeroAnim();
+  // Wait for DOM and layout to be ready before initial animation
+  // This prevents the desktop animation from playing on mobile first load
+  if (document.readyState === "complete") {
+    // If already loaded, wait one frame for layout to complete
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        initHeroAnim();
+      });
+    });
+  } else {
+    window.addEventListener("load", () => {
+      requestAnimationFrame(() => {
+        initHeroAnim();
+      });
+    });
+  }
 
   function initHeroAnim() {
     const section = document.querySelector("#hero-section");
