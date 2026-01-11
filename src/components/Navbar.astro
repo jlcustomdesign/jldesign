@@ -110,13 +110,13 @@ const links = [
 
   document.addEventListener("astro:page-load", () => {
     initNavbarAnim();
-    initThemeObserver();
+    initHeroObserver();
     initScrollResize();
   });
 
   // Initial run
   initNavbarAnim();
-  initThemeObserver();
+  initHeroObserver();
   initScrollResize();
 
   function initScrollResize() {
@@ -168,104 +168,41 @@ const links = [
     }
   }
 
-  function initThemeObserver() {
-    // 500ms delay to ensure all GSAP pinning (Services) is settled
-    setTimeout(() => {
-      const navContainer = document.querySelector("#navbar-container");
-      const sections = document.querySelectorAll("[data-theme]");
+  function initHeroObserver() {
+    const navContainer = document.querySelector("#navbar-container");
+    const hero = document.querySelector("#hero-section");
 
-      if (!navContainer || sections.length === 0) {
-        navContainer?.classList.add("nav-light");
-        return;
-      }
+    if (!navContainer) return;
 
-      interface SectionData {
-        top: number;
-        bottom: number;
-        theme: string | null;
-      }
+    // Optimization: Use IntersectionObserver instead of scroll listener to avoid layout thrashing
 
-      let sectionData: SectionData[] = [];
-      let currentTheme: string | null = "";
+    // Scenario A: No Hero (Subpages) -> Always Light
+    if (!hero) {
+      navContainer.classList.add("nav-light");
+      navContainer.classList.remove("nav-dark");
+      return;
+    }
 
-      const updateLayout = () => {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-
-        sectionData = Array.from(sections).map((section) => {
-          // Critical: Use the pin-spacer if present to capture full pinned height
-          const el = (section as HTMLElement).closest(".pin-spacer") || section;
-          const rect = el.getBoundingClientRect();
-
-          // Convert to absolute document coordinates
-          return {
-            top: rect.top + scrollTop,
-            bottom: rect.bottom + scrollTop,
-            theme: (section as HTMLElement).getAttribute("data-theme"),
-          };
-        });
-
-        // Sort by position just in case
-        sectionData.sort((a, b) => a.top - b.top);
-        checkTheme();
-      };
-
-      const checkTheme = () => {
-        const scrollPos = window.scrollY || document.documentElement.scrollTop;
-        // Trigger point: what section is under the Navbar (approx 50px down)
-        const triggerPoint = scrollPos + 50;
-
-        // Find valid section
-        const activeSection = sectionData.find(
-          (s) => triggerPoint >= s.top && triggerPoint < s.bottom
-        );
-
-        if (activeSection) {
-          // Strict Rule: Hero = Dark (White Text), All others = Light (Black Constants) usually
-          // But we respect the data-theme attribute if future sections need dark mode.
-          // However, user asked specifically: "after the hero section, turn it to black".
-
-          setTheme(activeSection.theme);
-        } else {
-          // Fallback logic
-          if (sectionData.length > 0) {
-            // If scrolling above first section (overscroll up), match first section
-            if (triggerPoint < sectionData[0].top) {
-              setTheme(sectionData[0].theme);
-            }
-            // If scrolled past last section, default to light (black text) as requested
-            else if (
-              triggerPoint >= sectionData[sectionData.length - 1].bottom
-            ) {
-              setTheme("light");
-            } else {
-              setTheme("light"); // Default to black text
-            }
+    // Scenario B: Hero Exists -> Dark when in Hero, Light when out
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            navContainer.classList.add("nav-dark");
+            navContainer.classList.remove("nav-light");
+          } else {
+            navContainer.classList.add("nav-light");
+            navContainer.classList.remove("nav-dark");
           }
-        }
-      };
+        });
+      },
+      {
+        root: null,
+        threshold: 0,
+        rootMargin: "-100px 0px 0px 0px", // Trigger when hero passes under header area
+      }
+    );
 
-      const setTheme = (theme: string | null) => {
-        if (currentTheme === theme) return; // Optimize: No change
-
-        currentTheme = theme;
-        navContainer.classList.remove("nav-dark", "nav-light");
-
-        if (theme === "dark") {
-          navContainer.classList.add("nav-dark");
-        } else {
-          navContainer.classList.add("nav-light");
-        }
-      };
-
-      // Listeners
-      window.addEventListener("scroll", checkTheme, { passive: true });
-      window.addEventListener("resize", updateLayout);
-
-      // Crucial: Update boundaries whenever ScrollTrigger refreshes (e.g. after pinning settles)
-      ScrollTrigger.addEventListener("refresh", updateLayout);
-
-      // Initial
-      updateLayout();
-    }, 100);
+    observer.observe(hero);
   }
 </script>
