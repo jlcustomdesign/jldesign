@@ -17,14 +17,15 @@ export function initThemeTransition() {
         const transitionEase = "power2.inOut";
         
         // --- 1. Light -> Dark (Entering Process) ---
-        // Trigger: When Process enters the viewport (top 60%)
+        // Trigger: Start transition as soon as Process approaches center-bottom
         const tlEnterDark = gsap.timeline({
             scrollTrigger: {
                 trigger: processSection,
-                start: "top 60%", 
-                end: "top 20%",
-                scrub: 1, // Smooth scrub
+                start: "top 75%", 
+                end: "top 25%",
+                scrub: 0.5, // Reduced scrub lag for responsiveness
                 toggleActions: "play none none reverse",
+                invalidateOnRefresh: true, // Recalculate on resize (crucial due to pins)
                 id: "theme-enter-dark"
             }
         });
@@ -33,7 +34,7 @@ export function initThemeTransition() {
             backgroundColor: "#050505", 
             color: "#ffffff", 
             duration: transitionDuration, 
-            ease: transitionEase,
+            ease: "none", // Linear mapping to scroll is often smoother for scrubs
             overwrite: "auto"
         });
         
@@ -42,7 +43,7 @@ export function initThemeTransition() {
             backgroundColor: "#050505",
             color: "#ffffff",
             duration: transitionDuration, 
-            ease: transitionEase,
+            ease: "none",
              overwrite: "auto"
         }, "<");
         
@@ -50,6 +51,7 @@ export function initThemeTransition() {
         tlEnterDark.to(".faq-item-v2", {
             borderColor: "#333333",
             duration: transitionDuration,
+            ease: "none",
             overwrite: "auto"
         }, "<");
 
