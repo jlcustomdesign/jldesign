@@ -230,44 +230,58 @@ const steps = [
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Sequential Reveal Animation with PIN logic
-  document.addEventListener("astro:page-load", () => {
+  function initProcessAnimation() {
     const section = document.querySelector("#process-section-v2");
-    if (!section) return;
+    if (!section) {
+      // console.warn("Process Section V2 not found");
+      return;
+    }
 
-    // Use a timeline that PINS the section
+    // console.log("Initializing Process V2 Animation");
+
+    // Kill previous triggers to prevent duplicates on navigation
+    ScrollTrigger.getAll().forEach((t: any) => {
+      if (
+        t.vars.trigger === section ||
+        t.vars.trigger === "#process-section-v2"
+      ) {
+        t.kill();
+      }
+    });
+
+    // Create Pinning Timeline
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top top", // Pin when section hits top
-        end: "+=2000", // Scroll distance to complete sequence
+        start: "top top",
+        end: "+=3000",
         pin: true,
-        scrub: 1, // Smooth scrub
+        scrub: 1,
         anticipatePin: 1,
+        // markers: true, // Uncomment for debugging
       },
     });
 
-    // Animate each Step (Image + Text) sequentially
-    // Select by data-step to group them
+    // Animate Steps
     [0, 1, 2, 3].forEach((i) => {
       const elements = section.querySelectorAll(`[data-step="${i}"]`);
 
-      // Reveal: Blur -> 0, Opacity -> 1
-      tl.to(
-        elements,
-        {
-          opacity: 1,
-          filter: "blur(0px)",
-          transform: "scale(1)", // reset scale if needed
-          duration: 1,
-          ease: "power2.out",
-        },
-        i * 1.5
-      ); // Stagger by appending to timeline with gap
+      // Ensure elements exist
+      if (elements.length > 0) {
+        tl.to(
+          elements,
+          {
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: 1,
+            ease: "power2.out",
+          },
+          i * 1.5
+        );
+      }
     });
 
-    // Ensure CTA is visible at end?
-    // It's part of the section flow. It might be good to reveal it last.
+    // Reveal CTA at the very end
     const cta = section.querySelector(".mt-16");
     if (cta) {
       tl.fromTo(
@@ -277,5 +291,10 @@ const steps = [
         "+=0.5"
       );
     }
-  });
+  }
+
+  // Run on Page Load (View Transitions)
+  document.addEventListener("astro:page-load", initProcessAnimation);
+  // Run Immediately (Initial Load fallback)
+  initProcessAnimation();
 </script>
