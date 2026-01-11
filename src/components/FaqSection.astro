@@ -134,12 +134,12 @@ const faqs = [
       gsap.set(".faq-line", { scaleX: 0 });
     }
 
-    // Master Scrub Timeline
+    // Master Scrub Timeline (Matched to About Section logic)
     const scrubTl = gsap.timeline({
       scrollTrigger: {
         trigger: "#faq-section-v2",
-        start: "top 80%",
-        end: "center center", // Finish animation when center of section hits center of viewport
+        start: "top bottom", // Start as soon as section enters viewport
+        end: "center 60%",   // Finish when section center is at 60% viewport
         scrub: 1,
       }
     });

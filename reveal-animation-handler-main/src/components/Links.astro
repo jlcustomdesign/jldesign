@@ -1,0 +1,74 @@
+---
+const links = [
+	{ href: '/', text: 'Slide Reveal' },
+	{ href: '/slide-fade', text: 'Slide with Fade' },
+	{ href: '/slide-blur', text: 'Slide with Blur' },
+	{ href: '/perspective', text: 'Perspective Reveal' },
+	{ href: '/perspective-fade', text: 'Perspective with Fade' },
+	{ href: '/perspective-blur', text: 'Perspective with Blur' },
+];
+---
+
+<div class='navigation'>
+	<div class='navigation__links'>
+		{
+			links.map((link) => (
+				<a
+					href={link.href}
+					class='navigation__link'>
+					{link.text}
+				</a>
+			))
+		}
+		<a
+			href='https://github.com/CarloBu/reveal-animation-handler'
+			class='navigation__link--github'
+			target='_blank'
+			rel='noopener noreferrer'>
+			<img
+				src='/github-mark.svg'
+				alt='GitHub'
+				class='github-icon'
+			/>
+		</a>
+	</div>
+</div>
+
+<style>
+	.navigation__links {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 1rem;
+		padding-left: 3rem;
+		padding-right: 3rem;
+		margin-top: 2rem;
+		display: flex;
+		align-items: center;
+	}
+
+	.navigation__link {
+		display: inline-block;
+		padding: 0.5rem 1rem;
+		border: 1px solid #000;
+		text-decoration: none;
+		color: #000;
+		font-weight: 500;
+		transition: all 0.3s ease;
+	}
+
+	.navigation__link:hover {
+		background-color: #000;
+		color: #fff;
+	}
+
+	.github-icon {
+		width: 2.2rem;
+		height: 2.2rem;
+		vertical-align: middle;
+	}
+
+	.navigation__link--github:hover .github-icon {
+		opacity: 0.75;
+	}
+</style>

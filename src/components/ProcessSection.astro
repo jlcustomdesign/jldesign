@@ -48,33 +48,52 @@ const steps = [
   </div>
 
   <!-- Cards Container 
-       Mobile: h-auto, flex-col, native sticky
-       Desktop: h-[55vh], pinned (GSAP)
+       Mobile: Vertical Stack (Flex Col), No Pin
+       Desktop: h-[55vh], pinned (GSAP), Absolute Stack
   -->
-  <div class="relative w-full max-w-7xl mx-auto h-auto md:h-[55vh]" id="cards-wrapper">
+  <div class="relative w-full max-w-7xl mx-auto h-auto md:h-[55vh] flex flex-col gap-8 md:block md:gap-0" id="cards-wrapper">
     {
       steps.map((step, index) => (
         <div
-          class={`process-card sticky md:absolute top-0 left-0 w-full md:h-full h-[50vh] rounded-[2.5rem] shadow-xl origin-top overflow-hidden will-change-transform ${step.color}`}
-          style={`z-index: ${index + 1}; top: ${100 + index * 40}px;`}
+          class={`process-card relative md:absolute top-0 left-0 w-full md:h-full min-h-[50vh] md:min-h-0 rounded-[2.5rem] shadow-xl origin-top overflow-hidden will-change-transform ${step.color}`}
+          style={`z-index: ${index + 1}; --desktop-top: ${100 + index * 40}px;`}
         >
-          <div class="flex h-full">
-            <!-- Left: Content -->
-            <div class="flex-1 p-8 md:p-12 flex flex-col justify-between">
-                <div class="text-6xl md:text-8xl font-serif text-primary/10 font-bold leading-none select-none">
+          <div class="flex flex-col md:flex-row h-full">
+            <!-- Content -->
+            <div class="flex-1 p-8 md:p-12 flex flex-col justify-between relative z-10">
+                <div class="text-6xl md:text-8xl font-serif text-primary/10 font-bold leading-none select-none mb-8 md:mb-0">
                   {step.step}
                 </div>
                 <div>
-                   <h3 class="font-serif font-bold text-3xl md:text-5xl text-primary mb-6">
+                   <h3 
+                     class="font-serif font-bold text-3xl md:text-5xl text-primary mb-6"
+                     data-reveal="slide" 
+                     data-reveal-blur
+                   >
                         {step.title}
                    </h3>
-                   <p class="text-gray-500 leading-relaxed text-lg md:text-xl max-w-md">
+                   <p 
+                     class="text-gray-500 leading-relaxed text-lg md:text-xl max-w-md"
+                     data-reveal="slide" 
+                     data-reveal-blur
+                     data-reveal-delay="0.2"
+                   >
                         {step.desc}
                    </p>
                 </div>
+
+                <!-- Mobile Image (Bottom of Card) -->
+                <div class="md:hidden w-full aspect-[4/3] rounded-2xl overflow-hidden mt-8">
+                    <img 
+                      src={step.img} 
+                      alt={step.title} 
+                      class="w-full h-full object-cover" 
+                      loading="lazy"
+                    />
+                </div>
             </div>
 
-            <!-- Right: Image Frame (Vertical 3:4) -->
+            <!-- Desktop Image Frame (Vertical 3:4) -->
             <div class="hidden md:block h-full aspect-[3/4] p-4">
                 <div class="w-full h-full rounded-[2rem] overflow-hidden relative">
                     <img src={step.img} alt={step.title} class="w-full h-full object-cover" />
@@ -87,7 +106,7 @@ const steps = [
   </div>
   
   <!-- CTA Button -->
-  <div class="container mx-auto px-4 md:px-8 mt-36 mb-16 flex justify-center relative z-20 opacity-0 md:translate-y-12" id="process-cta">
+  <div class="container mx-auto px-4 md:px-8 mt-16 md:mt-36 mb-16 flex justify-center relative z-20 md:opacity-0 md:translate-y-12" id="process-cta">
     <BubbleButton href="/contact" variant="outline" class="!px-12 !py-5 text-lg shadow-2xl !border-white !text-white">
       Discută Proiectul Tău
     </BubbleButton>
@@ -104,11 +123,19 @@ const steps = [
       background-color: white !important;
       border-color: white !important;
     }
+    
+    /* Desktop-only positioning logic to avoid inline style interference on mobile */
+    @media (min-width: 768px) {
+        .process-card {
+            top: var(--desktop-top);
+        }
+    }
   </style>
 
   <script>
     import { gsap } from "gsap";
     import { ScrollTrigger } from "gsap/ScrollTrigger";
+    import "../utils/RevealAnimationHandler"; // Import the handler for mobile reveal
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -116,9 +143,21 @@ const steps = [
     document.addEventListener("astro:page-load", initProcessStack);
 
     function initProcessStack() {
+      // Mobile Optimization: Skip GSAP Stacking ENTIRELY on Mobile
+      // RevealAnimationHandler matches data-reveal automatically.
+      if (window.innerWidth < 1024) {
+          return;
+      }
+
+      // --- DESKTOP LOGIC BELOW ---
+
       // Helper: Split text into words for stagger effect
       const splitTextToWords = (element: Element | null) => {
           if (!element) return;
+          // Clear any RevealHandler modifications first if needed (unlikely on fresh load, but good practice)
+          // Actually, we should strip data-reveal on desktop if we use GSAP custom logic?
+          // OR, we let GSAP overwrite. GSAP overwrite is fine.
+          
           const text = element.textContent?.trim() || "";
           element.innerHTML = text
             .split(" ")
@@ -134,12 +173,16 @@ const steps = [
       const wrapper = document.querySelector("#cards-wrapper");
       const cards = gsap.utils.toArray(".process-card") as HTMLElement[];
       
-      // Prepare Texts
+      // Prepare Texts (Custom Desktop Split)
       splitTextToWords(headerH2);
       splitTextToWords(headerP);
       cards.forEach(card => {
-          splitTextToWords(card.querySelector("h3"));
-          splitTextToWords(card.querySelector("p"));
+          // Verify we aren't splitting already split text?
+          // Just simplistic:
+          const title = card.querySelector("h3");
+          const desc = card.querySelector("p");
+          if(title && !title.querySelector(".split-word")) splitTextToWords(title);
+          if(desc && !desc.querySelector(".split-word")) splitTextToWords(desc);
       });
 
       // --- 1. Header & First Card Reveal (Time-Based, Not Scrub) ---
@@ -171,21 +214,6 @@ const steps = [
       }
 
       if (!wrapper || cards.length === 0) return;
-
-      // Mobile Optimization: Skip GSAP Stacking on Mobile
-      if (window.innerWidth < 1024) {
-          // Just enable the CTA visibility since no timeline will trigger it
-          gsap.set("#process-cta", { opacity: 1, y: 0, delay: 0.5 });
-          
-          // Also simpler text reveal for cards as they appear? 
-          // Native scroll reveals them, let's just make sure text is visible
-          cards.forEach(card => {
-             const spans = card.querySelectorAll("h3 span span, p span span");
-             gsap.set(spans, { y: 0, opacity: 1, filter: "blur(0px)" });
-          });
-          return;
-      }
-
 
       // --- 2. Card Stacking (Scrubbed Move, Time-Based Text Reveal) ---
       gsap.set(cards, { clearProps: "all" }); // Reset
