@@ -51,12 +51,11 @@ const portfolio = [
 
     <!-- The Horizontal Track -->
     <!-- 
-      Mobile: Native horizontal scroll (overflow-x-auto + snap)
-      Desktop: overflow-hidden (GSAP Controlled)
+      All devices: GSAP controlled horizontal scroll with pinning
     -->
-    <div class="w-full overflow-x-auto md:overflow-hidden scrollbar-hide">
+    <div class="w-full overflow-hidden">
       <div
-        class="flex gap-4 md:gap-16 pl-4 md:pl-24 pr-24 md:will-change-transform md:transform-gpu snap-x snap-mandatory md:snap-none"
+        class="flex gap-4 md:gap-16 pl-4 md:pl-24 pr-24 will-change-transform transform-gpu"
         id="portfolio-gallery"
       >
         {
@@ -130,16 +129,9 @@ const portfolio = [
 
     if (!wrapper || !gallery) return;
 
-    // Mobile detection - use NATIVE scroll on mobile (no GSAP pinning)
+    // Mobile detection for performance tuning
     const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
 
-    // On mobile, skip GSAP entirely - use native horizontal scroll
-    if (isMobile) {
-      // Gallery already has overflow-x-auto and snap on mobile via CSS
-      return;
-    }
-
-    // DESKTOP ONLY: Enable GSAP Horizontal Scroll with pinning
     // Critical: Save CSS styles before GSAP touches them
     ScrollTrigger.saveStyles("#portfolio-gallery, #portfolio-wrapper");
 
@@ -156,9 +148,14 @@ const portfolio = [
         scrollTrigger: {
           trigger: wrapper,
           start: "top top",
-          end: "+=3000",
+          // Shorter scroll distance on mobile for snappier feel
+          end: isMobile ? "+=1500" : "+=3000",
           pin: true,
-          scrub: 1,
+          // Pin optimizations for iOS
+          pinType: "transform",
+          anticipatePin: 1,
+          // Faster scrub on mobile for less "fighting"
+          scrub: isMobile ? 0.1 : 1,
           invalidateOnRefresh: true,
         },
       });
