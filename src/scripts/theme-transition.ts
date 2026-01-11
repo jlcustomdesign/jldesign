@@ -6,30 +6,85 @@ gsap.registerPlugin(ScrollTrigger);
 export function initThemeTransition() {
   const processSection = document.querySelector("#process-section");
   const faqSection = document.querySelector("#faq-section-v2");
+  const footer = document.querySelector("footer");
 
   if (!processSection) return;
 
-  // Use requestAnimationFrame to ensure DOM is ready and layout settled
   requestAnimationFrame(() => {
     const ctx = gsap.context(() => {
-        // Define the "Dark Zone"
-        // Start: When Process Section hits 50% of viewport
-        // End: When FAQ Section leaves (or Footer enters)
-        // Since Process and FAQ are adjacent, we can treat them as a contiguous block if possible.
-        // Or simpler: Toggle class on body based on the combined range.
+        // --- Shared Configuration (The "Settings") ---
+        const transitionDuration = 0.6; 
+        const transitionEase = "power2.inOut";
         
-        // Find the END element (FAQ section or Process if FAQ missing)
-        const endTrigger = faqSection || processSection;
-
-        ScrollTrigger.create({
-            trigger: processSection,
-            endTrigger: endTrigger, // Extend to end of FAQ
-            start: "top 60%",       // Turn Dark when Process top hits 60% of viewport
-            end: "bottom 40%",      // Turn Light when FAQ bottom hits 40% of viewport (simulating separate light footer)
-            toggleClass: { className: "theme-dark", targets: "body" },
-            // markers: true, // Debug if needed
-            id: "theme-controller"
+        // --- 1. Light -> Dark (Entering Process) ---
+        // Trigger: When Process enters the viewport (top 60%)
+        const tlEnterDark = gsap.timeline({
+            scrollTrigger: {
+                trigger: processSection,
+                start: "top 60%", 
+                end: "top 20%",
+                scrub: 1, // Smooth scrub
+                toggleActions: "play none none reverse",
+                id: "theme-enter-dark"
+            }
         });
+
+        tlEnterDark.to("body", { 
+            backgroundColor: "#050505", 
+            color: "#ffffff", 
+            duration: transitionDuration, 
+            ease: transitionEase,
+            overwrite: "auto"
+        });
+        
+        // Also animate known light sections to dark if they aren't transparent
+        tlEnterDark.to([processSection, faqSection], {
+            backgroundColor: "#050505",
+            color: "#ffffff",
+            duration: transitionDuration, 
+            ease: transitionEase,
+             overwrite: "auto"
+        }, "<");
+        
+        // Target FAQ borders explicitly
+        tlEnterDark.to(".faq-item-v2", {
+            borderColor: "#333333",
+            duration: transitionDuration,
+            overwrite: "auto"
+        }, "<");
+
+
+        // --- 2. Dark -> Light (Entering Footer) ---
+        // "Exact same settings as the first one" -> Mirror the scrub/trigger logic
+        // Trigger: When Footer enters (top 90%? or end of FAQ)
+        if (footer) {
+             const tlExitDark = gsap.timeline({
+                scrollTrigger: {
+                    trigger: footer,
+                    start: "top 85%", // Late trigger to keep FAQ dark as long as possible
+                    end: "top 45%",   // Scrub transition over this distance
+                    scrub: 1,
+                    toggleActions: "play none none reverse",
+                    id: "theme-exit-dark"
+                }
+            });
+
+            tlExitDark.to("body", {
+                backgroundColor: "#ffffff", // Back to White
+                color: "#000000",
+                duration: transitionDuration,
+                ease: transitionEase,
+                overwrite: "auto"
+            });
+
+            // Ensure footer stays light (though it has its own bg usually)
+             tlExitDark.to(footer, {
+                backgroundColor: "#f5f5f7", // Secondary light color
+                color: "#1a1a1a",
+                duration: transitionDuration,
+                overwrite: "auto"
+            }, "<");
+        }
 
     });
   });

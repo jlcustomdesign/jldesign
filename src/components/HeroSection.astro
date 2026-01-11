@@ -166,25 +166,24 @@ const heroImage = "/Images/Imagine hero section.png";
   const desktopResolution = { width: 1890, height: 916 };
   const mobileResolution = { width: 1020, height: 882 };
 
-  document.addEventListener("astro:page-load", () => {
-    initHeroAnim();
-  });
+  // Defer initialization to avoid blocking Main Thread during initial paint
+  const deferInit = () => {
+    // @ts-ignore - requestIdleCallback is not in all TS definitions yet
+    if (window.requestIdleCallback) {
+      // @ts-ignore
+      window.requestIdleCallback(() => initHeroAnim(), { timeout: 2000 });
+    } else {
+      setTimeout(() => initHeroAnim(), 100);
+    }
+  };
 
-  // Wait for DOM and layout to be ready before initial animation
-  // This prevents the desktop animation from playing on mobile first load
+  document.addEventListener("astro:page-load", deferInit);
+
+  // Initial load handling
   if (document.readyState === "complete") {
-    // If already loaded, wait one frame for layout to complete
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        initHeroAnim();
-      });
-    });
+    deferInit();
   } else {
-    window.addEventListener("load", () => {
-      requestAnimationFrame(() => {
-        initHeroAnim();
-      });
-    });
+    window.addEventListener("load", deferInit);
   }
 
   function initHeroAnim() {
