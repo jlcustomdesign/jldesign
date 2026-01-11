@@ -5,7 +5,7 @@ const heroImage = "/Images/Imagine hero section.png";
 ---
 
 <section
-  class="relative min-h-screen flex items-center bg-secondary overflow-hidden"
+  class="relative min-h-screen flex items-center bg-secondary overflow-hidden transition-[height] duration-300"
   id="hero-section"
   data-theme="dark"
   style="z-index: 1;"
@@ -453,10 +453,8 @@ const heroImage = "/Images/Imagine hero section.png";
   function initHeroExitAnimation() {
     const heroSection = document.querySelector("#hero-section");
     const heroContent = document.querySelector("#hero-content-wrapper");
-    const heroSvg = document.querySelector("#mySVG");
-    const aboutSection = document.querySelector("#about-section");
 
-    if (!heroSection || !heroContent || !aboutSection) return;
+    if (!heroSection || !heroContent) return;
 
     // Mobile detection
     const isMobile = window.innerWidth < 1024;
