@@ -50,19 +50,25 @@ const portfolio = [
     </div>
 
     <!-- The Horizontal Track -->
-    <div class="flex items-center overflow-hidden w-full">
+    <!-- 
+      Mobile: overflow-x-auto snap-x snap-mandatory (Native Horizontal Scroll)
+      Desktop: overflow-hidden (GSAP Controlled)
+    -->
+    <div
+      class="w-full lg:overflow-hidden overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
+    >
       <div
         class="flex gap-4 md:gap-16 pl-4 md:pl-24 pr-24 will-change-transform transform-gpu"
         id="portfolio-gallery"
       >
         {
           portfolio.map((item, index) => (
-            <div class="relative flex-none w-[85vw] md:w-[420px] xl:w-[550px] group portfolio-item">
+            <div class="relative flex-none w-[85vw] md:w-[420px] xl:w-[550px] group portfolio-item snap-center">
               <div class="w-full aspect-[3/2] rounded-2xl overflow-hidden relative">
                 <img
                   src={item.img}
                   alt={item.name}
-                  class="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-700 ease-out scale-100 group-hover:scale-105 portfolio-img"
+                  class="w-full h-full object-cover grayscale-[30%] mobile:filter-none group-hover:grayscale-0 transition-all duration-700 ease-out scale-100 group-hover:scale-105 portfolio-img"
                 />
               </div>
               <div class="mt-6 flex justify-between items-start">
@@ -113,6 +119,10 @@ const portfolio = [
     const gallery = document.querySelector("#portfolio-gallery");
 
     if (!wrapper || !gallery) return;
+
+    // Mobile Check: If < 1024px, we use native CSS scroll, so we SKIP GSAP logic
+    // This is the aggressive optimization: 0 JS on scroll for mobile
+    if (window.innerWidth < 1024) return;
 
     const ctx = gsap.context(() => {
       const getScrollAmount = () => {

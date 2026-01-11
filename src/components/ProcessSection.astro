@@ -47,13 +47,16 @@ const steps = [
     </p>
   </div>
 
-  <!-- Cards Container - Pinned -->
-  <div class="relative w-full max-w-7xl mx-auto h-[50vh] md:h-[55vh]" id="cards-wrapper">
+  <!-- Cards Container 
+       Mobile: h-auto, flex-col, native sticky
+       Desktop: h-[55vh], pinned (GSAP)
+  -->
+  <div class="relative w-full max-w-7xl mx-auto h-auto md:h-[55vh]" id="cards-wrapper">
     {
       steps.map((step, index) => (
         <div
-          class={`process-card absolute top-0 left-0 w-full h-full rounded-[2.5rem] shadow-xl origin-top overflow-hidden will-change-transform ${step.color}`}
-          style={`z-index: ${index + 1};`}
+          class={`process-card sticky md:absolute top-0 left-0 w-full md:h-full h-[50vh] rounded-[2.5rem] shadow-xl origin-top overflow-hidden will-change-transform ${step.color}`}
+          style={`z-index: ${index + 1}; top: ${100 + index * 40}px;`}
         >
           <div class="flex h-full">
             <!-- Left: Content -->
@@ -168,6 +171,21 @@ const steps = [
       }
 
       if (!wrapper || cards.length === 0) return;
+
+      // Mobile Optimization: Skip GSAP Stacking on Mobile
+      if (window.innerWidth < 1024) {
+          // Just enable the CTA visibility since no timeline will trigger it
+          gsap.set("#process-cta", { opacity: 1, y: 0, delay: 0.5 });
+          
+          // Also simpler text reveal for cards as they appear? 
+          // Native scroll reveals them, let's just make sure text is visible
+          cards.forEach(card => {
+             const spans = card.querySelectorAll("h3 span span, p span span");
+             gsap.set(spans, { y: 0, opacity: 1, filter: "blur(0px)" });
+          });
+          return;
+      }
+
 
       // --- 2. Card Stacking (Scrubbed Move, Time-Based Text Reveal) ---
       gsap.set(cards, { clearProps: "all" }); // Reset
