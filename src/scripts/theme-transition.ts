@@ -98,7 +98,12 @@ export function initThemeTransition() {
                     ease: "power2.out",
                     overwrite: true 
                 });
-                gsap.to(textElementsToWhite, { 
+
+                // Animate Text (Process/FAQ + Navbar) to Black
+                const navTexts = document.querySelectorAll(".nav-text");
+                const allTextTargets = [...textElementsToWhite, ...Array.from(navTexts)];
+                
+                gsap.to(allTextTargets, { 
                     color: "#1a1a1a", // Black text
                     duration: 0.5, 
                     ease: "power2.out",
@@ -122,7 +127,11 @@ export function initThemeTransition() {
                     ease: "power2.out",
                     overwrite: true 
                 });
-                gsap.to(textElementsToWhite, { 
+
+                const navTexts = document.querySelectorAll(".nav-text");
+                const allTextTargets = [...textElementsToWhite, ...Array.from(navTexts)];
+
+                gsap.to(allTextTargets, { 
                     color: "#ffffff", // White text
                     duration: 0.5, 
                     ease: "power2.out",
