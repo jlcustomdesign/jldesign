@@ -86,36 +86,14 @@ export function initThemeTransition() {
             id: "theme-enter"
         });
 
-        // Create Footer Timeline (Dark -> Light)
-        const footerTl = gsap.timeline({ paused: true });
-        
-        // Backgrounds to White
-        backgroundElementsToBlack.forEach(el => {
-             // We animate TO white. The starting state is presumed Black from previous trigger.
-             footerTl.to(el, { backgroundColor: "#ffffff", duration: duration, ease: ease }, 0);
-        });
-        footerTl.to("body", { backgroundColor: "#ffffff", duration: duration, ease: ease }, 0);
-
-        // Text to Black (including Navbar)
-        // nav-text is now in textElementsToWhite
-        textElementsToWhite.forEach(el => {
-             footerTl.to(el, { color: "#1a1a1a", duration: duration, ease: ease }, 0);
-             if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
-                 footerTl.to(el, { stroke: "#1a1a1a", fill: "transparent", duration: duration, ease: ease }, 0);
-             }
-        });
-        
-        // FAQ Borders
-        faqItems.forEach(item => {
-             footerTl.to(item, { borderColor: "#e5e7eb", duration: duration, ease: ease }, 0);
-        });
-
         // Trigger 2: Footer Entry
+        // Use the SAME timeline (tl) but reverse it to go back to Light Mode.
+        // This ensures zero conflict and reuses the exact same performance profile.
         ScrollTrigger.create({
             trigger: footer,
             start: "top 90%",
-            onEnter: () => footerTl.play(),
-            onLeaveBack: () => footerTl.reverse(),
+            onEnter: () => tl.reverse(), // Reverse to Start (Light)
+            onLeaveBack: () => tl.play(), // Play to End (Dark)
             id: "theme-footer-override"
         });
 
