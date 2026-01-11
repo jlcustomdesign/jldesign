@@ -215,8 +215,8 @@ const steps = [
      Target the whole .hover-container via :has()
   */
 
-  /* 1. When ANY image is hovered: Blur everything in container */
-  .hover-container:has(.process-image:hover) .process-image,
+  /* 1. When ANY image is hovered: Blur everything (images not hovered, texts, header) */
+  .hover-container:has(.process-image:hover) .process-image:not(:hover),
   .hover-container:has(.process-image:hover) .process-text,
   .hover-container:has(.process-image:hover) .process-header {
     opacity: 0.3 !important;
