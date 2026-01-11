@@ -461,8 +461,17 @@ const heroImage = "/Images/Imagine hero section.png";
     // Mobile detection
     const isMobile = window.innerWidth < 1024;
 
-    // Blur + fade animation (works on all devices)
+    // Fix iOS Safari address bar resize issue:
+    // Lock the hero section height to current value on load
+    if (isMobile) {
+      const currentHeight = (heroSection as HTMLElement).offsetHeight;
+      (heroSection as HTMLElement).style.height = `${currentHeight}px`;
+      (heroSection as HTMLElement).style.minHeight = "unset";
+    }
+
+    // Blur + fade + SCALE animation for entire hero content
     gsap.to(heroContent, {
+      scale: isMobile ? 0.95 : 0.9,
       filter: isMobile ? "blur(4px)" : "blur(8px)",
       opacity: 0.5,
       ease: "none",
@@ -475,20 +484,6 @@ const heroImage = "/Images/Imagine hero section.png";
         pinSpacing: false,
       },
     });
-
-    // Scale the SVG directly (works on all devices)
-    if (heroSvg) {
-      gsap.to(heroSvg, {
-        scale: isMobile ? 0.95 : 0.9,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroSection,
-          start: "bottom bottom",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-    }
   }
 
   // Initialize hero exit animation
