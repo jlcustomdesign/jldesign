@@ -205,6 +205,7 @@ const heroImage = "/Images/Imagine hero section.png";
       try {
         const width = window.innerWidth;
         const height = window.innerHeight;
+        const isMobile = width < widthTarget;
 
         svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
 
@@ -217,14 +218,27 @@ const heroImage = "/Images/Imagine hero section.png";
           svg.appendChild(path);
         }
 
-        // Initial State (Rectangle)
-        path.setAttribute("d", rectangle(width, height));
+        if (isMobile) {
+          // On mobile: Skip animation, set final simple shape immediately
+          // Simple rounded rect with bottom corners cutout only
+          path.setAttribute("d", mobileSimpleShape(width, height));
 
-        // SVG Animation (Step 1)
-        if (gsap.plugins.morphSVG) {
-          masterTl.add(runSvgAnim(path, width, height));
+          // No morph animation on mobile - just scale in
+          masterTl.from("#mySVG", {
+            scale: 1.2,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out",
+          });
         } else {
-          console.warn("GSAP MorphSVGPlugin not loaded. Skipping morph.");
+          // Desktop: Full morph animation
+          path.setAttribute("d", rectangle(width, height));
+
+          if (gsap.plugins.morphSVG) {
+            masterTl.add(runSvgAnim(path, width, height));
+          } else {
+            console.warn("GSAP MorphSVGPlugin not loaded. Skipping morph.");
+          }
         }
 
         // Resize Listener
@@ -232,7 +246,11 @@ const heroImage = "/Images/Imagine hero section.png";
           const w = window.innerWidth;
           const h = window.innerHeight;
           svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-          path.setAttribute("d", cross(w, h));
+          if (w < widthTarget) {
+            path.setAttribute("d", mobileSimpleShape(w, h));
+          } else {
+            path.setAttribute("d", cross(w, h));
+          }
         };
         window.addEventListener("resize", onResize);
       } catch (e) {
@@ -411,5 +429,44 @@ const heroImage = "/Images/Imagine hero section.png";
     return displayCond
       ? `M${rw(505)} ${rh(125)} H${rw(19)} C${rw(9)} ${rh(125)} ${rw(1)} ${rh(133)} ${rw(1)} ${rh(143)} V${rh(774)} C${rw(1)} ${rh(783)} ${rw(9)} ${rh(792)} ${rw(19)} ${rh(792)} H${rw(280)} C${rw(290)} ${rh(792)} ${rw(298)} ${rh(800)} ${rw(298)} ${rh(810)} V${rh(898)} C${rw(298)} ${rh(907)} ${rw(306)} ${h} ${rw(316)} ${h} H${rw(1132)} C${rw(1142)} ${h} ${rw(1150)} ${rh(907)} ${rw(1150)} ${rh(898)} V${rh(809)} C${rw(1150)} ${rh(799)} ${rw(1158)} ${rh(791)} ${rw(1168)} ${rh(791)} H${rw(1872)} C${rw(1881)} ${rh(791)} ${w} ${rh(783)} ${w} ${rh(773)} V${rh(144)} C${w} ${rh(134)} ${rw(1881)} ${rh(126)} ${rw(1872)} ${rh(126)} H${rw(1385)} C${rw(1375)} ${rh(126)} ${rw(1367)} ${rh(117)} ${rw(1367)} ${rh(108)} V${rh(19)} C${rw(1367)} ${rh(9)} ${rw(1359)} ${rh(1)} ${rw(1349)} ${rh(1)} H${rw(541)} C${rw(531)} ${rh(1)} ${rw(523)} ${rh(9)} ${rw(523)} ${rh(19)} V${rh(107)} C${rw(523)} ${rh(117)} ${rw(515)} ${rh(125)} ${rw(505)} ${rh(125)} Z`
       : `M${rw(1000)} ${rh(1)} H${rw(21)} C${rw(9.9543)} ${rh(1)} ${rw(1)} ${rh(9.95432)} ${rw(1)} ${rh(21)} V${rh(737)} C${rw(1)} ${rh(748.046)} ${rw(9.9543)} ${rh(757)} ${rw(21)} ${rh(757)} H${rw(86)} C${rw(97.0457)} ${rh(757)} ${rw(106)} ${rh(765.954)} ${rw(106)} ${rh(777)} V${rh(861.869)} C${rw(106)} ${rh(872.915)} ${rw(114.954)} ${rh(881.869)} ${rw(126)} ${rh(881.869)} H${rw(875)} C${rw(886.046)} ${rh(881.869)} ${rw(895)} ${rh(872.915)} ${rw(895)} ${rh(861.869)} V${rh(777)} C${rw(895)} ${rh(765.954)} ${rw(903.954)} ${rh(757)} ${rw(915)} ${rh(757)} H${rw(1000)} C${rw(1011.05)} ${rh(757)} ${w} ${rh(748.046)} ${w} ${rh(737)} V${rh(21)} C${w} ${rh(9.9543)} ${rw(1011.05)} ${rh(1)} ${rw(1000)} ${rh(1)} Z`;
+  }
+
+  // Simple mobile shape with only bottom 2 corners cutout
+  function mobileSimpleShape(w: number, h: number) {
+    const w1 = mobileResolution.width;
+    const h1 = mobileResolution.height;
+
+    const rw = (val: number) => (val / w1) * w;
+    const rh = (val: number) => (val / h1) * h;
+
+    // Rounded rectangle with bottom-left and bottom-right corner cutouts only
+    // Top: full width rounded corners
+    // Bottom: two small notches in the corners
+    const cornerRadius = 20;
+    const cutoutWidth = rw(100);
+    const cutoutHeight = rh(80);
+
+    return `
+      M ${cornerRadius} 0
+      H ${w - cornerRadius}
+      Q ${w} 0 ${w} ${cornerRadius}
+      V ${h - cutoutHeight - cornerRadius}
+      Q ${w} ${h - cutoutHeight} ${w - cornerRadius} ${h - cutoutHeight}
+      H ${w - cutoutWidth + cornerRadius}
+      Q ${w - cutoutWidth} ${h - cutoutHeight} ${w - cutoutWidth} ${h - cutoutHeight + cornerRadius}
+      V ${h - cornerRadius}
+      Q ${w - cutoutWidth} ${h} ${w - cutoutWidth - cornerRadius} ${h}
+      H ${cutoutWidth + cornerRadius}
+      Q ${cutoutWidth} ${h} ${cutoutWidth} ${h - cornerRadius}
+      V ${h - cutoutHeight + cornerRadius}
+      Q ${cutoutWidth} ${h - cutoutHeight} ${cutoutWidth - cornerRadius} ${h - cutoutHeight}
+      H ${cornerRadius}
+      Q 0 ${h - cutoutHeight} 0 ${h - cutoutHeight - cornerRadius}
+      V ${cornerRadius}
+      Q 0 0 ${cornerRadius} 0
+      Z
+    `
+      .replace(/\s+/g, " ")
+      .trim();
   }
 </script>
