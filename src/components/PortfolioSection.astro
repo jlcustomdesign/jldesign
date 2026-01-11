@@ -51,11 +51,12 @@ const portfolio = [
 
     <!-- The Horizontal Track -->
     <!-- 
-      Universal: overflow-hidden (GSAP Controlled on All Devices)
+      Mobile: Native horizontal scroll (overflow-x-auto + snap)
+      Desktop: overflow-hidden (GSAP Controlled)
     -->
-    <div class="w-full overflow-hidden">
+    <div class="w-full overflow-x-auto md:overflow-hidden scrollbar-hide">
       <div
-        class="flex gap-4 md:gap-16 pl-4 md:pl-24 pr-24 will-change-transform transform-gpu"
+        class="flex gap-4 md:gap-16 pl-4 md:pl-24 pr-24 md:will-change-transform md:transform-gpu snap-x snap-mandatory md:snap-none"
         id="portfolio-gallery"
       >
         {
@@ -129,15 +130,20 @@ const portfolio = [
 
     if (!wrapper || !gallery) return;
 
-    // Critical: Save CSS styles (native scroll) before GSAP touches them
+    // Mobile detection - use NATIVE scroll on mobile (no GSAP pinning)
+    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
+
+    // On mobile, skip GSAP entirely - use native horizontal scroll
+    if (isMobile) {
+      // Gallery already has overflow-x-auto and snap on mobile via CSS
+      return;
+    }
+
+    // DESKTOP ONLY: Enable GSAP Horizontal Scroll with pinning
+    // Critical: Save CSS styles before GSAP touches them
     ScrollTrigger.saveStyles("#portfolio-gallery, #portfolio-wrapper");
 
-    // Enable GSAP Horizontal Scroll for ALL devices
-    // User explicitly requested "Scroll Lock/Pin" behavior on mobile too.
     const ctx = gsap.context(() => {
-      // Mobile detection for performance tuning
-      const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
-
       const getScrollAmount = () => {
         let galleryWidth = (gallery as HTMLElement).scrollWidth;
         return -(galleryWidth - window.innerWidth + 100);
@@ -146,28 +152,24 @@ const portfolio = [
       gsap.to(gallery, {
         x: getScrollAmount,
         ease: "none",
-        // Force GPU layer for smoother animation on high refresh rate displays
         force3D: true,
         scrollTrigger: {
           trigger: wrapper,
           start: "top top",
-          // Shorter scroll distance on mobile for faster response
-          end: isMobile ? "+=2000" : "+=3000",
+          end: "+=3000",
           pin: true,
-          // scrub: true = instant response (no interpolation/smoothing)
-          // This eliminates the "shadow" ghosting on 120fps displays
-          scrub: isMobile ? true : 1,
+          scrub: 1,
           invalidateOnRefresh: true,
         },
       });
-    }, wrapper); // <-- This is new
+    }, wrapper);
 
     // Refresh to ensure pinning calculations are correct
     ScrollTrigger.refresh();
 
     // Cleanup logic
     const cleanup = () => {
-      ctx.revert(); // Revert all GSAP animations and ScrollTriggers created in this context
+      ctx.revert();
       document.removeEventListener("astro:before-preparation", cleanup);
     };
     document.addEventListener("astro:before-preparation", cleanup);

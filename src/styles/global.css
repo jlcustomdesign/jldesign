@@ -16,3 +16,12 @@
   --font-serif: "Grift", serif;
   --font-sans: "Grift", sans-serif;
 }
+
+/* Hide scrollbar for native horizontal scroll galleries */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
