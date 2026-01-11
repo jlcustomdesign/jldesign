@@ -171,10 +171,9 @@ const links = [
   function initHeroObserver() {
     const navContainer = document.querySelector("#navbar-container");
     const hero = document.querySelector("#hero-section");
+    const aboutSection = document.querySelector("#about-section");
 
     if (!navContainer) return;
-
-    // Optimization: Use IntersectionObserver instead of scroll listener to avoid layout thrashing
 
     // Scenario A: No Hero (Subpages) -> Always Light
     if (!hero) {
@@ -183,26 +182,36 @@ const links = [
       return;
     }
 
-    // Scenario B: Hero Exists -> Dark when in Hero, Light when out
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            navContainer.classList.add("nav-dark");
-            navContainer.classList.remove("nav-light");
-          } else {
-            navContainer.classList.add("nav-light");
-            navContainer.classList.remove("nav-dark");
-          }
-        });
-      },
-      {
-        root: null,
-        threshold: 0,
-        rootMargin: "-100px 0px 0px 0px", // Trigger when hero passes under header area
-      }
-    );
+    // Start with dark theme (hero visible)
+    navContainer.classList.add("nav-dark");
+    navContainer.classList.remove("nav-light");
 
-    observer.observe(hero);
+    // Scenario B: Watch About section instead of Hero
+    // When About enters viewport, switch to light theme
+    // This works better with pinned Hero (parallax reveal)
+    if (aboutSection) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // About section visible -> Light theme (black text)
+              navContainer.classList.add("nav-light");
+              navContainer.classList.remove("nav-dark");
+            } else {
+              // About section not visible -> Dark theme (white text)
+              navContainer.classList.add("nav-dark");
+              navContainer.classList.remove("nav-light");
+            }
+          });
+        },
+        {
+          root: null,
+          threshold: 0,
+          rootMargin: "-100px 0px 0px 0px", // Trigger when about section reaches header
+        }
+      );
+
+      observer.observe(aboutSection);
+    }
   }
 </script>
