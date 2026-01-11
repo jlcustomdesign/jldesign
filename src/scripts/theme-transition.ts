@@ -4,106 +4,125 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 export function initThemeTransition() {
-  const processSection = document.querySelector("#process-section");
-  const faqSection = document.querySelector("#faq-section-v2");
-  const footer = document.querySelector("footer");
-  // const portfolioSection = document.querySelector("#portfolio-section"); // Target via selector string to be safe if variable not needed globally
+  const portfolioSection = document.querySelector("#portfolio-section");
+  if (!portfolioSection) return;
 
-  if (!processSection) return;
-
+  // Use requestAnimationFrame to ensure DOM is ready
   requestAnimationFrame(() => {
-    const ctx = gsap.context(() => {
-        // --- Shared Configuration ---
-        const transitionDuration = 0.6; 
-        
-        // --- 1. Light -> Dark (Entering Process) ---
-        // Trigger: Start transition as soon as Process approaches center-bottom
-        const tlEnterDark = gsap.timeline({
-            scrollTrigger: {
-                trigger: processSection,
-                start: "top 75%", 
-                end: "top 25%",
-                scrub: 0.5, 
-                toggleActions: "play none none reverse",
-                invalidateOnRefresh: true, 
-                id: "theme-enter-dark"
-            }
-        });
+    // Add delay to allow Process Section pinning to settle layout
+    setTimeout(() => {
+        // 1. Identify Sections AFTER Portfolio
+        // Order: Portfolio -> Process -> FAQ -> Footer
+        const processSection = document.querySelector("#process-section");
+        const faqSection = document.querySelector("#faq-section-v2");
+        const footer = document.querySelector("footer");
+        const main = document.querySelector("main");
 
-        const darkColor = "#050505";
-        const lightColor = "#ffffff";
-        
-        // 1. Body & Text
-        tlEnterDark.to("body", { 
-            backgroundColor: darkColor, 
-            color: lightColor, 
-            duration: transitionDuration, 
-            ease: "none", 
-            overwrite: "auto"
-        });
-        
-        // 2. SECTIONS: Process, FAQ, AND Portfolio (Previous Section)
-        // This ensures the section BEFORE the dark zone also turns dark so the transition is seamless
-        const sectionsToDark = [processSection, faqSection, "#portfolio-section"];
-        tlEnterDark.to(sectionsToDark, {
-            backgroundColor: darkColor,
-            color: lightColor,
-            duration: transitionDuration, 
-            ease: "none",
-            overwrite: "auto"
-        }, "<");
-        
-        // 3. FAQ Borders
-        tlEnterDark.to(".faq-item-v2", {
-            borderColor: "#333333",
-            duration: transitionDuration,
-            ease: "none",
-            overwrite: "auto"
-        }, "<");
+        // Elements groups
+        const backgroundElementsToBlack: HTMLElement[] = [];
+        const textElementsToWhite: HTMLElement[] = [];
 
+        // --- A. Collect Background Elements ---
+        // Include Portfolio because it might still be visible
+        if (portfolioSection) backgroundElementsToBlack.push(portfolioSection as HTMLElement);
+        if (processSection) backgroundElementsToBlack.push(processSection as HTMLElement);
+        if (faqSection) backgroundElementsToBlack.push(faqSection as HTMLElement);
+        if (footer) backgroundElementsToBlack.push(footer as HTMLElement);
+        
+        // --- B. Collect Text Elements ---
+        if (main) {
+            // Selectors for text in Portfolio, Process, FAQ
+            // NOTE: Removed .nav-text to avoid conflict with Navbar.astro's own theme observer
+            const selectors = [
+                "#portfolio-section h2", "#portfolio-section h3", "#portfolio-section p", "#portfolio-section span", "#portfolio-section .text-primary",
+                // Process: Only target the intro text, not the cards (which stay white)
+                "#process-section > .container h2", "#process-section > .container p", 
+                "#faq-section-v2 h2", "#faq-section-v2 button", "#faq-section-v2 span", "#faq-section-v2 p", "#faq-section-v2 svg"
+            ].join(", ");
 
-        // --- 2. Dark -> Light (Entering Footer) ---
-        if (footer) {
-             const tlExitDark = gsap.timeline({
-                scrollTrigger: {
-                    trigger: footer,
-                    start: "top 85%", 
-                    end: "top 45%", 
-                    scrub: 1,
-                    toggleActions: "play none none reverse",
-                    id: "theme-exit-dark"
-                }
+            const elements = document.querySelectorAll(selectors);
+            elements.forEach((el) => {
+                 textElementsToWhite.push(el as HTMLElement);
             });
-
-            const secondaryColor = "#f5f5f7"; // The light gray bg
-
-            // 1. Body & Text Back to Light
-            tlExitDark.to("body", {
-                backgroundColor: secondaryColor, // Match footer/secondary bg
-                color: "#000000",
-                duration: transitionDuration,
-                ease: "none", // Linear scrub
-                overwrite: "auto"
-            });
-
-            // 2. Sections: Footer AND FAQ (Previous Section)
-            // Ensure FAQ fades back to light as we leave it
-            const sectionsToLight = [footer, faqSection, "#portfolio-section"]; 
-            tlExitDark.to(sectionsToLight, {
-                backgroundColor: secondaryColor,
-                color: "#1a1a1a",
-                duration: transitionDuration,
-                overwrite: "auto"
-            }, "<");
-            
-            // 3. FAQ Borders Back to Light
-             tlExitDark.to(".faq-item-v2", {
-                borderColor: "rgba(0,0,0,0.1)", // Restore light border
-                duration: transitionDuration,
-                overwrite: "auto"
-            }, "<");
         }
 
-    });
+        // --- C. Create Master Timeline (Paused) ---
+        const tl = gsap.timeline({ paused: true });
+        const duration = 0.5; // Faster transition (was 0.8)
+        const ease = "power2.inOut";
+
+        // Build Animation: Light -> Dark
+        // Animate Backgrounds to Black
+        backgroundElementsToBlack.forEach(el => {
+            tl.to(el, { backgroundColor: "#050505", duration: duration, ease: ease }, 0);
+        });
+        // Animate Body to Black
+        tl.to("body", { backgroundColor: "#050505", duration: duration, ease: ease }, 0);
+
+        // Animate Text to White
+        textElementsToWhite.forEach(el => {
+            tl.to(el, { color: "#ffffff", duration: duration, ease: ease }, 0);
+            
+            if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
+                 tl.to(el, { stroke: "#ffffff", fill: "transparent", duration: duration, ease: ease }, 0);
+            }
+        });
+        
+        // FAQ Borders
+        const faqItems = document.querySelectorAll(".faq-item-v2");
+        faqItems.forEach(item => {
+            tl.to(item, { borderColor: "#333333", duration: duration, ease: ease }, 0);
+        });
+
+        // --- D. Triggers ---
+
+        // Trigger 1: Enter Dark Mode (at Process Section)
+        ScrollTrigger.create({
+            trigger: processSection || portfolioSection,
+            start: "top 50%", // Adjusted trigger point
+            onEnter: () => tl.play(),
+            onLeaveBack: () => tl.reverse(),
+            id: "theme-enter"
+        });
+
+        // Trigger 2: Footer Entry (Explicit Override)
+        // When Footer enters, force theme to Light (White BG, Black Text)
+        ScrollTrigger.create({
+            trigger: footer,
+            start: "top 90%", // Trigger slightly before full view
+            onEnter: () => {
+                // Force Light Mode
+                gsap.to("body, #portfolio-section, #process-section, #faq-section-v2, footer", { 
+                    backgroundColor: "#ffffff", 
+                    duration: 0.5, 
+                    ease: "power2.out",
+                    overwrite: true 
+                });
+                gsap.to(textElementsToWhite, { 
+                    color: "#1a1a1a", // Black text
+                    duration: 0.5, 
+                    ease: "power2.out",
+                    overwrite: true 
+                });
+                 // Handle SVG/Path specifically if needed (invert back)
+                 textElementsToWhite.forEach(el => {
+                    if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
+                        gsap.to(el, { stroke: "#1a1a1a", fill: "transparent", duration: 0.5, overwrite: true });
+                    }
+                 });
+                 // FAQ Borders back to light gray
+                 gsap.to(".faq-item-v2", { borderColor: "#e5e7eb", duration: 0.5, overwrite: true });
+            },
+            onLeaveBack: () => {
+                 // Force Dark Mode (Revert)
+                 tl.play(); // Re-play the master dark timeline
+            },
+            id: "theme-footer-override"
+        });
+
+        // Force refresh to handle pinning calculations
+        ScrollTrigger.refresh();
+
+    }, 500);
   });
 }

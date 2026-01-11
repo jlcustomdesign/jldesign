@@ -43,8 +43,17 @@ const { title } = Astro.props;
     <script>
       import { initSmoothScroll } from "../scripts/smooth-scroll";
 
-      initSmoothScroll();
-      document.addEventListener("astro:page-load", initSmoothScroll);
+      // Optimization: Stagger initialization to avoid blocking Main Thread on load
+      const init = () => {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            initSmoothScroll();
+          }, 100);
+        });
+      };
+
+      init();
+      document.addEventListener("astro:page-load", init);
     </script>
   </body>
 </html>
@@ -63,5 +72,11 @@ const { title } = Astro.props;
   }
   ::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
+  }
+
+  /* Performance Optimization */
+  .section-optimize {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 1000px; /* Guess height to prevent scroll jump */
   }
 </style>

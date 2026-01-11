@@ -131,14 +131,12 @@ const portfolio = [
       gsap.to(gallery, {
         x: getScrollAmount,
         ease: "none",
-        force3D: true, // Force GPU acceleration
-        overwrite: "auto",
         scrollTrigger: {
           trigger: wrapper,
           start: "top top",
           end: "+=3000",
           pin: true,
-          scrub: 1, // slightly smoother scrub
+          scrub: 1,
           invalidateOnRefresh: true,
         },
       });

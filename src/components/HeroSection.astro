@@ -70,7 +70,7 @@ const heroImage = "/Images/Imagine hero section.png";
       class="hidden md:block order-1 md:order-2 relative aspect-[1.3/1] w-full max-w-xl mx-auto md:translate-x-18"
     >
       <div
-        class="hero-image-mask absolute inset-0 w-full h-full overflow-hidden rounded-2xl origin-center scale-90 opacity-0 will-change-transform"
+        class="hero-image-mask absolute inset-0 w-full h-full overflow-hidden rounded-2xl origin-center scale-90 opacity-0"
       >
         <div
           class="w-full h-full bg-white hero-image-inner shadow-2xl flex items-stretch justify-between p-8 md:p-12"
@@ -110,14 +110,12 @@ const heroImage = "/Images/Imagine hero section.png";
 
           <!-- Right: 3:4 Vertical Image -->
           <div
-            class="hero-card-img w-[44%] aspect-[3/4.5] overflow-hidden rounded-lg shadow-inner self-end opacity-0 will-change-transform"
+            class="hero-card-img w-[44%] aspect-[3/4.5] overflow-hidden rounded-lg shadow-inner self-end opacity-0"
           >
             <img
               src="/Images/Proiecte-JL Custom Design-07.jpg"
               alt="Premium Furniture Detail"
               class="w-full h-full object-cover"
-              loading="eager"
-              fetchpriority="high"
             />
           </div>
         </div>
@@ -166,24 +164,25 @@ const heroImage = "/Images/Imagine hero section.png";
   const desktopResolution = { width: 1890, height: 916 };
   const mobileResolution = { width: 1020, height: 882 };
 
-  // Defer initialization to avoid blocking Main Thread during initial paint
-  const deferInit = () => {
-    // @ts-ignore - requestIdleCallback is not in all TS definitions yet
-    if (window.requestIdleCallback) {
-      // @ts-ignore
-      window.requestIdleCallback(() => initHeroAnim(), { timeout: 2000 });
-    } else {
-      setTimeout(() => initHeroAnim(), 100);
-    }
-  };
+  document.addEventListener("astro:page-load", () => {
+    initHeroAnim();
+  });
 
-  document.addEventListener("astro:page-load", deferInit);
-
-  // Initial load handling
+  // Wait for DOM and layout to be ready before initial animation
+  // This prevents the desktop animation from playing on mobile first load
   if (document.readyState === "complete") {
-    deferInit();
+    // If already loaded, wait one frame for layout to complete
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        initHeroAnim();
+      });
+    });
   } else {
-    window.addEventListener("load", deferInit);
+    window.addEventListener("load", () => {
+      requestAnimationFrame(() => {
+        initHeroAnim();
+      });
+    });
   }
 
   function initHeroAnim() {
