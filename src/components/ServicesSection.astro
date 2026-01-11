@@ -37,7 +37,7 @@ const services = [
 
 <section
   id="services-fullscreen-wrapper"
-  class="relative h-screen bg-white overflow-hidden text-primary"
+  class="relative h-[100dvh] bg-white overflow-hidden text-primary"
   data-theme="light"
 >
   <!-- BACKGROUNDS LAYER (Wrapped in Card) -->
@@ -264,6 +264,7 @@ const services = [
     const intentObserver = Observer.create({
       target: wrapper,
       type: "wheel,touch,pointer",
+      lockAxis: true, // Forces single-axis processing, preventing bleed-through
       onUp: (self: any) => {
         // With preventDefault: true, the scroll is already locked.
         if (isAnimating) return;
@@ -301,8 +302,8 @@ const services = [
           }
         }
       },
-      tolerance: 10,
-      preventDefault: true, // STRICT locking to prevent momentum skipping
+      tolerance: 20, // Increased tolerance to filter out micro-movements on mobile
+      preventDefault: true, // STRICT locking
     });
 
     // We only enable this observer when the section is PINNED/ACTIVE
