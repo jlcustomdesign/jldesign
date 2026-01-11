@@ -47,12 +47,12 @@ const steps = [
     </p>
   </div>
 
-  <!-- Cards Container - Pinned -->
-  <div class="relative w-full max-w-7xl mx-auto h-[50vh] md:h-[55vh]" id="cards-wrapper">
+  <!-- Cards Container - Stack on Mobile, Pinned on Desktop -->
+  <div class="relative w-full max-w-7xl mx-auto h-auto md:h-[55vh]" id="cards-wrapper">
     {
       steps.map((step, index) => (
         <div
-          class={`process-card absolute top-0 left-0 w-full h-full rounded-[2.5rem] shadow-xl origin-top overflow-hidden will-change-transform ${step.color}`}
+          class={`process-card relative md:absolute top-0 left-0 w-full md:h-full aspect-auto md:aspect-auto min-h-[500px] md:min-h-0 rounded-[2.5rem] shadow-xl overflow-hidden will-change-transform mb-6 md:mb-0 ${step.color}`}
           style={`z-index: ${index + 1};`}
         >
           <div class="flex h-full">
@@ -113,6 +113,7 @@ const steps = [
     document.addEventListener("astro:page-load", initProcessStack);
 
     function initProcessStack() {
+      if (window.innerWidth < 1024) return;
       // Helper: Split text into words for stagger effect
       const splitTextToWords = (element: Element | null) => {
           if (!element) return;
