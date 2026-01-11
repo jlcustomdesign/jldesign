@@ -452,12 +452,14 @@ const heroImage = "/Images/Imagine hero section.png";
 
     if (!heroSection || !heroContent || !aboutSection) return;
 
-    // Check if mobile - use less blur on mobile for performance
+    // Mobile detection
     const isMobile = window.innerWidth < 1024;
 
     gsap.to(heroContent, {
-      scale: 0.9,
-      filter: isMobile ? "blur(0px)" : "blur(8px)",
+      // Less dramatic scale on mobile (0.95 vs 0.9)
+      scale: isMobile ? 0.95 : 0.9,
+      // Enable blur on mobile too (user request), but slightly less
+      filter: isMobile ? "blur(6px)" : "blur(8px)",
       opacity: 0.5,
       ease: "none",
       scrollTrigger: {
