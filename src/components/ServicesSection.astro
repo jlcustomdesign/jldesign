@@ -261,27 +261,7 @@ const services = [
       type: "wheel,touch,pointer",
       lockAxis: true, // Forces single-axis processing, preventing bleed-through
       onUp: (self: any) => {
-        // Inverted logic per user request (Touch interpretation compensation)
-        // onUp (Swipe Down / Wheel Up) -> Advances to Next Slide
-        if (isAnimating) return;
-
-        if (currentIndex < totalSlides - 1) {
-          gotoSlide(currentIndex + 1, 1);
-        } else {
-          // Allow scrolling down (exit section)
-          const st = ScrollTrigger.getById("services-pin");
-          if (st) {
-            // Programmatically scroll just after the trigger
-            gsap.to(window, {
-              scrollTo: st.end + 10,
-              duration: 0.5,
-              overwrite: true,
-            });
-          }
-        }
-      },
-      onDown: (self: any) => {
-        // onDown (Swipe Up / Wheel Down) -> Go to Previous Slide
+        // Reverted to Standard Logic: Swipe Down / Wheel Up -> Previous Slide
         if (isAnimating) return;
 
         if (currentIndex > 0) {
@@ -293,6 +273,25 @@ const services = [
             // Programmatically scroll just before the trigger
             gsap.to(window, {
               scrollTo: st.start - 10,
+              duration: 0.5,
+              overwrite: true,
+            });
+          }
+        }
+      },
+      onDown: (self: any) => {
+        // Standard Logic: Swipe Up / Wheel Down -> Next Slide
+        if (isAnimating) return;
+
+        if (currentIndex < totalSlides - 1) {
+          gotoSlide(currentIndex + 1, 1);
+        } else {
+          // Allow scrolling down (exit section)
+          const st = ScrollTrigger.getById("services-pin");
+          if (st) {
+            // Programmatically scroll just after the trigger
+            gsap.to(window, {
+              scrollTo: st.end + 10,
               duration: 0.5,
               overwrite: true,
             });
