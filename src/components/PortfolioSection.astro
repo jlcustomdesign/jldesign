@@ -114,17 +114,17 @@ const portfolio = [
   document.addEventListener("astro:page-load", initPortfolioAnim);
 
   function initPortfolioAnim() {
-    // Only verify context once
+    // Only verify elements prompt existence
     const wrapper = document.querySelector("#portfolio-wrapper");
     const gallery = document.querySelector("#portfolio-gallery");
 
     if (!wrapper || !gallery) return;
 
-    // Mobile Check: If < 1024px, we use native CSS scroll, so we SKIP GSAP logic
-    // This is the aggressive optimization: 0 JS on scroll for mobile
-    if (window.innerWidth < 1024) return;
+    // Use matchMedia for robust desktop-only targeting
+    // automatically handles revert/cleanup on resize
+    const mm = gsap.matchMedia();
 
-    const ctx = gsap.context(() => {
+    mm.add("(min-width: 1024px)", () => {
       const getScrollAmount = () => {
         let galleryWidth = (gallery as HTMLElement).scrollWidth;
         return -(galleryWidth - window.innerWidth + 100);
@@ -142,6 +142,6 @@ const portfolio = [
           invalidateOnRefresh: true,
         },
       });
-    }, wrapper);
+    });
   }
 </script>
