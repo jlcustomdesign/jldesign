@@ -54,27 +54,26 @@ const steps = [
       <!-- DESKTOP STRUCTURE -->
       
       <!-- Left Column Texts (Steps 1 & 3) -->
-      <div class="hidden lg:flex flex-col justify-between h-full py-12 text-right pr-8 gap-32">
+      <!-- Left Column Texts (Steps 1 & 3) -->
+      <div class="hidden lg:flex flex-col justify-between h-full py-12 text-right pr-8 gap-24">
         <!-- Step 1 Text -->
-        <div class="group/text">
-           <span class="text-6xl font-serif text-accent/20 font-bold block mb-2">{steps[0].step}</span>
+        <div class="process-text transition-all duration-500 origin-right" data-step="0">
            <h3 class="font-serif text-2xl text-primary font-bold mb-3">{steps[0].title}</h3>
            <p class="text-gray-500 text-sm leading-relaxed">{steps[0].desc}</p>
         </div>
         <!-- Step 3 Text -->
-        <div class="group/text">
-           <span class="text-6xl font-serif text-accent/20 font-bold block mb-2">{steps[2].step}</span>
+        <div class="process-text transition-all duration-500 origin-right" data-step="2">
            <h3 class="font-serif text-2xl text-primary font-bold mb-3">{steps[2].title}</h3>
            <p class="text-gray-500 text-sm leading-relaxed">{steps[2].desc}</p>
         </div>
       </div>
 
       <!-- Center Column: Images (2x2 Grid) -->
-      <div class="relative w-full aspect-square md:aspect-auto md:h-[600px] grid grid-cols-2 gap-4 p-4 group/images">
+      <div class="relative w-full max-w-2xl aspect-square md:aspect-auto md:h-[500px] grid grid-cols-2 gap-4 p-4 z-20">
          {steps.map((step, index) => (
              <div class="w-full h-full relative overflow-hidden rounded-2xl transition-all duration-500 ease-out 
-                         transform hover:scale-105 hover:z-10 focus-image
-                         grayscale hover:grayscale-0"
+                         transform hover:scale-105 hover:z-30 process-image"
+                  data-step={index}
              >
                 <img 
                     src={step.img} 
@@ -82,9 +81,8 @@ const steps = [
                     class="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
                     loading="lazy"
                 />
-                <!-- Mobile Overlay Text (Visible only on small screens) -->
+                <!-- Mobile Overlay Text -->
                 <div class="lg:hidden absolute inset-0 bg-black/60 flex flex-col justify-end p-6 text-white transition-opacity duration-300">
-                     <span class="text-accent text-sm font-bold opacity-80 mb-1">{step.step}</span>
                      <h3 class="font-serif text-xl font-bold mb-2">{step.title}</h3>
                      <p class="text-white/80 text-xs line-clamp-2">{step.desc}</p>
                 </div>
@@ -93,16 +91,14 @@ const steps = [
       </div>
 
       <!-- Right Column Texts (Steps 2 & 4) -->
-      <div class="hidden lg:flex flex-col justify-between h-full py-12 pl-8 gap-32">
+      <div class="hidden lg:flex flex-col justify-between h-full py-12 pl-8 gap-24">
         <!-- Step 2 Text -->
-        <div class="group/text">
-           <span class="text-6xl font-serif text-accent/20 font-bold block mb-2">{steps[1].step}</span>
+        <div class="process-text transition-all duration-500 origin-left" data-step="1">
            <h3 class="font-serif text-2xl text-primary font-bold mb-3">{steps[1].title}</h3>
            <p class="text-gray-500 text-sm leading-relaxed">{steps[1].desc}</p>
         </div>
         <!-- Step 4 Text -->
-        <div class="group/text">
-           <span class="text-6xl font-serif text-accent/20 font-bold block mb-2">{steps[3].step}</span>
+        <div class="process-text transition-all duration-500 origin-left" data-step="3">
            <h3 class="font-serif text-2xl text-primary font-bold mb-3">{steps[3].title}</h3>
            <p class="text-gray-500 text-sm leading-relaxed">{steps[3].desc}</p>
         </div>
@@ -110,28 +106,64 @@ const steps = [
     </div>
     
     <!-- CTA -->
-    <div class="mt-20 text-center">
+    <div class="mt-16 text-center relative z-20">
         <BubbleButton href="/contact" class="!px-10 !py-4">Începe Proiectul</BubbleButton>
     </div>
   </div>
 </section>
 
 <style>
-  /* Focus Effect Logic */
-  
-  /* When hovering the container, blur all images */
-  .group\/images:hover .focus-image {
-     filter: blur(4px) grayscale(100%);
-     opacity: 0.6;
-     transform: scale(0.95);
+  /* 
+     HOVER LOGIC 
+     Using :has() to control state based on which image is hovered.
+  */
+
+  /* 1. When ANY image is hovered: */
+  /* Dim/Blur the entire container's contents by default... */
+  .lg\:grid:has(.process-image:hover) .process-image,
+  .lg\:grid:has(.process-image:hover) .process-text {
+      opacity: 0.3;
+      filter: blur(3px);
+      transform: scale(0.95);
   }
 
-  /* But restore the specific hovered image */
-  .group\/images .focus-image:hover {
-     filter: blur(0px) grayscale(0%);
-     opacity: 1;
-     transform: scale(1.15); /* Make it pop significantly */
-     z-index: 20;
-     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  /* 2. ...EXCEPT the specific hovered image: */
+  .lg\:grid .process-image:hover {
+      opacity: 1 !important;
+      filter: none !important;
+      transform: scale(1.15) !important;
+      z-index: 50;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* 3. ...AND EXCEPT the text corresponding to the hovered image: */
+  
+  /* Step 1 (Index 0) */
+  .lg\:grid:has(.process-image[data-step="0"]:hover) .process-text[data-step="0"] {
+      opacity: 1 !important;
+      filter: none !important;
+      transform: scale(1.2) !important;
+      color: var(--color-primary);
+  }
+  
+  /* Step 2 (Index 1) */
+  .lg\:grid:has(.process-image[data-step="1"]:hover) .process-text[data-step="1"] {
+      opacity: 1 !important;
+      filter: none !important;
+      transform: scale(1.2) !important;
+  }
+
+  /* Step 3 (Index 2) */
+  .lg\:grid:has(.process-image[data-step="2"]:hover) .process-text[data-step="2"] {
+      opacity: 1 !important;
+      filter: none !important;
+      transform: scale(1.2) !important;
+  }
+
+  /* Step 4 (Index 3) */
+  .lg\:grid:has(.process-image[data-step="3"]:hover) .process-text[data-step="3"] {
+      opacity: 1 !important;
+      filter: none !important;
+      transform: scale(1.2) !important;
   }
 </style>
