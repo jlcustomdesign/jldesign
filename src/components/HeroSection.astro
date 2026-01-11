@@ -8,149 +8,155 @@ const heroImage = "/Images/Imagine hero section.png";
   class="relative min-h-screen flex items-center bg-secondary overflow-hidden"
   id="hero-section"
   data-theme="dark"
+  style="z-index: 1;"
 >
-  <!-- Background SVG Container -->
-  <div
-    class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none"
-  >
-    <svg
-      id="mySVG"
-      xmlns="http://www.w3.org/2000/svg"
-      width="100%"
-      height="100%"
-      preserveAspectRatio="xMidYMid meet"
-      class="w-[98%] h-full opacity-0"
+  <!-- Hero Content Wrapper (for scale/blur animation) -->
+  <div id="hero-content-wrapper" class="absolute inset-0">
+    <!-- Background SVG Container -->
+    <div
+      class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none"
     >
-      <defs>
-        <clipPath id="heroClip">
-          <path id="heroPath" fill="white"></path>
-        </clipPath>
-      </defs>
-      <!-- Image masked by the path -->
-      <image
-        href={heroImage}
+      <svg
+        id="mySVG"
+        xmlns="http://www.w3.org/2000/svg"
         width="100%"
         height="100%"
-        preserveAspectRatio="xMidYMid slice"
-        clip-path="url(#heroClip)"
-      />
-      <!-- Overlay for text contrast -->
-      <rect
-        width="100%"
-        height="100%"
-        fill="black"
-        opacity="0.3"
-        clip-path="url(#heroClip)"></rect>
-    </svg>
-  </div>
-
-  <!-- Content Container -->
-  <div
-    class="container mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
-  >
-    <!-- Left: Text Content -->
-    <div class="order-2 md:order-1">
-      <h1
-        class="font-serif font-extrabold text-5xl md:text-6xl lg:text-7xl leading-tight text-white mb-6 overflow-hidden"
+        preserveAspectRatio="xMidYMid meet"
+        class="w-[98%] h-full opacity-0"
       >
-        <span class="hero-text-line block">Spațiul tău,</span>
-        <span class="hero-text-line block">viziunea noastră</span>
-      </h1>
-
-      <p
-        class="hero-subtitle text-lg md:text-xl text-white max-w-md mb-10 opacity-0 transform translate-y-4"
-      >
-        Mobilă creată să dăinuie. Design minimalist, finisaje premium și o
-        atenție obsesivă la detalii.
-      </p>
+        <defs>
+          <clipPath id="heroClip">
+            <path id="heroPath" fill="white"></path>
+          </clipPath>
+        </defs>
+        <!-- Image masked by the path -->
+        <image
+          href={heroImage}
+          width="100%"
+          height="100%"
+          preserveAspectRatio="xMidYMid slice"
+          clip-path="url(#heroClip)"
+        />
+        <!-- Overlay for text contrast -->
+        <rect
+          width="100%"
+          height="100%"
+          fill="black"
+          opacity="0.3"
+          clip-path="url(#heroClip)"></rect>
+      </svg>
     </div>
 
-    <!-- Right: Visual "Window" -->
+    <!-- Content Container -->
     <div
-      class="hidden md:block order-1 md:order-2 relative aspect-[1.3/1] w-full max-w-xl mx-auto md:translate-x-18"
+      class="container mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
     >
+      <!-- Left: Text Content -->
+      <div class="order-2 md:order-1">
+        <h1
+          class="font-serif font-extrabold text-5xl md:text-6xl lg:text-7xl leading-tight text-white mb-6 overflow-hidden"
+        >
+          <span class="hero-text-line block">Spațiul tău,</span>
+          <span class="hero-text-line block">viziunea noastră</span>
+        </h1>
+
+        <p
+          class="hero-subtitle text-lg md:text-xl text-white max-w-md mb-10 opacity-0 transform translate-y-4"
+        >
+          Mobilă creată să dăinuie. Design minimalist, finisaje premium și o
+          atenție obsesivă la detalii.
+        </p>
+      </div>
+
+      <!-- Right: Visual "Window" -->
       <div
-        class="hero-image-mask absolute inset-0 w-full h-full overflow-hidden rounded-2xl origin-center scale-90 opacity-0"
+        class="hidden md:block order-1 md:order-2 relative aspect-[1.3/1] w-full max-w-xl mx-auto md:translate-x-18"
       >
         <div
-          class="w-full h-full bg-white hero-image-inner shadow-2xl flex items-stretch justify-between p-8 md:p-12"
+          class="hero-image-mask absolute inset-0 w-full h-full overflow-hidden rounded-2xl origin-center scale-90 opacity-0"
         >
-          <!-- Left: Content Container -->
-          <div class="w-[52%] flex flex-col justify-between items-center py-2">
-            <!-- Text Content (Centered Vertically) -->
-            <div
-              class="flex-1 flex flex-col justify-center gap-4 md:gap-6 text-center"
-            >
-              <h3
-                class="hero-card-title font-serif text-2xl md:text-4xl text-primary leading-tight opacity-0"
-              >
-                Calitate Fără <br />
-                <span class="text-accent">Compromis</span>
-              </h3>
-              <p
-                class="hero-card-subtext text-gray-600 text-sm md:text-lg leading-relaxed max-w-[90%] mx-auto opacity-0"
-              >
-                Mobilier realizat cu pasiune și precizie pentru a crea piese
-                care rezistă testului timpului.
-              </p>
-            </div>
-
-            <!-- Button centered in the left space and aligned with image bottom -->
-            <div class="flex justify-center w-full">
-              <BubbleButton
-                id="hero-about-btn"
-                href="#about-section"
-                variant="dark"
-                class="hero-card-btn !px-10 !py-4 text-sm md:text-base whitespace-nowrap opacity-0"
-              >
-                Află mai multe
-              </BubbleButton>
-            </div>
-          </div>
-
-          <!-- Right: 3:4 Vertical Image -->
           <div
-            class="hero-card-img w-[44%] aspect-[3/4.5] overflow-hidden rounded-lg shadow-inner self-end opacity-0"
+            class="w-full h-full bg-white hero-image-inner shadow-2xl flex items-stretch justify-between p-8 md:p-12"
           >
-            <img
-              src="/Images/Proiecte-JL Custom Design-07.jpg"
-              alt="Premium Furniture Detail"
-              class="w-full h-full object-cover"
-            />
+            <!-- Left: Content Container -->
+            <div
+              class="w-[52%] flex flex-col justify-between items-center py-2"
+            >
+              <!-- Text Content (Centered Vertically) -->
+              <div
+                class="flex-1 flex flex-col justify-center gap-4 md:gap-6 text-center"
+              >
+                <h3
+                  class="hero-card-title font-serif text-2xl md:text-4xl text-primary leading-tight opacity-0"
+                >
+                  Calitate Fără <br />
+                  <span class="text-accent">Compromis</span>
+                </h3>
+                <p
+                  class="hero-card-subtext text-gray-600 text-sm md:text-lg leading-relaxed max-w-[90%] mx-auto opacity-0"
+                >
+                  Mobilier realizat cu pasiune și precizie pentru a crea piese
+                  care rezistă testului timpului.
+                </p>
+              </div>
+
+              <!-- Button centered in the left space and aligned with image bottom -->
+              <div class="flex justify-center w-full">
+                <BubbleButton
+                  id="hero-about-btn"
+                  href="#about-section"
+                  variant="dark"
+                  class="hero-card-btn !px-10 !py-4 text-sm md:text-base whitespace-nowrap opacity-0"
+                >
+                  Află mai multe
+                </BubbleButton>
+              </div>
+            </div>
+
+            <!-- Right: 3:4 Vertical Image -->
+            <div
+              class="hero-card-img w-[44%] aspect-[3/4.5] overflow-hidden rounded-lg shadow-inner self-end opacity-0"
+            >
+              <img
+                src="/Images/Proiecte-JL Custom Design-07.jpg"
+                alt="Premium Furniture Detail"
+                class="w-full h-full object-cover"
+              />
+            </div>
           </div>
+          <!-- Organic Shape Overlay / Vibe -->
+          <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
         </div>
-        <!-- Organic Shape Overlay / Vibe -->
-        <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
       </div>
     </div>
-  </div>
 
-  <!-- CTA Buttons (Repositioned to downside cutout) -->
-  <div
-    class="absolute bottom-12 left-0 w-full flex justify-center z-20 md:-translate-x-48"
-  >
+    <!-- CTA Buttons (Repositioned to downside cutout) -->
     <div
-      class="hero-cta flex flex-col sm:flex-row gap-4 opacity-0 transform translate-y-4"
+      class="absolute bottom-12 left-0 w-full flex justify-center z-20 md:-translate-x-48"
     >
-      <BubbleButton
-        href="/contact"
-        variant="primary"
-        class="w-full md:w-auto text-center"
+      <div
+        class="hero-cta flex flex-col sm:flex-row gap-4 opacity-0 transform translate-y-4"
       >
-        Cere o ofertă
-      </BubbleButton>
-      <BubbleButton
-        href="/portfolio"
-        variant="outline"
-        class="w-full md:w-auto text-center !border-white !text-white hover:!border-[#d4af37] !bg-white/10 backdrop-blur-md hover:!bg-white/20"
-      >
-        Vezi proiecte
-      </BubbleButton>
+        <BubbleButton
+          href="/contact"
+          variant="primary"
+          class="w-full md:w-auto text-center"
+        >
+          Cere o ofertă
+        </BubbleButton>
+        <BubbleButton
+          href="/portfolio"
+          variant="outline"
+          class="w-full md:w-auto text-center !border-white !text-white hover:!border-[#d4af37] !bg-white/10 backdrop-blur-md hover:!bg-white/20"
+        >
+          Vezi proiecte
+        </BubbleButton>
+      </div>
     </div>
-  </div>
 
-  <!-- Decorative Elements -->
-  <!-- Scroll indicator removed -->
+    <!-- Decorative Elements -->
+    <!-- Scroll indicator removed -->
+  </div><!-- End hero-content-wrapper -->
 </section>
 
 <script>
@@ -436,5 +442,41 @@ const heroImage = "/Images/Imagine hero section.png";
     return displayCond
       ? `M${rw(470)} ${rh(145)} H${rw(19)} C${rw(9)} ${rh(145)} ${rw(1)} ${rh(153)} ${rw(1)} ${rh(163)} V${rh(754)} C${rw(1)} ${rh(763)} ${rw(9)} ${rh(772)} ${rw(19)} ${rh(772)} H${rw(320)} C${rw(330)} ${rh(772)} ${rw(338)} ${rh(780)} ${rw(338)} ${rh(790)} V${rh(898)} C${rw(338)} ${rh(907)} ${rw(346)} ${h} ${rw(356)} ${h} H${rw(1092)} C${rw(1102)} ${h} ${rw(1110)} ${rh(907)} ${rw(1110)} ${rh(898)} V${rh(789)} C${rw(1110)} ${rh(779)} ${rw(1118)} ${rh(771)} ${rw(1128)} ${rh(771)} H${rw(1872)} C${rw(1881)} ${rh(771)} ${w} ${rh(763)} ${w} ${rh(753)} V${rh(164)} C${w} ${rh(154)} ${rw(1881)} ${rh(146)} ${rw(1872)} ${rh(146)} H${rw(1420)} C${rw(1410)} ${rh(146)} ${rw(1402)} ${rh(137)} ${rw(1402)} ${rh(128)} V${rh(19)} C${rw(1402)} ${rh(9)} ${rw(1394)} ${rh(1)} ${rw(1384)} ${rh(1)} H${rw(506)} C${rw(496)} ${rh(1)} ${rw(488)} ${rh(9)} ${rw(488)} ${rh(19)} V${rh(127)} C${rw(488)} ${rh(137)} ${rw(480)} ${rh(145)} ${rw(470)} ${rh(145)} Z`
       : `M${rw(1000)} ${rh(15)} H${rw(21)} C${rw(9.9543)} ${rh(15)} ${rw(1)} ${rh(24.9543)} ${rw(1)} ${rh(35)} V${rh(680)} C${rw(1)} ${rh(691.046)} ${rw(9.9543)} ${rh(700)} ${rw(21)} ${rh(700)} H${rw(220)} C${rw(231.046)} ${rh(700)} ${rw(240)} ${rh(708.954)} ${rw(240)} ${rh(720)} V${rh(846.869)} C${rw(240)} ${rh(857.915)} ${rw(248.954)} ${rh(866.869)} ${rw(260)} ${rh(866.869)} H${rw(741)} C${rw(752.046)} ${rh(866.869)} ${rw(761)} ${rh(857.915)} ${rw(761)} ${rh(846.869)} V${rh(720)} C${rw(761)} ${rh(708.954)} ${rw(769.954)} ${rh(700)} ${rw(781)} ${rh(700)} H${rw(1000)} C${rw(1011.05)} ${rh(700)} ${w} ${rh(691.046)} ${w} ${rh(680)} V${rh(35)} C${w} ${rh(24.9543)} ${rw(1011.05)} ${rh(15)} ${rw(1000)} ${rh(15)} Z`;
+  }
+
+  // Hero Exit Animation: Pin hero, scale down and blur as About section slides over
+  function initHeroExitAnimation() {
+    const heroSection = document.querySelector("#hero-section");
+    const heroContent = document.querySelector("#hero-content-wrapper");
+    const aboutSection = document.querySelector("#about-section");
+
+    if (!heroSection || !heroContent || !aboutSection) return;
+
+    // Check if mobile - use less blur on mobile for performance
+    const isMobile = window.innerWidth < 1024;
+
+    gsap.to(heroContent, {
+      scale: 0.9,
+      filter: isMobile ? "blur(0px)" : "blur(8px)",
+      opacity: 0.5,
+      ease: "none",
+      scrollTrigger: {
+        trigger: heroSection,
+        start: "bottom bottom", // When hero bottom hits viewport bottom
+        end: "bottom top", // When hero bottom leaves viewport top
+        scrub: true,
+        // Pin the hero so About slides over it
+        pin: true,
+        pinSpacing: false, // Don't add extra space (About will cover it)
+      },
+    });
+  }
+
+  // Initialize hero exit animation
+  document.addEventListener("astro:page-load", initHeroExitAnimation);
+  if (document.readyState === "complete") {
+    requestAnimationFrame(initHeroExitAnimation);
+  } else {
+    window.addEventListener("load", initHeroExitAnimation);
   }
 </script>
