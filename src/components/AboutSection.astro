@@ -54,6 +54,9 @@ import BubbleButton from "./ui/BubbleButton.astro";
     const section = document.querySelector("#about-section");
     if (!section) return;
 
+    // Mobile detection - disable expensive blur on mobile
+    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
+
     // Helper: Split text into words for stagger effect
     const splitTextToWords = (selector: string) => {
       const element = section.querySelector(selector);
@@ -63,7 +66,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
         .split(" ")
         .map(
           (word) =>
-            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: blur(8px)">${word}&nbsp;</span></span>`
+            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: ${isMobile ? "none" : "blur(8px)"}">${word}&nbsp;</span></span>`
         )
         .join("");
     };
@@ -82,26 +85,26 @@ import BubbleButton from "./ui/BubbleButton.astro";
         },
       });
 
-      // 1. Card Reveal (Scale + Fade + Blur)
+      // 1. Card Reveal (Scale + Fade + Blur) - No blur on mobile for performance
       tl.from(".about-card", {
         scale: 0.9,
         y: 100,
         opacity: 0,
-        filter: "blur(10px)",
+        filter: isMobile ? "none" : "blur(10px)",
         duration: 1, // Relative duration in scrub
         ease: "power2.out",
       });
 
-      // 2. Title Staggered Reveal
+      // 2. Title Staggered Reveal - skip blur on mobile for performance
       tl.to(
         ".about-title span span",
         {
           y: 0,
           opacity: 1,
-          filter: "blur(0px)",
+          filter: isMobile ? "none" : "blur(0px)",
           duration: 1,
-          stagger: 0.1, // Stagger needs to be significant in scrub
-          ease: "none", // Linear ease feels better with scrub often, but power1 is ok
+          stagger: isMobile ? 0.03 : 0.1, // Faster stagger on mobile
+          ease: "none",
         },
         "-=0.5"
       );
@@ -112,9 +115,9 @@ import BubbleButton from "./ui/BubbleButton.astro";
         {
           y: 0,
           opacity: 1,
-          filter: "blur(0px)",
+          filter: isMobile ? "none" : "blur(0px)",
           duration: 1,
-          stagger: 0.05,
+          stagger: isMobile ? 0.02 : 0.05,
           ease: "none",
         },
         "-=0.5"
@@ -126,12 +129,12 @@ import BubbleButton from "./ui/BubbleButton.astro";
         {
           y: 20,
           opacity: 0,
-          filter: "blur(10px)",
+          filter: isMobile ? "none" : "blur(10px)",
         },
         {
           y: 0,
           opacity: 1,
-          filter: "blur(0px)",
+          filter: isMobile ? "none" : "blur(0px)",
           duration: 0.5,
           ease: "none",
         },

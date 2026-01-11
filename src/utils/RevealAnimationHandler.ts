@@ -28,6 +28,10 @@ const DEFAULT_ANIMATION_VALUES = {
 	STAGGER: 0.1,
 };
 
+// Mobile detection - disable expensive effects on mobile for performance
+const IS_MOBILE = typeof window !== 'undefined' && 
+	(window.innerWidth < 1024 || 'ontouchstart' in window);
+
 // Common selectors used throughout the code
 const SELECTORS = {
 	NESTED_TEXT_ELEMENTS: 'h1, h2, h3, h4, h5, h6, p, li',
@@ -51,6 +55,7 @@ const ACCESSIBILITY = {
 
 /**
  * Standardize animation options by applying defaults
+ * Note: blur is disabled on mobile devices for performance
  */
 const standardizeOptions = (element: HTMLElement): AnimationOptions => {
 	return {
@@ -67,10 +72,12 @@ const standardizeOptions = (element: HTMLElement): AnimationOptions => {
 		stagger: getAttributeValue(
 			element,
 			'data-reveal-stagger',
-			DEFAULT_ANIMATION_VALUES.STAGGER
+			// Faster stagger on mobile for better perceived performance
+			IS_MOBILE ? DEFAULT_ANIMATION_VALUES.STAGGER * 0.5 : DEFAULT_ANIMATION_VALUES.STAGGER
 		),
 		fade: element.hasAttribute('data-reveal-fade'),
-		blur: element.hasAttribute('data-reveal-blur'),
+		// CRITICAL: Disable blur on mobile - it's the most expensive CSS filter
+		blur: IS_MOBILE ? false : element.hasAttribute('data-reveal-blur'),
 		keepWillChange: element.hasAttribute('data-reveal-keep-will-change'),
 	};
 };

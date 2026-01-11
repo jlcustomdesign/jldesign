@@ -190,6 +190,9 @@ const currentYear = new Date().getFullYear();
 
     footer.dataset.animInitialized = "true";
 
+    // Mobile detection - disable expensive blur on mobile
+    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
+
     // Helper: Safe Split for H4
     const splitTextToWords = (element: Element | null) => {
       if (!element) return;
@@ -199,7 +202,7 @@ const currentYear = new Date().getFullYear();
         .split(" ")
         .map(
           (w) =>
-            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: blur(8px)">${w}&nbsp;</span></span>`
+            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: ${isMobile ? "none" : "blur(8px)"}">${w}&nbsp;</span></span>`
         )
         .join("");
     };
@@ -238,15 +241,15 @@ const currentYear = new Date().getFullYear();
       }
     );
 
-    // 2. Big Title (Block Fade Up with Blur)
+    // 2. Big Title (Block Fade Up with Blur) - No blur on mobile
     if (bigTitle) {
       tl.fromTo(
         bigTitle,
-        { y: 40, opacity: 0, filter: "blur(12px)" },
+        { y: 40, opacity: 0, filter: isMobile ? "none" : "blur(12px)" },
         {
           y: 0,
           opacity: 1,
-          filter: "blur(0px)",
+          filter: isMobile ? "none" : "blur(0px)",
           duration: 1.2,
           ease: "power3.out",
         },
@@ -262,9 +265,9 @@ const currentYear = new Date().getFullYear();
         {
           y: 0,
           opacity: 1,
-          filter: "blur(0px)",
+          filter: isMobile ? "none" : "blur(0px)",
           duration: 1,
-          stagger: 0.05,
+          stagger: isMobile ? 0.02 : 0.05,
           ease: "power3.out",
         },
         "-=1.0"
@@ -276,13 +279,13 @@ const currentYear = new Date().getFullYear();
     if (misc.length) {
       tl.fromTo(
         misc,
-        { y: 20, opacity: 0, filter: "blur(5px)" },
+        { y: 20, opacity: 0, filter: isMobile ? "none" : "blur(5px)" },
         {
           y: 0,
           opacity: 1,
-          filter: "blur(0px)",
+          filter: isMobile ? "none" : "blur(0px)",
           duration: 0.8,
-          stagger: 0.05,
+          stagger: isMobile ? 0.02 : 0.05,
           ease: "power2.out",
         },
         "-=0.8"

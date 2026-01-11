@@ -143,6 +143,9 @@ const steps = [
     document.addEventListener("astro:page-load", initProcessStack);
 
     function initProcessStack() {
+      // Mobile detection - disable expensive blur on mobile
+      const isMobile = window.innerWidth < 1024 || 'ontouchstart' in window;
+
       // Helper: Split text into words (Defined outside to be available if needed, 
       // though we only use it in desktop logic currently)
       const splitTextToWords = (element: Element | null) => {
@@ -152,7 +155,7 @@ const steps = [
             .split(" ")
             .map(
               (word) =>
-                `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: blur(8px)">${word}&nbsp;</span></span>`
+                `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: ${isMobile ? 'none' : 'blur(8px)'}">${word}&nbsp;</span></span>`
             )
             .join("");
       };
