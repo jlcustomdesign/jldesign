@@ -305,19 +305,34 @@ const services = [
       id: "services-pin",
       trigger: wrapper,
       start: "top top",
-      end: "+=5000", // Increased pin duration for safety
+      end: "+=5000", // Extended pin duration for 5 slides
       pin: true,
       onEnter: () => {
         intentObserver.enable();
+        // CRITICAL: Pause ScrollSmoother to hand exclusive control to Observer
+        // @ts-ignore
+        if (window.smoother) window.smoother.paused(true);
+        // Force touch-action to prevent native scroll during pin
+        (wrapper as HTMLElement).style.touchAction = "none";
       },
       onEnterBack: () => {
         intentObserver.enable();
+        // @ts-ignore
+        if (window.smoother) window.smoother.paused(true);
+        (wrapper as HTMLElement).style.touchAction = "none";
       },
       onLeave: () => {
         intentObserver.disable();
+        // Resume ScrollSmoother for normal page scrolling
+        // @ts-ignore
+        if (window.smoother) window.smoother.paused(false);
+        (wrapper as HTMLElement).style.touchAction = "";
       },
       onLeaveBack: () => {
         intentObserver.disable();
+        // @ts-ignore
+        if (window.smoother) window.smoother.paused(false);
+        (wrapper as HTMLElement).style.touchAction = "";
       },
     });
 
