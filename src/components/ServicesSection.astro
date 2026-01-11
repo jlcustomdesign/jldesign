@@ -261,20 +261,24 @@ const services = [
     // OBSERVER LOGIC
     // Hybrid Approach: Pin for distance, use Observer to hijack navigation.
 
+    // Add touch-action CSS to wrapper for proper touch event capture
+    (wrapper as HTMLElement).style.touchAction = "none";
+
     const intentObserver = Observer.create({
       target: wrapper,
       type: "wheel,touch,pointer",
-      onUp: (self: any) => {
-        // With preventDefault: true, the scroll is already locked.
+      wheelSpeed: -1, // Normalize wheel direction
+      tolerance: 50, // Higher tolerance for mobile touch
+      onUp: () => {
+        // onUp = user swipes/scrolls UP = wants to go to PREVIOUS slide
         if (isAnimating) return;
 
         if (currentIndex > 0) {
           gotoSlide(currentIndex - 1, -1);
         } else {
-          // Allow scrolling up (exit section)
+          // Exit section upward
           const st = ScrollTrigger.getById("services-pin");
           if (st) {
-            // Programmatically scroll just before the trigger
             gsap.to(window, {
               scrollTo: st.start - 10,
               duration: 0.5,
@@ -283,16 +287,16 @@ const services = [
           }
         }
       },
-      onDown: (self: any) => {
+      onDown: () => {
+        // onDown = user swipes/scrolls DOWN = wants to go to NEXT slide
         if (isAnimating) return;
 
         if (currentIndex < totalSlides - 1) {
           gotoSlide(currentIndex + 1, 1);
         } else {
-          // Allow scrolling down (exit section)
+          // Exit section downward
           const st = ScrollTrigger.getById("services-pin");
           if (st) {
-            // Programmatically scroll just after the trigger
             gsap.to(window, {
               scrollTo: st.end + 10,
               duration: 0.5,
@@ -301,8 +305,7 @@ const services = [
           }
         }
       },
-      tolerance: 10,
-      preventDefault: true, // STRICT locking to prevent momentum skipping
+      preventDefault: true,
     });
 
     // We only enable this observer when the section is PINNED/ACTIVE
