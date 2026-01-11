@@ -47,10 +47,7 @@ const services = [
     <div class="w-[90%] h-[90%] rounded-3xl overflow-hidden relative bg-white">
       {
         services.map((service, i) => (
-          <div
-            class="service-bg absolute inset-0 w-full h-full will-change-transform z-10"
-            data-index={i}
-          >
+          <div class="service-bg absolute inset-0 w-full h-full" data-index={i}>
             <div class="w-full h-full relative">
               {[0, 1, 2, 3, 4].map((k) => (
                 <div
@@ -141,10 +138,8 @@ const services = [
     gsap.set(allSlices, { yPercent: 100 });
 
     // BGs container visibility
-    gsap.set(bgs, { autoAlpha: 1, zIndex: 1 });
+    gsap.set(bgs, { autoAlpha: 1, zIndex: 0 });
     gsap.set(contents, { autoAlpha: 0, y: 50 });
-
-    // Initial Button State
 
     // ANIMATION FUNCTION
     function gotoSlide(index: number, direction: number, isIntro = false) {
@@ -178,9 +173,9 @@ const services = [
       if (!isIntro) {
         // Layers
         gsap.set(prevBg, { zIndex: 1 });
-        gsap.set(nextBg, { zIndex: 2 });
+        gsap.set(nextBg, { zIndex: 10 });
       } else {
-        gsap.set(nextBg, { zIndex: 2 });
+        gsap.set(nextBg, { zIndex: 10 });
       }
 
       const tl = gsap.timeline({
@@ -190,8 +185,8 @@ const services = [
           if (!isIntro) {
             // Reset previous slices for future use (send to bottom)
             gsap.set(prevSlices, { yPercent: 100 });
-            // Also restore opacity of prevBg container just in case it was faded
-            gsap.set(prevBg, { autoAlpha: 1 });
+            // Drop prevBg back to bottom of stack
+            gsap.set(prevBg, { autoAlpha: 1, zIndex: 0 });
           }
         },
       });
