@@ -264,18 +264,27 @@ const services = [
     // Detect if mobile/touch device
     const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
 
+    // Reference to observer (declared here, defined later)
+    let intentObserver: Observer;
+
     // Helper functions for slide navigation
     const goNext = () => {
       if (isAnimating) return;
       if (currentIndex < totalSlides - 1) {
         gotoSlide(currentIndex + 1, 1);
+
+        // If this was the second-to-last slide, prepare for immediate exit
+        if (currentIndex + 1 === totalSlides - 1) {
+          // Next swipe will exit - no action needed here
+        }
       } else {
-        // Exit section downward
+        // Already on last slide - exit section immediately
+        intentObserver.disable();
         (wrapper as HTMLElement).style.touchAction = "auto";
         const st = ScrollTrigger.getById("services-pin");
         if (st) {
           gsap.to(window, {
-            scrollTo: st.end + 10,
+            scrollTo: st.end + 100,
             duration: 0.5,
             overwrite: true,
           });
@@ -288,12 +297,13 @@ const services = [
       if (currentIndex > 0) {
         gotoSlide(currentIndex - 1, -1);
       } else {
-        // Exit section upward
+        // Already on first slide - exit section immediately
+        intentObserver.disable();
         (wrapper as HTMLElement).style.touchAction = "auto";
         const st = ScrollTrigger.getById("services-pin");
         if (st) {
           gsap.to(window, {
-            scrollTo: st.start - 10,
+            scrollTo: st.start - 100,
             duration: 0.5,
             overwrite: true,
           });
@@ -301,7 +311,7 @@ const services = [
       }
     };
 
-    const intentObserver = Observer.create({
+    intentObserver = Observer.create({
       target: wrapper,
       type: "wheel,touch,pointer",
       tolerance: isMobile ? 50 : 10, // Higher tolerance for mobile touch
@@ -337,14 +347,11 @@ const services = [
     };
 
     // We only enable this observer when the section is PINNED/ACTIVE
-    // Pin distance scaled to number of slides for quicker exit
-    const pinDistance = totalSlides * 200; // 200px per slide
-
     ScrollTrigger.create({
       id: "services-pin",
       trigger: wrapper,
       start: "top top",
-      end: `+=${pinDistance}`,
+      end: "+=5000",
       pin: true,
       onEnter: () => {
         killMomentum();
