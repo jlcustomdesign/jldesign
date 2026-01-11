@@ -37,7 +37,7 @@ const services = [
 
 <section
   id="services-fullscreen-wrapper"
-  class="relative h-[100dvh] bg-white overflow-hidden text-primary"
+  class="relative h-screen bg-white overflow-hidden text-primary"
   data-theme="light"
 >
   <!-- BACKGROUNDS LAYER (Wrapped in Card) -->
@@ -47,7 +47,10 @@ const services = [
     <div class="w-[90%] h-[90%] rounded-3xl overflow-hidden relative bg-white">
       {
         services.map((service, i) => (
-          <div class="service-bg absolute inset-0 w-full h-full" data-index={i}>
+          <div
+            class="service-bg absolute inset-0 w-full h-full will-change-transform z-10"
+            data-index={i}
+          >
             <div class="w-full h-full relative">
               {[0, 1, 2, 3, 4].map((k) => (
                 <div
@@ -133,12 +136,15 @@ const services = [
 
     // INITIAL STATE
     // Prepare all BGs
+    // Hide all slices initially (yPercent: 100)
     const allSlices = gsap.utils.toArray(".service-slice") as HTMLElement[];
-    gsap.set(allSlices, { yPercent: 100 }); // Reset slices to bottom (Slicing Mode)
+    gsap.set(allSlices, { yPercent: 100 });
 
     // BGs container visibility
-    gsap.set(bgs, { autoAlpha: 1, zIndex: 0 }); // Containers visible, slices hidden
+    gsap.set(bgs, { autoAlpha: 1, zIndex: 1 });
     gsap.set(contents, { autoAlpha: 0, y: 50 });
+
+    // Initial Button State
 
     // ANIMATION FUNCTION
     function gotoSlide(index: number, direction: number, isIntro = false) {
@@ -170,11 +176,11 @@ const services = [
       }
 
       if (!isIntro) {
-        // Layers: Next on VERY TOP (100), Prev below (1)
-        gsap.set(prevBg, { zIndex: 1, autoAlpha: 1 });
-        gsap.set(nextBg, { zIndex: 100, autoAlpha: 1 });
+        // Layers
+        gsap.set(prevBg, { zIndex: 1 });
+        gsap.set(nextBg, { zIndex: 2 });
       } else {
-        gsap.set(nextBg, { zIndex: 100, autoAlpha: 1 });
+        gsap.set(nextBg, { zIndex: 2 });
       }
 
       const tl = gsap.timeline({
@@ -182,15 +188,15 @@ const services = [
           isAnimating = false;
           currentIndex = index;
           if (!isIntro) {
-            // Reset previous slices for future use
+            // Reset previous slices for future use (send to bottom)
             gsap.set(prevSlices, { yPercent: 100 });
-            // Reset previous BG stack position
-            gsap.set(prevBg, { zIndex: 0, autoAlpha: 1 });
+            // Also restore opacity of prevBg container just in case it was faded
+            gsap.set(prevBg, { autoAlpha: 1 });
           }
         },
       });
 
-      // 1. BG - "Slices Rise" (The Effect)
+      // 1. BG - "Slices Rise"
       // Ensure next slices start at bottom
       tl.set(nextSlices, { yPercent: 100 }, 0);
 
@@ -205,8 +211,15 @@ const services = [
         0
       );
 
-      // Previous slide exit: REMOVED early fade-out.
-      // We keep prevBg visible underneath the rising slices to prevent "blank" gaps.
+      // Previous slide exit
+      if (!isIntro) {
+        // Fade out prevBg behind nextBg to reveal white gaps between fingers
+        // We fade out the CONTAINER so all its slices disappear together
+        tl.to(prevBg, { autoAlpha: 0, duration: 0.4 }, 0);
+        tl.set(nextBg, { autoAlpha: 1 }, 0);
+      } else {
+        tl.set(nextBg, { autoAlpha: 1 }, 0);
+      }
 
       // 2. Content
       if (!isIntro) {
@@ -233,42 +246,9 @@ const services = [
           ease: "power3.out",
           overwrite: true,
         },
-        0.5
+        0.6
       );
     }
-
-    // Navigation Helpers
-    const goPrev = () => {
-      if (currentIndex > 0) {
-        gotoSlide(currentIndex - 1, -1);
-      } else {
-        // Exit Up
-        const st = ScrollTrigger.getById("services-pin");
-        if (st) {
-          gsap.to(window, {
-            scrollTo: st.start - 10,
-            duration: 0.5,
-            overwrite: true,
-          });
-        }
-      }
-    };
-
-    const goNext = () => {
-      if (currentIndex < totalSlides - 1) {
-        gotoSlide(currentIndex + 1, 1);
-      } else {
-        // Exit Down
-        const st = ScrollTrigger.getById("services-pin");
-        if (st) {
-          gsap.to(window, {
-            scrollTo: st.end + 10,
-            duration: 0.5,
-            overwrite: true,
-          });
-        }
-      }
-    };
 
     // Intro Trigger
     ScrollTrigger.create({
@@ -284,20 +264,45 @@ const services = [
     const intentObserver = Observer.create({
       target: wrapper,
       type: "wheel,touch,pointer",
-      onChangeY: (self: any) => {
+      onUp: (self: any) => {
+        // With preventDefault: true, the scroll is already locked.
         if (isAnimating) return;
 
-        // Unified Logic: relies on normalized deltaY which abstracts input type
-        // deltaY > 0: Scroll Down / Swipe Up -> NEXT
-        // deltaY < 0: Scroll Up / Swipe Down -> PREV
-        if (self.deltaY > 0) {
-          goNext();
+        if (currentIndex > 0) {
+          gotoSlide(currentIndex - 1, -1);
         } else {
-          goPrev();
+          // Allow scrolling up (exit section)
+          const st = ScrollTrigger.getById("services-pin");
+          if (st) {
+            // Programmatically scroll just before the trigger
+            gsap.to(window, {
+              scrollTo: st.start - 10,
+              duration: 0.5,
+              overwrite: true,
+            });
+          }
         }
       },
-      tolerance: 20,
-      preventDefault: true, // STRICT locking
+      onDown: (self: any) => {
+        if (isAnimating) return;
+
+        if (currentIndex < totalSlides - 1) {
+          gotoSlide(currentIndex + 1, 1);
+        } else {
+          // Allow scrolling down (exit section)
+          const st = ScrollTrigger.getById("services-pin");
+          if (st) {
+            // Programmatically scroll just after the trigger
+            gsap.to(window, {
+              scrollTo: st.end + 10,
+              duration: 0.5,
+              overwrite: true,
+            });
+          }
+        }
+      },
+      tolerance: 10,
+      preventDefault: true, // STRICT locking to prevent momentum skipping
     });
 
     // We only enable this observer when the section is PINNED/ACTIVE
@@ -305,34 +310,19 @@ const services = [
       id: "services-pin",
       trigger: wrapper,
       start: "top top",
-      end: "+=5000", // Extended pin duration for 5 slides
+      end: "+=5000", // Increased pin duration for safety
       pin: true,
       onEnter: () => {
         intentObserver.enable();
-        // CRITICAL: Pause ScrollSmoother to hand exclusive control to Observer
-        // @ts-ignore
-        if (window.smoother) window.smoother.paused(true);
-        // Force touch-action to prevent native scroll during pin
-        (wrapper as HTMLElement).style.touchAction = "none";
       },
       onEnterBack: () => {
         intentObserver.enable();
-        // @ts-ignore
-        if (window.smoother) window.smoother.paused(true);
-        (wrapper as HTMLElement).style.touchAction = "none";
       },
       onLeave: () => {
         intentObserver.disable();
-        // Resume ScrollSmoother for normal page scrolling
-        // @ts-ignore
-        if (window.smoother) window.smoother.paused(false);
-        (wrapper as HTMLElement).style.touchAction = "";
       },
       onLeaveBack: () => {
         intentObserver.disable();
-        // @ts-ignore
-        if (window.smoother) window.smoother.paused(false);
-        (wrapper as HTMLElement).style.touchAction = "";
       },
     });
 
