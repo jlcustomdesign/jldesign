@@ -452,6 +452,7 @@ const heroImage = "/Images/Imagine hero section.png";
   function initHeroExitAnimation() {
     const heroSection = document.querySelector("#hero-section");
     const heroContent = document.querySelector("#hero-content-wrapper");
+    const heroSvg = document.querySelector("#mySVG");
     const aboutSection = document.querySelector("#about-section");
 
     if (!heroSection || !heroContent || !aboutSection) return;
@@ -459,23 +460,35 @@ const heroImage = "/Images/Imagine hero section.png";
     // Mobile detection
     const isMobile = window.innerWidth < 1024;
 
+    // Common animation: blur + fade
     gsap.to(heroContent, {
-      // Less dramatic scale on mobile (0.95 vs 0.9)
-      scale: isMobile ? 0.95 : 0.9,
-      // Enable blur on mobile too (user request), but slightly less
+      // No scale on mobile to avoid the weird jump/resize issue
       filter: isMobile ? "blur(6px)" : "blur(8px)",
       opacity: 0.5,
       ease: "none",
       scrollTrigger: {
         trigger: heroSection,
-        start: "bottom bottom", // When hero bottom hits viewport bottom
-        end: "bottom top", // When hero bottom leaves viewport top
+        start: "bottom bottom",
+        end: "bottom top",
         scrub: true,
-        // Pin the hero so About slides over it
         pin: true,
-        pinSpacing: false, // Don't add extra space (About will cover it)
+        pinSpacing: false,
       },
     });
+
+    // Desktop only: Scale the SVG directly to avoid image issues
+    if (!isMobile && heroSvg) {
+      gsap.to(heroSvg, {
+        scale: 0.9,
+        ease: "none",
+        scrollTrigger: {
+          trigger: heroSection,
+          start: "bottom bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    }
   }
 
   // Initialize hero exit animation
