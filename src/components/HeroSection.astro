@@ -175,31 +175,35 @@ const heroImage = "/Images/Imagine hero section.png";
   const desktopResolution = { width: 1890, height: 916 };
   const mobileResolution = { width: 1020, height: 882 };
 
-  document.addEventListener("astro:page-load", () => {
+  // Safe initialization - only run once per page
+  let heroAnimInitialized = false;
+  function safeInitHeroAnim() {
+    if (heroAnimInitialized) return;
+    const section = document.querySelector("#hero-section");
+    if (!section || (section as HTMLElement).dataset.heroAnimInit) return;
+    heroAnimInitialized = true;
     initHeroAnim();
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    heroAnimInitialized = false; // Reset on page navigation
+    safeInitHeroAnim();
   });
 
-  // Wait for DOM and layout to be ready before initial animation
-  // This prevents the desktop animation from playing on mobile first load
+  // For initial load (before Astro routing takes over)
   if (document.readyState === "complete") {
-    // If already loaded, wait one frame for layout to complete
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        initHeroAnim();
-      });
-    });
+    requestAnimationFrame(safeInitHeroAnim);
   } else {
-    window.addEventListener("load", () => {
-      requestAnimationFrame(() => {
-        initHeroAnim();
-      });
-    });
+    window.addEventListener("load", safeInitHeroAnim);
   }
 
   function initHeroAnim() {
     const section = document.querySelector("#hero-section");
     const svg = document.querySelector("#mySVG");
     if (!section || !svg) return;
+
+    // Mark as initialized
+    (section as HTMLElement).dataset.heroAnimInit = "true";
 
     // Custom split specifically for this known title structure
     const splitHeroCardTitle = () => {
