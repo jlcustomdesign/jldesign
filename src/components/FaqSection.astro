@@ -123,17 +123,6 @@ const faqs = [
     // Animate FAQ Items (Triggered List)
     const faqItemsList = document.querySelectorAll(".faq-item-v2");
     
-    // Initial States
-    if (faqHeader) {
-      gsap.set(faqHeader.querySelectorAll("span span"), { y: 20, opacity: 0, filter: "blur(8px)" });
-    }
-    if (faqItemsList.length) {
-      // Items text/content blur
-      gsap.set(faqItemsList, { y: 20, opacity: 0, filter: "blur(5px)" });
-      // Lines scale (already set in HTML class but good to enforce)
-      gsap.set(".faq-line", { scaleX: 0 });
-    }
-
     // Master Scrub Timeline (Matched to About Section logic)
     const scrubTl = gsap.timeline({
       scrollTrigger: {
@@ -144,40 +133,53 @@ const faqs = [
       }
     });
 
-    // 1. Header Reveal
+    // 1. Header Reveal (Use fromTo for guaranteed start state)
     if (faqHeader) {
-      scrubTl.to(faqHeader.querySelectorAll("span span"), {
-        y: 0,
-        opacity: 1,
-        filter: "blur(0px)",
-        duration: 2, // Relative duration
-        stagger: 0.1,
-        ease: "power2.out",
-      });
+      scrubTl.fromTo(
+        faqHeader.querySelectorAll("span span"),
+        { y: 20, opacity: 0, filter: "blur(10px)" }, // Initial State
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 2,
+          stagger: 0.1,
+          ease: "power2.out",
+        }
+      );
     }
 
     // 2. Items & Lines Reveal
-    // We want lines to expand like a loadbar, and text to unblur
     if (faqItemsList.length) {
       faqItemsList.forEach((item, i) => {
          const line = item.querySelector(".faq-line");
          
-         // Animate Item Opacity/Blur
-         scrubTl.to(item, {
+         // Animate Item Opacity/Blur (fromTo)
+         scrubTl.fromTo(
+           item,
+           { y: 20, opacity: 0, filter: "blur(5px)" },
+           {
             y: 0,
             opacity: 1,
             filter: "blur(0px)",
             duration: 2,
             ease: "power2.out"
-         }, "-=1.5"); // Overlap with header or previous
+           },
+           "-=1.5"
+         );
 
-         // Animate Line Expansion (Loadbar feel)
+         // Animate Line Expansion (fromTo)
          if(line) {
-             scrubTl.to(line, {
+             scrubTl.fromTo(
+               line,
+               { scaleX: 0 },
+               {
                  scaleX: 1,
-                 duration: 3, // Slower expansion
+                 duration: 3,
                  ease: "none"
-             }, "<"); // Start with item reveal
+               },
+               "<"
+             );
          }
       });
     }

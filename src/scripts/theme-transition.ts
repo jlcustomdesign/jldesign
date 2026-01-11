@@ -31,13 +31,13 @@ export function initThemeTransition() {
         
         // --- B. Collect Text Elements ---
         if (main) {
-            // Selectors for text in Portfolio, Process, FAQ + Navbar
+            // Selectors for text in Portfolio, Process, FAQ
+            // NOTE: Removed .nav-text to avoid conflict with Navbar.astro's own theme observer
             const selectors = [
                 "#portfolio-section h2", "#portfolio-section h3", "#portfolio-section p", "#portfolio-section span", "#portfolio-section .text-primary",
                 // Process: Only target the intro text, not the cards (which stay white)
                 "#process-section > .container h2", "#process-section > .container p", 
-                "#faq-section-v2 h2", "#faq-section-v2 button", "#faq-section-v2 span", "#faq-section-v2 p", "#faq-section-v2 svg",
-                ".nav-text" // Navbar text
+                "#faq-section-v2 h2", "#faq-section-v2 button", "#faq-section-v2 span", "#faq-section-v2 p", "#faq-section-v2 svg"
             ].join(", ");
 
             const elements = document.querySelectorAll(selectors);
@@ -48,7 +48,7 @@ export function initThemeTransition() {
 
         // --- C. Create Master Timeline (Paused) ---
         const tl = gsap.timeline({ paused: true });
-        const duration = 0.8;
+        const duration = 0.5; // Faster transition (was 0.8)
         const ease = "power2.inOut";
 
         // Build Animation: Light -> Dark
@@ -79,7 +79,7 @@ export function initThemeTransition() {
         // Trigger 1: Enter Dark Mode (at Process Section)
         ScrollTrigger.create({
             trigger: processSection || portfolioSection,
-            start: "top 60%",
+            start: "top 50%", // Adjusted trigger point
             onEnter: () => tl.play(),
             onLeaveBack: () => tl.reverse(),
             id: "theme-enter"

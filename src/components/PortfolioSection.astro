@@ -114,34 +114,42 @@ const portfolio = [
   document.addEventListener("astro:page-load", initPortfolioAnim);
 
   function initPortfolioAnim() {
-    // Only verify elements prompt existence
+    // Cleanup previous instance if it exists (though module scope is cleaner, keeping it local is safer for Astro's multiple runs)
     const wrapper = document.querySelector("#portfolio-wrapper");
     const gallery = document.querySelector("#portfolio-gallery");
 
     if (!wrapper || !gallery) return;
 
-    // Use matchMedia for robust desktop-only targeting
-    // automatically handles revert/cleanup on resize
+    // Create a MatchMedia instance
     const mm = gsap.matchMedia();
 
+    // Desktop Logic
     mm.add("(min-width: 1024px)", () => {
+      // Calculate scroll amount dynamically
       const getScrollAmount = () => {
         let galleryWidth = (gallery as HTMLElement).scrollWidth;
         return -(galleryWidth - window.innerWidth + 100);
       };
 
-      const tween = gsap.to(gallery, {
+      gsap.to(gallery, {
         x: getScrollAmount,
         ease: "none",
         scrollTrigger: {
-          trigger: wrapper, // The wrapper is pinned
-          start: "top top", // When top of wrapper hits top of viewport
-          end: "+=3000", // Scroll distance
-          pin: true, // Pin the wrapper
-          scrub: 1, // Smooth scrubbing
+          trigger: wrapper,
+          start: "top top",
+          end: "+=3000",
+          pin: true,
+          scrub: 1,
           invalidateOnRefresh: true,
         },
       });
     });
+
+    // Clean up on page navigation to prevent duplicate listeners
+    const cleanup = () => {
+      mm.revert();
+      document.removeEventListener("astro:before-preparation", cleanup);
+    };
+    document.addEventListener("astro:before-preparation", cleanup);
   }
 </script>
