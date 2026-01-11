@@ -1,47 +1,53 @@
 ---
 import BubbleButton from "./ui/BubbleButton.astro";
 
-// New working furniture images
 const steps = [
   {
     step: "01",
     title: "Consultanță",
     desc: "Discutăm viziunea ta. Luăm măsurători precise și înțelegem fluxul spațiului.",
-    img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?q=80&w=800&auto=format&fit=crop",
+    // Meeting / Discussion
+    img: "https://images.unsplash.com/photo-1556910103-1c02745a30bf?q=80&w=800",
   },
   {
     step: "02",
     title: "Proiectare 3D",
-    desc: "Randări fotorealiste. Vezi exact cum va arăta mobilierul înainte de producție.",
-    img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop",
+    desc: "Randări fotorealiste. Vezi exact cum va arăta mobilierul în casa ta.",
+    // Blueprint / Sketch
+    img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800",
   },
   {
     step: "03",
     title: "Producție",
-    desc: "Utilaje CNC de ultimă generație și finisaje manuale de excepție.",
-    img: "https://images.unsplash.com/photo-1604014237800-1c9102c219da?q=80&w=800&auto=format&fit=crop",
+    desc: "Folosim utilaje CNC de ultimă generație și finisaje manuale pentru detalii impecabile.",
+    // Workshop / Craft
+    img: "https://images.unsplash.com/photo-1622372738946-a28763b1f9b0?q=80&w=800",
   },
   {
     step: "04",
     title: "Montaj",
-    desc: "Instalare curată și precisă. Totul funcționează perfect la final.",
-    img: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?q=80&w=800&auto=format&fit=crop",
+    desc: "Echipa noastră instalează totul, reglează feroneria și lasă totul curat.",
+    // Installation / Living Room
+    img: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?q=80&w=800",
   },
 ];
 ---
 
 <section
-  class="bg-primary py-24 overflow-hidden relative group/section"
+  class="bg-black py-24 overflow-hidden relative"
   id="process-section-v2"
   data-theme="dark"
 >
+  <!-- Background Glow (Optional subtle effect) -->
   <div
-    class="container mx-auto px-4 md:px-8 relative z-10 transition-all duration-500"
-    id="process-content"
+    class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-[120px] pointer-events-none"
   >
-    <!-- Title Left Aligned -->
+  </div>
+
+  <div class="container mx-auto px-4 md:px-8 relative z-10 hover-container">
+    <!-- Title Section (Left Aligned) -->
     <div
-      class="mb-16 md:mb-24 md:pl-8 text-left max-w-xl transition-all duration-500 process-header"
+      class="text-left mb-16 md:mb-24 max-w-2xl process-header transition-all duration-500"
     >
       <h2 class="font-serif font-bold text-4xl md:text-6xl text-white mb-6">
         Procesul Nostru
@@ -53,15 +59,17 @@ const steps = [
 
     <!-- Layout Container -->
     <div
-      class="flex flex-col lg:grid lg:grid-cols-[1fr_minmax(500px,900px)_1fr] gap-8 items-center justify-center relative"
+      class="flex flex-col lg:grid lg:grid-cols-[1fr_minmax(500px,650px)_1fr] gap-8 items-start relative"
     >
+      <!-- DESKTOP STRUCTURE -->
+
       <!-- Left Column Texts (Steps 1 & 3) -->
       <div
-        class="hidden lg:flex flex-col justify-between h-full py-12 text-right pr-12 gap-32"
+        class="hidden lg:flex flex-col justify-between h-[500px] pt-12 text-right pr-8 gap-32"
       >
         <!-- Step 1 Text -->
         <div
-          class="process-text opacity-0 translate-y-8 transition-all duration-500 origin-right"
+          class="process-text transition-all duration-500 origin-right opacity-0 translate-y-8"
           data-step="0"
         >
           <h3 class="font-serif text-2xl text-white font-bold mb-3">
@@ -71,7 +79,7 @@ const steps = [
         </div>
         <!-- Step 3 Text -->
         <div
-          class="process-text opacity-0 translate-y-8 transition-all duration-500 origin-right pt-24"
+          class="process-text transition-all duration-500 origin-right opacity-0 translate-y-8"
           data-step="2"
         >
           <h3 class="font-serif text-2xl text-white font-bold mb-3">
@@ -81,76 +89,67 @@ const steps = [
         </div>
       </div>
 
-      <!-- Center Column: Images (2x2 Grid with Offsets for "Not Dead Centered" look) -->
-      <!-- Images are landscape (4:3 naturally or forced via class) -->
-      <div class="relative w-full grid grid-cols-2 gap-6 p-4 z-20">
-        <!-- Image 1 -->
-        <div
-          class="process-image-wrapper opacity-0 translate-y-12"
-          data-step="0"
-        >
+      <!-- Center Column: Images (Staggered 2x2 Grid) -->
+      <!-- Added translate-y to second column for staggered look "not dead centered" -->
+      <!-- Reduced height to 500px as requested "images smaller, seeable in one viewport" -->
+      <div
+        class="relative w-full max-w-2xl mx-auto h-[500px] grid grid-cols-2 gap-6 p-4 z-20 group/grid"
+      >
+        <!-- Column 1 -->
+        <div class="flex flex-col gap-6">
+          <!-- Image 0 -->
           <div
             class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                         transform hover:scale-105 hover:z-30 process-image cursor-pointer shadow-lg hover:shadow-accent/20"
+                         transform hover:scale-105 hover:z-30 process-image opacity-0 translate-y-8"
+            data-step="0"
           >
             <img
               src={steps[0].img}
               alt={steps[0].title}
-              class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+              class="w-full h-full object-cover"
               loading="lazy"
             />
           </div>
-        </div>
-
-        <!-- Image 2 (Offset Down) -->
-        <div
-          class="process-image-wrapper opacity-0 translate-y-12 mt-12"
-          data-step="1"
-        >
+          <!-- Image 2 -->
           <div
             class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                         transform hover:scale-105 hover:z-30 process-image cursor-pointer shadow-lg hover:shadow-accent/20"
-          >
-            <img
-              src={steps[1].img}
-              alt={steps[1].title}
-              class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-              loading="lazy"
-            />
-          </div>
-        </div>
-
-        <!-- Image 3 (Offset Up - to create distinct look) -->
-        <div
-          class="process-image-wrapper opacity-0 translate-y-12 -mt-12"
-          data-step="2"
-        >
-          <div
-            class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                         transform hover:scale-105 hover:z-30 process-image cursor-pointer shadow-lg hover:shadow-accent/20"
+                         transform hover:scale-105 hover:z-30 process-image opacity-0 translate-y-8"
+            data-step="2"
           >
             <img
               src={steps[2].img}
               alt={steps[2].title}
-              class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+              class="w-full h-full object-cover"
               loading="lazy"
             />
           </div>
         </div>
 
-        <!-- Image 4 -->
-        <div
-          class="process-image-wrapper opacity-0 translate-y-12"
-          data-step="3"
-        >
+        <!-- Column 2 (Offset down) -->
+        <div class="flex flex-col gap-6 pt-12">
+          <!-- Image 1 -->
           <div
             class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                         transform hover:scale-105 hover:z-30 process-image cursor-pointer shadow-lg hover:shadow-accent/20"
+                         transform hover:scale-105 hover:z-30 process-image opacity-0 translate-y-8"
+            data-step="1"
+          >
+            <img
+              src={steps[1].img}
+              alt={steps[1].title}
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <!-- Image 3 -->
+          <div
+            class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
+                         transform hover:scale-105 hover:z-30 process-image opacity-0 translate-y-8"
+            data-step="3"
           >
             <img
               src={steps[3].img}
               alt={steps[3].title}
-              class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+              class="w-full h-full object-cover"
               loading="lazy"
             />
           </div>
@@ -159,11 +158,11 @@ const steps = [
 
       <!-- Right Column Texts (Steps 2 & 4) -->
       <div
-        class="hidden lg:flex flex-col justify-between h-full py-12 pl-12 gap-32"
+        class="hidden lg:flex flex-col justify-between h-[500px] pt-24 pl-8 gap-32"
       >
         <!-- Step 2 Text -->
         <div
-          class="process-text opacity-0 translate-y-8 transition-all duration-500 origin-left mt-16"
+          class="process-text transition-all duration-500 origin-left opacity-0 translate-y-8"
           data-step="1"
         >
           <h3 class="font-serif text-2xl text-white font-bold mb-3">
@@ -173,7 +172,7 @@ const steps = [
         </div>
         <!-- Step 4 Text -->
         <div
-          class="process-text opacity-0 translate-y-8 transition-all duration-500 origin-left"
+          class="process-text transition-all duration-500 origin-left opacity-0 translate-y-8"
           data-step="3"
         >
           <h3 class="font-serif text-2xl text-white font-bold mb-3">
@@ -185,7 +184,7 @@ const steps = [
     </div>
 
     <!-- CTA -->
-    <div class="mt-24 text-center relative z-20 md:text-left md:pl-8">
+    <div class="mt-16 text-center relative z-20">
       <BubbleButton
         href="/contact"
         class="!px-10 !py-4 !border-white !text-white hover:!text-black hover:!bg-white"
@@ -197,50 +196,40 @@ const steps = [
 
 <style>
   /* 
-     HOVER LOGIC (Refined for SECTION level blur)
+     HOVER LOGIC 
+     Target the whole .hover-container via :has()
   */
 
-  /* 1. When ANY image is hovered: Blur text headers, texts, and non-hovered images */
-  /* Target the CONTAINER (#process-content) when it has a hovered image */
-  #process-content:has(.process-image:hover) .process-image,
-  #process-content:has(.process-image:hover) .process-text,
-  #process-content:has(.process-image:hover) .process-header {
-    opacity: 0.2;
+  /* 1. When ANY image is hovered: Blur everything in container */
+  .hover-container:has(.process-image:hover) .process-image,
+  .hover-container:has(.process-image:hover) .process-text,
+  .hover-container:has(.process-image:hover) .process-header {
+    opacity: 0.3;
     filter: blur(4px);
     transform: scale(0.98);
-    transition: all 0.4s ease;
   }
 
-  /* 2. EXCEPTION: Restore the specific hovered image */
-  #process-content .process-image:hover {
+  /* 2. Restore active image */
+  .hover-container .process-image:hover {
     opacity: 1 !important;
     filter: none !important;
-    transform: scale(1.1) !important;
+    transform: scale(1.15) !important;
     z-index: 50;
-    box-shadow: 0 30px 60px -15px rgba(255, 255, 255, 0.15); /* White glow */
+    box-shadow: 0 25px 50px -12px rgba(255, 255, 255, 0.1);
   }
 
-  /* 3. EXCEPTION: Restore the text corresponding to the hovered image */
-  #process-content:has(
-      .process-image-wrapper[data-step="0"] .process-image:hover
-    )
+  /* 3. Restore active text */
+  .hover-container:has(.process-image[data-step="0"]:hover)
     .process-text[data-step="0"],
-  #process-content:has(
-      .process-image-wrapper[data-step="1"] .process-image:hover
-    )
+  .hover-container:has(.process-image[data-step="1"]:hover)
     .process-text[data-step="1"],
-  #process-content:has(
-      .process-image-wrapper[data-step="2"] .process-image:hover
-    )
+  .hover-container:has(.process-image[data-step="2"]:hover)
     .process-text[data-step="2"],
-  #process-content:has(
-      .process-image-wrapper[data-step="3"] .process-image:hover
-    )
+  .hover-container:has(.process-image[data-step="3"]:hover)
     .process-text[data-step="3"] {
     opacity: 1 !important;
     filter: none !important;
     transform: scale(1.1) !important;
-    color: white;
   }
 </style>
 
@@ -250,49 +239,25 @@ const steps = [
 
   gsap.registerPlugin(ScrollTrigger);
 
+  // Sequential Reveal Animation
   document.addEventListener("astro:page-load", () => {
     const section = document.querySelector("#process-section-v2");
     if (!section) return;
 
-    const tl = gsap.timeline({
+    const elements = section.querySelectorAll(
+      ".process-header, .process-image, .process-text"
+    );
+
+    gsap.to(elements, {
       scrollTrigger: {
         trigger: section,
-        start: "top 70%",
-        toggleActions: "play none none reverse",
+        start: "top 70%", // Start revealing when section enters
       },
-    });
-
-    // 1. Reveal Images sequentially
-    const wrappers = section.querySelectorAll(".process-image-wrapper");
-    const texts = section.querySelectorAll(".process-text");
-
-    wrappers.forEach((el, i) => {
-      // Animate Image
-      tl.to(
-        el,
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-        },
-        i * 0.2
-      ); // Stagger start by 0.2s
-
-      // Animate Corresponding Text slightly after
-      const text = document.querySelector(`.process-text[data-step="${i}"]`);
-      if (text) {
-        tl.to(
-          text,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power2.out",
-          },
-          "<+=0.1"
-        ); // Start 0.1s after image starts
-      }
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.15, // Sequential delay
+      ease: "power3.out",
     });
   });
 </script>

@@ -13,7 +13,7 @@ export function initThemeTransition() {
     setTimeout(() => {
         // 1. Identify Sections AFTER Portfolio
         // Order: Portfolio -> Process -> FAQ -> Footer
-        const processSection = document.querySelector("#process-section");
+        const processSection = document.querySelector("#process-section-v2");
         const faqSection = document.querySelector("#faq-section-v2");
         const footer = document.querySelector("footer");
         const main = document.querySelector("main");
@@ -35,8 +35,8 @@ export function initThemeTransition() {
             // Re-added .nav-text to ensure Global Theme Sync (First Transition & Footer)
             const selectors = [
                 "#portfolio-section h2", "#portfolio-section h3", "#portfolio-section p", "#portfolio-section span", "#portfolio-section .text-primary",
-                // Process: Only target the intro text, not the cards (which stay white)
-                "#process-section > .container h2", "#process-section > .container p", 
+                // Process V2: Text is already white by default spread, but we ensure consistency
+                "#process-section-v2 h2", "#process-section-v2 p", "#process-section-v2 h3",
                 "#faq-section-v2 h2", "#faq-section-v2 button", "#faq-section-v2 span", "#faq-section-v2 p", "#faq-section-v2 svg",
                 ".nav-text" // Added back
             ].join(", ");
@@ -80,7 +80,7 @@ export function initThemeTransition() {
         // Trigger 1: Enter Dark Mode (at Process Section)
         ScrollTrigger.create({
             trigger: processSection || portfolioSection,
-            start: "top 50%", // Adjusted trigger point
+            start: "top 80%", // Adjusted trigger point: Early switch
             onEnter: () => tl.play(),
             onLeaveBack: () => tl.reverse(),
             id: "theme-enter"
