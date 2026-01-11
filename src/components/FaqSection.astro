@@ -52,7 +52,7 @@ const faqs = [
         <div class="space-y-4">
           {
             faqs.map((faq, index) => (
-              <div class="group border-b border-gray-200 pb-4 faq-item-v2 cursor-pointer">
+              <div class="group pb-4 faq-item-v2 cursor-pointer relative">
                 <button
                   class="w-full flex justify-between items-center py-4 text-left focus:outline-none faq-trigger-v2"
                   aria-expanded="false"
@@ -82,6 +82,8 @@ const faqs = [
                     {faq.a}
                   </p>
                 </div>
+                <!-- Animated Separator Line -->
+                <div class="absolute bottom-0 left-0 w-full h-[1px] bg-gray-200 origin-left transform scale-x-0 faq-line"></div>
               </div>
             ))
           }
@@ -118,39 +120,65 @@ const faqs = [
     const faqHeader = document.querySelector("#faq-sidebar-v2 h2");
     splitTextToWords(faqHeader);
 
+    // Animate FAQ Items (Triggered List)
+    const faqItemsList = document.querySelectorAll(".faq-item-v2");
+    
+    // Initial States
     if (faqHeader) {
-      gsap.to(faqHeader.querySelectorAll("span span"), {
-        scrollTrigger: {
-          trigger: "#faq-section-v2",
-          start: "top 75%",
-          toggleActions: "play none none reverse",
-        },
+      gsap.set(faqHeader.querySelectorAll("span span"), { y: 20, opacity: 0, filter: "blur(8px)" });
+    }
+    if (faqItemsList.length) {
+      // Items text/content blur
+      gsap.set(faqItemsList, { y: 20, opacity: 0, filter: "blur(5px)" });
+      // Lines scale (already set in HTML class but good to enforce)
+      gsap.set(".faq-line", { scaleX: 0 });
+    }
+
+    // Master Scrub Timeline
+    const scrubTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#faq-section-v2",
+        start: "top 80%",
+        end: "center center", // Finish animation when center of section hits center of viewport
+        scrub: 1,
+      }
+    });
+
+    // 1. Header Reveal
+    if (faqHeader) {
+      scrubTl.to(faqHeader.querySelectorAll("span span"), {
         y: 0,
         opacity: 1,
         filter: "blur(0px)",
-        duration: 1,
+        duration: 2, // Relative duration
         stagger: 0.1,
-        ease: "power3.out",
+        ease: "power2.out",
       });
     }
 
-    // Animate FAQ Items (Triggered List)
-    const faqItemsList = document.querySelectorAll(".faq-item-v2");
+    // 2. Items & Lines Reveal
+    // We want lines to expand like a loadbar, and text to unblur
     if (faqItemsList.length) {
-      gsap.set(faqItemsList, { y: 50, opacity: 0, filter: "blur(5px)" });
+      faqItemsList.forEach((item, i) => {
+         const line = item.querySelector(".faq-line");
+         
+         // Animate Item Opacity/Blur
+         scrubTl.to(item, {
+            y: 0,
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: 2,
+            ease: "power2.out"
+         }, "-=1.5"); // Overlap with header or previous
 
-      gsap.to(faqItemsList, {
-        scrollTrigger: {
-          trigger: "#faq-list-v2",
-          start: "top 75%",
-          toggleActions: "play none none reverse",
-        },
-        y: 0,
-        opacity: 1,
-        filter: "blur(0px)",
-        duration: 0.8,
-        stagger: 0.1, // Time based stagger
-        ease: "power2.out",
+         // Animate Line Expansion (Loadbar feel)
+         if(line) {
+             scrubTl.to(line, {
+                 scaleX: 1,
+                 duration: 3, // Slower expansion
+                 ease: "none"
+             }, "<"); // Start with item reveal
+         }
       });
     }
 

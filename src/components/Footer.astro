@@ -290,7 +290,6 @@ const currentYear = new Date().getFullYear();
     }
   }
 
-  // Initialize immediately AND on Astro navigation
-  initFooterAnimations();
+  // Initialize only on Astro navigation/load to prevent double-firing
   document.addEventListener("astro:page-load", initFooterAnimations);
 </script>

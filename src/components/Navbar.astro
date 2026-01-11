@@ -220,15 +220,26 @@ const links = [
         );
 
         if (activeSection) {
+          // Strict Rule: Hero = Dark (White Text), All others = Light (Black Constants) usually
+          // But we respect the data-theme attribute if future sections need dark mode.
+          // However, user asked specifically: "after the hero section, turn it to black".
+
           setTheme(activeSection.theme);
         } else {
-          // Fallback: If above first section, use first. If below last, use last.
+          // Fallback logic
           if (sectionData.length > 0) {
-            if (triggerPoint < sectionData[0].top)
+            // If scrolling above first section (overscroll up), match first section
+            if (triggerPoint < sectionData[0].top) {
               setTheme(sectionData[0].theme);
-            else if (triggerPoint >= sectionData[sectionData.length - 1].bottom)
-              setTheme(sectionData[sectionData.length - 1].theme);
-            else setTheme("light"); // Default
+            }
+            // If scrolled past last section, default to light (black text) as requested
+            else if (
+              triggerPoint >= sectionData[sectionData.length - 1].bottom
+            ) {
+              setTheme("light");
+            } else {
+              setTheme("light"); // Default to black text
+            }
           }
         }
       };
