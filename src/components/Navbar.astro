@@ -1,0 +1,260 @@
+---
+import BubbleButton from "./ui/BubbleButton.astro";
+
+const links = [
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Services", href: "/services" },
+  { name: "Portfolio", href: "/portfolio" },
+];
+---
+
+<nav
+  class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl mx-auto px-4"
+>
+  <div
+    id="navbar-container"
+    class="bg-transparent backdrop-blur-xl shadow-lg rounded-2xl px-8 py-3 flex items-center gap-8 transition-colors transition-shadow duration-300 hover:shadow-xl w-full justify-between opacity-0 scale-0 origin-center nav-light"
+  >
+    <!-- Logo -->
+    <a
+      href="/"
+      class="nav-text font-serif text-xl font-bold tracking-tight whitespace-nowrap transition-colors duration-300"
+    >
+      JL
+    </a>
+
+    <!-- Links -->
+    <ul class="hidden md:flex gap-6 items-center">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="nav-text text-xs font-semibold uppercase tracking-widest hover:text-accent transition-colors duration-300 relative group"
+            >
+              {link.name}
+              <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- CTA (Bubble Button) -->
+    <BubbleButton
+      href="/contact"
+      class="hidden md:inline-flex whitespace-nowrap !px-6 !py-2.5"
+    >
+      Contact
+    </BubbleButton>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="nav-text md:hidden transition-colors duration-300">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<style>
+  /* Theme Logic */
+
+  /* Dark Navbar (for Dark Backgrounds/Hero) -> White Text */
+  :global(.nav-dark) .nav-text {
+    color: white;
+  }
+
+  /* Light Navbar (for Light Backgrounds) -> Black Text */
+  :global(.nav-light) .nav-text {
+    color: #1a1a1a;
+  }
+
+  /* Hover effects */
+  :global(.nav-dark) .nav-text:hover {
+    color: #d4af37; /* Accent */
+  }
+  :global(.nav-light) .nav-text:hover {
+    color: #d4af37; /* Accent */
+  }
+
+  /* Active Scroll Shrink */
+  #navbar-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  #navbar-container.nav-shrunk {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    transform: scale(
+      0.95
+    ) !important; /* Override GSAP inline if needed, creates simple shrink */
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("astro:page-load", () => {
+    initNavbarAnim();
+    initThemeObserver();
+    initScrollResize();
+  });
+
+  // Initial run
+  initNavbarAnim();
+  initThemeObserver();
+  initScrollResize();
+
+  function initScrollResize() {
+    const navContainer = document.querySelector("#navbar-container");
+    let scrollTimeout: any;
+
+    if (!navContainer) return;
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        // While scrolling, shrink
+        navContainer.classList.add("nav-shrunk");
+
+        // Clear existing timeout
+        clearTimeout(scrollTimeout);
+
+        // Set timeout to restore size when scroll stops
+        scrollTimeout = setTimeout(() => {
+          navContainer.classList.remove("nav-shrunk");
+        }, 150); // 150ms delay after stop
+      },
+      { passive: true }
+    );
+  }
+
+  function initNavbarAnim() {
+    const navContainer = document.querySelector("#navbar-container");
+    const navWrapper = document.querySelector("nav");
+
+    if (navContainer && navWrapper) {
+      // 1. Initial Load Animation
+      // Only run if Hero Section is NOT present (Hero handles it otherwise)
+      const hero = document.querySelector("#hero-section");
+
+      if (!hero) {
+        gsap.to(navContainer, {
+          opacity: 1,
+          duration: 0.05,
+          delay: 0.2,
+        });
+        gsap.to(navContainer, {
+          scale: 1,
+          duration: 1.8,
+          ease: "back.out(1.2)",
+          delay: 0.2,
+        });
+      }
+    }
+  }
+
+  function initThemeObserver() {
+    // 500ms delay to ensure all GSAP pinning (Services) is settled
+    setTimeout(() => {
+      const navContainer = document.querySelector("#navbar-container");
+      const sections = document.querySelectorAll("[data-theme]");
+
+      if (!navContainer || sections.length === 0) {
+        navContainer?.classList.add("nav-light");
+        return;
+      }
+
+      interface SectionData {
+        top: number;
+        bottom: number;
+        theme: string | null;
+      }
+
+      let sectionData: SectionData[] = [];
+      let currentTheme: string | null = "";
+
+      const updateLayout = () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+        sectionData = Array.from(sections).map((section) => {
+          // Critical: Use the pin-spacer if present to capture full pinned height
+          const el = (section as HTMLElement).closest(".pin-spacer") || section;
+          const rect = el.getBoundingClientRect();
+
+          // Convert to absolute document coordinates
+          return {
+            top: rect.top + scrollTop,
+            bottom: rect.bottom + scrollTop,
+            theme: (section as HTMLElement).getAttribute("data-theme"),
+          };
+        });
+
+        // Sort by position just in case
+        sectionData.sort((a, b) => a.top - b.top);
+        checkTheme();
+      };
+
+      const checkTheme = () => {
+        const scrollPos = window.scrollY || document.documentElement.scrollTop;
+        // Trigger point: what section is under the Navbar (approx 50px down)
+        const triggerPoint = scrollPos + 50;
+
+        // Find valid section
+        const activeSection = sectionData.find(
+          (s) => triggerPoint >= s.top && triggerPoint < s.bottom
+        );
+
+        if (activeSection) {
+          setTheme(activeSection.theme);
+        } else {
+          // Fallback: If above first section, use first. If below last, use last.
+          if (sectionData.length > 0) {
+            if (triggerPoint < sectionData[0].top)
+              setTheme(sectionData[0].theme);
+            else if (triggerPoint >= sectionData[sectionData.length - 1].bottom)
+              setTheme(sectionData[sectionData.length - 1].theme);
+            else setTheme("light"); // Default
+          }
+        }
+      };
+
+      const setTheme = (theme: string | null) => {
+        if (currentTheme === theme) return; // Optimize: No change
+
+        currentTheme = theme;
+        navContainer.classList.remove("nav-dark", "nav-light");
+
+        if (theme === "dark") {
+          navContainer.classList.add("nav-dark");
+        } else {
+          navContainer.classList.add("nav-light");
+        }
+      };
+
+      // Listeners
+      window.addEventListener("scroll", checkTheme, { passive: true });
+      window.addEventListener("resize", updateLayout);
+
+      // Crucial: Update boundaries whenever ScrollTrigger refreshes (e.g. after pinning settles)
+      ScrollTrigger.addEventListener("refresh", updateLayout);
+
+      // Initial
+      updateLayout();
+    }, 100);
+  }
+</script>

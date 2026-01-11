@@ -1,0 +1,296 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="bg-secondary pt-20 pb-10 px-4 md:px-8" data-theme="light">
+  <div class="container mx-auto">
+    <!-- Big Card -->
+    <div
+      class="footer-card bg-primary rounded-[2.5rem] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl"
+      data-theme="dark"
+    >
+      <!-- Decorative Glow -->
+      <div
+        class="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"
+      >
+      </div>
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 relative z-10"
+      >
+        <!-- Brand & CTA -->
+        <div class="lg:col-span-6 flex flex-col justify-between h-full">
+          <div>
+            <h2 class="font-serif text-5xl md:text-7xl mb-8 leading-tight">
+              Să construim ceva <br />
+              <span class="text-accent">remarcabil.</span>
+            </h2>
+            <a
+              href="/contact"
+              class="inline-flex items-center gap-4 text-xl md:text-2xl font-medium group hover:text-accent transition-colors"
+            >
+              <span
+                class="border-b border-white/30 pb-1 group-hover:border-accent transition-colors"
+                >Discută cu noi</span
+              >
+              <span
+                class="group-hover:translate-x-2 transition-transform duration-300"
+                >→</span
+              >
+            </a>
+          </div>
+        </div>
+
+        <!-- Links -->
+        <div class="lg:col-span-2 lg:col-start-8">
+          <h4
+            class="text-accent uppercase tracking-wider text-sm font-semibold mb-6"
+          >
+            Meniu
+          </h4>
+          <ul class="space-y-4">
+            <li>
+              <a
+                href="/"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Acasă
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/about"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Despre Noi
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/services"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Servicii
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/portfolio"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Portofoliu
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/contact"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Contact
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Socials & Contact -->
+        <div class="lg:col-span-3">
+          <h4
+            class="text-accent uppercase tracking-wider text-sm font-semibold mb-6"
+          >
+            Contact
+          </h4>
+          <ul class="space-y-4 mb-10">
+            <li class="text-white/70">
+              Strada Exemplului Nr. 10,<br />București, Sector 1
+            </li>
+            <li>
+              <a
+                href="tel:+40700000000"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >+40 700 000 000
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="mailto:contact@jlmobila.ro"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >contact@jlmobila.ro
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+          </ul>
+
+          <div class="flex gap-4">
+            <!-- Social Icons placeholders -->
+            <a
+              href="#"
+              class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-primary transition-all"
+              >FB</a
+            >
+            <a
+              href="#"
+              class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-primary transition-all"
+              >IG</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="border-t border-white/10 mt-20 pt-8 flex flex-col md:flex-row justify-between items-center text-white/40 text-sm"
+      >
+        <p>&copy; {currentYear} JL Mobila. Toate drepturile rezervate.</p>
+        <div class="flex gap-6 mt-4 md:mt-0">
+          <a href="#" class="hover:text-accent relative group inline-block"
+            >Termeni și Condiții
+            <span
+              class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+            ></span>
+          </a>
+          <a href="#" class="hover:text-accent relative group inline-block"
+            >Politica de Confidențialitate
+            <span
+              class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+            ></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initFooterAnimations() {
+    const footer = document.querySelector("footer");
+    // Prevent double-init on same element
+    if (!footer || footer.dataset.animInitialized) return;
+
+    const card = footer.querySelector(".footer-card");
+    if (!card) return;
+
+    footer.dataset.animInitialized = "true";
+
+    // Helper: Safe Split for H4
+    const splitTextToWords = (element: Element | null) => {
+      if (!element) return;
+      if (element.children.length > 0) return; // Skip complex elements
+      const text = element.textContent?.trim() || "";
+      element.innerHTML = text
+        .split(" ")
+        .map(
+          (w) =>
+            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: blur(8px)">${w}&nbsp;</span></span>`
+        )
+        .join("");
+    };
+
+    const bigTitle = card.querySelector("h2");
+    const headers = card.querySelectorAll("h4");
+
+    headers.forEach((h) => splitTextToWords(h));
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: footer,
+        start: "top 85%",
+        toggleActions: "play none none reverse",
+      },
+      delay: 0.1,
+    });
+    // 1. Card Reveal (Morph-like "Pill to Card" Expansion)
+    tl.fromTo(
+      card,
+      {
+        clipPath: "inset(40% 30% 40% 30% round 5rem)", // Starts as a small pill shape in center
+        opacity: 1,
+        y: 100,
+      },
+      {
+        clipPath: "inset(0% 0% 0% 0% round 2.5rem)", // Expands to full card
+        y: 0,
+        opacity: 1,
+        duration: 1.8,
+        ease: "expo.out",
+        onComplete: () => {
+          // Remove clipPath to restore the box-shadow
+          gsap.set(card, { clearProps: "clipPath" });
+        },
+      }
+    );
+
+    // 2. Big Title (Block Fade Up with Blur)
+    if (bigTitle) {
+      tl.fromTo(
+        bigTitle,
+        { y: 40, opacity: 0, filter: "blur(12px)" },
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1.2,
+          ease: "power3.out",
+        },
+        "-=1.0"
+      );
+    }
+
+    // 3. Headers (Splitted Words Reveal)
+    const h4Spans = card.querySelectorAll("h4 span span");
+    if (h4Spans.length) {
+      tl.to(
+        h4Spans,
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1,
+          stagger: 0.05,
+          ease: "power3.out",
+        },
+        "-=1.0"
+      );
+    }
+
+    // 4. Misc
+    const misc = card.querySelectorAll("li, .border-t, a.inline-flex");
+    if (misc.length) {
+      tl.fromTo(
+        misc,
+        { y: 20, opacity: 0, filter: "blur(5px)" },
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 0.8,
+          stagger: 0.05,
+          ease: "power2.out",
+        },
+        "-=0.8"
+      );
+    }
+  }
+
+  // Initialize immediately AND on Astro navigation
+  initFooterAnimations();
+  document.addEventListener("astro:page-load", initFooterAnimations);
+</script>

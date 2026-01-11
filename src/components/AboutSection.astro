@@ -1,0 +1,154 @@
+---
+import BubbleButton from "./ui/BubbleButton.astro";
+---
+
+<section
+  class="py-24 md:py-40 bg-secondary flex items-center justify-center min-h-[70vh] relative overflow-hidden"
+  id="about-section"
+  data-theme="light"
+>
+  <div class="container mx-auto px-4 md:px-8 relative z-10 text-center">
+    <div
+      class="max-w-7xl mx-auto p-12 md:p-24 bg-white rounded-3xl md:rounded-[3rem] shadow-2xl about-card border border-gray-100 flex flex-col items-center gap-8"
+    >
+      <h2
+        class="font-serif text-4xl md:text-6xl lg:text-7xl text-primary leading-tight about-title"
+      >
+        Peste 15 ani de experiență în prelucrarea lemnului și a materialelor
+        compozite.
+      </h2>
+      <p class="text-gray-600 text-lg md:text-xl max-w-3xl about-subtext">
+        Fiecare piesă de mobilier pe care o creăm este rezultatul unei pasiuni
+        pentru perfecțiune și al unui respect profund pentru tradiția
+        mâneșugului, combinat cu tehnologii moderne de producție.
+      </p>
+      <div class="mt-4 about-cta opacity-0 translate-y-4">
+        <BubbleButton
+          href="/about"
+          variant="primary"
+          class="!px-10 !py-4 !border !border-primary/20"
+        >
+          Află mai multe
+        </BubbleButton>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subtle Decorative Background Shape -->
+  <div
+    class="about-bg-shape absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] aspect-square bg-accent/5 rounded-full blur-[120px] -z-0"
+  >
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  initAboutAnim();
+  document.addEventListener("astro:page-load", initAboutAnim);
+
+  function initAboutAnim() {
+    const section = document.querySelector("#about-section");
+    if (!section) return;
+
+    // Helper: Split text into words for stagger effect
+    const splitTextToWords = (selector: string) => {
+      const element = section.querySelector(selector);
+      if (!element) return;
+      const text = element.textContent?.trim() || "";
+      element.innerHTML = text
+        .split(" ")
+        .map(
+          (word) =>
+            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: blur(8px)">${word}&nbsp;</span></span>`
+        )
+        .join("");
+    };
+
+    // Prepare text for animation
+    splitTextToWords(".about-title");
+    splitTextToWords(".about-subtext");
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".about-card",
+          start: "top bottom",
+          end: "center 60%",
+          scrub: 1,
+        },
+      });
+
+      // 1. Card Reveal (Scale + Fade + Blur)
+      tl.from(".about-card", {
+        scale: 0.9,
+        y: 100,
+        opacity: 0,
+        filter: "blur(10px)",
+        duration: 1, // Relative duration in scrub
+        ease: "power2.out",
+      });
+
+      // 2. Title Staggered Reveal
+      tl.to(
+        ".about-title span span",
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1,
+          stagger: 0.1, // Stagger needs to be significant in scrub
+          ease: "none", // Linear ease feels better with scrub often, but power1 is ok
+        },
+        "-=0.5"
+      );
+
+      // 3. Subtext Staggered Reveal
+      tl.to(
+        ".about-subtext span span",
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1,
+          stagger: 0.05,
+          ease: "none",
+        },
+        "-=0.5"
+      );
+
+      // 4. Button Reveal
+      tl.fromTo(
+        ".about-cta",
+        {
+          y: 20,
+          opacity: 0,
+          filter: "blur(10px)",
+        },
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 0.5,
+          ease: "none",
+        },
+        "-=0.2"
+      );
+
+      // 5. Parallax for Background Shape
+      gsap.to(".about-bg-shape", {
+        y: "20%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#about-section",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+    }, section);
+  }
+</script>

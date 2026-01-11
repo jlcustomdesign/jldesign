@@ -1,0 +1,233 @@
+---
+import BubbleButton from "./ui/BubbleButton.astro";
+
+const steps = [
+  {
+    step: "01",
+    title: "Consultanță",
+    desc: "Discutăm viziunea ta. Luăm măsurători precise și înțelegem fluxul spațiului. Este momentul în care ideile prind contur.",
+    color: "bg-white",
+    img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200",
+  },
+  {
+    step: "02",
+    title: "Proiectare 3D",
+    desc: "Randări fotorealiste. Vezi exact cum va arăta mobilierul în casa ta înainte de a tăia prima placă. Ajustăm până la perfecțiune.",
+    color: "bg-white",
+    img: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1200",
+  },
+  {
+    step: "03",
+    title: "Producție",
+    desc: "Artizanat și tehnologie. Folosim utilaje CNC de ultimă generație și finisaje manuale pentru detalii impecabile.",
+    color: "bg-white",
+    img: "https://images.unsplash.com/photo-1620613907042-32a2eb6be638?q=80&w=1200",
+  },
+  {
+    step: "04",
+    title: "Montaj",
+    desc: "Curățenie și precizie. Echipa noastră instalează totul, reglează feroneria și se asigură că totul funcționează 'soft-close'.",
+    color: "bg-white",
+    img: "https://images.unsplash.com/photo-1584622050111-993a426fbf0a?q=80&w=1200",
+  },
+];
+---
+
+<section
+  id="process-section"
+  class="bg-secondary relative py-24 overflow-hidden"
+  data-theme="light"
+>
+  <div class="container mx-auto px-4 md:px-8 mb-12">
+    <h2 class="font-serif font-bold text-4xl md:text-5xl text-primary mb-6">
+      Procesul Nostru
+    </h2>
+    <p class="text-gray-400 max-w-2xl">
+        De la schiță la realitate în patru pași simpli.
+    </p>
+  </div>
+
+  <!-- Cards Container - Pinned -->
+  <div class="relative w-full max-w-7xl mx-auto h-[50vh] md:h-[55vh]" id="cards-wrapper">
+    {
+      steps.map((step, index) => (
+        <div
+          class={`process-card absolute top-0 left-0 w-full h-full rounded-[2.5rem] shadow-xl origin-top overflow-hidden will-change-transform ${step.color}`}
+          style={`z-index: ${index + 1};`}
+        >
+          <div class="flex h-full">
+            <!-- Left: Content -->
+            <div class="flex-1 p-8 md:p-12 flex flex-col justify-between">
+                <div class="text-6xl md:text-8xl font-serif text-primary/10 font-bold leading-none select-none">
+                  {step.step}
+                </div>
+                <div>
+                   <h3 class="font-serif font-bold text-3xl md:text-5xl text-primary mb-6">
+                        {step.title}
+                   </h3>
+                   <p class="text-gray-500 leading-relaxed text-lg md:text-xl max-w-md">
+                        {step.desc}
+                   </p>
+                </div>
+            </div>
+
+            <!-- Right: Image Frame (Vertical 3:4) -->
+            <div class="hidden md:block h-full aspect-[3/4] p-4">
+                <div class="w-full h-full rounded-[2rem] overflow-hidden relative">
+                    <img src={step.img} alt={step.title} class="w-full h-full object-cover" />
+                </div>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+  
+  <!-- CTA Button -->
+  <div class="container mx-auto px-4 md:px-8 mt-36 mb-16 flex justify-center relative z-20 opacity-0 md:translate-y-12" id="process-cta">
+    <BubbleButton href="/contact" variant="outline" class="!px-12 !py-5 text-lg shadow-2xl !border-white !text-white">
+      Discută Proiectul Tău
+    </BubbleButton>
+  </div>
+  
+  <style>
+    /* Override Button Styles for Process Section (White Blob, Black Text) */
+    #process-cta :global(.work-btn:hover),
+    #process-cta :global(.work-btn:hover span),
+    #process-cta :global(.work-btn:hover *) {
+      color: black !important;
+    }
+    #process-cta :global(.work-blob-trick) {
+      background-color: white !important;
+      border-color: white !important;
+    }
+  </style>
+
+  <script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    initProcessStack();
+    document.addEventListener("astro:page-load", initProcessStack);
+
+    function initProcessStack() {
+      // Helper: Split text into words for stagger effect
+      const splitTextToWords = (element: Element | null) => {
+          if (!element) return;
+          const text = element.textContent?.trim() || "";
+          element.innerHTML = text
+            .split(" ")
+            .map(
+              (word) =>
+                `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: blur(8px)">${word}&nbsp;</span></span>`
+            )
+            .join("");
+      };
+
+      const headerH2 = document.querySelector("#process-section .container > h2");
+      const headerP = document.querySelector("#process-section .container > p");
+      const wrapper = document.querySelector("#cards-wrapper");
+      const cards = gsap.utils.toArray(".process-card") as HTMLElement[];
+      
+      // Prepare Texts
+      splitTextToWords(headerH2);
+      splitTextToWords(headerP);
+      cards.forEach(card => {
+          splitTextToWords(card.querySelector("h3"));
+          splitTextToWords(card.querySelector("p"));
+      });
+
+      // --- 1. Header & First Card Reveal (Time-Based, Not Scrub) ---
+      const tlHeader = gsap.timeline({
+          scrollTrigger: {
+              trigger: "#process-section",
+              start: "top 75%",
+              toggleActions: "play none none reverse"
+          }
+      });
+
+      // Header Text
+      if(headerH2) {
+          const spans = headerH2.querySelectorAll("span span");
+          if(spans.length) tlHeader.to(spans, { y: 0, opacity: 1, filter: "blur(0px)", duration: 1, stagger: 0.1, ease: "power3.out" });
+      }
+      if(headerP) {
+           const spans = headerP.querySelectorAll("span span");
+           if(spans.length) tlHeader.to(spans, { y: 0, opacity: 1, filter: "blur(0px)", duration: 1, stagger: 0.05, ease: "power3.out" }, "-=0.8");
+      }
+      
+      // Card 0 Text (Immediate)
+      const card0 = cards[0];
+      if(card0) {
+           const c0Texts = card0.querySelectorAll("h3 span span, p span span");
+           if(c0Texts.length) {
+               tlHeader.to(c0Texts, { y: 0, opacity: 1, filter: "blur(0px)", duration: 1, stagger: 0.05, ease: "power3.out" }, "-=0.8"); 
+          }
+      }
+
+      if (!wrapper || cards.length === 0) return;
+
+      // --- 2. Card Stacking (Scrubbed Move, Time-Based Text Reveal) ---
+      gsap.set(cards, { clearProps: "all" }); // Reset
+      
+      const tlStack = gsap.timeline({
+        scrollTrigger: {
+            trigger: "#process-section",
+            start: "top top", 
+            end: `+=${cards.length * 100}%`, 
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1
+        }
+      });
+
+      cards.forEach((card, i) => {
+        if (i === 0) return; 
+        
+        gsap.set(card, { y: window.innerHeight * 1.1 });
+
+        // Helper to animate text independently
+        const animateText = (forward: boolean) => {
+             const spans = card.querySelectorAll("h3 span span, p span span");
+             if(!spans.length) return;
+             
+             if(forward) {
+                 gsap.to(spans, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.8, stagger: 0.05, ease: "power3.out", overwrite: true });
+             } else {
+                 gsap.to(spans, { y: "100%", opacity: 0, filter: "blur(8px)", duration: 0.5, overwrite: true });
+             }
+        };
+
+        const startTime = i - 0.5;
+
+        // Stack Animation
+        tlStack.to(card, {
+            y: i * 25, 
+            duration: 1,
+            ease: "none"
+        }, startTime); 
+
+        // Text Trigger at 60% of movement (Visible)
+        tlStack.call(() => {
+             const dir = tlStack.scrollTrigger?.direction || 1;
+             animateText(dir > 0);
+        }, [], startTime + 0.6);
+      });
+
+      // Animate CTA Button
+      gsap.to("#process-cta", {
+        scrollTrigger: {
+          trigger: "#process-cta",
+          start: "top 85%", // Reveal when it comes into view
+          toggleActions: "play none none reverse",
+        },
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: "power2.out",
+      });
+    }
+  </script>
+</section>

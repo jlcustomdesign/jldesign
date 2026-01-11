@@ -1,0 +1,331 @@
+---
+import BubbleButton from "./ui/BubbleButton.astro";
+
+const services = [
+  {
+    id: "kitchen",
+    title: "Bucătării Custom",
+    desc: "Inima casei tale, regândită. Funcționalitate desăvârșită îmbrăcată în materiale nobile.",
+    img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=2000&auto=format&fit=crop",
+  },
+  {
+    id: "dressing",
+    title: "Dressing & Wardrobes",
+    desc: "Mai mult decât depozitare. Un sanctuar al stilului tău. Iluminare ambientală și finisaje de catifea.",
+    img: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?q=80&w=2000&auto=format&fit=crop",
+  },
+  {
+    id: "living",
+    title: "Living & Library",
+    desc: "Povestea casei, scrisă în lemn masiv. Biblioteci impunătoare și piese care dau tonul conversației.",
+    img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop",
+  },
+  {
+    id: "office",
+    title: "Office & Comercial",
+    desc: "Productivitate și stil. Spații de lucru ergonomice care impresionează clienții din prima clipă.",
+    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop",
+  },
+  {
+    id: "bathroom",
+    title: "Baie & Wellness",
+    desc: "Refugiul tău personal. Mobilier rezistent la umiditate, integrat perfect cu piatra și ceramica.",
+    img: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?q=80&w=2000&auto=format&fit=crop",
+  },
+];
+---
+
+<section
+  id="services-fullscreen-wrapper"
+  class="relative h-screen bg-white overflow-hidden text-primary"
+  data-theme="light"
+>
+  <!-- BACKGROUNDS LAYER (Wrapped in Card) -->
+  <div
+    class="absolute inset-0 w-full h-full z-0 flex items-center justify-center"
+  >
+    <div class="w-[90%] h-[90%] rounded-3xl overflow-hidden relative bg-white">
+      {
+        services.map((service, i) => (
+          <div
+            class="service-bg absolute inset-0 w-full h-full will-change-transform z-10"
+            data-index={i}
+          >
+            <div class="w-full h-full relative">
+              {[0, 1, 2, 3, 4].map((k) => (
+                <div
+                  class="service-slice absolute top-0 bottom-0 h-full overflow-hidden bg-white rounded-3xl"
+                  style={`left: ${k * 20}%; width: 20%;`}
+                >
+                  <img
+                    src={service.img}
+                    alt={service.title}
+                    class="absolute top-0 bottom-0 h-full max-w-none object-cover"
+                    style={`left: -${k * 100}%; width: 500%;`}
+                  />
+                  <div class="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- CONTENT LAYER -->
+  <div
+    class="relative z-10 w-full h-full flex items-center justify-center pointer-events-none"
+  >
+    <!-- HEADER REMOVED -->
+
+    <!-- SLIDES LOOP -->
+    {
+      services.map((service, i) => (
+        <div
+          class="service-content absolute w-full max-w-4xl px-8 md:px-20 text-center flex flex-col items-center opacity-0 translate-y-10"
+          data-index={i}
+        >
+          <div class="font-sans text-xs md:text-sm text-accent tracking-[0.3em] uppercase mb-6">
+            {(i + 1).toString().padStart(2, "0")} — Servicii
+          </div>
+          <h2 class="font-serif font-bold text-5xl md:text-8xl mb-8 leading-tight text-white">
+            {service.title}
+          </h2>
+          <p class="font-sans text-lg md:text-2xl text-secondary/90 leading-relaxed max-w-2xl mb-12 font-light">
+            {service.desc}
+          </p>
+          <div class="pointer-events-auto">
+            <BubbleButton
+              href={`/services/${service.id}`}
+              variant="primary"
+              class="px-8 py-4"
+            >
+              Explorează
+            </BubbleButton>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger, Observer, ScrollToPlugin } from "gsap/all";
+
+  gsap.registerPlugin(ScrollTrigger, Observer, ScrollToPlugin);
+
+  initFullscreenScroll();
+  document.addEventListener("astro:page-load", initFullscreenScroll);
+
+  function initFullscreenScroll() {
+    // if (window.innerWidth < 1024) return; // Removed to enable mobile scroll
+
+    const wrapper = document.querySelector("#services-fullscreen-wrapper");
+    const bgs = gsap.utils.toArray(".service-bg") as HTMLElement[];
+    const contents = gsap.utils.toArray(".service-content") as HTMLElement[];
+
+    if (!wrapper) return;
+
+    const totalSlides = bgs.length;
+    let currentIndex = 0;
+    let isAnimating = false;
+
+    // Buttons
+
+    // INITIAL STATE
+    // Prepare all BGs
+    // Hide all slices initially (yPercent: 100)
+    const allSlices = gsap.utils.toArray(".service-slice") as HTMLElement[];
+    gsap.set(allSlices, { yPercent: 100 });
+
+    // BGs container visibility
+    gsap.set(bgs, { autoAlpha: 1, zIndex: 1 });
+    gsap.set(contents, { autoAlpha: 0, y: 50 });
+
+    // Initial Button State
+
+    // ANIMATION FUNCTION
+    function gotoSlide(index: number, direction: number, isIntro = false) {
+      if (isAnimating && !isIntro) return;
+      isAnimating = true;
+
+      // Current indices (if intro, current is same)
+      const prevIndex = isIntro ? index : currentIndex;
+
+      const prevBg = bgs[prevIndex];
+      const nextBg = bgs[index];
+      const prevContent = contents[prevIndex];
+      const nextContent = contents[index];
+
+      // Slices
+      const nextSlices = nextBg.querySelectorAll(".service-slice");
+      const prevSlices = prevBg.querySelectorAll(".service-slice");
+
+      // Sync Scrollbar
+      const st = ScrollTrigger.getById("services-pin");
+      if (st && !isIntro) {
+        const progress = index / (totalSlides - 1);
+        const scrollPos = st.start + (st.end - st.start) * progress;
+        gsap.to(window, {
+          scrollTo: scrollPos,
+          duration: 1,
+          ease: "power2.out",
+        });
+      }
+
+      if (!isIntro) {
+        // Layers
+        gsap.set(prevBg, { zIndex: 1 });
+        gsap.set(nextBg, { zIndex: 2 });
+      } else {
+        gsap.set(nextBg, { zIndex: 2 });
+      }
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isAnimating = false;
+          currentIndex = index;
+          if (!isIntro) {
+            // Reset previous slices for future use (send to bottom)
+            gsap.set(prevSlices, { yPercent: 100 });
+            // Also restore opacity of prevBg container just in case it was faded
+            gsap.set(prevBg, { autoAlpha: 1 });
+          }
+        },
+      });
+
+      // 1. BG - "Slices Rise"
+      // Ensure next slices start at bottom
+      tl.set(nextSlices, { yPercent: 100 }, 0);
+
+      tl.to(
+        nextSlices,
+        {
+          yPercent: 0,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: "power4.out",
+        },
+        0
+      );
+
+      // Previous slide exit
+      if (!isIntro) {
+        // Fade out prevBg behind nextBg to reveal white gaps between fingers
+        // We fade out the CONTAINER so all its slices disappear together
+        tl.to(prevBg, { autoAlpha: 0, duration: 0.4 }, 0);
+        tl.set(nextBg, { autoAlpha: 1 }, 0);
+      } else {
+        tl.set(nextBg, { autoAlpha: 1 }, 0);
+      }
+
+      // 2. Content
+      if (!isIntro) {
+        tl.to(
+          prevContent,
+          {
+            y: direction > 0 ? -50 : 50,
+            autoAlpha: 0,
+            duration: 0.4,
+            ease: "power2.in",
+            overwrite: true,
+          },
+          0
+        );
+      }
+
+      tl.fromTo(
+        nextContent,
+        { y: 50, autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          overwrite: true,
+        },
+        0.6
+      );
+    }
+
+    // Intro Trigger
+    ScrollTrigger.create({
+      trigger: wrapper,
+      start: "top 60%", // Trigger when section is in view
+      once: true,
+      onEnter: () => gotoSlide(0, 1, true),
+    });
+
+    // OBSERVER LOGIC
+    // Hybrid Approach: Pin for distance, use Observer to hijack navigation.
+
+    const intentObserver = Observer.create({
+      target: wrapper,
+      type: "wheel,touch,pointer",
+      onUp: (self: any) => {
+        // With preventDefault: true, the scroll is already locked.
+        if (isAnimating) return;
+
+        if (currentIndex > 0) {
+          gotoSlide(currentIndex - 1, -1);
+        } else {
+          // Allow scrolling up (exit section)
+          const st = ScrollTrigger.getById("services-pin");
+          if (st) {
+            // Programmatically scroll just before the trigger
+            gsap.to(window, {
+              scrollTo: st.start - 10,
+              duration: 0.5,
+              overwrite: true,
+            });
+          }
+        }
+      },
+      onDown: (self: any) => {
+        if (isAnimating) return;
+
+        if (currentIndex < totalSlides - 1) {
+          gotoSlide(currentIndex + 1, 1);
+        } else {
+          // Allow scrolling down (exit section)
+          const st = ScrollTrigger.getById("services-pin");
+          if (st) {
+            // Programmatically scroll just after the trigger
+            gsap.to(window, {
+              scrollTo: st.end + 10,
+              duration: 0.5,
+              overwrite: true,
+            });
+          }
+        }
+      },
+      tolerance: 10,
+      preventDefault: true, // STRICT locking to prevent momentum skipping
+    });
+
+    // We only enable this observer when the section is PINNED/ACTIVE
+    ScrollTrigger.create({
+      id: "services-pin",
+      trigger: wrapper,
+      start: "top top",
+      end: "+=5000", // Increased pin duration for safety
+      pin: true,
+      onEnter: () => {
+        intentObserver.enable();
+      },
+      onEnterBack: () => {
+        intentObserver.enable();
+      },
+      onLeave: () => {
+        intentObserver.disable();
+      },
+      onLeaveBack: () => {
+        intentObserver.disable();
+      },
+    });
+
+    intentObserver.disable();
+  }
+</script>

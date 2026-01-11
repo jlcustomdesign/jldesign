@@ -1,0 +1,29 @@
+---
+import Layout from "../layouts/Layout.astro";
+import HeroSection from "../components/HeroSection.astro";
+import AboutSection from "../components/AboutSection.astro";
+import ServicesSection from "../components/ServicesSection.astro";
+import PortfolioSection from "../components/PortfolioSection.astro";
+import ProcessSection from "../components/ProcessSection.astro";
+import FaqSection from "../components/FaqSection.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Mobilă la comandă | JL Mobila">
+  <main>
+    <HeroSection />
+    <AboutSection />
+    <ServicesSection />
+    <PortfolioSection />
+    <ProcessSection />
+    <FaqSection />
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  import { initThemeTransition } from "../scripts/theme-transition";
+  document.addEventListener("astro:page-load", initThemeTransition);
+  // Run immediately mostly for dev HMR or initial load if event misses
+  initThemeTransition();
+</script>

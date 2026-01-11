@@ -1,0 +1,67 @@
+---
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Mobilă la comandă - Quiet Luxury" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script is:inline>
+      // Prevent scroll restoration (glitch prevention)
+      if (history.scrollRestoration) {
+        history.scrollRestoration = "manual";
+      }
+      window.scrollTo(0, 0);
+    </script>
+  </head>
+  <body
+    class="bg-secondary text-primary font-sans antialiased overflow-x-hidden"
+  >
+    <!--  Navbar must be outside smooth-wrapper to be fixed/sticky correctly -->
+    <Navbar />
+
+    <!-- ScrollSmoother Structure -->
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <slot />
+        <!-- Footer will go here -->
+      </div>
+    </div>
+
+    <script>
+      import { initSmoothScroll } from "../scripts/smooth-scroll";
+
+      initSmoothScroll();
+      document.addEventListener("astro:page-load", initSmoothScroll);
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Custom Scrollbar for 'Quiet Luxury' feel */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+</style>

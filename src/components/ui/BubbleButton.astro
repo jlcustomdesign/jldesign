@@ -1,0 +1,150 @@
+---
+interface Props {
+  href: string;
+  class?: string;
+  id?: string;
+  variant?: "primary" | "dark" | "outline";
+}
+
+const { href, class: className, id, variant = "primary" } = Astro.props;
+---
+
+<a
+  href={href}
+  id={id}
+  class:list={[
+    "work-btn relative inline-flex items-center justify-center text-center px-10 py-4 rounded-2xl font-bold uppercase tracking-wider overflow-hidden transition-colors duration-300",
+    `variant-${variant}`,
+    className,
+  ]}
+>
+  <span class="relative z-10"><slot /></span>
+</a>
+
+<style>
+  .work-btn {
+    /* Padding handled by Tailwind utility classes for easy override */
+    cursor: pointer;
+    border: none;
+    font-size: 0.75rem;
+  }
+
+  /* Variants */
+  .variant-primary {
+    background: white;
+    color: black;
+  }
+
+  .variant-dark {
+    background: black;
+    color: white;
+  }
+
+  .variant-outline {
+    background: transparent;
+    border: 1px solid black;
+    color: black;
+    /* Adjust padding to account for border if needed, or box-sizing handles it */
+  }
+
+  /* Hover state: Text turns White for all (blob is gold) */
+  .work-btn:hover {
+    color: white;
+  }
+
+  /* Outline specific: Border color might need to fade out or change? 
+     Let's make it Gold to match blob or Transparent? 
+     If Gold blob covers it, border might look weird if black. 
+     Let's fade border to transparent or gold.
+  */
+  .variant-outline:hover {
+    border-color: #d4af37;
+  }
+
+  /* The actual blob element injected by JS */
+  :global(.work-blob-trick) {
+    z-index: 0;
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #d4af37; /* Accent Gold */
+    border-radius: 50%;
+    border-color: #d4af37;
+    border-width: 1px;
+    border-style: solid;
+    transition:
+      border-width 0.45s ease-in-out,
+      margin-left 0.45s ease-in-out,
+      margin-top 0.45s ease-in-out;
+    pointer-events: none;
+  }
+
+  :global(.work-expand) {
+    border-width: 300px;
+    margin-left: -300px;
+    margin-top: -300px;
+  }
+</style>
+
+<script>
+  function initBubbleButtons() {
+    const btns = document.querySelectorAll(".work-btn");
+
+    btns.forEach((btn) => {
+      // Cleanup to prevent duplicate listeners if re-run
+      // @ts-ignore
+      if (btn.dataset.bubbleInit) return;
+      // @ts-ignore
+      btn.dataset.bubbleInit = "true";
+
+      btn.addEventListener("mouseenter", function (e) {
+        const mouseEvent = e as MouseEvent;
+        // @ts-ignore
+        const self = this as HTMLElement;
+
+        // Remove any existing
+        const existing = self.querySelector(".work-blob-trick");
+        if (existing) existing.remove();
+
+        const rect = self.getBoundingClientRect();
+        const x = mouseEvent.pageX - rect.left - window.scrollX;
+        const y = mouseEvent.pageY - rect.top - window.scrollY;
+
+        const blob = document.createElement("div");
+        blob.className = "work-blob-trick";
+        blob.style.left = x + "px";
+        blob.style.top = y + "px";
+        self.appendChild(blob);
+
+        setTimeout(function () {
+          blob.classList.add("work-expand");
+        }, 20);
+      });
+
+      btn.addEventListener("mouseleave", function (e) {
+        const mouseEvent = e as MouseEvent;
+        // @ts-ignore
+        const self = this as HTMLElement;
+        const rect = self.getBoundingClientRect();
+        const x = mouseEvent.pageX - rect.left - window.scrollX;
+        const y = mouseEvent.pageY - rect.top - window.scrollY;
+
+        const blobs = self.querySelectorAll(".work-blob-trick");
+        blobs.forEach(function (b) {
+          const blob = b as HTMLElement;
+          blob.style.left = x + "px";
+          blob.style.top = y + "px";
+          blob.classList.remove("work-expand");
+          setTimeout(function () {
+            blob.remove();
+          }, 520);
+        });
+      });
+    });
+  }
+
+  // Run on load
+  document.addEventListener("astro:page-load", initBubbleButtons);
+  // Also pure init
+  initBubbleButtons();
+</script>

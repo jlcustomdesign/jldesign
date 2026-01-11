@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Grift';
+  src: url('/Fonts/grift-2025-04-02-02-51-35-utc/Variable-TT/Grift Variable-VF.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-accent: #D4AF37;
+  --color-primary: #000000;
+  --color-secondary: #FFFFFF;
+  
+  --font-serif: "Grift", serif;
+  --font-sans: "Grift", sans-serif;
+}

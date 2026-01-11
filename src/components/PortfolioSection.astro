@@ -1,0 +1,137 @@
+---
+const portfolio = [
+  {
+    name: "Apartament Băneasa",
+    material: "Nuc American",
+    img: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    name: "Villa Pipera",
+    material: "Stejar Masiv",
+    img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    name: "Penthouse Herăstrău",
+    material: "MDF Vopsit & Marmură",
+    img: "https://images.unsplash.com/photo-1600566752355-35792bedcfe1?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    name: "Loft Timpuri Noi",
+    material: "Metal & Lemn Recuperat",
+    img: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    name: "Cluj Residence",
+    material: "Furnir Eucalipt",
+    img: "https://images.unsplash.com/photo-1615529182904-14819c35db37?q=80&w=1600&auto=format&fit=crop",
+  },
+];
+---
+
+<section
+  class="bg-secondary relative overflow-hidden"
+  id="portfolio-section"
+  data-theme="light"
+>
+  <!-- No height set on wrapper needed for pin:true, GSAP handles spacing. -->
+  <div
+    class="w-full relative min-h-screen flex flex-col justify-center pt-32 pb-12"
+    id="portfolio-wrapper"
+  >
+    <div
+      class="container mx-auto px-4 md:px-8 mb-8 md:mb-12 flex justify-between items-end"
+    >
+      <h2 class="font-serif text-4xl md:text-5xl text-primary">
+        Portofoliu Selectiv
+      </h2>
+      <span class="text-gray-400 hidden md:inline-block"
+        >← Scroll Horizontally →</span
+      >
+    </div>
+
+    <!-- The Horizontal Track -->
+    <div class="flex items-center overflow-hidden w-full">
+      <div
+        class="flex gap-4 md:gap-16 pl-4 md:pl-24 pr-24"
+        id="portfolio-gallery"
+      >
+        {
+          portfolio.map((item, index) => (
+            <div class="relative flex-none w-[85vw] md:w-[420px] xl:w-[550px] group portfolio-item">
+              <div class="w-full aspect-[3/2] rounded-2xl overflow-hidden relative">
+                <img
+                  src={item.img}
+                  alt={item.name}
+                  class="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-700 ease-out scale-100 group-hover:scale-105 portfolio-img"
+                />
+              </div>
+              <div class="mt-6 flex justify-between items-start">
+                <div>
+                  <h3 class="font-serif text-2xl text-primary">{item.name}</h3>
+                  <p class="text-sm font-medium text-accent mt-1 uppercase tracking-wider">
+                    {item.material}
+                  </p>
+                </div>
+                <div class="w-10 h-10 border border-primary/20 rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    class="text-primary transform -rotate-45"
+                  >
+                    <path
+                      d="M5 12h14M12 5l7 7-7 7"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  initPortfolioAnim();
+  document.addEventListener("astro:page-load", initPortfolioAnim);
+
+  function initPortfolioAnim() {
+    // Only verify context once
+    const wrapper = document.querySelector("#portfolio-wrapper");
+    const gallery = document.querySelector("#portfolio-gallery");
+
+    if (!wrapper || !gallery) return;
+
+    const ctx = gsap.context(() => {
+      const getScrollAmount = () => {
+        let galleryWidth = (gallery as HTMLElement).scrollWidth;
+        return -(galleryWidth - window.innerWidth + 100);
+      };
+
+      const tween = gsap.to(gallery, {
+        x: getScrollAmount,
+        ease: "none",
+        scrollTrigger: {
+          trigger: wrapper, // The wrapper is pinned
+          start: "top top", // When top of wrapper hits top of viewport
+          end: "+=3000", // Scroll distance
+          pin: true, // Pin the wrapper
+          scrub: 1, // Smooth scrubbing
+          invalidateOnRefresh: true,
+        },
+      });
+    }, wrapper);
+  }
+</script>
