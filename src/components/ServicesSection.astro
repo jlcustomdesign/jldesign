@@ -37,7 +37,7 @@ const services = [
 
 <section
   id="services-fullscreen-wrapper"
-  class="relative h-[100dvh] bg-white overflow-hidden text-primary"
+  class="relative h-[100dvh] bg-white overflow-hidden text-primary touch-none"
   data-theme="light"
 >
   <!-- BACKGROUNDS LAYER (Wrapped in Card) -->
@@ -287,11 +287,13 @@ const services = [
       lockAxis: true, // Forces single-axis processing, preventing bleed-through
       onUp: (self: any) => {
         if (isAnimating) return;
-        // Check if event is from mouse wheel or touch
-        const isWheel = self.event.type === "wheel";
+        // Detect if it's a wheel event (Mouse) vs Touch/Pointer
+        // Note: Observer normalizes types, but we check raw event type to be sure
+        const type = self.event.type;
+        const isWheel = type === "wheel" || type === "mousewheel";
 
         // Desktop (Wheel Up) -> Previous
-        // Mobile (Swipe Down / Touch "Up" signal) -> Next (Inverted)
+        // Mobile (Swipe Down / Touch "Up" signal) -> Next (Inverted per user request)
         if (isWheel) {
           goPrev();
         } else {
@@ -300,17 +302,18 @@ const services = [
       },
       onDown: (self: any) => {
         if (isAnimating) return;
-        const isWheel = self.event.type === "wheel";
+        const type = self.event.type;
+        const isWheel = type === "wheel" || type === "mousewheel";
 
         // Desktop (Wheel Down) -> Next
-        // Mobile (Swipe Up / Touch "Down" signal) -> Previous (Inverted)
+        // Mobile (Swipe Up / Touch "Down" signal) -> Previous (Inverted per user request)
         if (isWheel) {
           goNext();
         } else {
           goPrev();
         }
       },
-      tolerance: 20, // Increased tolerance to filter out micro-movements on mobile
+      tolerance: 10, // Reduced tolerance slightly for better responsiveness with touch-none
       preventDefault: true, // STRICT locking
     });
 
