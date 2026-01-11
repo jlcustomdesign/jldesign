@@ -60,19 +60,30 @@ const portfolio = [
       >
         {
           portfolio.map((item, index) => (
-            <div class="relative flex-none w-[85vw] md:w-[420px] xl:w-[550px] group portfolio-item snap-center">
+            <div
+              class="relative flex-none w-[85vw] md:w-[420px] xl:w-[550px] group portfolio-item snap-center"
+              style="backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: translateZ(0);"
+            >
               <div class="w-full aspect-[3/2] rounded-2xl overflow-hidden relative">
                 <img
                   src={item.img}
                   alt={item.name}
                   loading="lazy"
-                  class="w-full h-full object-cover grayscale-[30%] mobile:filter-none group-hover:grayscale-0 transition-all duration-700 ease-out scale-100 group-hover:scale-105 portfolio-img"
+                  class="w-full h-full object-cover grayscale-[30%] md:group-hover:grayscale-0 md:transition-all md:duration-700 md:ease-out scale-100 md:group-hover:scale-105 portfolio-img"
                 />
               </div>
               <div class="mt-6 flex justify-between items-start">
                 <div>
-                  <h3 class="font-serif text-2xl text-primary">{item.name}</h3>
-                  <p class="text-sm font-medium text-accent mt-1 uppercase tracking-wider">
+                  <h3
+                    class="font-serif text-2xl text-primary"
+                    style="backface-visibility: hidden; -webkit-backface-visibility: hidden;"
+                  >
+                    {item.name}
+                  </h3>
+                  <p
+                    class="text-sm font-medium text-accent mt-1 uppercase tracking-wider"
+                    style="backface-visibility: hidden;"
+                  >
                     {item.material}
                   </p>
                 </div>
