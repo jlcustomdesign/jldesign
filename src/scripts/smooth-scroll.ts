@@ -16,7 +16,7 @@ export function initSmoothScroll() {
     content: "#smooth-content",
     smooth: 2, // Reverted to 2 for better responsiveness (3 was too slow)
     effects: true, 
-    smoothTouch: 0.1,
+    smoothTouch: false, // Disabled for native mobile performance
   });
 
   /* @ts-ignore */
