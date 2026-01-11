@@ -76,7 +76,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: ".about-card",
-          start: "top bottom",
+          start: "top 90%", // Trigger earlier
           end: "center 60%",
           scrub: 1,
         },
