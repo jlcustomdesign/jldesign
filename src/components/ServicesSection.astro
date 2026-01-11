@@ -133,12 +133,12 @@ const services = [
 
     // INITIAL STATE
     // Prepare all BGs
-    // Hide all slices initially (yPercent: 100)
     const allSlices = gsap.utils.toArray(".service-slice") as HTMLElement[];
-    gsap.set(allSlices, { yPercent: 100 });
+    // Ensure slices are visible inside their containers (No transform hiding)
+    gsap.set(allSlices, { yPercent: 0 });
 
     // BGs container visibility
-    gsap.set(bgs, { autoAlpha: 1, zIndex: 0 });
+    gsap.set(bgs, { autoAlpha: 0, zIndex: 0 }); // Hide all initially
     gsap.set(contents, { autoAlpha: 0, y: 50 });
 
     // ANIMATION FUNCTION
@@ -154,10 +154,6 @@ const services = [
       const prevContent = contents[prevIndex];
       const nextContent = contents[index];
 
-      // Slices
-      const nextSlices = nextBg.querySelectorAll(".service-slice");
-      const prevSlices = prevBg.querySelectorAll(".service-slice");
-
       // Sync Scrollbar
       const st = ScrollTrigger.getById("services-pin");
       if (st && !isIntro) {
@@ -171,8 +167,8 @@ const services = [
       }
 
       if (!isIntro) {
-        // Layers
-        gsap.set(prevBg, { zIndex: 1 });
+        // Layers: next on top (10), prev below (1)
+        gsap.set(prevBg, { zIndex: 1, autoAlpha: 1 }); // Ensure prev is visible
         gsap.set(nextBg, { zIndex: 10 });
       } else {
         gsap.set(nextBg, { zIndex: 10 });
@@ -183,38 +179,24 @@ const services = [
           isAnimating = false;
           currentIndex = index;
           if (!isIntro) {
-            // Reset previous slices for future use (send to bottom)
-            gsap.set(prevSlices, { yPercent: 100 });
-            // Drop prevBg back to bottom of stack
-            gsap.set(prevBg, { autoAlpha: 1, zIndex: 0 });
+            // Hide previous BG after it's fully covered
+            gsap.set(prevBg, { autoAlpha: 0, zIndex: 0 });
           }
         },
       });
 
-      // 1. BG - "Slices Rise"
-      // Ensure next slices start at bottom
-      tl.set(nextSlices, { yPercent: 100 }, 0);
-
-      tl.to(
-        nextSlices,
+      // 1. BG Animation - Robust Crossfade
+      // Animate Next BG Opacity from 0 to 1
+      tl.fromTo(
+        nextBg,
+        { autoAlpha: 0 },
         {
-          yPercent: 0,
-          duration: 1.2,
-          stagger: 0.1,
-          ease: "power4.out",
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: "power2.out",
         },
         0
       );
-
-      // Previous slide exit
-      if (!isIntro) {
-        // Fade out prevBg behind nextBg to reveal white gaps between fingers
-        // We fade out the CONTAINER so all its slices disappear together
-        tl.to(prevBg, { autoAlpha: 0, duration: 0.4 }, 0);
-        tl.set(nextBg, { autoAlpha: 1 }, 0);
-      } else {
-        tl.set(nextBg, { autoAlpha: 1 }, 0);
-      }
 
       // 2. Content
       if (!isIntro) {
@@ -241,7 +223,7 @@ const services = [
           ease: "power3.out",
           overwrite: true,
         },
-        0.6
+        0.5
       );
     }
 
