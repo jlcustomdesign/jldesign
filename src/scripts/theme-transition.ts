@@ -114,8 +114,28 @@ export function initThemeTransition() {
                  gsap.to(".faq-item-v2", { borderColor: "#e5e7eb", duration: 0.5, overwrite: true });
             },
             onLeaveBack: () => {
-                 // Force Dark Mode (Revert)
-                 tl.play(); // Re-play the master dark timeline
+                 // Force Dark Mode (Revert) explicitly
+                 // We cannot rely on tl.play() because overwrites occurred
+                 gsap.to("body, #portfolio-section, #process-section, #faq-section-v2, footer", { 
+                    backgroundColor: "#050505", 
+                    duration: 0.5, 
+                    ease: "power2.out",
+                    overwrite: true 
+                });
+                gsap.to(textElementsToWhite, { 
+                    color: "#ffffff", // White text
+                    duration: 0.5, 
+                    ease: "power2.out",
+                    overwrite: true 
+                });
+                 // Handle SVG/Path inverted back to white
+                 textElementsToWhite.forEach(el => {
+                    if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
+                        gsap.to(el, { stroke: "#ffffff", fill: "transparent", duration: 0.5, overwrite: true });
+                    }
+                 });
+                 // FAQ Borders back to dark
+                 gsap.to(".faq-item-v2", { borderColor: "#333333", duration: 0.5, overwrite: true });
             },
             id: "theme-footer-override"
         });
