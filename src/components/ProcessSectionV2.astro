@@ -7,7 +7,7 @@ const steps = [
     title: "Consultanță",
     desc: "Discutăm viziunea ta. Luăm măsurători precise și înțelegem fluxul spațiului.",
     // Meeting / Discussion
-    img: "https://images.unsplash.com/photo-1556910103-1c02745a30bf?q=80&w=800",
+    img: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=800",
   },
   {
     step: "02",
@@ -20,15 +20,15 @@ const steps = [
     step: "03",
     title: "Producție",
     desc: "Folosim utilaje CNC de ultimă generație și finisaje manuale pentru detalii impecabile.",
-    // Workshop / Craft
-    img: "https://images.unsplash.com/photo-1622372738946-a28763b1f9b0?q=80&w=800",
+    // Workshop - Woodworking
+    img: "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?q=80&w=800",
   },
   {
     step: "04",
     title: "Montaj",
     desc: "Echipa noastră instalează totul, reglează feroneria și lasă totul curat.",
-    // Installation / Living Room
-    img: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?q=80&w=800",
+    // Modern Interior / Installation
+    img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800",
   },
 ];
 ---
@@ -50,8 +50,9 @@ const steps = [
     </div>
 
     <!-- Layout Container -->
+    <!-- Added min-h to allow pinning space if needed, but ScrollTrigger 'end' handles duration -->
     <div
-      class="flex flex-col lg:grid lg:grid-cols-[1fr_minmax(500px,650px)_1fr] gap-8 items-start relative"
+      class="flex flex-col lg:grid lg:grid-cols-[1fr_minmax(500px,650px)_1fr] gap-8 items-start relative h-full"
     >
       <!-- DESKTOP STRUCTURE -->
 
@@ -60,14 +61,20 @@ const steps = [
         class="hidden lg:flex flex-col justify-between h-[500px] pt-12 text-right pr-8 gap-32"
       >
         <!-- Step 1 Text -->
-        <div class="process-text origin-right" data-step="0">
+        <div
+          class="process-text origin-right opacity-20 blur-sm will-change-transform"
+          data-step="0"
+        >
           <h3 class="font-serif text-2xl text-primary font-bold mb-3">
             {steps[0].title}
           </h3>
           <p class="text-gray-500 text-sm leading-relaxed">{steps[0].desc}</p>
         </div>
         <!-- Step 3 Text -->
-        <div class="process-text origin-right" data-step="2">
+        <div
+          class="process-text origin-right opacity-20 blur-sm will-change-transform"
+          data-step="2"
+        >
           <h3 class="font-serif text-2xl text-primary font-bold mb-3">
             {steps[2].title}
           </h3>
@@ -84,7 +91,7 @@ const steps = [
           <!-- Image 0 -->
           <div
             class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                         transform hover:scale-105 hover:z-30 process-image"
+                         transform process-image opacity-20 blur-sm will-change-transform"
             data-step="0"
           >
             <img
@@ -97,7 +104,7 @@ const steps = [
           <!-- Image 2 -->
           <div
             class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                         transform hover:scale-105 hover:z-30 process-image"
+                         transform process-image opacity-20 blur-sm will-change-transform"
             data-step="2"
           >
             <img
@@ -114,7 +121,7 @@ const steps = [
           <!-- Image 1 -->
           <div
             class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                         transform hover:scale-105 hover:z-30 process-image"
+                         transform process-image opacity-20 blur-sm will-change-transform"
             data-step="1"
           >
             <img
@@ -127,7 +134,7 @@ const steps = [
           <!-- Image 3 -->
           <div
             class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                         transform hover:scale-105 hover:z-30 process-image"
+                         transform process-image opacity-20 blur-sm will-change-transform"
             data-step="3"
           >
             <img
@@ -145,14 +152,20 @@ const steps = [
         class="hidden lg:flex flex-col justify-between h-[500px] pt-24 pl-8 gap-32"
       >
         <!-- Step 2 Text -->
-        <div class="process-text origin-left" data-step="1">
+        <div
+          class="process-text origin-left opacity-20 blur-sm will-change-transform"
+          data-step="1"
+        >
           <h3 class="font-serif text-2xl text-primary font-bold mb-3">
             {steps[1].title}
           </h3>
           <p class="text-gray-500 text-sm leading-relaxed">{steps[1].desc}</p>
         </div>
         <!-- Step 4 Text -->
-        <div class="process-text origin-left" data-step="3">
+        <div
+          class="process-text origin-left opacity-20 blur-sm will-change-transform"
+          data-step="3"
+        >
           <h3 class="font-serif text-2xl text-primary font-bold mb-3">
             {steps[3].title}
           </h3>
@@ -172,8 +185,8 @@ const steps = [
 
 <style>
   /* 
-     HOVER LOGIC 
-     Target the whole .hover-container via :has()
+     HOVER LOGIC (Still active, but now elements start blurry by default until revealed)
+     Once revealed (blur: 0), the hover logic takes over.
   */
 
   /* 1. When ANY image is hovered: Blur everything in container */
@@ -207,7 +220,7 @@ const steps = [
     opacity: 1 !important;
     filter: none !important;
     transform: scale(1.1) !important;
-    color: var(--color-primary); /* Ensure text stays sharp/colored */
+    color: var(--color-primary);
   }
 </style>
 
@@ -217,27 +230,52 @@ const steps = [
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Sequential Reveal Animation
+  // Sequential Reveal Animation with PIN logic
   document.addEventListener("astro:page-load", () => {
     const section = document.querySelector("#process-section-v2");
     if (!section) return;
 
-    const elements = section.querySelectorAll(
-      ".process-header, .process-image, .process-text"
-    );
-
-    // Use .from() so elements are visible if JS fails, but animated in properly
-    gsap.from(elements, {
+    // Use a timeline that PINS the section
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top 70%", // Start revealing when section enters
+        start: "top top", // Pin when section hits top
+        end: "+=2000", // Scroll distance to complete sequence
+        pin: true,
+        scrub: 1, // Smooth scrub
+        anticipatePin: 1,
       },
-      y: 50,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.15, // Sequential delay
-      ease: "power3.out",
-      clearProps: "all", // Clean up after animation so hover effects work cleanly
     });
+
+    // Animate each Step (Image + Text) sequentially
+    // Select by data-step to group them
+    [0, 1, 2, 3].forEach((i) => {
+      const elements = section.querySelectorAll(`[data-step="${i}"]`);
+
+      // Reveal: Blur -> 0, Opacity -> 1
+      tl.to(
+        elements,
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          transform: "scale(1)", // reset scale if needed
+          duration: 1,
+          ease: "power2.out",
+        },
+        i * 1.5
+      ); // Stagger by appending to timeline with gap
+    });
+
+    // Ensure CTA is visible at end?
+    // It's part of the section flow. It might be good to reveal it last.
+    const cta = section.querySelector(".mt-16");
+    if (cta) {
+      tl.fromTo(
+        cta,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1 },
+        "+=0.5"
+      );
+    }
   });
 </script>
