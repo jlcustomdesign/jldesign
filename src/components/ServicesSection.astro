@@ -266,26 +266,7 @@ const services = [
       type: "wheel,touch,pointer",
       tolerance: 50, // Higher tolerance for mobile touch
       onUp: () => {
-        // onUp = user swipes/scrolls UP = wants to go to PREVIOUS slide
-        if (isAnimating) return;
-
-        if (currentIndex > 0) {
-          gotoSlide(currentIndex - 1, -1);
-        } else {
-          // Exit section upward - temporarily allow scroll
-          (wrapper as HTMLElement).style.touchAction = "auto";
-          const st = ScrollTrigger.getById("services-pin");
-          if (st) {
-            gsap.to(window, {
-              scrollTo: st.start - 10,
-              duration: 0.5,
-              overwrite: true,
-            });
-          }
-        }
-      },
-      onDown: () => {
-        // onDown = user swipes/scrolls DOWN = wants to go to NEXT slide
+        // onUp = user swipes UP = wants to go to NEXT slide (scroll down)
         if (isAnimating) return;
 
         if (currentIndex < totalSlides - 1) {
@@ -297,6 +278,25 @@ const services = [
           if (st) {
             gsap.to(window, {
               scrollTo: st.end + 10,
+              duration: 0.5,
+              overwrite: true,
+            });
+          }
+        }
+      },
+      onDown: () => {
+        // onDown = user swipes DOWN = wants to go to PREVIOUS slide (scroll up)
+        if (isAnimating) return;
+
+        if (currentIndex > 0) {
+          gotoSlide(currentIndex - 1, -1);
+        } else {
+          // Exit section upward - temporarily allow scroll
+          (wrapper as HTMLElement).style.touchAction = "auto";
+          const st = ScrollTrigger.getById("services-pin");
+          if (st) {
+            gsap.to(window, {
+              scrollTo: st.start - 10,
               duration: 0.5,
               overwrite: true,
             });
