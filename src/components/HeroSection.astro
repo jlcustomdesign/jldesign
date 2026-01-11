@@ -449,7 +449,6 @@ const heroImage = "/Images/Imagine hero section.png";
   }
 
   // Hero Exit Animation: Pin hero, scale down and blur as About section slides over
-  // DESKTOP ONLY - Mobile has issues with pinning causing "jump" glitches
   function initHeroExitAnimation() {
     const heroSection = document.querySelector("#hero-section");
     const heroContent = document.querySelector("#hero-content-wrapper");
@@ -458,17 +457,12 @@ const heroImage = "/Images/Imagine hero section.png";
 
     if (!heroSection || !heroContent || !aboutSection) return;
 
-    // Mobile detection - SKIP entire animation on mobile to avoid jump
+    // Mobile detection
     const isMobile = window.innerWidth < 1024;
-    if (isMobile) {
-      // Remove z-index styling on mobile since we're not pinning
-      (heroSection as HTMLElement).style.zIndex = "";
-      return;
-    }
 
-    // Desktop only: blur + fade + scale animation
+    // Blur + fade animation (works on all devices)
     gsap.to(heroContent, {
-      filter: "blur(8px)",
+      filter: isMobile ? "blur(4px)" : "blur(8px)",
       opacity: 0.5,
       ease: "none",
       scrollTrigger: {
@@ -481,10 +475,10 @@ const heroImage = "/Images/Imagine hero section.png";
       },
     });
 
-    // Scale the SVG directly
+    // Scale the SVG directly (works on all devices)
     if (heroSvg) {
       gsap.to(heroSvg, {
-        scale: 0.9,
+        scale: isMobile ? 0.95 : 0.9,
         ease: "none",
         scrollTrigger: {
           trigger: heroSection,
