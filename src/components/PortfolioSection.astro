@@ -51,12 +51,9 @@ const portfolio = [
 
     <!-- The Horizontal Track -->
     <!-- 
-      Mobile: overflow-x-auto snap-x snap-mandatory (Native Horizontal Scroll)
-      Desktop: overflow-hidden (GSAP Controlled)
+      Universal: overflow-hidden (GSAP Controlled on All Devices)
     -->
-    <div
-      class="w-full lg:overflow-hidden overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
-    >
+    <div class="w-full overflow-hidden">
       <div
         class="flex gap-4 md:gap-16 pl-4 md:pl-24 pr-24 will-change-transform transform-gpu"
         id="portfolio-gallery"
@@ -114,6 +111,7 @@ const portfolio = [
   document.addEventListener("astro:page-load", initPortfolioAnim);
 
   function initPortfolioAnim() {
+    // Only verify elements prompt existence
     const wrapper = document.querySelector("#portfolio-wrapper");
     const gallery = document.querySelector("#portfolio-gallery");
 
@@ -122,10 +120,9 @@ const portfolio = [
     // Critical: Save CSS styles (native scroll) before GSAP touches them
     ScrollTrigger.saveStyles("#portfolio-gallery, #portfolio-wrapper");
 
-    const mm = gsap.matchMedia();
-
-    // Desktop: Pinning & Horizontal Scroll
-    mm.add("(min-width: 1024px)", () => {
+    // Enable GSAP Horizontal Scroll for ALL devices
+    // User explicitly requested "Scroll Lock/Pin" behavior on mobile too.
+    const ctx = gsap.context(() => {
       const getScrollAmount = () => {
         let galleryWidth = (gallery as HTMLElement).scrollWidth;
         return -(galleryWidth - window.innerWidth + 100);
@@ -143,14 +140,16 @@ const portfolio = [
           invalidateOnRefresh: true,
         },
       });
-    });
+    }, wrapper); // <-- This is new
+
+    // Refresh to ensure pinning calculations are correct
+    ScrollTrigger.refresh();
 
     // Cleanup logic
     const cleanup = () => {
-      mm.revert();
+      ctx.revert(); // Revert all GSAP animations and ScrollTriggers created in this context
       document.removeEventListener("astro:before-preparation", cleanup);
     };
     document.addEventListener("astro:before-preparation", cleanup);
   }
 </script>
-```
