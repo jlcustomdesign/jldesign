@@ -261,9 +261,6 @@ const services = [
     // OBSERVER LOGIC
     // Hybrid Approach: Pin for distance, use Observer to hijack navigation.
 
-    // Add touch-action CSS to wrapper for proper touch event capture
-    (wrapper as HTMLElement).style.touchAction = "none";
-
     const intentObserver = Observer.create({
       target: wrapper,
       type: "wheel,touch,pointer",
@@ -275,7 +272,8 @@ const services = [
         if (currentIndex > 0) {
           gotoSlide(currentIndex - 1, -1);
         } else {
-          // Exit section upward
+          // Exit section upward - temporarily allow scroll
+          (wrapper as HTMLElement).style.touchAction = "auto";
           const st = ScrollTrigger.getById("services-pin");
           if (st) {
             gsap.to(window, {
@@ -293,7 +291,8 @@ const services = [
         if (currentIndex < totalSlides - 1) {
           gotoSlide(currentIndex + 1, 1);
         } else {
-          // Exit section downward
+          // Exit section downward - temporarily allow scroll
+          (wrapper as HTMLElement).style.touchAction = "auto";
           const st = ScrollTrigger.getById("services-pin");
           if (st) {
             gsap.to(window, {
@@ -315,15 +314,19 @@ const services = [
       end: "+=5000", // Increased pin duration for safety
       pin: true,
       onEnter: () => {
+        (wrapper as HTMLElement).style.touchAction = "none";
         intentObserver.enable();
       },
       onEnterBack: () => {
+        (wrapper as HTMLElement).style.touchAction = "none";
         intentObserver.enable();
       },
       onLeave: () => {
+        (wrapper as HTMLElement).style.touchAction = "auto";
         intentObserver.disable();
       },
       onLeaveBack: () => {
+        (wrapper as HTMLElement).style.touchAction = "auto";
         intentObserver.disable();
       },
     });
