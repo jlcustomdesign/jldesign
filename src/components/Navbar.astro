@@ -187,17 +187,17 @@ const links = [
     navContainer.classList.remove("nav-light");
 
     // Scenario B: Watch About section instead of Hero
-    // When About enters viewport, switch to light theme
+    // When About enters viewport significantly, switch to light theme
     // This works better with pinned Hero (parallax reveal)
     if (aboutSection) {
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              // About section visible -> Light theme (black text)
+            if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
+              // About section significantly visible -> Light theme (black text)
               navContainer.classList.add("nav-light");
               navContainer.classList.remove("nav-dark");
-            } else {
+            } else if (!entry.isIntersecting) {
               // About section not visible -> Dark theme (white text)
               navContainer.classList.add("nav-dark");
               navContainer.classList.remove("nav-light");
@@ -206,8 +206,8 @@ const links = [
         },
         {
           root: null,
-          threshold: 0,
-          rootMargin: "-100px 0px 0px 0px", // Trigger when about section reaches header
+          threshold: [0, 0.1, 0.2], // Multiple thresholds for smoother detection
+          rootMargin: "-80px 0px 0px 0px", // Account for navbar height
         }
       );
 
