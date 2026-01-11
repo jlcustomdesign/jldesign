@@ -267,7 +267,6 @@ const services = [
     const intentObserver = Observer.create({
       target: wrapper,
       type: "wheel,touch,pointer",
-      wheelSpeed: -1, // Normalize wheel direction
       tolerance: 50, // Higher tolerance for mobile touch
       onUp: () => {
         // onUp = user swipes/scrolls UP = wants to go to PREVIOUS slide
