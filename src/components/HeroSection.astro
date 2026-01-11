@@ -486,13 +486,30 @@ const heroImage = "/Images/Imagine hero section.png";
         invalidateOnRefresh: true,
       },
     });
+
+    // Mark as initialized to prevent re-runs
+    (heroSection as HTMLElement).dataset.exitAnimInit = "true";
   }
 
-  // Initialize hero exit animation
-  document.addEventListener("astro:page-load", initHeroExitAnimation);
+  // Initialize hero exit animation - only once
+  let heroExitInitialized = false;
+  function safeInitHeroExitAnimation() {
+    if (heroExitInitialized) return;
+    const heroSection = document.querySelector("#hero-section");
+    if (heroSection && (heroSection as HTMLElement).dataset.exitAnimInit)
+      return;
+    heroExitInitialized = true;
+    initHeroExitAnimation();
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    heroExitInitialized = false; // Reset on page navigation
+    safeInitHeroExitAnimation();
+  });
+
   if (document.readyState === "complete") {
-    requestAnimationFrame(initHeroExitAnimation);
+    requestAnimationFrame(safeInitHeroExitAnimation);
   } else {
-    window.addEventListener("load", initHeroExitAnimation);
+    window.addEventListener("load", safeInitHeroExitAnimation);
   }
 </script>
