@@ -475,13 +475,17 @@ const heroImage = "/Images/Imagine hero section.png";
       filter: isMobile ? "blur(4px)" : "blur(8px)",
       opacity: 0.5,
       ease: "none",
+      force3D: true,
       scrollTrigger: {
         trigger: heroSection,
         start: "bottom bottom",
         end: "bottom top",
-        scrub: true,
+        // Use numeric scrub for better iOS compatibility
+        scrub: 0.5,
         pin: true,
         pinSpacing: false,
+        // Force refresh on orientation change
+        invalidateOnRefresh: true,
       },
     });
   }
