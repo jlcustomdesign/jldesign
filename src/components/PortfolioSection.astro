@@ -114,42 +114,56 @@ const portfolio = [
   document.addEventListener("astro:page-load", initPortfolioAnim);
 
   function initPortfolioAnim() {
-    // Cleanup previous instance if it exists (though module scope is cleaner, keeping it local is safer for Astro's multiple runs)
+    // Cleanup previous listener to be safe (though removed in cleanup function usually)
+    // We rely on the event listener removal in the cleanup function.
+
     const wrapper = document.querySelector("#portfolio-wrapper");
     const gallery = document.querySelector("#portfolio-gallery");
 
     if (!wrapper || !gallery) return;
 
-    // Create a MatchMedia instance
-    const mm = gsap.matchMedia();
+    // Use a small delay to ensure layout (images/css) is stable
+    setTimeout(() => {
+      const mm = gsap.matchMedia();
 
-    // Desktop Logic
-    mm.add("(min-width: 1024px)", () => {
-      // Calculate scroll amount dynamically
-      const getScrollAmount = () => {
-        let galleryWidth = (gallery as HTMLElement).scrollWidth;
-        return -(galleryWidth - window.innerWidth + 100);
-      };
+      // Desktop Logic
+      mm.add("(min-width: 1024px)", () => {
+        // Calculate scroll amount dynamically
+        const getScrollAmount = () => {
+          let galleryWidth = (gallery as HTMLElement).scrollWidth;
+          let viewportWidth = window.innerWidth;
+          // Diagnostic log
+          console.log("Portfolio Scroll Calc:", {
+            galleryWidth,
+            viewportWidth,
+          });
+          return -(galleryWidth - viewportWidth + 100);
+        };
 
-      gsap.to(gallery, {
-        x: getScrollAmount,
-        ease: "none",
-        scrollTrigger: {
-          trigger: wrapper,
-          start: "top top",
-          end: "+=3000",
-          pin: true,
-          scrub: 1,
-          invalidateOnRefresh: true,
-        },
+        gsap.to(gallery, {
+          x: getScrollAmount,
+          ease: "none",
+          scrollTrigger: {
+            trigger: wrapper,
+            start: "top top",
+            end: "+=3000", // Distance to scroll
+            pin: true,
+            scrub: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // Force refresh after setting up
+        ScrollTrigger.refresh();
       });
-    });
 
-    // Clean up on page navigation to prevent duplicate listeners
-    const cleanup = () => {
-      mm.revert();
-      document.removeEventListener("astro:before-preparation", cleanup);
-    };
-    document.addEventListener("astro:before-preparation", cleanup);
+      // Clean up on page navigation
+      const cleanup = () => {
+        mm.revert();
+        console.log("Portfolio Cleanup");
+        document.removeEventListener("astro:before-preparation", cleanup);
+      };
+      document.addEventListener("astro:before-preparation", cleanup);
+    }, 100);
   }
 </script>
