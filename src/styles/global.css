@@ -16,3 +16,30 @@
   --font-serif: "Grift", serif;
   --font-sans: "Grift", sans-serif;
 }
+
+/* Mobile Performance Optimizations */
+@media (max-width: 1023px) {
+  /* Disable expensive blur filters on mobile */
+  * {
+    filter: none !important;
+    -webkit-filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  /* Force GPU acceleration for animated elements */
+  .service-bg,
+  .service-slice,
+  .process-card,
+  .hero-image-mask,
+  .footer-card {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  /* Reduce will-change usage on mobile */
+  .will-change-transform {
+    will-change: auto;
+  }
+}
