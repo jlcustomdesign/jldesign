@@ -37,7 +37,7 @@ const services = [
 
 <section
   id="services-fullscreen-wrapper"
-  class="relative h-[100dvh] bg-white overflow-hidden text-primary touch-none"
+  class="relative h-[100dvh] bg-white overflow-hidden text-primary"
   data-theme="light"
 >
   <!-- BACKGROUNDS LAYER (Wrapped in Card) -->
@@ -284,36 +284,19 @@ const services = [
     const intentObserver = Observer.create({
       target: wrapper,
       type: "wheel,touch,pointer",
-      lockAxis: true, // Forces single-axis processing, preventing bleed-through
-      onUp: (self: any) => {
+      onChangeY: (self: any) => {
         if (isAnimating) return;
-        // Detect if it's a wheel event (Mouse) vs Touch/Pointer
-        // Note: Observer normalizes types, but we check raw event type to be sure
-        const type = self.event.type;
-        const isWheel = type === "wheel" || type === "mousewheel";
 
-        // Desktop (Wheel Up) -> Previous
-        // Mobile (Swipe Down / Touch "Up" signal) -> Next (Inverted per user request)
-        if (isWheel) {
-          goPrev();
-        } else {
-          goNext();
-        }
-      },
-      onDown: (self: any) => {
-        if (isAnimating) return;
-        const type = self.event.type;
-        const isWheel = type === "wheel" || type === "mousewheel";
-
-        // Desktop (Wheel Down) -> Next
-        // Mobile (Swipe Up / Touch "Down" signal) -> Previous (Inverted per user request)
-        if (isWheel) {
+        // Unified Logic: relies on normalized deltaY which abstracts input type
+        // deltaY > 0: Scroll Down / Swipe Up -> NEXT
+        // deltaY < 0: Scroll Up / Swipe Down -> PREV
+        if (self.deltaY > 0) {
           goNext();
         } else {
           goPrev();
         }
       },
-      tolerance: 10, // Reduced tolerance slightly for better responsiveness with touch-none
+      tolerance: 20,
       preventDefault: true, // STRICT locking
     });
 
