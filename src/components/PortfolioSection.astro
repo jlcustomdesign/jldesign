@@ -146,14 +146,17 @@ const portfolio = [
       gsap.to(gallery, {
         x: getScrollAmount,
         ease: "none",
+        // Force GPU layer for smoother animation on high refresh rate displays
+        force3D: true,
         scrollTrigger: {
           trigger: wrapper,
           start: "top top",
           // Shorter scroll distance on mobile for faster response
           end: isMobile ? "+=2000" : "+=3000",
           pin: true,
-          // Lower scrub value on mobile for more responsive feel
-          scrub: isMobile ? 0.3 : 1,
+          // scrub: true = instant response (no interpolation/smoothing)
+          // This eliminates the "shadow" ghosting on 120fps displays
+          scrub: isMobile ? true : 1,
           invalidateOnRefresh: true,
         },
       });
