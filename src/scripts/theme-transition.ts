@@ -86,9 +86,9 @@ export function initThemeTransition() {
             id: "theme-enter"
         });
 
-        // Trigger 2: Footer Entry
-        // Use the SAME timeline (tl) but reverse it to go back to Light Mode.
-        // This ensures zero conflict and reuses the exact same performance profile.
+        // Trigger 2: Footer Entry (REMOVED due to Fixed Parallax Footer)
+        // We keep the theme Dark through the footer to match the Faq/Footer blend.
+        /* 
         ScrollTrigger.create({
             trigger: footer,
             start: "top 90%",
@@ -96,6 +96,7 @@ export function initThemeTransition() {
             onLeaveBack: () => tl.play(), // Play to End (Dark)
             id: "theme-footer-override"
         });
+        */
 
         // Force refresh to handle pinning calculations
         ScrollTrigger.refresh();

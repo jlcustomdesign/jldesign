@@ -2,12 +2,17 @@
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="bg-secondary pt-20 pb-10 px-4 md:px-8" data-theme="light">
-  <div class="container mx-auto">
+<footer
+  class="bg-secondary pt-20 pb-10 px-4 md:px-8 relative"
+  data-theme="light"
+  id="main-footer"
+>
+  <div class="container mx-auto h-full flex flex-col justify-center">
     <!-- Big Card -->
     <div
-      class="footer-card bg-primary rounded-[2.5rem] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl"
+      class="footer-card bg-primary rounded-[2.5rem] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl w-full"
       data-theme="dark"
+      style="will-change: transform, filter;"
     >
       <!-- Decorative Glow -->
       <div
@@ -182,119 +187,152 @@ const currentYear = new Date().getFullYear();
 
   gsap.registerPlugin(ScrollTrigger);
 
-  function initFooterAnimations() {
-    const footer = document.querySelector("footer");
-    // Prevent double-init on same element
-    if (!footer || footer.dataset.animInitialized) return;
+  function initFooterParallax() {
+    const footer = document.querySelector("#main-footer") as HTMLElement;
+    const main = document.querySelector("main") as HTMLElement;
 
-    const card = footer.querySelector(".footer-card");
-    if (!card) return;
+    if (!footer || !main) return;
+    // Avoid double init
+    if (footer.dataset.parallaxInitialized) return;
+    footer.dataset.parallaxInitialized = "true";
 
-    footer.dataset.animInitialized = "true";
-
-    // Mobile detection - disable expensive blur on mobile
     const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
 
-    // Helper: Safe Split for H4
+    // 1. Setup Fixed Positioning & Spacer
+    // Wait for content to stabilize
+    requestAnimationFrame(() => {
+      const h = footer.offsetHeight;
+
+      // Make footer fixed behind
+      footer.style.position = "fixed";
+      footer.style.left = "0";
+      footer.style.bottom = "0";
+      footer.style.width = "100%";
+      footer.style.zIndex = "0"; // Behind main (assuming main is higher)
+
+      // Adjust Main to push content up and allow scroll to reveal footer
+      main.style.position = "relative";
+      main.style.zIndex = "10";
+      main.style.marginBottom = `${h}px`; // The "gap" for the footer
+
+      // Ensure main has background if transparent (to cover footer)
+      // Usually index.astro sections have backgrounds.
+      // We add a 'shadow' element to cover if needed, but assuming FaqSection covers.
+
+      const footerCard = footer.querySelector(".footer-card");
+
+      // 2. Parallax Animation (Scale Up + Unblur)
+      // Animates as the main content scrolls AWAY (revealing footer)
+      if (footerCard) {
+        gsap.fromTo(
+          footerCard,
+          {
+            scale: 0.8, // Zoomed out start
+            filter: "blur(20px)",
+            y: -50, // Slightly up
+          },
+          {
+            scale: 1,
+            filter: "blur(0px)",
+            y: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: main,
+              start: "bottom bottom", // When main bottom hits viewport bottom (start of reveal)
+              end: `+=${h}`, // Scrub over the height of the footer
+              scrub: true,
+              // invalidateOnRefresh: true
+            },
+          }
+        );
+      }
+    });
+
+    // Helper: Split text into words for animation (Entrance Effect inside the card)
     const splitTextToWords = (element: Element | null) => {
       if (!element) return;
-      if (element.children.length > 0) return; // Skip complex elements
+      if (element.children.length > 0) return;
       const text = element.textContent?.trim() || "";
       element.innerHTML = text
         .split(" ")
         .map(
           (w) =>
-            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: ${isMobile ? "none" : "blur(8px)"}">${w}&nbsp;</span></span>`
+            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform footer-word-enter">${w}&nbsp;</span></span>`
         )
         .join("");
     };
 
-    const bigTitle = card.querySelector("h2");
-    const headers = card.querySelectorAll("h4");
+    const card = footer.querySelector(".footer-card");
+    if (card) {
+      const bigTitle = card.querySelector("h2");
+      const headers = card.querySelectorAll("h4");
+      headers.forEach((h) => splitTextToWords(h));
 
-    headers.forEach((h) => splitTextToWords(h));
+      // 3. Inner Content Entrance (Optional: trigger when footer is somewhat visible)
+      // Since footer is fixed, "in view" is tricky. Use Main's scroll position.
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: footer,
-        start: "top 85%",
-        toggleActions: "play none none reverse",
-      },
-      delay: 0.1,
+      ScrollTrigger.create({
+        trigger: main,
+        start: `bottom bottom-=${footer.offsetHeight * 0.3}`, // When margin is 30% revealed
+        onEnter: () => {
+          // Trigger word animations
+          const words = card.querySelectorAll(".footer-word-enter");
+          if (words.length) {
+            gsap.to(words, {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              stagger: 0.03,
+              ease: "power3.out",
+              overwrite: true,
+            });
+          }
+          if (bigTitle) {
+            gsap.fromTo(
+              bigTitle,
+              { opacity: 0, y: 30, blur: 10 },
+              {
+                opacity: 1,
+                y: 0,
+                blur: 0,
+                duration: 1,
+                ease: "power3.out",
+                overwrite: true,
+              }
+            );
+          }
+          // Misc elements
+          const misc = card.querySelectorAll("li, .border-t, a.inline-flex");
+          gsap.fromTo(
+            misc,
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              stagger: 0.05,
+              duration: 0.8,
+              delay: 0.2,
+              overwrite: true,
+            }
+          );
+        },
+      });
+    }
+
+    // Refresh on Resize
+    window.addEventListener("resize", () => {
+      const newH = footer.offsetHeight;
+      main.style.marginBottom = `${newH}px`;
+      ScrollTrigger.refresh();
     });
-    // 1. Card Reveal (Morph-like "Pill to Card" Expansion)
-    tl.fromTo(
-      card,
-      {
-        clipPath: "inset(40% 30% 40% 30% round 5rem)", // Starts as a small pill shape in center
-        opacity: 1,
-        y: 100,
-      },
-      {
-        clipPath: "inset(0% 0% 0% 0% round 2.5rem)", // Expands to full card
-        y: 0,
-        opacity: 1,
-        duration: 1.8,
-        ease: "expo.out",
-        onComplete: () => {
-          // Remove clipPath to restore the box-shadow
-          gsap.set(card, { clearProps: "clipPath" });
-        },
-      }
-    );
-
-    // 2. Big Title (Block Fade Up with Blur) - No blur on mobile
-    if (bigTitle) {
-      tl.fromTo(
-        bigTitle,
-        { y: 40, opacity: 0, filter: isMobile ? "none" : "blur(12px)" },
-        {
-          y: 0,
-          opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
-          duration: 1.2,
-          ease: "power3.out",
-        },
-        "-=1.0"
-      );
-    }
-
-    // 3. Headers (Splitted Words Reveal)
-    const h4Spans = card.querySelectorAll("h4 span span");
-    if (h4Spans.length) {
-      tl.to(
-        h4Spans,
-        {
-          y: 0,
-          opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
-          duration: 1,
-          stagger: isMobile ? 0.02 : 0.05,
-          ease: "power3.out",
-        },
-        "-=1.0"
-      );
-    }
-
-    // 4. Misc
-    const misc = card.querySelectorAll("li, .border-t, a.inline-flex");
-    if (misc.length) {
-      tl.fromTo(
-        misc,
-        { y: 20, opacity: 0, filter: isMobile ? "none" : "blur(5px)" },
-        {
-          y: 0,
-          opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
-          duration: 0.8,
-          stagger: isMobile ? 0.02 : 0.05,
-          ease: "power2.out",
-        },
-        "-=0.8"
-      );
-    }
   }
 
-  // Initialize only on Astro navigation/load to prevent double-firing
-  document.addEventListener("astro:page-load", initFooterAnimations);
+  // Initialize only on Astro navigation/load
+  document.addEventListener("astro:page-load", initFooterParallax);
+  // Initial load fallback
+  if (document.readyState === "complete") {
+    initFooterParallax();
+  } else {
+    window.addEventListener("load", initFooterParallax);
+  }
 </script>
