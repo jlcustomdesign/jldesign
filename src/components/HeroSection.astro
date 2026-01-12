@@ -1,7 +1,7 @@
 ---
 import BubbleButton from "./ui/BubbleButton.astro";
 
-const heroImage = "/Images/Imagine hero section.png";
+const heroImage = "/Images/hero-image.jpg";
 ---
 
 <section
@@ -41,6 +41,7 @@ const heroImage = "/Images/Imagine hero section.png";
           height="100%"
           preserveAspectRatio="xMidYMid slice"
           clip-path="url(#heroClip)"
+          image-rendering="optimizeQuality"
         />
         <!-- Overlay for text contrast -->
         <rect
