@@ -33,12 +33,15 @@ const { title } = Astro.props;
     <Navbar />
 
     <!-- ScrollSmoother Structure -->
-    <div id="smooth-wrapper">
+    <div
+      id="smooth-wrapper"
+      style="position: relative; z-index: 10 !important;"
+    >
       <div id="smooth-content">
         <slot />
-        <!-- Footer will go here -->
       </div>
     </div>
+    <slot name="footer" />
 
     <script>
       import { initSmoothScroll } from "../scripts/smooth-scroll";

@@ -208,28 +208,34 @@ const currentYear = new Date().getFullYear();
       footer.style.left = "0";
       footer.style.bottom = "0";
       footer.style.width = "100%";
-      footer.style.zIndex = "0"; // Behind main (assuming main is higher)
+      footer.style.zIndex = "0"; // Neutral z-index, Layout wrapper will be higher
 
-      // Adjust Main to push content up and allow scroll to reveal footer
+      // Use a physical spacer instead of margin to ensure ScrollSmoother picks up the height
+      let spacer = document.getElementById("footer-spacer");
+      if (!spacer) {
+        spacer = document.createElement("div");
+        spacer.id = "footer-spacer";
+        main.appendChild(spacer);
+      }
+      spacer.style.height = `${h}px`;
+      spacer.style.pointerEvents = "none";
+
       main.style.position = "relative";
       main.style.zIndex = "10";
-      main.style.marginBottom = `${h}px`; // The "gap" for the footer
 
-      // Ensure main has background if transparent (to cover footer)
-      // Usually index.astro sections have backgrounds.
-      // We add a 'shadow' element to cover if needed, but assuming FaqSection covers.
+      // Force update of scroll calculations
+      ScrollTrigger.refresh();
 
       const footerCard = footer.querySelector(".footer-card");
 
       // 2. Parallax Animation (Scale Up + Unblur)
-      // Animates as the main content scrolls AWAY (revealing footer)
       if (footerCard) {
         gsap.fromTo(
           footerCard,
           {
-            scale: 0.8, // Zoomed out start
+            scale: 0.8,
             filter: "blur(20px)",
-            y: -50, // Slightly up
+            y: -50,
           },
           {
             scale: 1,
@@ -237,11 +243,10 @@ const currentYear = new Date().getFullYear();
             y: 0,
             ease: "none",
             scrollTrigger: {
-              trigger: main,
-              start: "bottom bottom", // When main bottom hits viewport bottom (start of reveal)
-              end: `+=${h}`, // Scrub over the height of the footer
+              trigger: spacer, // Trigger on the spacer itself
+              start: "top bottom", // When spacer top hits viewport bottom (start of reveal)
+              end: "bottom bottom", // When spacer bottom hits viewport bottom (fully revealed)
               scrub: true,
-              // invalidateOnRefresh: true
             },
           }
         );
