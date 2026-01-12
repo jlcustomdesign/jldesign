@@ -86,29 +86,32 @@ export function initThemeTransition() {
             id: "theme-enter"
         });
 
-        // Trigger 2: Revert to Light Mode (at FAQ Section)
-        // This ensures the requested "Color Transition" is visible (Dark Process -> Light FAQ)
+        // Trigger 2: Revert to Light Mode (at FAQ Section) -> REMOVED
+        // User requested FAQ to stay Dark (same as Process)
+        /* 
+        if (faqSection) { ... } 
+        */
+
+        // Trigger 3: Footer Reveal (Light Mode)
+        // Switch from Black (FAQ) to White (Footer) as requested
         if (faqSection) {
-             ScrollTrigger.create({
+            ScrollTrigger.create({
                 trigger: faqSection,
-                start: "top 70%", // Switch to Light as FAQ becomes dominant
-                onEnter: () => tl.reverse(), // Go Light
-                onLeaveBack: () => tl.play(), // Go Dark (back to Process)
-                id: "theme-faq-light"
+                start: "bottom bottom", 
+                onEnter: () => tl.reverse(), // Go Light (White)
+                onLeaveBack: () => tl.play(), // Go Dark (Back to FAQ)
+                id: "theme-footer-light"
+            });
+        } else {
+             // Fallback if no FAQ, trigger on Main end
+             ScrollTrigger.create({
+                trigger: "main",
+                start: "bottom bottom",
+                onEnter: () => tl.play(),
+                onLeaveBack: () => tl.reverse(),
+                id: "theme-footer-dark-fallback"
             });
         }
-
-        // Trigger 3: Footer Reveal (Dark Mode)
-        // Triggered by the physical spacer element created by the Footer script
-        // This ensures the Footer Card (Dark) is matched by the Global Theme
-        const footerSpacer = document.getElementById("footer-spacer");
-        ScrollTrigger.create({
-            trigger: footerSpacer || "main", // Fallback to main end
-            start: footerSpacer ? "top 80%" : "bottom bottom", // Reveal Dark slightly before full bottom
-            onEnter: () => tl.play(), // Go Dark
-            onLeaveBack: () => tl.reverse(), // Go Light (back to FAQ)
-            id: "theme-footer-dark"
-        });
 
         // Force refresh to handle pinning calculations
         ScrollTrigger.refresh();
