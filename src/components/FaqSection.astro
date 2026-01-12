@@ -131,7 +131,7 @@ const faqs = [
           gsap.to(faqHeader.querySelectorAll("span span"), {
             y: 0,
             opacity: 1,
-            filter: isMobile ? "none" : "blur(0px)",
+            filter: "blur(0px)",
             duration: 1.5,
             stagger: 0.1,
             ease: "power3.out",
@@ -171,12 +171,12 @@ const faqs = [
           gsap.fromTo(questionText,
             { 
               opacity: 0.2, 
-              filter: isMobile ? "none" : "blur(4px)",
+              filter: "blur(4px)",
               y: 20 
             },
             {
               opacity: 1, 
-              filter: isMobile ? "none" : "blur(0px)",
+              filter: "blur(0px)",
               y: 0,
               ease: "none",
               scrollTrigger: {
