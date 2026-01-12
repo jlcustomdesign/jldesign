@@ -284,16 +284,13 @@ const faqs = [
     const content = document.querySelector("#faq-list-v2") as HTMLElement;
     const wrapper = document.querySelector(".wrapper-v2") as HTMLElement;
 
-    if (sidebar && content && wrapper) {
+    if (sidebar && content && wrapper && !isMobile) {
         ScrollTrigger.create({
             trigger: wrapper,
             start: "top top+=120", // 120px offset from top
             end: "bottom bottom",
             pin: sidebar, // Pin the sidebar
             pinSpacing: false, // Don't push content down
-            // On mobile, native CSS sticky is often better, but user asked for this specific behavior?
-            // User asked: "stay fixed on mobile, up, it shouldn't scroll down on scrol, but only on mobile"
-            // Actually, for mobile the requested behavior implies simple CSS sticky.
         });
     }
   }

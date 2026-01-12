@@ -198,138 +198,100 @@ const currentYear = new Date().getFullYear();
 
     const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
 
-    // 1. Setup Fixed Positioning & Spacer
-    // Wait for content to stabilize
-    requestAnimationFrame(() => {
+    // 1. Setup Logic
+    // 1. Setup Logic wrapped in a function to handle Resize correctly
+    const updateFooterLayout = () => {
       const h = footer.offsetHeight;
+      const viewportH = window.innerHeight;
 
-      // Make footer fixed behind
-      footer.style.position = "fixed";
-      footer.style.left = "0";
-      footer.style.bottom = "0";
-      footer.style.width = "100%";
-      footer.style.zIndex = "0"; // Neutral z-index, Layout wrapper will be higher
+      // Re-check conditions on resize
+      // We use window.innerWidth check inside to handle orientation changes
+      const currentIsMobile =
+        window.innerWidth < 1024 || "ontouchstart" in window;
+      const shouldDisableParallax = currentIsMobile || h > viewportH;
 
-      // Use a physical spacer instead of margin to ensure ScrollSmoother picks up the height
       let spacer = document.getElementById("footer-spacer");
       if (!spacer) {
         spacer = document.createElement("div");
         spacer.id = "footer-spacer";
         main.appendChild(spacer);
       }
-      spacer.style.height = `${h}px`;
-      spacer.style.pointerEvents = "none";
 
-      main.style.position = "relative";
-      main.style.zIndex = "10";
+      if (shouldDisableParallax) {
+        // -- STATIC LAYOUT (Mobile/Tall) --
+        footer.style.position = "relative";
+        footer.style.zIndex = "20";
+        footer.style.bottom = "auto";
+        footer.style.left = "auto";
 
-      // Force update of scroll calculations
-      ScrollTrigger.refresh();
+        // Remove spacer usage
+        spacer.style.height = "0px";
+        spacer.style.display = "none";
+        main.style.marginBottom = "0px"; // CRITICAL: Ensure no gap
 
-      const footerCard = footer.querySelector(".footer-card");
+        // Reset transforms
+        const footerCard = footer.querySelector(".footer-card");
+        if (footerCard) gsap.set(footerCard, { clearProps: "all" });
+      } else {
+        // -- PARALLAX LAYOUT (Desktop/Short) --
+        footer.style.position = "fixed";
+        footer.style.left = "0";
+        footer.style.bottom = "0";
+        footer.style.width = "100%";
+        footer.style.zIndex = "0";
 
-      // 2. Parallax Animation (Scale Up + Unblur)
-      if (footerCard) {
-        gsap.fromTo(
-          footerCard,
-          {
-            scale: 0.8,
-            filter: "blur(20px)",
-            y: -50,
-          },
-          {
-            scale: 1,
-            filter: "blur(0px)",
-            y: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: spacer, // Trigger on the spacer itself
-              start: "top bottom", // When spacer top hits viewport bottom (start of reveal)
-              end: "bottom bottom", // When spacer bottom hits viewport bottom (fully revealed)
-              scrub: true,
-            },
-          }
-        );
-      }
-    });
+        spacer.style.display = "block";
+        spacer.style.height = `${h}px`;
+        spacer.style.pointerEvents = "none";
 
-    // Helper: Split text into words for animation (Entrance Effect inside the card)
-    const splitTextToWords = (element: Element | null) => {
-      if (!element) return;
-      if (element.children.length > 0) return;
-      const text = element.textContent?.trim() || "";
-      element.innerHTML = text
-        .split(" ")
-        .map(
-          (w) =>
-            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform footer-word-enter">${w}&nbsp;</span></span>`
-        )
-        .join("");
-    };
+        main.style.position = "relative";
+        main.style.zIndex = "10";
+        // Check if we need to re-apply margin?
+        // Actually with spacer div, we usually don't need margin-bottom on main if spacer is in flow?
+        // Wait, previous code used main.marginBottom logic?
+        // NO, previous code used SPACER for trigger but main.marginBottom = h in the resize bug.
+        // Let's stick to SPACER taking up the space.
+        // BUT: if Main is zIndex 10 and Relative, and Footer is Fixed zIndex 0,
+        // We need a visual gap in the 'flow' for the footer to be revealed behind.
+        // The SPACER (div appended to main) provides this height in the flow of Main.
+        // So main.marginBottom should actually be 0 if we use a real spacer div inside main?
+        // Let's ensure main.marginBottom IS 0 to avoid double spacing.
+        main.style.marginBottom = "0px";
 
-    const card = footer.querySelector(".footer-card");
-    if (card) {
-      const bigTitle = card.querySelector("h2");
-      const headers = card.querySelectorAll("h4");
-      headers.forEach((h) => splitTextToWords(h));
+        const footerCard = footer.querySelector(".footer-card");
 
-      // 3. Inner Content Entrance (Optional: trigger when footer is somewhat visible)
-      // Since footer is fixed, "in view" is tricky. Use Main's scroll position.
-
-      ScrollTrigger.create({
-        trigger: main,
-        start: `bottom bottom-=${footer.offsetHeight * 0.3}`, // When margin is 30% revealed
-        onEnter: () => {
-          // Trigger word animations
-          const words = card.querySelectorAll(".footer-word-enter");
-          if (words.length) {
-            gsap.to(words, {
-              y: 0,
-              opacity: 1,
-              duration: 0.8,
-              stagger: 0.03,
-              ease: "power3.out",
-              overwrite: true,
-            });
-          }
-          if (bigTitle) {
-            gsap.fromTo(
-              bigTitle,
-              { opacity: 0, y: 30, blur: 10 },
-              {
-                opacity: 1,
-                y: 0,
-                blur: 0,
-                duration: 1,
-                ease: "power3.out",
-                overwrite: true,
-              }
-            );
-          }
-          // Misc elements
-          const misc = card.querySelectorAll("li, .border-t, a.inline-flex");
+        if (footerCard) {
           gsap.fromTo(
-            misc,
-            { opacity: 0, y: 20 },
+            footerCard,
             {
-              opacity: 1,
+              scale: 0.8,
+              filter: "blur(20px)",
+              y: -50,
+            },
+            {
+              scale: 1,
+              filter: "blur(0px)",
               y: 0,
-              stagger: 0.05,
-              duration: 0.8,
-              delay: 0.2,
-              overwrite: true,
+              ease: "none",
+              scrollTrigger: {
+                trigger: spacer,
+                start: "top bottom",
+                end: "bottom bottom",
+                scrub: true,
+              },
             }
           );
-        },
-      });
-    }
+        }
+      }
 
-    // Refresh on Resize
-    window.addEventListener("resize", () => {
-      const newH = footer.offsetHeight;
-      main.style.marginBottom = `${newH}px`;
       ScrollTrigger.refresh();
-    });
+    };
+
+    // Run Once
+    requestAnimationFrame(updateFooterLayout);
+
+    // Run on Resize
+    window.addEventListener("resize", updateFooterLayout);
   }
 
   // Initialize only on Astro navigation/load
