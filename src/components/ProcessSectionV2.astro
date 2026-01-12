@@ -369,18 +369,22 @@ const steps = [
             // Use elements[0] (Image) as the trigger
             const triggerEl = elements[0];
 
-            gsap.to(elements, {
-              opacity: 1,
-              filter: "blur(0px)",
-              y: 0, // Reset translateY
-              ease: "none", // Scrub usually works best with none or linear
-              scrollTrigger: {
-                trigger: triggerEl,
-                start: "top 75%", // Start revealing when 75% down viewport
-                end: "top 45%", // Finish when 45% down
-                scrub: 1,
-              },
-            });
+            gsap.fromTo(
+              elements,
+              { opacity: 0.2, filter: "blur(4px)", y: 20 },
+              {
+                opacity: 1,
+                filter: "blur(0px)",
+                y: 0, // Reset translateY
+                ease: "none", // Scrub usually works best with none or linear
+                scrollTrigger: {
+                  trigger: triggerEl,
+                  start: "top bottom", // Start revealing when entering viewport
+                  end: "top 60%", // Finish when somewhat up
+                  scrub: 1,
+                },
+              }
+            );
           }
         });
 
