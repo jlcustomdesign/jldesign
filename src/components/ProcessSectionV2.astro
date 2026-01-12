@@ -89,7 +89,7 @@ const steps = [
           <div class="flex flex-col">
             <div
               class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                           transform process-image opacity-20 blur-sm will-change-transform"
+                           transform process-image lg:opacity-20 lg:blur-sm lg:will-change-transform"
               data-step="0"
             >
               <img
@@ -99,11 +99,8 @@ const steps = [
                 loading="lazy"
               />
             </div>
-            <!-- Mobile Text (Sibling) -->
-            <div
-              class="lg:hidden mt-4 text-left opacity-20 blur-sm transform translate-y-4 will-change-transform"
-              data-step-mobile="0"
-            >
+            <!-- Mobile Text (Sibling) - Static on Mobile -->
+            <div class="lg:hidden mt-4 text-left" data-step-mobile="0">
               <h3 class="font-serif text-xl text-primary font-bold mb-2">
                 {steps[0].title}
               </h3>
@@ -117,7 +114,7 @@ const steps = [
           <div class="flex flex-col">
             <div
               class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                           transform process-image opacity-20 blur-sm will-change-transform"
+                           transform process-image lg:opacity-20 lg:blur-sm lg:will-change-transform"
               data-step="2"
             >
               <img
@@ -127,11 +124,8 @@ const steps = [
                 loading="lazy"
               />
             </div>
-            <!-- Mobile Text (Sibling) -->
-            <div
-              class="lg:hidden mt-4 text-left opacity-20 blur-sm transform translate-y-4 will-change-transform"
-              data-step-mobile="2"
-            >
+            <!-- Mobile Text (Sibling) - Static on Mobile -->
+            <div class="lg:hidden mt-4 text-left" data-step-mobile="2">
               <h3 class="font-serif text-xl text-primary font-bold mb-2">
                 {steps[2].title}
               </h3>
@@ -148,7 +142,7 @@ const steps = [
           <div class="flex flex-col">
             <div
               class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                           transform process-image opacity-20 blur-sm will-change-transform"
+                           transform process-image lg:opacity-20 lg:blur-sm lg:will-change-transform"
               data-step="1"
             >
               <img
@@ -158,11 +152,8 @@ const steps = [
                 loading="lazy"
               />
             </div>
-            <!-- Mobile Text (Sibling) -->
-            <div
-              class="lg:hidden mt-4 text-left opacity-20 blur-sm transform translate-y-4 will-change-transform"
-              data-step-mobile="1"
-            >
+            <!-- Mobile Text (Sibling) - Static on Mobile -->
+            <div class="lg:hidden mt-4 text-left" data-step-mobile="1">
               <h3 class="font-serif text-xl text-primary font-bold mb-2">
                 {steps[1].title}
               </h3>
@@ -176,7 +167,7 @@ const steps = [
           <div class="flex flex-col">
             <div
               class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                           transform process-image opacity-20 blur-sm will-change-transform"
+                           transform process-image lg:opacity-20 lg:blur-sm lg:will-change-transform"
               data-step="3"
             >
               <img
@@ -186,11 +177,8 @@ const steps = [
                 loading="lazy"
               />
             </div>
-            <!-- Mobile Text (Sibling) -->
-            <div
-              class="lg:hidden mt-4 text-left opacity-20 blur-sm transform translate-y-4 will-change-transform"
-              data-step-mobile="3"
-            >
+            <!-- Mobile Text (Sibling) - Static on Mobile -->
+            <div class="lg:hidden mt-4 text-left" data-step-mobile="3">
               <h3 class="font-serif text-xl text-primary font-bold mb-2">
                 {steps[3].title}
               </h3>
@@ -299,7 +287,7 @@ const steps = [
     const section = document.querySelector("#process-section-v2");
     if (!section) return;
 
-    // Kill previous triggers
+    // Kill previous triggers to prevent duplicates on navigation
     ScrollTrigger.getAll().forEach((t: any) => {
       if (
         t.vars.trigger === section ||
@@ -356,55 +344,15 @@ const steps = [
       },
 
       // --------------------------------------------------------------------------
-      // MOBILE: NO PIN, SCRUB REVEAL (FAQ STYLE)
+      // MOBILE: STATIC (NO ANIMATION REQUESTED)
       // --------------------------------------------------------------------------
       "(max-width: 1023px)": function () {
-        [0, 1, 2, 3].forEach((i) => {
-          // Target both the image wrapper and the mobile text div
-          const elements = section.querySelectorAll(
-            `[data-step="${i}"], [data-step-mobile="${i}"]`
-          );
-
-          if (elements.length > 0) {
-            // Use elements[0] (Image) as the trigger
-            const triggerEl = elements[0];
-
-            gsap.fromTo(
-              elements,
-              { opacity: 0.2, filter: "blur(4px)", y: 20 },
-              {
-                opacity: 1,
-                filter: "blur(0px)",
-                y: 0, // Reset translateY
-                ease: "none", // Scrub usually works best with none or linear
-                scrollTrigger: {
-                  trigger: triggerEl,
-                  start: "top bottom", // Start revealing when entering viewport
-                  end: "top 60%", // Finish when somewhat up
-                  scrub: 1,
-                },
-              }
-            );
-          }
-        });
-
-        // CTA simple fade in on scroll
-        const cta = section.querySelector(".mt-16");
-        if (cta) {
-          gsap.fromTo(
-            cta,
-            { opacity: 0, y: 30 },
-            {
-              opacity: 1,
-              y: 0,
-              scrollTrigger: {
-                trigger: cta,
-                start: "top 85%",
-                end: "bottom 90%",
-                scrub: 1,
-              },
-            }
-          );
+        // Explicitly clear any GSAP styles if resizing from desktop
+        const allElements = section.querySelectorAll(
+          ".process-image, .process-mobile-text"
+        );
+        if (allElements.length) {
+          gsap.set(allElements, { clearProps: "all" });
         }
       },
     });
