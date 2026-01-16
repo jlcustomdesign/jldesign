@@ -25,90 +25,82 @@ const portfolio = [
     material: "Furnir Eucalipt",
     img: "https://images.unsplash.com/photo-1615529182904-14819c35db37?q=80&w=1600&auto=format&fit=crop",
   },
+  {
+    name: "Office Space Unirii",
+    material: "Sticlă & Oțel",
+    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    name: "Duplex Primăverii",
+    material: "Marmură Carrara",
+    img: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    name: "Showroom Victoriei",
+    material: "Compozit & Velvet",
+    img: "https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?q=80&w=1600&auto=format&fit=crop",
+  },
 ];
+
+// Helper to chunk text
+type PortfolioItem = typeof portfolio[0];
+const columns: PortfolioItem[][] = [[], [], [], []];
+portfolio.forEach((item, i) => {
+  columns[i % 4].push(item);
+});
 ---
 
 <section
-  class="bg-secondary relative overflow-hidden"
+  class="bg-secondary relative"
   id="portfolio-section"
   data-theme="light"
 >
-  <!-- No height set on wrapper needed for pin:true, GSAP handles spacing. -->
-  <div
-    class="w-full relative min-h-screen flex flex-col justify-center pt-32 pb-12"
-    id="portfolio-wrapper"
-  >
-    <div
-      class="container mx-auto px-4 md:px-8 mb-8 md:mb-12 flex justify-between items-end"
-    >
-      <h2 class="font-serif text-4xl md:text-5xl text-primary">
+  <div class="w-full relative min-h-screen py-32 px-4">
+    <div class="container mx-auto mb-20 md:mb-32 px-4 md:px-0">
+      <!-- Title Left Aligned -->
+      <h2 class="font-serif text-4xl md:text-6xl text-primary text-left">
         Portofoliu Selectiv
       </h2>
-      <span class="text-gray-400 hidden md:inline-block"
-        >← Scroll Horizontally →</span
-      >
     </div>
 
-    <!-- The Horizontal Track -->
     <!-- 
-      All devices: GSAP controlled horizontal scroll with pinning
+      Grid Layout Updates:
+      - Mobile: 2 columns (grid-cols-2)
+      - Tablet: 3 columns (md:grid-cols-3)
+      - Desktop: 4 columns (lg:grid-cols-4)
+      - Gap: gap-4
     -->
-    <div class="w-full overflow-hidden">
-      <div
-        class="flex gap-4 md:gap-16 pl-4 md:pl-24 pr-24 will-change-transform transform-gpu"
-        id="portfolio-gallery"
-      >
-        {
-          portfolio.map((item, index) => (
-            <div
-              class="relative flex-none w-[85vw] md:w-[420px] xl:w-[550px] group portfolio-item snap-center"
-              style="backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: translateZ(0);"
-            >
-              <div class="w-full aspect-[3/2] rounded-2xl overflow-hidden relative">
-                <img
-                  src={item.img}
-                  alt={item.name}
-                  loading="lazy"
-                  class="w-full h-full object-cover grayscale-[30%] md:group-hover:grayscale-0 md:transition-all md:duration-700 md:ease-out scale-100 md:group-hover:scale-105 portfolio-img"
-                />
-              </div>
-              <div class="mt-6 flex justify-between items-start">
-                <div>
-                  <h3
-                    class="font-serif text-2xl text-primary"
-                    style="backface-visibility: hidden; -webkit-backface-visibility: hidden;"
-                  >
-                    {item.name}
-                  </h3>
-                  <p
-                    class="text-sm font-medium text-accent mt-1 uppercase tracking-wider"
-                    style="backface-visibility: hidden;"
-                  >
-                    {item.material}
-                  </p>
-                </div>
-                <div class="w-10 h-10 border border-primary/20 rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    class="text-primary transform -rotate-45"
-                  >
-                    <path
-                      d="M5 12h14M12 5l7 7-7 7"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-[1800px] mx-auto" id="portfolio-grid">
+      {
+        columns.map((col, colIndex) => (
+          <div class="flex flex-col gap-4 portfolio-column" data-col-index={colIndex}>
+            {col.map((item) => (
+              <div class="group relative w-full overflow-hidden rounded-3xl">
+                <!-- Image Container -->
+                <div class="w-full aspect-[3/4] overflow-hidden relative bg-gray-200">
+                  <img
+                    src={item.img}
+                    alt={item.name}
+                    loading="lazy"
+                    class="w-full h-[120%] object-cover absolute top-0 left-0 portfolio-img"
+                    style="transform: translateY(-10%);" 
+                  />
+                  
+                  <!-- Overlay: Visible on Hover -->
+                  <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex flex-col justify-end p-6">
+                    <h3 class="font-serif text-2xl text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
+                      {item.name}
+                    </h3>
+                     <p class="text-sm font-medium text-gray-300 mt-1 uppercase tracking-wider translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-200">
+                      {item.material}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
-        }
-      </div>
+            ))}
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
@@ -119,55 +111,71 @@ const portfolio = [
 
   gsap.registerPlugin(ScrollTrigger);
 
-  initPortfolioAnim();
-  document.addEventListener("astro:page-load", initPortfolioAnim);
-
   function initPortfolioAnim() {
-    const wrapper = document.querySelector("#portfolio-wrapper");
-    const gallery = document.querySelector("#portfolio-gallery");
+    const section = document.querySelector("#portfolio-section");
+    if (!section) return;
 
-    if (!wrapper || !gallery) return;
+    const cols = document.querySelectorAll(".portfolio-column");
+    if (cols.length === 0) return;
 
-    // Simple mobile detection by screen width only
-    const isMobile = window.innerWidth < 1024;
+    // Enabled on ALL devices now (Mobile/Tablet/Desktop)
+    // We might want to reduce the distance on mobile if needed, but let's test strict logic first.
 
-    // Critical: Save CSS styles before GSAP touches them
-    ScrollTrigger.saveStyles("#portfolio-gallery, #portfolio-wrapper");
+    let ctx = gsap.context(() => {
+        // Performance configs
+        gsap.config({ autoSleep: 60, force3D: true, nullTargetWarn: false });
 
-    const ctx = gsap.context(() => {
-      const getScrollAmount = () => {
-        let galleryWidth = (gallery as HTMLElement).scrollWidth;
-        return -(galleryWidth - window.innerWidth + 100);
-      };
+        cols.forEach((col, i) => {
+            const isOddVisual = (i + 1) % 2 !== 0; 
+            
+            // Movement: Total range 200px
+            // Odd (Up): Start at +100 (Down), End at -100 (Up)
+            // Even (Down): Start at -100 (Up), End at +100 (Down)
+            // This creates a "crossing" effect where they shear past each other
+            
+            const range = 100;
+            const startY = isOddVisual ? range : -range;
+            const endY = isOddVisual ? -range : range;
 
-      gsap.to(gallery, {
-        x: getScrollAmount,
-        ease: "none",
-        force3D: true,
-        scrollTrigger: {
-          trigger: wrapper,
-          start: "top top",
-          // Shorter on mobile for faster section
-          end: isMobile ? "+=1500" : "+=3000",
-          pin: true,
-          anticipatePin: 1,
-          // Very low scrub for near-instant response on mobile
-          scrub: isMobile ? 0.05 : 1,
-          invalidateOnRefresh: true,
-        },
-      });
-    }, wrapper);
+            gsap.fromTo(col, 
+                { y: startY },
+                {
+                    y: endY,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top bottom", 
+                        end: "bottom top",
+                        scrub: true,
+                    }
+                }
+            );
+        });
 
-    // Refresh after short delay to ensure layout is stable
-    requestAnimationFrame(() => {
-      ScrollTrigger.refresh();
-    });
+        // Image Parallax (Subtle internal movement)
+        const images = document.querySelectorAll(".portfolio-img");
+        images.forEach((img) => {
+             gsap.to(img, {
+                 y: "10%",
+                 ease: "none",
+                 scrollTrigger: {
+                     trigger: img.parentElement,
+                     start: "top bottom",
+                     end: "bottom top",
+                     scrub: true
+                 }
+             });
+        });
 
-    // Cleanup logic
-    const cleanup = () => {
-      ctx.revert();
-      document.removeEventListener("astro:before-preparation", cleanup);
-    };
-    document.addEventListener("astro:before-preparation", cleanup);
+    }, section);
+
+    return () => ctx.revert();
   }
+
+  // Run on load and transitions
+  if (document.readyState !== 'loading') initPortfolioAnim();
+  else document.addEventListener('DOMContentLoaded', initPortfolioAnim);
+  
+  document.addEventListener("astro:page-load", initPortfolioAnim);
+  document.addEventListener("astro:after-swap", initPortfolioAnim);
 </script>

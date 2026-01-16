@@ -109,6 +109,27 @@ const services = [
       ))
     }
   </div>
+  <!-- SKIP BUTTON: Single rotating button deeper inside card -->
+  <button
+    id="skip-btn"
+    class="absolute bottom-20 right-[10%] translate-x-1/2 z-50 bg-black/20 backdrop-blur-md border border-white/20 text-white rounded-full p-4 hover:bg-black/40 transition-all duration-300 cursor-pointer shadow-xl pointer-events-auto"
+    aria-label="Skip Navigation"
+  >
+    <svg
+      id="skip-arrow"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      class="w-6 h-6"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
+    </svg>
+  </button>
 </section>
 
 <script>
@@ -126,6 +147,8 @@ const services = [
     const wrapper = document.querySelector("#services-fullscreen-wrapper");
     const bgs = gsap.utils.toArray(".service-bg") as HTMLElement[];
     const contents = gsap.utils.toArray(".service-content") as HTMLElement[];
+    const skipBtn = document.querySelector("#skip-btn") as HTMLElement;
+    const skipArrow = document.querySelector("#skip-arrow") as HTMLElement;
 
     if (!wrapper) return;
 
@@ -133,7 +156,45 @@ const services = [
     let currentIndex = 0;
     let isAnimating = false;
 
-    // Buttons
+    // --- BUTTON LOGIC ---
+    if (skipBtn) {
+      skipBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // If we are at the end, go to start
+        if (currentIndex === totalSlides - 1) {
+          gotoSlide(0, -1);
+
+          // Explicit Scroll Reset
+          const st = ScrollTrigger.getById("services-pin");
+          if (st) {
+            gsap.to(window, {
+              scrollTo: st.start,
+              duration: 1.2,
+              ease: "power2.out",
+            });
+          }
+        } else {
+          // Go to end
+          gotoSlide(totalSlides - 1, 1);
+        }
+      });
+    }
+
+    function updateSkipButtonState(index: number) {
+      if (!skipBtn || !skipArrow) return;
+
+      // If last slide: Rotate 180 (Point Up)
+      // Else: Rotate 0 (Point Down)
+      const isEnd = index === totalSlides - 1;
+
+      gsap.to(skipArrow, {
+        rotation: isEnd ? 180 : 0,
+        duration: 0.5,
+        ease: "back.out(1.7)",
+      });
+    }
 
     // INITIAL STATE
     // Prepare all BGs
@@ -146,6 +207,7 @@ const services = [
     gsap.set(contents, { autoAlpha: 0, y: 50 });
 
     // Initial Button State
+    updateSkipButtonState(0);
 
     // ANIMATION FUNCTION
     function gotoSlide(index: number, direction: number, isIntro = false) {
@@ -164,15 +226,22 @@ const services = [
       const nextSlices = nextBg.querySelectorAll(".service-slice");
       const prevSlices = prevBg.querySelectorAll(".service-slice");
 
+      // Update Buttons
+      updateSkipButtonState(index);
+
       // Sync Scrollbar
       const st = ScrollTrigger.getById("services-pin");
       if (st && !isIntro) {
+        // Calculate scroll position based on slide index
         const progress = index / (totalSlides - 1);
         const scrollPos = st.start + (st.end - st.start) * progress;
+
+        // Force scroll to that position
         gsap.to(window, {
           scrollTo: scrollPos,
-          duration: 1,
+          duration: 1.2, // Match animation duration
           ease: "power2.out",
+          overwrite: true, // Ensure we override any fighting scroll
         });
       }
 
