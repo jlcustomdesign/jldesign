@@ -174,12 +174,17 @@ const links = [
 
     if (!navContainer) return;
 
-    // Default to Light Theme (Black text) initially - safest default
-    navContainer.classList.add("nav-light");
-    navContainer.classList.remove("nav-dark");
-
-    // Scenario A: No Hero (Subpages) -> Stay Light and return
-    if (!hero) return;
+    // Check if Hero Exists
+    if (hero) {
+      // Scenario A: Hero Exists (Home) -> Default to Dark Theme (White Text)
+      navContainer.classList.add("nav-dark");
+      navContainer.classList.remove("nav-light");
+    } else {
+      // Scenario B: No Hero (Subpages) -> Default to Light Theme (Black Text)
+      navContainer.classList.add("nav-light");
+      navContainer.classList.remove("nav-dark");
+      return; // Stop here, no ScrollTrigger needed
+    }
 
     // Scenario B: Hero Exists -> Use ScrollTrigger to toggle theme
     // We want Dark Theme (White Text) ONLY when we are IN the Hero section
@@ -203,9 +208,9 @@ const links = [
         navContainer.classList.remove("nav-light");
       },
       onLeaveBack: () => {
-        // Leaves Hero (scrolling up past top?) -> Light Theme (rare but safe)
-        navContainer.classList.add("nav-light");
-        navContainer.classList.remove("nav-dark");
+        // Leaves Hero (scrolling up past top) -> Keep Dark Theme (overscroll)
+        navContainer.classList.add("nav-dark");
+        navContainer.classList.remove("nav-light");
       },
     });
   }
