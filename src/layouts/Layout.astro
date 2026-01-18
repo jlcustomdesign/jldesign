@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
+import MobileMenu from "../components/MobileMenu.astro";
 
 interface Props {
   title: string;
@@ -31,6 +32,7 @@ const { title } = Astro.props;
   >
     <!--  Navbar must be outside smooth-wrapper to be fixed/sticky correctly -->
     <Navbar />
+    <MobileMenu />
 
     <!-- ScrollSmoother Structure -->
     <div

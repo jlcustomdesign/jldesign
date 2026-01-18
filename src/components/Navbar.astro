@@ -51,9 +51,8 @@ const links = [
 
     <!-- Mobile Menu Toggle -->
     <button
-      id="mobile-menu-toggle"
-      class="nav-text md:hidden transition-colors duration-300 z-50 relative"
-      aria-label="Toggle Menu"
+      id="open-mobile-menu"
+      class="nav-text md:hidden transition-colors duration-300"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -70,394 +69,152 @@ const links = [
       </svg>
     </button>
   </div>
+</nav>
 
-  <!-- Mobile Menu Overlay -->
-  <div
-    id="mobile-menu-overlay"
-    class="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center opacity-0 pointer-events-none"
-  >
-    <!-- SVG Container for Morph Animation -->
-    <div
-      class="absolute inset-0 flex justify-center items-center pointer-events-none"
-    >
-      <svg
-        id="menu-morph-svg"
-        width="100%"
-        height="100%"
-        viewBox="0 0 2481 3508"
-        xml:space="preserve"
-        class="w-full h-full max-w-[500px] max-h-[700px]"
-      >
-        <defs>
-          <!-- Hidden Definitions for Morph Targets -->
-          <g id="Morph-Start"
-            ><path
-              d="M1814.157,1100.237L1814.157,2407.637C1814.157,2470.997 1762.717,2522.437 1699.357,2522.437L780.957,2522.437C717.598,2522.437 666.157,2470.997 666.157,2407.637L666.157,1100.237C666.157,1036.877 717.598,985.437 780.957,985.437L1699.357,985.437C1762.717,985.437 1814.157,1036.877 1814.157,1100.237Z"
-            ></path></g
-          >
-          <g id="Morph-Step-1"
-            ><path
-              d="M1102,656.7L1102,1664.237C1102,1713.744 1061.807,1753.937 1012.3,1753.937L294.7,1753.937C245.193,1753.937 205,1713.744 205,1664.237L205,656.7C205,607.193 245.193,567 294.7,567L1012.3,567C1061.807,567 1102,607.193 1102,656.7Z"
-            ></path></g
-          >
-          <g id="Morph-Step-2"
-            ><path
-              d="M2405,646.6L2405,1283.4C2405,1327.332 2369.332,1363 2325.4,1363L679.6,1363C635.668,1363 600,1327.332 600,1283.4L600,646.6C600,602.668 635.668,567 679.6,567L2325.4,567C2369.332,567 2405,602.668 2405,646.6Z"
-            ></path></g
-          >
-          <g id="Morph-Step-3">
-            <path
-              id="Morph-Step-3-Part1"
-              d="M2405,2123.037L2405,2921.837C2405,2966.321 2368.884,3002.437 2324.4,3002.437L1679.6,3002.437C1635.116,3002.437 1599,2966.321 1599,2921.837L1599,2123.037C1599,2078.553 1635.116,2042.437 1679.6,2042.437L2324.4,2042.437C2368.884,2042.437 2405,2078.553 2405,2123.037Z"
-            ></path>
-            <path
-              id="Morph-Step-3-Part2"
-              d="M819,2321.4L819,2941.037C819,2974.925 791.488,3002.437 757.6,3002.437L266.4,3002.437C232.512,3002.437 205,2974.925 205,2941.037L205,2321.4C205,2287.512 232.512,2260 266.4,2260L757.6,2260C791.488,2260 819,2287.512 819,2321.4Z"
-            ></path>
-          </g>
-          <g id="Morph-Fin">
-            <path
-              id="Morph-Fin-Part1"
-              d="M666.157,1520.116L666.157,2476.321C666.157,2501.773 645.494,2522.437 620.042,2522.437L251.116,2522.437C225.664,2522.437 205,2501.773 205,2476.321L205,1520.116C205,1494.664 225.664,1474 251.116,1474L620.042,1474C645.494,1474 666.157,1494.664 666.157,1520.116Z"
-            ></path>
-            <path
-              id="Morph-Fin-Part2"
-              d="M2405,1044.521L2405,2534.916C2405,2567.525 2378.525,2594 2345.916,2594L1873.242,2594C1840.632,2594 1814.157,2567.525 1814.157,2534.916L1814.157,1044.521C1814.157,1011.912 1840.632,985.437 1873.242,985.437L2345.916,985.437C2378.525,985.437 2405,1011.912 2405,1044.521Z"
-            ></path>
-            <path
-              id="Morph-Fin-Part3"
-              d="M1869,2570.437L1869,2954.437C1869,2980.929 1847.492,3002.437 1821,3002.437L612,3002.437C585.508,3002.437 564,2980.929 564,2954.437L564,2570.437C564,2543.945 585.508,2522.437 612,2522.437L1821,2522.437C1847.492,2522.437 1869,2543.945 1869,2570.437Z"
-            ></path>
-          </g>
-        </defs>
+<style>
+  /* Theme Logic */
 
-        <!-- Visible Actors (Initialized hidden) -->
-        <path id="menu-actor-1" fill="#eb1e27" d="" class="opacity-0"></path>
-        <path id="menu-actor-2" fill="#eb1e27" d="" class="opacity-0"></path>
-        <path id="menu-actor-3" fill="#eb1e27" d="" class="opacity-0"></path>
-      </svg>
-    </div>
+  /* Dark Navbar (for Dark Backgrounds/Hero) -> White Text */
+  :global(.nav-dark) .nav-text {
+    color: white;
+  }
 
-    <!-- Menu Links (Hidden initially) -->
-    <ul
-      id="mobile-menu-links"
-      class="flex flex-col gap-8 text-center opacity-0 z-10"
-    >
-      {
-        links.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class="text-4xl font-serif text-black hover:text-accent transition-colors duration-300 mobile-link"
-            >
-              {link.name}
-            </a>
-          </li>
-        ))
-      }
-      <li>
-        <BubbleButton href="/contact" class="text-xl px-10 py-4 mt-4"
-          >Contact</BubbleButton
-        >
-      </li>
-    </ul>
-  </div>
+  /* Light Navbar (for Light Backgrounds) -> Black Text */
+  :global(.nav-light) .nav-text {
+    color: #1a1a1a;
+  }
 
-  <style>
-    /* Theme Logic */
+  /* Hover effects */
+  :global(.nav-dark) .nav-text:hover {
+    color: #d4af37; /* Accent */
+  }
+  :global(.nav-light) .nav-text:hover {
+    color: #d4af37; /* Accent */
+  }
 
-    /* Dark Navbar (for Dark Backgrounds/Hero) -> White Text */
-    :global(.nav-dark) .nav-text {
-      color: white;
-    }
+  /* Active Scroll Shrink */
+  #navbar-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  #navbar-container.nav-shrunk {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    transform: scale(
+      0.95
+    ) !important; /* Override GSAP inline if needed, creates simple shrink */
+  }
+</style>
 
-    /* Light Navbar (for Light Backgrounds) -> Black Text */
-    :global(.nav-light) .nav-text {
-      color: #1a1a1a;
-    }
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-    /* Hover effects */
-    :global(.nav-dark) .nav-text:hover {
-      color: #d4af37; /* Accent */
-    }
-    :global(.nav-light) .nav-text:hover {
-      color: #d4af37; /* Accent */
-    }
+  gsap.registerPlugin(ScrollTrigger);
 
-    /* Active Scroll Shrink */
-    #navbar-container {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    #navbar-container.nav-shrunk {
-      padding-top: 0.5rem !important;
-      padding-bottom: 0.5rem !important;
-      transform: scale(
-        0.95
-      ) !important; /* Override GSAP inline if needed, creates simple shrink */
-    }
-  </style>
-
-  <script>
-    import { gsap } from "gsap";
-    import { ScrollTrigger } from "gsap/ScrollTrigger";
-    import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
-
-    gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin);
-
-    document.addEventListener("astro:page-load", () => {
-      initNavbarAnim();
-      initHeroObserver();
-      initScrollResize();
-      initMobileMenu();
-    });
-
-    // Initial run
+  document.addEventListener("astro:page-load", () => {
     initNavbarAnim();
     initHeroObserver();
     initScrollResize();
-    initMobileMenu();
+  });
 
-    function initMobileMenu() {
-      const toggleBtn = document.querySelector("#mobile-menu-toggle");
-      const overlay = document.querySelector("#mobile-menu-overlay");
-      const menuLinks = document.querySelector("#mobile-menu-links");
-      // Cast to SVGPathElement to fix TS errors with simple helper
-      const actors = [
-        document.querySelector("#menu-actor-1") as SVGPathElement,
-        document.querySelector("#menu-actor-2") as SVGPathElement,
-        document.querySelector("#menu-actor-3") as SVGPathElement,
-      ];
+  // Initial run
+  initNavbarAnim();
+  initHeroObserver();
+  initScrollResize();
 
-      if (!toggleBtn || !overlay || !menuLinks) return;
+  function initScrollResize() {
+    const navContainer = document.querySelector("#navbar-container");
+    let scrollTimeout: any;
 
-      let isOpen = false;
-      let tl: gsap.core.Timeline | null = null;
-      let isAnimating = false;
+    if (!navContainer) return;
 
-      toggleBtn.addEventListener("click", () => {
-        if (isAnimating) return; // Prevent spam clicks
-        if (isOpen) {
-          closeMenu();
-        } else {
-          openMenu();
-        }
-      });
+    window.addEventListener(
+      "scroll",
+      () => {
+        // While scrolling, shrink
+        navContainer.classList.add("nav-shrunk");
 
-      function openMenu() {
-        isAnimating = true;
-        isOpen = true;
+        // Clear existing timeout
+        clearTimeout(scrollTimeout);
 
-        // 1. Show Overlay
-        gsap.set(overlay, { opacity: 1, pointerEvents: "auto" });
-        gsap.set("#mobile-menu-toggle svg", { color: "black" }); // Ensure button visible on white
+        // Set timeout to restore size when scroll stops
+        scrollTimeout = setTimeout(() => {
+          navContainer.classList.remove("nav-shrunk");
+        }, 150); // 150ms delay after stop
+      },
+      { passive: true }
+    );
+  }
 
-        // 2. Reset Actors (Start State)
-        // We start visible but small or centered
-        gsap.set(actors[0], {
-          attr: { d: getPath("Morph-Start") },
-          opacity: 1,
-          fill: "white", // User requested White
-          scale: 0.1, // Start small/centered
-          transformOrigin: "center center",
-        });
-        gsap.set([actors[1], actors[2]], {
-          opacity: 0,
-          fill: "white",
-          scale: 0.1,
-          transformOrigin: "center center",
-        });
+  function initNavbarAnim() {
+    const navContainer = document.querySelector("#navbar-container");
+    const navWrapper = document.querySelector("nav");
 
-        // Prepare Menu Links
-        gsap.set(menuLinks, { opacity: 0 });
-
-        // 3. Create Timeline
-        tl = gsap.timeline({
-          defaults: { ease: "power2.inOut" },
-          onComplete: () => {
-            isAnimating = false;
-            // Reveal Links
-            gsap.to(menuLinks, { opacity: 1, duration: 0.5, y: 0 });
-          },
-        });
-
-        // --- STEP 1: Center Pop / Grow ---
-        // Morph start to Fin-Part1 immediately while scaling up
-        tl.to(actors[0], {
-          scale: 1, // Full size
-          duration: 0.8,
-          morphSVG: getPath("Morph-Fin-Part1"),
-          ease: "back.out(1.2)",
-        });
-
-        // --- STEP 2: Extend Parts 2 & 3 ---
-        // "Extend and keep visible all of the other parts"
-        // We grow them out from the center (overlapping the first part initially)
-
-        // Part 2
-        tl.fromTo(
-          actors[1],
-          {
-            attr: { d: getPath("Morph-Fin-Part2") },
-            scale: 0.1,
-            opacity: 0,
-          },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power2.out",
-          },
-          "-=0.6"
-        ); // Overlap with Part 1
-
-        // Part 3
-        tl.fromTo(
-          actors[2],
-          {
-            attr: { d: getPath("Morph-Fin-Part3") },
-            scale: 0.1,
-            opacity: 0,
-          },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power2.out",
-          },
-          "-=0.7"
-        );
-
-        // Reveal Menu Text Staggered
-        tl.fromTo(
-          "#mobile-menu-links li",
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" },
-          "-=0.4"
-        );
-      }
-
-      function closeMenu() {
-        isAnimating = true;
-        isOpen = false;
-
-        // Reverse or Fade Out
-        const tlClose = gsap.timeline({
-          onComplete: () => {
-            isAnimating = false;
-            gsap.set(overlay, { opacity: 0, pointerEvents: "none" });
-            gsap.set("#mobile-menu-toggle svg", { color: "" }); // Reset color
-          },
-        });
-
-        tlClose
-          .to(menuLinks, { opacity: 0, duration: 0.3 })
-          .to(actors, { opacity: 0, scale: 0.5, duration: 0.4 }, "<")
-          .to(overlay, { opacity: 0, duration: 0.3 }, "<");
-      }
-
-      // Helper to get path string from ID
-      function getPath(id: string) {
-        const el = document.querySelector(`#${id} path`);
-        return el ? el.getAttribute("d") || "" : "";
-      }
-    }
-
-    function initScrollResize() {
-      const navContainer = document.querySelector("#navbar-container");
-      let scrollTimeout: any;
-
-      if (!navContainer) return;
-
-      window.addEventListener(
-        "scroll",
-        () => {
-          // While scrolling, shrink
-          navContainer.classList.add("nav-shrunk");
-
-          // Clear existing timeout
-          clearTimeout(scrollTimeout);
-
-          // Set timeout to restore size when scroll stops
-          scrollTimeout = setTimeout(() => {
-            navContainer.classList.remove("nav-shrunk");
-          }, 150); // 150ms delay after stop
-        },
-        { passive: true }
-      );
-    }
-
-    function initNavbarAnim() {
-      const navContainer = document.querySelector("#navbar-container");
-      const navWrapper = document.querySelector("nav");
-
-      if (navContainer && navWrapper) {
-        // 1. Initial Load Animation
-        // Only run if Hero Section is NOT present (Hero handles it otherwise)
-        const hero = document.querySelector("#hero-section");
-
-        if (!hero) {
-          gsap.to(navContainer, {
-            opacity: 1,
-            duration: 0.05,
-            delay: 0.2,
-          });
-          gsap.to(navContainer, {
-            scale: 1,
-            duration: 1.8,
-            ease: "back.out(1.2)",
-            delay: 0.2,
-          });
-        }
-      }
-    }
-
-    function initHeroObserver() {
-      const navContainer = document.querySelector("#navbar-container");
+    if (navContainer && navWrapper) {
+      // 1. Initial Load Animation
+      // Only run if Hero Section is NOT present (Hero handles it otherwise)
       const hero = document.querySelector("#hero-section");
 
-      // Start with light theme if no hero and container exists (failsafe)
-      if (!hero && navContainer) {
-        navContainer.classList.add("nav-light");
-        navContainer.classList.remove("nav-dark");
-        return;
+      if (!hero) {
+        gsap.to(navContainer, {
+          opacity: 1,
+          duration: 0.05,
+          delay: 0.2,
+        });
+        gsap.to(navContainer, {
+          scale: 1,
+          duration: 1.8,
+          ease: "back.out(1.2)",
+          delay: 0.2,
+        });
       }
+    }
+  }
 
-      if (!navContainer || !hero) return;
+  function initHeroObserver() {
+    const navContainer = document.querySelector("#navbar-container");
+    const hero = document.querySelector("#hero-section");
 
-      // Check if Hero Exists
-      if (hero) {
-        // Scenario A: Hero Exists (Home) -> Default to Dark Theme (White Text)
+    if (!navContainer) return;
+
+    // Check if Hero Exists
+    if (hero) {
+      // Scenario A: Hero Exists (Home) -> Default to Dark Theme (White Text)
+      navContainer.classList.add("nav-dark");
+      navContainer.classList.remove("nav-light");
+    } else {
+      // Scenario B: No Hero (Subpages) -> Default to Light Theme (Black Text)
+      navContainer.classList.add("nav-light");
+      navContainer.classList.remove("nav-dark");
+      return; // Stop here, no ScrollTrigger needed
+    }
+
+    // Scenario B: Hero Exists -> Use ScrollTrigger to toggle theme
+    // We want Dark Theme (White Text) ONLY when we are IN the Hero section
+    ScrollTrigger.create({
+      trigger: hero,
+      start: "top top", // When hero starts
+      end: "bottom top+=80", // When hero bottom passes top (plus buffer for nav height)
+      onEnter: () => {
+        // Enters Hero -> Dark Theme
         navContainer.classList.add("nav-dark");
         navContainer.classList.remove("nav-light");
-      }
-
-      // Scenario B: Hero Exists -> Use ScrollTrigger to toggle theme
-      // We want Dark Theme (White Text) ONLY when we are IN the Hero section
-      ScrollTrigger.create({
-        trigger: hero,
-        start: "top top", // When hero starts
-        end: "bottom top+=80", // When hero bottom passes top (plus buffer for nav height)
-        onEnter: () => {
-          // Enters Hero -> Dark Theme
-          navContainer.classList.add("nav-dark");
-          navContainer.classList.remove("nav-light");
-        },
-        onLeave: () => {
-          // Leaves Hero (scrolling down) -> Light Theme
-          navContainer.classList.add("nav-light");
-          navContainer.classList.remove("nav-dark");
-        },
-        onEnterBack: () => {
-          // Re-enters Hero (scrolling up) -> Dark Theme
-          navContainer.classList.add("nav-dark");
-          navContainer.classList.remove("nav-light");
-        },
-        onLeaveBack: () => {
-          // Leaves Hero (scrolling up past top) -> Keep Dark Theme (overscroll)
-          navContainer.classList.add("nav-dark");
-          navContainer.classList.remove("nav-light");
-        },
-      });
-    }
-  </script>
-</nav>
+      },
+      onLeave: () => {
+        // Leaves Hero (scrolling down) -> Light Theme
+        navContainer.classList.add("nav-light");
+        navContainer.classList.remove("nav-dark");
+      },
+      onEnterBack: () => {
+        // Re-enters Hero (scrolling up) -> Dark Theme
+        navContainer.classList.add("nav-dark");
+        navContainer.classList.remove("nav-light");
+      },
+      onLeaveBack: () => {
+        // Leaves Hero (scrolling up past top) -> Keep Dark Theme (overscroll)
+        navContainer.classList.add("nav-dark");
+        navContainer.classList.remove("nav-light");
+      },
+    });
+  }
+</script>
