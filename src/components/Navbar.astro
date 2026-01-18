@@ -221,10 +221,11 @@ const links = [
       const toggleBtn = document.querySelector("#mobile-menu-toggle");
       const overlay = document.querySelector("#mobile-menu-overlay");
       const menuLinks = document.querySelector("#mobile-menu-links");
+      // Cast to SVGPathElement to fix TS errors with simple helper
       const actors = [
-        document.querySelector("#menu-actor-1"),
-        document.querySelector("#menu-actor-2"),
-        document.querySelector("#menu-actor-3"),
+        document.querySelector("#menu-actor-1") as SVGPathElement,
+        document.querySelector("#menu-actor-2") as SVGPathElement,
+        document.querySelector("#menu-actor-3") as SVGPathElement,
       ];
 
       if (!toggleBtn || !overlay || !menuLinks) return;
@@ -251,17 +252,27 @@ const links = [
         gsap.set("#mobile-menu-toggle svg", { color: "black" }); // Ensure button visible on white
 
         // 2. Reset Actors (Start State)
-        // Actor 1 is the main shape initially. Actors 2 & 3 hidden.
+        // We start visible but small or centered
         gsap.set(actors[0], {
           attr: { d: getPath("Morph-Start") },
           opacity: 1,
-          fill: "#1a1a1a", // Dark fill
+          fill: "white", // User requested White
+          scale: 0.1, // Start small/centered
+          transformOrigin: "center center",
         });
-        gsap.set([actors[1], actors[2]], { opacity: 0 });
+        gsap.set([actors[1], actors[2]], {
+          opacity: 0,
+          fill: "white",
+          scale: 0.1,
+          transformOrigin: "center center",
+        });
+
+        // Prepare Menu Links
         gsap.set(menuLinks, { opacity: 0 });
 
         // 3. Create Timeline
         tl = gsap.timeline({
+          defaults: { ease: "power2.inOut" },
           onComplete: () => {
             isAnimating = false;
             // Reveal Links
@@ -269,97 +280,59 @@ const links = [
           },
         });
 
-        // --- PHASE 1: Start -> Step 1 -> Step 2 (Single Path) ---
+        // --- STEP 1: Center Pop / Grow ---
+        // Morph start to Fin-Part1 immediately while scaling up
         tl.to(actors[0], {
-          morphSVG: getPath("Morph-Step-1"),
-          duration: 0.4,
-          ease: "power2.inOut",
-        }).to(actors[0], {
-          morphSVG: getPath("Morph-Step-2"),
-          duration: 0.4,
-          ease: "power2.inOut",
+          scale: 1, // Full size
+          duration: 0.8,
+          morphSVG: getPath("Morph-Fin-Part1"),
+          ease: "back.out(1.2)",
         });
 
-        // --- PHASE 2: Step 2 -> Step 3 (Split into 2) ---
+        // --- STEP 2: Extend Parts 2 & 3 ---
+        // "Extend and keep visible all of the other parts"
+        // We grow them out from the center (overlapping the first part initially)
 
-        tl.add("step3");
-
-        // Actor 1 becomes Part 1
-        tl.to(
-          actors[0],
-          {
-            morphSVG: getPath("Morph-Step-3-Part1"),
-            duration: 0.5,
-            ease: "back.out(1.2)",
-          },
-          "step3"
-        );
-
-        // Actor 2 appears and forms Part 2
+        // Part 2
         tl.fromTo(
           actors[1],
           {
-            attr: { d: getPath("Morph-Step-2") },
+            attr: { d: getPath("Morph-Fin-Part2") },
+            scale: 0.1,
             opacity: 0,
-            fill: "#1a1a1a",
           },
           {
+            scale: 1,
             opacity: 1,
-            morphSVG: getPath("Morph-Step-3-Part2"),
-            duration: 0.5,
-            ease: "back.out(1.2)",
+            duration: 0.8,
+            ease: "power2.out",
           },
-          "step3"
-        );
+          "-=0.6"
+        ); // Overlap with Part 1
 
-        // --- PHASE 3: Step 3 -> Fin (Split into 3) ---
-        tl.add("fin");
-
-        // Actor 1 -> Fin Part 1
-        tl.to(
-          actors[0],
-          {
-            morphSVG: getPath("Morph-Fin-Part1"),
-            duration: 0.6,
-            ease: "elastic.out(1, 0.8)",
-          },
-          "fin"
-        );
-
-        // Actor 2 -> Fin Part 2
-        tl.to(
-          actors[1],
-          {
-            morphSVG: getPath("Morph-Fin-Part2"),
-            duration: 0.6,
-            ease: "elastic.out(1, 0.8)",
-          },
-          "fin"
-        );
-
-        // Actor 3 Appears -> Fin Part 3
+        // Part 3
         tl.fromTo(
           actors[2],
           {
-            attr: { d: getPath("Morph-Step-3-Part1") },
+            attr: { d: getPath("Morph-Fin-Part3") },
+            scale: 0.1,
             opacity: 0,
-            fill: "#1a1a1a",
           },
           {
+            scale: 1,
             opacity: 1,
-            morphSVG: getPath("Morph-Fin-Part3"),
-            duration: 0.6,
-            ease: "elastic.out(1, 0.8)",
+            duration: 0.8,
+            ease: "power2.out",
           },
-          "fin"
+          "-=0.7"
         );
 
         // Reveal Menu Text Staggered
         tl.fromTo(
           "#mobile-menu-links li",
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, stagger: 0.1 },
-          "-=0.2"
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" },
+          "-=0.4"
         );
       }
 
@@ -367,7 +340,7 @@ const links = [
         isAnimating = true;
         isOpen = false;
 
-        // Simple fade out
+        // Reverse or Fade Out
         const tlClose = gsap.timeline({
           onComplete: () => {
             isAnimating = false;
@@ -378,14 +351,14 @@ const links = [
 
         tlClose
           .to(menuLinks, { opacity: 0, duration: 0.3 })
-          .to(actors, { opacity: 0, duration: 0.3 }, "<")
+          .to(actors, { opacity: 0, scale: 0.5, duration: 0.4 }, "<")
           .to(overlay, { opacity: 0, duration: 0.3 }, "<");
       }
 
       // Helper to get path string from ID
       function getPath(id: string) {
         const el = document.querySelector(`#${id} path`);
-        return el ? el.getAttribute("d") : "";
+        return el ? el.getAttribute("d") || "" : "";
       }
     }
 
@@ -442,18 +415,20 @@ const links = [
       const navContainer = document.querySelector("#navbar-container");
       const hero = document.querySelector("#hero-section");
 
-      if (!navContainer) return;
+      // Start with light theme if no hero and container exists (failsafe)
+      if (!hero && navContainer) {
+        navContainer.classList.add("nav-light");
+        navContainer.classList.remove("nav-dark");
+        return;
+      }
+
+      if (!navContainer || !hero) return;
 
       // Check if Hero Exists
       if (hero) {
         // Scenario A: Hero Exists (Home) -> Default to Dark Theme (White Text)
         navContainer.classList.add("nav-dark");
         navContainer.classList.remove("nav-light");
-      } else {
-        // Scenario B: No Hero (Subpages) -> Default to Light Theme (Black Text)
-        navContainer.classList.add("nav-light");
-        navContainer.classList.remove("nav-dark");
-        return; // Stop here, no ScrollTrigger needed
       }
 
       // Scenario B: Hero Exists -> Use ScrollTrigger to toggle theme
