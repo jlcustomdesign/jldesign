@@ -11,7 +11,8 @@ const links = [
 
 <div
   id="mobile-menu-overlay"
-  class="fixed inset-0 z-[60] bg-secondary pointer-events-none opacity-0"
+  id="mobile-menu-overlay"
+  class="fixed inset-0 z-[60] pointer-events-none opacity-0"
 >
   <!-- Background SVG Container -->
   <div
@@ -32,36 +33,36 @@ const links = [
       <g id="Start" class="menu-step opacity-0">
         <path
           d="M1814.157,1100.237L1814.157,2407.637C1814.157,2470.997 1762.717,2522.437 1699.357,2522.437L780.957,2522.437C717.598,2522.437 666.157,2470.997 666.157,2407.637L666.157,1100.237C666.157,1036.877 717.598,985.437 780.957,985.437L1699.357,985.437C1762.717,985.437 1814.157,1036.877 1814.157,1100.237Z"
-          style="fill:rgb(235,235,235);"></path>
+          style="fill:black;"></path>
       </g>
       <g id="Step-1" class="menu-step opacity-0">
         <path
           d="M1102,656.7L1102,1664.237C1102,1713.744 1061.807,1753.937 1012.3,1753.937L294.7,1753.937C245.193,1753.937 205,1713.744 205,1664.237L205,656.7C205,607.193 245.193,567 294.7,567L1012.3,567C1061.807,567 1102,607.193 1102,656.7Z"
-          style="fill:rgb(235,235,235);"></path>
+          style="fill:black;"></path>
       </g>
       <g id="Step-2" class="menu-step opacity-0">
         <path
           d="M2405,646.6L2405,1283.4C2405,1327.332 2369.332,1363 2325.4,1363L679.6,1363C635.668,1363 600,1327.332 600,1283.4L600,646.6C600,602.668 635.668,567 679.6,567L2325.4,567C2369.332,567 2405,602.668 2405,646.6Z"
-          style="fill:rgb(235,235,235);"></path>
+          style="fill:black;"></path>
       </g>
       <g id="Step-3" class="menu-step opacity-0">
         <path
           d="M2405,2123.037L2405,2921.837C2405,2966.321 2368.884,3002.437 2324.4,3002.437L1679.6,3002.437C1635.116,3002.437 1599,2966.321 1599,2921.837L1599,2123.037C1599,2078.553 1635.116,2042.437 1679.6,2042.437L2324.4,2042.437C2368.884,2042.437 2405,2078.553 2405,2123.037Z"
-          style="fill:rgb(235,235,235);"></path>
+          style="fill:black;"></path>
         <path
           d="M819,2321.4L819,2941.037C819,2974.925 791.488,3002.437 757.6,3002.437L266.4,3002.437C232.512,3002.437 205,2974.925 205,2941.037L205,2321.4C205,2287.512 232.512,2260 266.4,2260L757.6,2260C791.488,2260 819,2287.512 819,2321.4Z"
-          style="fill:rgb(235,235,235);"></path>
+          style="fill:black;"></path>
       </g>
       <g id="Step-Fin" class="menu-step opacity-0">
         <path
           d="M666.157,1520.116L666.157,2476.321C666.157,2501.773 645.494,2522.437 620.042,2522.437L251.116,2522.437C225.664,2522.437 205,2501.773 205,2476.321L205,1520.116C205,1494.664 225.664,1474 251.116,1474L620.042,1474C645.494,1474 666.157,1494.664 666.157,1520.116Z"
-          style="fill:rgb(235,235,235);"></path>
+          style="fill:black;"></path>
         <path
           d="M2405,1044.521L2405,2534.916C2405,2567.525 2378.525,2594 2345.916,2594L1873.242,2594C1840.632,2594 1814.157,2567.525 1814.157,2534.916L1814.157,1044.521C1814.157,1011.912 1840.632,985.437 1873.242,985.437L2345.916,985.437C2378.525,985.437 2405,1011.912 2405,1044.521Z"
-          style="fill:rgb(235,235,235);"></path>
+          style="fill:black;"></path>
         <path
           d="M1869,2570.437L1869,2954.437C1869,2980.929 1847.492,3002.437 1821,3002.437L612,3002.437C585.508,3002.437 564,2980.929 564,2954.437L564,2570.437C564,2543.945 585.508,2522.437 612,2522.437L1821,2522.437C1847.492,2522.437 1869,2543.945 1869,2570.437Z"
-          style="fill:rgb(235,235,235);"></path>
+          style="fill:black;"></path>
       </g>
     </svg>
   </div>
@@ -134,32 +135,77 @@ const links = [
     // Kill old timeline if exists to prevent duplicates on navigation
     if (menuTimeline) menuTimeline.kill();
 
-    menuTimeline = gsap.timeline({ paused: true, reversed: true });
+    // Set stroke to cover gaps (White lines fix)
+    gsap.set("#menu-bg-svg path", {
+      stroke: "black",
+      strokeWidth: 2,
+      vectorEffect: "non-scaling-stroke",
+    });
+
+    menuTimeline = gsap.timeline({
+      paused: true,
+      reversed: true,
+      onReverseComplete: () => {
+        // Ensure overlay is hidden and interaction restored
+        gsap.set(overlay, { autoAlpha: 0 });
+        overlay.classList.remove("is-open");
+        document.body.style.overflow = "";
+      },
+    });
 
     // 1. Reveal Overlay
     menuTimeline.to(overlay, {
       autoAlpha: 1,
-      duration: 0.1,
+      duration: 0.05, // Fast reveal of white bg
       pointerEvents: "auto",
       ease: "power2.out",
     });
 
-    // 2. Sequential SVG Reveal (Additive)
-    const steps = ["#Start", "#Step-1", "#Step-2", "#Step-3", "#Step-Fin"];
+    // 2. Sequential SVG Reveal (Scale Growth - No Clipping Glitches)
+    // We grow the actual shape from the connection point
+    const steps = [
+      { id: "#Start", origin: "50% 100%" }, // Grow Up (from bottom)
+      { id: "#Step-1", origin: "100% 100%" }, // Grow Up-Left (from bottom-right)
+      { id: "#Step-2", origin: "100% 50%" }, // Grow Left (from right)
+      { id: "#Step-3", origin: "50% 0%" }, // Grow Down (from top)
+      { id: "#Step-Fin", origin: "50% 50%" }, // Grow Out (from center)
+    ];
 
     steps.forEach((step, i) => {
+      const target = step.id;
+
+      // Initial State: Scrunched down
+      gsap.set(target, {
+        transformOrigin: step.origin,
+        scale: 0,
+        opacity: 1,
+        // Ensure no clip-path interferes
+        clipPath: "none",
+      });
+
       menuTimeline?.to(
-        step,
+        target,
         {
-          opacity: 1,
-          duration: 0.15, // Quick morph-like feel
-          ease: "none",
+          scale: 1, // Grow to full size
+          duration: 1.2,
+          ease: "power3.inOut",
         },
-        i === 0 ? ">" : ">-0.05"
-      ); // Slight overlap for fluidity
+        i === 0 ? ">" : "<+=0.3"
+      );
     });
 
-    // 3. Reveal Links (After SVG is fully formed)
+    // 2.5 Vertical Growth (Taller - Separate Step)
+    // 2.5 Vertical Growth (Taller - Separate Step)
+    // "It needs to grow taller (both up/down directions) after animation is finished"
+    menuTimeline?.to("#menu-bg-svg", {
+      scaleY: 1.8, // Massive growth to ensure full height coverage
+      scaleX: 1.0,
+      transformOrigin: "center center",
+      duration: 0.8, // Smooth stretch
+      ease: "power2.inOut",
+    });
+
+    // 3. Reveal Links (During the growth)
     menuTimeline.to(
       menuLinks,
       {
@@ -167,9 +213,9 @@ const links = [
         opacity: 1,
         duration: 0.6,
         stagger: 0.1,
-        ease: "back.out(1.2)",
+        ease: "power2.out",
       },
-      "-=0.2"
+      "-=0.6" // Undercut the growth slightly
     );
 
     // 4. Reveal CTA and Close Button
@@ -185,33 +231,53 @@ const links = [
     );
 
     // Logic
-    // Remove old listeners to prevent duplicates (if any)
-    const newOpenBtn = openBtn.cloneNode(true);
-    if (openBtn.parentNode) {
-      openBtn.parentNode.replaceChild(newOpenBtn, openBtn);
-    }
+    // Simplify: Use onclick to avoid duplicate listeners without cloning
+    openBtn.onclick = (e) => {
+      e.stopPropagation();
+      console.log("MOBILE MENU: Open Button Clicked!");
 
-    newOpenBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent bubbling issues
-      console.log("Open Menu Clicked");
-      menuTimeline?.play();
-      document.body.style.overflow = "hidden"; // Lock scroll
-    });
+      // FORCE VISIBILITY via Class (Bypassing GSAP for container)
+      overlay.classList.add("is-open");
+
+      if (menuTimeline) {
+        console.log("MOBILE MENU: Playing Timeline", menuTimeline);
+        menuTimeline.play();
+        document.body.style.overflow = "hidden";
+      } else {
+        console.error("MOBILE MENU: Timeline not found!");
+      }
+    };
 
     closeBtn.addEventListener("click", () => {
-      menuTimeline?.reverse();
-      document.body.style.overflow = ""; // Unlock scroll
+      console.log("MOBILE MENU: Close Clicked");
+      if (menuTimeline) {
+        menuTimeline.reverse();
+      } else {
+        gsap.to(overlay, { autoAlpha: 0, duration: 0.2 });
+        overlay.classList.remove("is-open");
+        document.body.style.overflow = "";
+      }
     });
 
     // Close on link click (Navigating)
     menuLinks.forEach((link) => {
       link.addEventListener("click", () => {
         menuTimeline?.reverse();
-        document.body.style.overflow = "";
       });
     });
   }
 
   // Init on load
+  // Init on load
+  document.addEventListener("DOMContentLoaded", initMobileMenu);
   document.addEventListener("astro:page-load", initMobileMenu);
 </script>
+
+<style>
+  /* Force Visibility State (Debug/Fallback) */
+  .is-open {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+  }
+</style>
