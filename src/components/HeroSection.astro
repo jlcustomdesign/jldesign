@@ -474,11 +474,11 @@ const heroImage = "/Images/hero-image.jpg";
 
     // Blur + fade + SCALE animation for entire hero content
     gsap.to(heroContent, {
-      scale: isMobile ? 0.8 : 0.9,
-      filter: isMobile ? "blur(4px)" : "blur(8px)",
-      opacity: 0.5,
+      scale: isMobile ? 0.95 : 0.9, // Less scale on mobile
+      filter: isMobile ? "none" : "blur(8px)", // DISABLE BLUR ON MOBILE (Performance killer)
+      opacity: 0, // Fade out completely
       ease: "none",
-      force3D: true,
+      force3D: true, // Force GPU
       scrollTrigger: {
         trigger: heroSection,
         start: "bottom bottom",
