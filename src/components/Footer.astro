@@ -291,7 +291,16 @@ const currentYear = new Date().getFullYear();
     requestAnimationFrame(updateFooterLayout);
 
     // Run on Resize
-    window.addEventListener("resize", updateFooterLayout);
+    // Run on Resize (Width only check)
+    let lastWidth = window.innerWidth;
+    window.addEventListener("resize", () => {
+      const currentWidth = window.innerWidth;
+      // Ignore height-only resizes (mobile chrome)
+      if (currentWidth !== lastWidth) {
+        lastWidth = currentWidth;
+        updateFooterLayout();
+      }
+    });
   }
 
   // Initialize only on Astro navigation/load

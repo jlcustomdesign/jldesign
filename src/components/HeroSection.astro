@@ -261,9 +261,15 @@ const heroImage = "/Images/hero-image.jpg";
         }
 
         // Resize Listener
+        let lastWidth = window.innerWidth;
         const onResize = () => {
           const w = window.innerWidth;
           const h = window.innerHeight;
+
+          // Ignore height-only resize (mobile address bar) to prevent stutter
+          if (w === lastWidth) return;
+          lastWidth = w;
+
           svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
           path.setAttribute("d", cross(w, h));
         };
