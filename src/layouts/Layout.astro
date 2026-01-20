@@ -28,9 +28,7 @@ const { title } = Astro.props;
       window.scrollTo(0, 0);
     </script>
   </head>
-  <body
-    class="bg-secondary text-primary font-sans antialiased overflow-x-hidden"
-  >
+  <body class="bg-secondary text-primary font-sans antialiased">
     <!--  Navbar must be outside smooth-wrapper to be fixed/sticky correctly -->
     <Navbar />
     <MobileMenu />
@@ -80,9 +78,5 @@ const { title } = Astro.props;
     background: #9ca3af;
   }
 
-  /* Performance Optimization */
-  .section-optimize {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 1000px; /* Guess height to prevent scroll jump */
-  }
+  /* Performance Optimization - Removed to prevent layout shifts */
 </style>

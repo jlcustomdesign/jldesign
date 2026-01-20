@@ -17,6 +17,17 @@
   --font-sans: "Grift", sans-serif;
 }
 
+html {
+    scroll-behavior: auto !important; /* Prevent fighting with GSAP */
+    touch-action: manipulation; /* Improve touch latency */
+    overflow-x: hidden; /* Safe handling of horizontal overflow at root */
+}
+
+body {
+    width: 100%;
+    overflow-x: hidden; /* Ensure body doesn't cause horiz scroll */
+}
+
 /* Hide scrollbar for native horizontal scroll galleries */
 .scrollbar-hide {
   -ms-overflow-style: none;  /* IE and Edge */
