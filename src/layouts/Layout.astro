@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import MobileMenu from "../components/MobileMenu.astro";
+import CustomCursor from "../components/ui/CustomCursor.astro";
 
 interface Props {
   title: string;
@@ -34,6 +35,7 @@ const { title } = Astro.props;
     <!--  Navbar must be outside smooth-wrapper to be fixed/sticky correctly -->
     <Navbar />
     <MobileMenu />
+    <CustomCursor />
 
     <!-- ScrollSmoother Structure -->
     <div
@@ -84,5 +86,19 @@ const { title } = Astro.props;
   .section-optimize {
     content-visibility: auto;
     contain-intrinsic-size: 1px 1000px; /* Guess height to prevent scroll jump */
+  }
+
+  /* Hide Default Cursor on Desktop */
+  @media (hover: hover) and (pointer: fine) {
+    html,
+    body,
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    [role="button"] {
+      cursor: none !important;
+    }
   }
 </style>
