@@ -128,6 +128,11 @@ const links = [
 
     if (!navContainer) return;
 
+    // User feedback: Navbar pulsing causes "scroll stop" feeling on mobile.
+    // Disable this resizing logic on mobile devices.
+    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
+    if (isMobile) return;
+
     window.addEventListener(
       "scroll",
       () => {
