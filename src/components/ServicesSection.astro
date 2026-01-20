@@ -74,9 +74,9 @@ const services = [
     </div>
   </div>
 
-  <!-- CONTENT LAYER -->
+  <!-- CONTENT LAYER (Desktop Only) -->
   <div
-    class="relative z-10 w-full h-full flex items-center justify-center pointer-events-none"
+    class="relative z-10 w-full h-full flex items-center justify-center pointer-events-none desktop-content-layer"
   >
     <!-- HEADER REMOVED -->
 
@@ -130,6 +130,105 @@ const services = [
         d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
     </svg>
   </button>
+
+  <style>
+    /* MOBILE STACKED LAYOUT STYLES */
+    @media (max-width: 1023px) {
+      #services-fullscreen-wrapper {
+        height: auto !important;
+        overflow: visible !important;
+        background-color: transparent !important;
+      }
+      .service-bg {
+        display: none !important;
+      }
+      .mobile-stack-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        padding-bottom: 4rem;
+        width: 100%;
+      }
+      .mobile-service-card {
+        position: relative;
+        width: 100%;
+        min-height: 80vh;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 2rem;
+        color: white;
+      }
+      .mobile-service-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+      }
+      .mobile-service-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+        z-index: 1;
+      }
+      .mobile-service-content {
+        position: relative;
+        z-index: 2;
+        text-align: left;
+      }
+      /* Hide original desktop content structure */
+      .desktop-content-layer {
+        display: none !important;
+      }
+      #skip-btn {
+        display: none !important;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .mobile-stack-container {
+        display: none !important;
+      }
+    }
+  </style>
+
+  <div class="mobile-stack-container lg:hidden">
+    {
+      services.map((service, i) => (
+        <div class="mobile-service-card">
+          <img
+            src={service.img}
+            alt={service.title}
+            class="mobile-service-img"
+            loading="lazy"
+          />
+          <div class="mobile-service-overlay" />
+          <div class="mobile-service-content">
+            <div class="font-sans text-xs text-accent tracking-[0.3em] uppercase mb-4">
+              {(i + 1).toString().padStart(2, "0")} — Servicii
+            </div>
+            <h2 class="font-serif font-bold text-4xl mb-4 leading-tight">
+              {service.title}
+            </h2>
+            <p class="font-sans text-base text-gray-200 leading-relaxed mb-8 font-light">
+              {service.desc}
+            </p>
+            <BubbleButton
+              href={`/services/${service.id}`}
+              variant="primary"
+              class="px-6 py-3"
+            >
+              Explorează
+            </BubbleButton>
+          </div>
+        </div>
+      ))
+    }
+  </div>
 </section>
 
 <script>
@@ -142,7 +241,8 @@ const services = [
   document.addEventListener("astro:page-load", initFullscreenScroll);
 
   function initFullscreenScroll() {
-    // if (window.innerWidth < 1024) return; // Removed to enable mobile scroll
+    const isMobile = window.innerWidth < 1024;
+    if (isMobile) return; // Completely Type: Native layout handles it via CSS
 
     const wrapper = document.querySelector("#services-fullscreen-wrapper");
     const bgs = gsap.utils.toArray(".service-bg") as HTMLElement[];
@@ -330,9 +430,6 @@ const services = [
 
     // OBSERVER LOGIC
     // Hybrid Approach: Pin for distance, use Observer to hijack navigation.
-
-    // Detect if mobile/touch device
-    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
 
     // Reference to observer (declared here, defined later)
     let intentObserver: Observer;
