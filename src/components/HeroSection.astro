@@ -485,7 +485,7 @@ const heroImage = "/Images/hero-image.jpg";
         end: "bottom top",
         // Use numeric scrub for better iOS compatibility
         scrub: 0.5,
-        pin: true,
+        pin: !isMobile, // Disable pinning on mobile to prevent "tripwire" stop sensation
         pinSpacing: false,
         // Force refresh on orientation change
         invalidateOnRefresh: true,

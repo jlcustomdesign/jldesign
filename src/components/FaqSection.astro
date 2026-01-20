@@ -279,19 +279,27 @@ const faqs = [
       });
     }
 
-    // --- 4. Sidebar Sticky Logic ---
-    const sidebar = document.querySelector("#faq-sidebar-v2") as HTMLElement;
-    const content = document.querySelector("#faq-list-v2") as HTMLElement;
-    const wrapper = document.querySelector(".wrapper-v2") as HTMLElement;
+    // --- 4. Sidebar Sticky Logic (Desktop Only via MatchMedia) ---
+    ScrollTrigger.matchMedia({
+        "(min-width: 1024px)": function() {
+            const sidebar = document.querySelector("#faq-sidebar-v2") as HTMLElement;
+            const content = document.querySelector("#faq-list-v2") as HTMLElement;
+            const wrapper = document.querySelector(".wrapper-v2") as HTMLElement;
 
-    if (sidebar && content && wrapper && !isMobile) {
-        ScrollTrigger.create({
-            trigger: wrapper,
-            start: "top top+=120", // 120px offset from top
-            end: "bottom bottom",
-            pin: sidebar, // Pin the sidebar
-            pinSpacing: false, // Don't push content down
-        });
-    }
+            if (sidebar && content && wrapper) {
+                ScrollTrigger.create({
+                    trigger: wrapper, 
+                    start: "top top+=120", 
+                    end: () => `+=${content.offsetHeight - sidebar.offsetHeight}`,
+                    pin: sidebar, 
+                    pinSpacing: false,
+                    invalidateOnRefresh: true, 
+                });
+            }
+        },
+        "(max-width: 1023px)": function() {
+             // Cleanup if needed, usually auto-handled by matchMedia for triggers created inside
+        }
+    });
   }
 </script>
