@@ -104,7 +104,7 @@ const applyCleanStyles = (
  * Initializes animations by finding elements with data-reveal attribute
  * and setting up intersection observers
  */
-const initTextAnimations = (): void => {
+export const initTextAnimations = (): void => {
 	// Initialize the observer
 	const observer = new IntersectionObserver(
 		(entries) => handleIntersection(entries, observer),
@@ -154,8 +154,8 @@ const handleWindowResize = (): void => {
 		// Process only text-based animated elements
 		animatedElements.forEach((element) => {
 			const animType = element.getAttribute('data-reveal');
-			// Only restore text-based animations (slide, perspective)
-			if (animType && ['slide', 'perspective'].includes(animType)) {
+			// Only restore text-based animations (slide, perspective, word-slide)
+			if (animType && ['slide', 'perspective', 'word-slide'].includes(animType)) {
 				restoreOriginalText(element);
 			}
 		});
@@ -198,7 +198,7 @@ const restoreOriginalText = (element: HTMLElement): void => {
 
 	// If this element acts as a container for grouped line reveal, ensure nested text elements are visible
 	if (
-		['slide', 'perspective'].includes(element.getAttribute('data-reveal') || '')
+		['slide', 'perspective', 'word-slide'].includes(element.getAttribute('data-reveal') || '')
 	) {
 		const nestedTextEls = element.querySelectorAll<HTMLElement>(
 			SELECTORS.NESTED_TEXT_ELEMENTS
@@ -285,6 +285,9 @@ const handleIntersection = (
 						animateSlide(element, options);
 					}
 					break;
+				case 'word-slide':
+                   animateWordSlide(element, options);
+                   break;
 				default:
 					// Default to object animation for any unspecified animation type
 					animateSlide(element, options);
@@ -687,6 +690,148 @@ const animateSlide = (
 			keepWillChange
 		);
 	});
+};
+
+/**
+ * Animate text by sliding words individually
+ */
+const animateWordSlide = (
+	element: HTMLElement,
+	options: AnimationOptions
+): void => {
+	// Reset opacity
+	element.style.opacity = '1';
+
+	// Split text into words
+	const wordsHTML = splitTextIntoWordsOnly(element);
+
+	// Create container
+	const container = document.createElement('div');
+    // Ensure container behaves like the original element text flow
+    container.style.display = 'block'; 
+    container.style.wordWrap = 'break-word';
+
+	// Mark this animated container as hidden from assistive tech
+	container.setAttribute('aria-hidden', 'true');
+
+	container.innerHTML = wordsHTML;
+	// Clear current content then insert sr-only span followed by container
+	element.innerHTML = '';
+	insertSrOnlyText(element);
+	element.appendChild(container);
+
+	// Get all word wrappers for animation
+	const wordWrappers = container.querySelectorAll('.word-wrapper');
+	const totalWords = wordWrappers.length;
+
+	// Create GSAP timeline
+	const timeline = gsap.timeline({
+		delay: options.delay || 0,
+	});
+
+	// Animate each word
+	wordWrappers.forEach((wordWrapper, index) => {
+		const wordSpan = wordWrapper.querySelector('.word-inner');
+        if(!wordSpan) return;
+
+		const wordDelay = index * (options.stagger || 0.03); // Default faster stagger for words
+        const duration = options.duration || DEFAULT_ANIMATION_VALUES.DURATION;
+
+        // Slide Up Animation for the inner span
+        timeline.fromTo(
+            wordSpan,
+            { y: '100%' },
+            {
+                y: 0,
+                duration: duration,
+                ease: 'quart.out',
+                onComplete: () => {
+                     // Cleanup styles
+                     (wordSpan as HTMLElement).style.transform = '';
+                     (wordSpan as HTMLElement).style.willChange = 'auto';
+                }
+            },
+            wordDelay
+        );
+	});
+};
+
+/**
+ * Split text into words only (no line grouping)
+ */
+const splitTextIntoWordsOnly = (element: HTMLElement): string => {
+	// Preserve the original HTML so it can be restored later
+	const originalHTML = element.innerHTML;
+
+	// Create a clone for processing
+	const { parentClone, elementClone } = createAnalysisClone(element);
+	if (!parentClone) return originalHTML;
+
+	// Perform word splitting
+	splitWordsInElement(elementClone);
+
+    // Get all the .split-word spans
+    const wordSpans = Array.from(elementClone.querySelectorAll('.split-word'));
+
+    // Build HTML with the animation wrappers
+    let resultHTML = '';
+    
+    // We need to reconstruct the HTML preserving non-text nodes if possible, 
+    // but for simplicity and robustness with standard text elements, we often reconstruct from spans.
+    // However, splitWordsInElement operates IN PLACE on the clone.
+    // So if we just iterate the clone's children, we might get what we want?
+    // splitWordsInElement replaced text nodes with spans.
+    
+    // Let's iterate the clone's child nodes to preserve structure (like <br> or existing spans)
+    // But we need to wrap the .split-word spans in the animation div structure.
+    
+    const wrapWordsRecursively = (node: Node): string => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const el = node as HTMLElement;
+            if (el.classList.contains('split-word')) {
+                const text = el.textContent || '';
+                // The wrapper structure for individual word slide
+                // Use inline-block to flow naturally
+                return `<span class="word-wrapper" style="display: inline-block; overflow: hidden; vertical-align: top; margin-right: 0.25em; will-change: transform;">
+                            <span class="word-inner" style="display: inline-block; transform: translateY(100%); will-change: transform;">${text}</span>
+                        </span>`;
+            }
+            
+            // Recurse for other elements
+            let inner = '';
+            el.childNodes.forEach(child => {
+                inner += wrapWordsRecursively(child);
+            });
+            
+            // if it was just a container span/div/p, return it with new inner
+            // We strip the split-word class if it somehow got copied but handled above
+            const tag = el.tagName.toLowerCase();
+            const attrs = Array.from(el.attributes).map(a => `${a.name}="${a.value}"`).join(' ');
+            
+            // Check for void tags (elements that cannot have children/closing tag)
+            const voidTags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+            if (voidTags.includes(tag)) {
+                return `<${tag} ${attrs} />`;
+            }
+
+            return `<${tag} ${attrs}>${inner}</${tag}>`;
+        } else if (node.nodeType === Node.TEXT_NODE) {
+            // Should be empty or whitespace if splitWordsInElement worked
+            return node.textContent || '';
+        }
+        return '';
+    };
+
+    resultHTML = '';
+    elementClone.childNodes.forEach(node => {
+        resultHTML += wrapWordsRecursively(node);
+    });
+
+	// Clean up
+	parentClone.remove();
+
+    // Restore original is handled by the caller keeping originalHTML in the object property
+	return resultHTML;
 };
 
 /**

@@ -3,14 +3,15 @@ import BubbleButton from "./ui/BubbleButton.astro";
 ---
 
 <section
-  class="py-24 md:py-40 bg-secondary flex items-center justify-center min-h-[70vh] relative overflow-hidden"
+  class="py-24 md:py-40 bg-secondary flex items-center justify-center min-h-screen relative overflow-hidden"
   id="about-section"
   data-theme="light"
   style="z-index: 10; position: relative;"
 >
   <div class="container mx-auto px-4 md:px-8 relative z-10 text-center">
     <div
-      class="max-w-5xl mx-auto p-12 md:p-16 bg-white rounded-3xl md:rounded-[3rem] shadow-2xl about-card border border-gray-100 flex flex-col items-center gap-8"
+      class="max-w-5xl mx-auto p-12 md:p-16 w-full flex flex-col justify-center bg-white rounded-3xl md:rounded-[3rem] shadow-2xl about-card border border-gray-100 items-center gap-8"
+      style="min-height: 80vh !important;"
     >
       <h2
         class="font-serif text-4xl md:text-5xl lg:text-6xl text-primary leading-tight about-title"
@@ -36,10 +37,6 @@ import BubbleButton from "./ui/BubbleButton.astro";
   </div>
 
   <!-- Subtle Decorative Background Shape -->
-  <div
-    class="about-bg-shape absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] aspect-square bg-accent/5 rounded-full blur-[120px] -z-0"
-  >
-  </div>
 </section>
 
 <script>
@@ -67,7 +64,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
         .split(" ")
         .map(
           (word) =>
-            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: ${isMobile ? "none" : "blur(8px)"}">${word}&nbsp;</span></span>`
+            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: ${isMobile ? "none" : "blur(8px)"}">${word}&nbsp;</span></span>`,
         )
         .join("");
     };
@@ -107,7 +104,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
           stagger: isMobile ? 0.03 : 0.1, // Faster stagger on mobile
           ease: "none",
         },
-        "-=0.5"
+        "-=0.5",
       );
 
       // 3. Subtext Staggered Reveal
@@ -121,7 +118,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
           stagger: isMobile ? 0.02 : 0.05,
           ease: "none",
         },
-        "-=0.5"
+        "-=0.5",
       );
 
       // 4. Button Reveal
@@ -139,7 +136,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
           duration: 0.5,
           ease: "none",
         },
-        "-=0.2"
+        "-=0.2",
       );
 
       // 5. Parallax for Background Shape

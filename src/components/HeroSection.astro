@@ -55,109 +55,97 @@ const heroImage = "/Images/hero-image.jpg";
 
     <!-- Content Container -->
     <div
-      class="container mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+      class="container mx-auto px-4 md:px-8 relative z-10 flex flex-col justify-center h-full pointer-events-none"
     >
       <!-- Left: Text Content -->
-      <div class="order-2 md:order-1">
+      <div class="relative group pointer-events-auto" id="hero-title-container">
+        <!-- Main Title -->
         <h1
-          class="font-serif font-extrabold text-5xl md:text-6xl lg:text-7xl leading-tight text-white mb-6 overflow-hidden"
+          id="hero-title"
+          class="font-serif font-normal text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl leading-tight text-white mb-6 relative z-10 title-hover w-fit pointer-events-none opacity-0 invisible hero-text-element"
+          data-cursor-scale="5.0"
         >
-          <span class="hero-text-line block">Spațiul tău,</span>
-          <span class="hero-text-line block">viziunea noastră</span>
+          Spațiul tău, <br /> viziunea noastră
         </h1>
 
         <p
-          class="hero-subtitle text-lg md:text-xl text-white max-w-md mb-10 opacity-0 transform translate-y-4"
+          class="hero-subtitle text-lg md:text-xl text-white/80 max-w-2xl lg:max-w-4xl mb-10 opacity-0 invisible hero-text-element"
         >
           Mobilă creată să dăinuie. Design minimalist, finisaje premium și o
           atenție obsesivă la detalii.
         </p>
       </div>
-
-      <!-- Right: Visual "Window" -->
-      <div
-        class="hidden md:block order-1 md:order-2 relative aspect-[1.3/1] w-full max-w-xl mx-auto md:translate-x-18"
-      >
-        <div
-          class="hero-image-mask absolute inset-0 w-full h-full overflow-hidden rounded-2xl origin-center scale-90 opacity-0"
-        >
-          <div
-            class="w-full h-full bg-white hero-image-inner shadow-2xl flex items-stretch justify-between p-8 md:p-12"
-          >
-            <!-- Left: Content Container -->
-            <div
-              class="w-[52%] flex flex-col justify-between items-center py-2"
-            >
-              <!-- Text Content (Centered Vertically) -->
-              <div
-                class="flex-1 flex flex-col justify-center gap-4 md:gap-6 text-center"
-              >
-                <h3
-                  class="hero-card-title font-serif text-2xl md:text-4xl text-primary leading-tight opacity-0"
-                >
-                  Calitate Fără <br />
-                  <span class="text-accent">Compromis</span>
-                </h3>
-                <p
-                  class="hero-card-subtext text-gray-600 text-sm md:text-lg leading-relaxed max-w-[90%] mx-auto opacity-0"
-                >
-                  Mobilier realizat cu pasiune și precizie pentru a crea piese
-                  care rezistă testului timpului.
-                </p>
-              </div>
-
-              <!-- Button centered in the left space and aligned with image bottom -->
-              <div class="flex justify-center w-full">
-                <BubbleButton
-                  id="hero-about-btn"
-                  href="#about-section"
-                  variant="dark"
-                  class="hero-card-btn !px-10 !py-4 text-sm md:text-base whitespace-nowrap opacity-0"
-                >
-                  Află mai multe
-                </BubbleButton>
-              </div>
-            </div>
-
-            <!-- Right: 3:4 Vertical Image -->
-            <div
-              class="hero-card-img w-[44%] aspect-[3/4.5] overflow-hidden rounded-lg shadow-inner self-end opacity-0"
-            >
-              <img
-                src="/Images/Proiecte-JL Custom Design-07.jpg"
-                alt="Premium Furniture Detail"
-                class="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          <!-- Organic Shape Overlay / Vibe -->
-          <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
-        </div>
-      </div>
     </div>
 
-    <!-- CTA Buttons (Repositioned to downside cutout) -->
+    <!-- CTA Buttons (Centered low on mobile, Higher on tablet, Cutout on large desktop) -->
     <div
-      class="absolute bottom-12 left-0 w-full flex justify-center z-20 md:-translate-x-48"
+      class="absolute bottom-[40px] left-1/2 -translate-x-1/2 z-20 w-fit md:bottom-[144px] md:translate-y-1/2 xl:bottom-[72px] xl:left-[38.3%] xl:translate-y-1/2"
     >
-      <div
-        class="hero-cta flex flex-col sm:flex-row gap-4 opacity-0 transform translate-y-4"
-      >
+      <div class="hero-cta flex flex-col xl:flex-row gap-4">
         <BubbleButton
           href="/contact"
           variant="primary"
-          class="w-full md:w-auto text-center"
+          class="hero-btn w-full xl:w-auto text-center invisible opacity-0 translate-y-4 !bg-[#1a1a1a] !text-white hover:!border-[#d4af37] border border-[#1a1a1a] !px-8 !py-4 md:!text-sm md:!px-12 md:!py-5 xl:!text-sm xl:!px-12"
         >
           Cere o ofertă
         </BubbleButton>
         <BubbleButton
           href="/portfolio"
-          variant="outline"
-          class="w-full md:w-auto text-center !border-white !text-white hover:!border-[#d4af37] !bg-white/10 backdrop-blur-md hover:!bg-white/20"
+          id="glass-btn"
+          class="hero-btn w-full xl:w-auto text-center invisible opacity-0 translate-y-4 !border-white !text-white hover:!border-[#d4af37] !bg-white/20 backdrop-blur-md hover:!bg-white/30 !px-8 !py-4 md:!text-sm md:!px-12 md:!py-5 xl:!text-sm xl:!px-12"
         >
           Vezi proiecte
         </BubbleButton>
       </div>
+    </div>
+
+    <!-- Quality Badge / Corner Text (Bottom Right Void) -->
+    <!-- REMOVED as per request -->
+
+    <!-- Top Left Copy (Cutout) -->
+    <div
+      class="absolute top-[72px] left-[12.43%] -translate-x-1/2 -translate-y-1/2 z-20 hidden xl:block whitespace-nowrap"
+    >
+      <span
+        class="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-serif font-black tracking-widest uppercase text-[#1A1A1A] opacity-0 invisible hero-top-left"
+      >
+        JL Design
+      </span>
+    </div>
+
+    <!-- Top Right Button (Cutout) -->
+    <div
+      class="absolute top-[72px] right-[12.43%] translate-x-1/2 -translate-y-1/2 z-20 hidden xl:block"
+    >
+      <a
+        href="/contact"
+        class="group flex items-center gap-3 xl:gap-4 opacity-0 invisible hero-top-right"
+      >
+        <div
+          class="bg-transparent text-black border border-black px-6 py-3 xl:px-8 xl:py-4 rounded-full text-xs xl:text-sm font-extrabold uppercase tracking-wider transition-all duration-300 group-hover:bg-black group-hover:text-white group-hover:scale-105 shadow-none hover:shadow-xl"
+        >
+          Programează o intalnire
+        </div>
+        <div
+          class="w-12 h-12 xl:w-14 xl:h-14 bg-transparent text-black border border-black rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-black group-hover:text-white shadow-none hover:shadow-xl"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 14 14"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            class="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+          >
+            <path
+              d="M1 13L13 1M13 1H4M13 1V10"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </div>
+      </a>
     </div>
 
     <!-- Decorative Elements -->
@@ -166,361 +154,11 @@ const heroImage = "/Images/hero-image.jpg";
 </section>
 
 <script>
-  import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
-  import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
+  import { initHeroAnimations } from "../scripts/hero-animation";
+  import { initTextAnimations } from "../utils/RevealAnimationHandler";
 
-  gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin);
-
-  const widthTarget = 1110;
-  const desktopResolution = { width: 1890, height: 916 };
-  const mobileResolution = { width: 1020, height: 882 };
-
-  // Safe initialization - only run once per page
-  let heroAnimInitialized = false;
-  function safeInitHeroAnim() {
-    if (heroAnimInitialized) return;
-    const section = document.querySelector("#hero-section");
-    if (!section || (section as HTMLElement).dataset.heroAnimInit) return;
-    heroAnimInitialized = true;
-    initHeroAnim();
-  }
-
-  document.addEventListener("astro:page-load", () => {
-    heroAnimInitialized = false; // Reset on page navigation
-    safeInitHeroAnim();
-  });
-
-  // For initial load (before Astro routing takes over)
-  if (document.readyState === "complete") {
-    requestAnimationFrame(safeInitHeroAnim);
-  } else {
-    window.addEventListener("load", safeInitHeroAnim);
-  }
-
-  function initHeroAnim() {
-    const section = document.querySelector("#hero-section");
-    const svg = document.querySelector("#mySVG");
-    if (!section || !svg) return;
-
-    // Mark as initialized
-    (section as HTMLElement).dataset.heroAnimInit = "true";
-
-    // Custom split specifically for this known title structure
-    const splitHeroCardTitle = () => {
-      const titleEl = section.querySelector(".hero-card-title");
-      if (titleEl) {
-        // We know the structure. simpler to just animate children if they were spans.
-        const html = `
-            <span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">Calitate</span></span>
-            <span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">Fără</span></span>
-            <br />
-            <span class="text-accent inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">Compromis</span></span>
-           `;
-        titleEl.innerHTML = html;
-      }
-    };
-
-    splitHeroCardTitle();
-
-    // Ensure parent is visible immediately after split, children are hidden
-    const titleEl = section.querySelector(".hero-card-title");
-    if (titleEl) gsap.set(titleEl, { opacity: 1 });
-
-    // Use Context for easy cleanup
-    const ctx = gsap.context(() => {
-      const masterTl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-      // --- 1. SVG & Background Setup ---
-      try {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-
-        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-
-        // Select Path (now inside clipPath)
-        let path = svg.querySelector("#heroPath");
-        if (!path) {
-          // Fallback if structure damaged
-          path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-          path.id = "heroPath";
-          svg.appendChild(path);
-        }
-
-        // Initial State (Rectangle) - SVG is hidden via opacity-0 class
-        path.setAttribute("d", rectangle(width, height));
-
-        // Fade in SVG now that path is set
-        gsap.to(svg, { opacity: 1, duration: 0.3 });
-
-        // SVG Animation (Step 1)
-        if (gsap.plugins.morphSVG) {
-          masterTl.add(runSvgAnim(path, width, height));
-        } else {
-          console.warn("GSAP MorphSVGPlugin not loaded. Skipping morph.");
-        }
-
-        // Resize Listener
-        let lastWidth = window.innerWidth;
-        const onResize = () => {
-          const w = window.innerWidth;
-          const h = window.innerHeight;
-
-          // Ignore height-only resize (mobile address bar) to prevent stutter
-          if (w === lastWidth) return;
-          lastWidth = w;
-
-          svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-          path.setAttribute("d", cross(w, h));
-        };
-        window.addEventListener("resize", onResize);
-      } catch (e) {
-        console.warn("Hero Background Animation Error:", e);
-      }
-
-      // --- 2. Text Content (Step 2) ---
-      // Start this block '-=0.5' seconds before SVG finishes
-      masterTl.from(
-        ".hero-text-line",
-        {
-          y: 100,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.2,
-          ease: "power3.out",
-        },
-        "-=0.5"
-      );
-
-      // --- 3. Synchronized Content (Navbar, Subtitle, Buttons, Image) ---
-      // All loading AT THE SAME TIME as the text start ("<")
-
-      // Navbar
-      const navbar = document.querySelector("#navbar-container");
-      if (navbar) {
-        // Instant opacity, elastic scale for "Pop" effect
-        masterTl.to(navbar, { opacity: 1, duration: 0.05 }, "<");
-        masterTl.to(
-          navbar,
-          {
-            scale: 1,
-            duration: 1.8,
-            ease: "back.out(1.2)",
-          },
-          "<"
-        );
-      }
-
-      // Subtitle
-      masterTl.to(".hero-subtitle", { y: 0, opacity: 1, duration: 0.8 }, "<");
-
-      // Buttons
-      masterTl.to(".hero-cta", { y: 0, opacity: 1, duration: 0.8 }, "<");
-
-      // Smooth scroll for About button in visual card
-      const aboutBtn = section.querySelector("#hero-about-btn");
-      if (aboutBtn) {
-        aboutBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          // @ts-ignore
-          if (window.smoother) {
-            // @ts-ignore
-            window.smoother.scrollTo("#about-section", true, "top top");
-          } else {
-            const target = document.querySelector("#about-section");
-            target?.scrollIntoView({ behavior: "smooth" });
-          }
-        });
-      }
-
-      // --- 4. Hero Card & Inner Elements ---
-      // Card Mask Reveal
-      masterTl
-        .to(
-          ".hero-image-mask",
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 1.8,
-            ease: "expo.out",
-          },
-          "<"
-        )
-        .from(
-          ".hero-image-inner",
-          {
-            scale: 1.4,
-            duration: 2,
-            ease: "power2.out",
-          },
-          "<"
-        );
-
-      // DISTINCT ANIMATIONS for Inner Card Elements
-      // Trigger these slightly before the card finishes revealing for a nice overlap
-
-      // a) Title Stagger (Word by Word)
-      masterTl.to(
-        ".hero-card-title span span",
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "expo.out",
-        },
-        "-=1.2"
-      );
-
-      // b) Subtext Slide Up
-      masterTl.fromTo(
-        ".hero-card-subtext",
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" },
-        "-=0.9"
-      );
-
-      // c) Button Elastic Pop
-      masterTl.fromTo(
-        ".hero-card-btn",
-        { scale: 0.5, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)" },
-        "-=0.8"
-      );
-
-      // d) Right Image Reveal (Slide + Fade)
-      masterTl.fromTo(
-        ".hero-card-img",
-        { x: 30, opacity: 0 },
-        { x: 0, opacity: 1, duration: 1, ease: "power2.out" },
-        "-=1.0"
-      );
-    }, section);
-  }
-
-  function runSvgAnim(path: Element, width: number, height: number) {
-    const tl = gsap.timeline();
-
-    tl.from("#mySVG", {
-      scale: 1.5,
-      duration: 1,
-      ease: "power4.out",
-    }).to(path, {
-      scale: 1,
-      duration: width > widthTarget ? 1.8 : 0.6,
-      morphSVG: cross(width, height),
-      ease: width > widthTarget ? "elastic.out(1, 0.9)" : "back.out(1.7)",
-    });
-
-    return tl;
-  }
-
-  function rectangle(w: number, h: number) {
-    const displayCond = w > widthTarget;
-    let w1 = mobileResolution.width;
-    let h1 = mobileResolution.height;
-
-    if (displayCond) {
-      w1 = desktopResolution.width;
-      h1 = desktopResolution.height;
-    }
-
-    const rw = (val: number) => (val / w1) * w;
-    const rh = (val: number) => (val / h1) * h;
-
-    // Mobile: Added 15px padding top/bottom (start at 15, end at 867)
-    return displayCond
-      ? `M${rw(12)} ${rh(1)} H${rw(12)} C${rw(4)} ${rh(1)} ${rw(1)} ${rh(4)} ${rw(1)} ${rh(12)} V${rh(905)} C${rw(1)} ${rh(913)} ${rw(4)} ${h} ${rw(12)} ${h} H${rw(1879)} C${rw(1879)} ${h} ${rw(1879)} ${h} ${rw(1879)} ${h} V${h} C${rw(1879)} ${h} ${rw(1879)} ${h} ${rw(1879)} ${h} H${rw(1879)} C${rw(1879)} ${h} ${rw(1879)} ${h} ${rw(1879)} ${h} V${h} C${rw(1879)} ${h} ${rw(1879)} ${h} ${rw(1879)} ${h} H${rw(1879)} C${rw(1887)} ${h} ${w} ${rh(913)} ${w} ${rh(905)} V${rh(12)} C${w} ${rh(12)} ${w} ${rh(12)} ${w} ${rh(12)} H${w} C${w} ${rh(4)} ${rw(1887)} ${rh(1)} ${rw(1879)} ${rh(1)} V${rh(1)} C${rw(1879)} ${rh(1)} ${rw(1879)} ${rh(1)} ${rw(1879)} ${rh(1)} H${rw(12)} V${rh(1)} C${rw(4)} ${rh(1)} ${rw(1)} ${rh(4)} ${rw(1)} ${rh(12)} Z`
-      : `M${rw(1000)} ${rh(15)} H${rw(21)} C${rw(9.9543)} ${rh(15)} ${rw(1)} ${rh(24.9543)} ${rw(1)} ${rh(35)} V${rh(845)} C${rw(1)} ${rh(845)} ${rw(1)} ${rh(845)} ${rw(1)} ${rh(845)} H${rw(1)} C${rw(1)} ${rh(860)} ${rw(6)} ${rh(867)} ${rw(21)} ${rh(867)} V${rh(867)} C${rw(21)} ${rh(867)} ${rw(21)} ${rh(867)} ${rw(21)} ${rh(867)} H${rw(997)} C${rw(997)} ${rh(867)} ${rw(997)} ${rh(867)} ${rw(997)} ${rh(867)} V${rh(867)} C${rw(1016)} ${rh(867)} ${w} ${rh(862)} ${w} ${rh(845)} H${w} C${w} ${rh(845)} ${w} ${rh(845)} ${w} ${rh(845)} V${rh(35)} C${w} ${rh(24.9543)} ${rw(1011.05)} ${rh(15)} ${rw(1000)} ${rh(15)} Z`;
-  }
-
-  function cross(w: number, h: number) {
-    const displayCond = w > widthTarget;
-    let w1 = mobileResolution.width;
-    let h1 = mobileResolution.height;
-
-    if (displayCond) {
-      w1 = desktopResolution.width;
-      h1 = desktopResolution.height;
-    }
-
-    const rw = (val: number) => (val / w1) * w;
-    const rh = (val: number) => (val / h1) * h;
-
-    // Desktop: Made less tall (top: 125->145, bottom: 792->772) and cutouts pushed more inward
-    // Top-left cutout: was 505, now 470 (more inward)
-    // Top-right cutout: was 1385, now 1420 (more inward)
-    // Bottom-left cutout: was 280, now 320 (more inward)
-    // Bottom-right cutout: was 1168, now 1128 (more inward)
-    // Mobile: Made shorter (722->680), cutouts pushed inward HORIZONTALLY:
-    //   Bottom-left: 160->220 (pushed right toward center)
-    //   Bottom-right: 841->781 (pushed left toward center)
-    return displayCond
-      ? `M${rw(470)} ${rh(145)} H${rw(19)} C${rw(9)} ${rh(145)} ${rw(1)} ${rh(153)} ${rw(1)} ${rh(163)} V${rh(754)} C${rw(1)} ${rh(763)} ${rw(9)} ${rh(772)} ${rw(19)} ${rh(772)} H${rw(320)} C${rw(330)} ${rh(772)} ${rw(338)} ${rh(780)} ${rw(338)} ${rh(790)} V${rh(898)} C${rw(338)} ${rh(907)} ${rw(346)} ${h} ${rw(356)} ${h} H${rw(1092)} C${rw(1102)} ${h} ${rw(1110)} ${rh(907)} ${rw(1110)} ${rh(898)} V${rh(789)} C${rw(1110)} ${rh(779)} ${rw(1118)} ${rh(771)} ${rw(1128)} ${rh(771)} H${rw(1872)} C${rw(1881)} ${rh(771)} ${w} ${rh(763)} ${w} ${rh(753)} V${rh(164)} C${w} ${rh(154)} ${rw(1881)} ${rh(146)} ${rw(1872)} ${rh(146)} H${rw(1420)} C${rw(1410)} ${rh(146)} ${rw(1402)} ${rh(137)} ${rw(1402)} ${rh(128)} V${rh(19)} C${rw(1402)} ${rh(9)} ${rw(1394)} ${rh(1)} ${rw(1384)} ${rh(1)} H${rw(506)} C${rw(496)} ${rh(1)} ${rw(488)} ${rh(9)} ${rw(488)} ${rh(19)} V${rh(127)} C${rw(488)} ${rh(137)} ${rw(480)} ${rh(145)} ${rw(470)} ${rh(145)} Z`
-      : `M${rw(1000)} ${rh(15)} H${rw(21)} C${rw(9.9543)} ${rh(15)} ${rw(1)} ${rh(24.9543)} ${rw(1)} ${rh(35)} V${rh(680)} C${rw(1)} ${rh(691.046)} ${rw(9.9543)} ${rh(700)} ${rw(21)} ${rh(700)} H${rw(220)} C${rw(231.046)} ${rh(700)} ${rw(240)} ${rh(708.954)} ${rw(240)} ${rh(720)} V${rh(846.869)} C${rw(240)} ${rh(857.915)} ${rw(248.954)} ${rh(866.869)} ${rw(260)} ${rh(866.869)} H${rw(741)} C${rw(752.046)} ${rh(866.869)} ${rw(761)} ${rh(857.915)} ${rw(761)} ${rh(846.869)} V${rh(720)} C${rw(761)} ${rh(708.954)} ${rw(769.954)} ${rh(700)} ${rw(781)} ${rh(700)} H${rw(1000)} C${rw(1011.05)} ${rh(700)} ${w} ${rh(691.046)} ${w} ${rh(680)} V${rh(35)} C${w} ${rh(24.9543)} ${rw(1011.05)} ${rh(15)} ${rw(1000)} ${rh(15)} Z`;
-  }
-
-  // Hero Exit Animation: Pin hero, scale down and blur as About section slides over
-  function initHeroExitAnimation() {
-    const heroSection = document.querySelector("#hero-section");
-    const heroContent = document.querySelector("#hero-content-wrapper");
-
-    if (!heroSection || !heroContent) return;
-
-    // Mobile detection
-    const isMobile = window.innerWidth < 1024;
-
-    // Fix iOS Safari address bar resize issue:
-    // Lock the hero section height to current value on load
-    if (isMobile) {
-      const currentHeight = (heroSection as HTMLElement).offsetHeight;
-      (heroSection as HTMLElement).style.height = `${currentHeight}px`;
-      (heroSection as HTMLElement).style.minHeight = "unset";
-    }
-
-    // Blur + fade + SCALE animation for entire hero content
-    gsap.to(heroContent, {
-      scale: isMobile ? 0.8 : 0.9,
-      filter: isMobile ? "blur(4px)" : "blur(8px)",
-      opacity: 0.5,
-      ease: "none",
-      force3D: true,
-      scrollTrigger: {
-        trigger: heroSection,
-        start: "bottom bottom",
-        end: "bottom top",
-        // Use numeric scrub for better iOS compatibility
-        scrub: 0.5,
-        pin: !isMobile, // Disable pinning on mobile to prevent "tripwire" stop sensation
-        pinSpacing: false,
-        // Force refresh on orientation change
-        invalidateOnRefresh: true,
-      },
-    });
-
-    // Mark as initialized to prevent re-runs
-    (heroSection as HTMLElement).dataset.exitAnimInit = "true";
-  }
-
-  // Initialize hero exit animation - only once
-  let heroExitInitialized = false;
-  function safeInitHeroExitAnimation() {
-    if (heroExitInitialized) return;
-    const heroSection = document.querySelector("#hero-section");
-    if (heroSection && (heroSection as HTMLElement).dataset.exitAnimInit)
-      return;
-    heroExitInitialized = true;
-    initHeroExitAnimation();
-  }
-
-  document.addEventListener("astro:page-load", () => {
-    heroExitInitialized = false; // Reset on page navigation
-    safeInitHeroExitAnimation();
-  });
-
-  if (document.readyState === "complete") {
-    requestAnimationFrame(safeInitHeroExitAnimation);
-  } else {
-    window.addEventListener("load", safeInitHeroExitAnimation);
-  }
+  // Initialize animations
+  initHeroAnimations();
+  // Initialize text reveal
+  initTextAnimations();
 </script>

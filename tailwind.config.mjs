@@ -6,7 +6,7 @@ export default {
       colors: {
         accent: "#D4AF37", // Gold
         primary: "#000000", // Black
-        secondary: "#FFFFFF", // White
+        secondary: "#F4F1EA", // Cream (Quiet Luxury)
       },
       fontFamily: {
         serif: ['"Grift"', "serif"],

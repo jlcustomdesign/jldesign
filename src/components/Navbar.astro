@@ -10,22 +10,31 @@ const links = [
 ---
 
 <nav
-  class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl mx-auto px-4"
+  id="nav-wrapper"
+  class="fixed top-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-md mx-auto px-4 transition-all duration-500"
 >
   <div
     id="navbar-container"
-    class="bg-transparent backdrop-blur-xl shadow-lg rounded-2xl px-8 py-3 flex items-center gap-8 transition-colors transition-shadow duration-300 hover:shadow-xl w-full justify-between opacity-0 scale-0 origin-center nav-dark"
+    class="bg-transparent backdrop-blur-xl shadow-lg rounded-2xl px-8 py-3 flex items-center gap-8 transition-colors transition-shadow duration-300 hover:shadow-xl w-full justify-between opacity-0 scale-0 origin-center nav-dark relative"
   >
-    <!-- Logo -->
-    <a
-      href="/"
-      class="nav-text font-serif text-xl font-bold tracking-tight whitespace-nowrap transition-colors duration-300"
+    <!-- Logo (Hidden initially, revealed on scroll) -->
+    <div
+      id="nav-logo-wrapper"
+      class="opacity-0 scale-0 w-0 flex justify-start origin-left"
     >
-      JL
-    </a>
+      <a
+        id="nav-logo"
+        href="/"
+        class="nav-text font-serif text-xl font-bold tracking-tight whitespace-nowrap"
+      >
+        JL Design
+      </a>
+    </div>
 
-    <!-- Links -->
-    <ul class="hidden md:flex gap-6 items-center">
+    <!-- Links (Centered Absolutely) -->
+    <ul
+      class="hidden md:flex gap-6 items-center absolute left-1/2 -translate-x-1/2"
+    >
       {
         links.map((link) => (
           <li>
@@ -41,13 +50,18 @@ const links = [
       }
     </ul>
 
-    <!-- CTA (Bubble Button) -->
-    <BubbleButton
-      href="/contact"
-      class="hidden md:inline-flex whitespace-nowrap !px-6 !py-2.5"
+    <!-- CTA (Hidden initially, revealed on scroll) -->
+    <div
+      id="nav-contact"
+      class="opacity-0 scale-0 w-0 flex justify-end origin-right"
     >
-      Contact
-    </BubbleButton>
+      <BubbleButton
+        href="/contact"
+        class="hidden md:inline-flex whitespace-nowrap !px-6 !py-2.5"
+      >
+        Contact
+      </BubbleButton>
+    </div>
 
     <!-- Mobile Menu Toggle -->
     <button
@@ -142,7 +156,7 @@ const links = [
           navContainer.classList.remove("nav-shrunk");
         }, 150); // 150ms delay after stop
       },
-      { passive: true }
+      { passive: true },
     );
   }
 
@@ -152,21 +166,53 @@ const links = [
 
     if (navContainer && navWrapper) {
       // 1. Initial Load Animation
-      // Only run if Hero Section is NOT present (Hero handles it otherwise)
       const hero = document.querySelector("#hero-section");
+      const isDesktop = window.innerWidth >= 1024;
 
-      if (!hero) {
+      // Force expanded state on non-home pages OR on mobile/tablet (if we want it expanded there)
+      // Actually, user said: "on the rest of the website, like the other pages, use the exact same mode as the fully extended navbar"
+      // And "in the mobile mode remove the effect, keep it desktop only"
+
+      const shouldBeExpanded = !hero || !isDesktop;
+
+      if (shouldBeExpanded) {
+        // Desktop Secondary Pages: Compact "Pill" Layout (Centered)
+        // Set maxWidth to fit content so elements are close together
+        gsap.set(navWrapper, { maxWidth: "42rem" });
+
+        // Match Homepage "Pop" Animation but for Expanded State
+        // 1. Fade In
         gsap.to(navContainer, {
           opacity: 1,
           duration: 0.05,
-          delay: 0.2,
+          delay: 0.2, // Match home delay
         });
+
+        // 2. Standard Pop (One Bounce)
+        gsap.set(navContainer, { css: { transition: "none" } });
         gsap.to(navContainer, {
           scale: 1,
-          duration: 1.8,
-          ease: "back.out(1.2)",
+          duration: 1.0,
+          ease: "back.out(1.7)", // Standard bounce
           delay: 0.2,
+          force3D: true,
+          onComplete: () => {
+            // Restore CSS transitions for smooth scroll shrinking
+            gsap.set(navContainer, { clearProps: "transition" });
+          },
         });
+
+        // Ensure side elements are visible and naturally sized
+        const navLogoWrapper = document.querySelector("#nav-logo-wrapper");
+        const navContact = document.querySelector("#nav-contact");
+        if (navLogoWrapper)
+          gsap.set(navLogoWrapper, { opacity: 1, scale: 1, width: "120px" });
+        if (navContact)
+          gsap.set(navContact, { opacity: 1, scale: 1, width: "120px" });
+      } else {
+        // Home Desktop: Start collapsed (Hero handles reveal)
+        // DO NOT animate here. Let hero-animation.ts handle the reveal after SVG loads.
+        // Keeping it opacity-0 scale-0 initially.
       }
     }
   }
@@ -182,10 +228,19 @@ const links = [
       // Scenario A: Hero Exists (Home) -> Default to Dark Theme (White Text)
       navContainer.classList.add("nav-dark");
       navContainer.classList.remove("nav-light");
+
+      // Initialize scroll-reveal for nav elements
+      initScrollRevealNav(hero);
     } else {
       // Scenario B: No Hero (Subpages) -> Default to Light Theme (Black Text)
       navContainer.classList.add("nav-light");
       navContainer.classList.remove("nav-dark");
+
+      // On subpages, show logo/contact immediately
+      const navLogo = document.querySelector("#nav-logo");
+      const navContact = document.querySelector("#nav-contact");
+      if (navLogo) gsap.set(navLogo, { opacity: 1, scale: 1 });
+      if (navContact) gsap.set(navContact, { opacity: 1, scale: 1 });
       return; // Stop here, no ScrollTrigger needed
     }
 
@@ -214,6 +269,93 @@ const links = [
         // Leaves Hero (scrolling up past top) -> Keep Dark Theme (overscroll)
         navContainer.classList.add("nav-dark");
         navContainer.classList.remove("nav-light");
+      },
+    });
+  }
+
+  function initScrollRevealNav(hero: Element) {
+    const navLogoWrapper = document.querySelector("#nav-logo-wrapper");
+    const navContact = document.querySelector("#nav-contact");
+    const navWrapper = document.querySelector("#nav-wrapper");
+    const navLogo = document.querySelector("#nav-logo"); // Inner logo scale only? No, animate wrapper scale.
+
+    // Desktop ONLY check
+    if (window.innerWidth < 1024) return;
+
+    if (!navLogoWrapper || !navContact || !navWrapper) return;
+
+    // ScrollTrigger to reveal/hide nav elements based on hero position
+    ScrollTrigger.create({
+      trigger: hero,
+      start: "top top",
+      end: "bottom top+=80",
+      onLeave: () => {
+        // Scrolled past Hero -> Expand navbar FIRST, then reveal elements
+        const tl = gsap.timeline();
+
+        // Step 1: Expand navbar width FULLY
+        tl.to(navWrapper, {
+          maxWidth: "42rem", // Reduced from 48rem as requested
+          duration: 0.35,
+          ease: "power2.out",
+        });
+
+        // Step 2: Animate WIDTH of wrappers symmetrically to 140px
+        tl.to(
+          [navLogoWrapper, navContact],
+          {
+            width: "120px",
+            duration: 0.3,
+            ease: "power2.out",
+          },
+          "+=0.05",
+        );
+
+        // Step 3: Animate SCALE & OPACITY with bounce
+        tl.to(
+          [navLogoWrapper, navContact],
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.4,
+            ease: "back.out(1.5)",
+          },
+          "<+=0.1",
+        );
+      },
+      onEnterBack: () => {
+        // Scrolled back into Hero -> Hide elements then shrink navbar
+        const tl = gsap.timeline();
+
+        // Step 1: Shrink both elements AT THE SAME TIME
+        tl.to([navLogoWrapper, navContact], {
+          opacity: 0,
+          scale: 0,
+          duration: 0.3,
+          ease: "power2.inOut",
+        });
+
+        // Step 2: Shrink widths to 0
+        tl.to(
+          [navLogoWrapper, navContact],
+          {
+            width: 0,
+            duration: 0.3,
+            ease: "power2.inOut",
+          },
+          "<+=0.1",
+        );
+
+        // Step 3: Shrink navbar
+        tl.to(
+          navWrapper,
+          {
+            maxWidth: "28rem",
+            duration: 0.35,
+            ease: "power2.inOut",
+          },
+          "-=0.15",
+        );
       },
     });
   }

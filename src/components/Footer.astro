@@ -3,14 +3,14 @@ const currentYear = new Date().getFullYear();
 ---
 
 <footer
-  class="bg-secondary pt-20 pb-10 px-4 md:px-8 relative"
+  class="bg-secondary pt-10 pb-8 md:pt-20 md:pb-10 px-4 md:px-8 relative"
   data-theme="light"
   id="main-footer"
 >
   <div class="container mx-auto h-full flex flex-col justify-center">
     <!-- Big Card -->
     <div
-      class="footer-card bg-primary rounded-[2.5rem] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl w-full"
+      class="footer-card bg-primary rounded-[2.5rem] p-6 md:p-20 text-white relative overflow-hidden shadow-2xl w-full"
       data-theme="dark"
       style="will-change: transform, filter;"
     >
@@ -21,7 +21,7 @@ const currentYear = new Date().getFullYear();
       </div>
 
       <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 relative z-10"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-12 relative z-10"
       >
         <!-- Brand & CTA -->
         <div class="lg:col-span-7 flex flex-col justify-between h-full">
@@ -205,10 +205,14 @@ const currentYear = new Date().getFullYear();
       const viewportH = window.innerHeight;
 
       // Re-check conditions on resize
-      // We use window.innerWidth check inside to handle orientation changes
-      const currentIsMobile =
-        window.innerWidth < 1024 || "ontouchstart" in window;
-      const shouldDisableParallax = currentIsMobile || h > viewportH;
+      // Always enable parallax as requested (Force Desktop behavior)
+
+      // -- PARALLAX LAYOUT --
+      footer.style.position = "fixed";
+      footer.style.left = "0";
+      footer.style.bottom = "0";
+      footer.style.width = "100%";
+      footer.style.zIndex = "0";
 
       let spacer = document.getElementById("footer-spacer");
       if (!spacer) {
@@ -217,71 +221,40 @@ const currentYear = new Date().getFullYear();
         main.appendChild(spacer);
       }
 
-      if (shouldDisableParallax) {
-        // -- STATIC LAYOUT (Mobile/Tall) --
-        footer.style.position = "relative";
-        footer.style.zIndex = "20";
-        footer.style.bottom = "auto";
-        footer.style.left = "auto";
+      spacer.style.display = "block";
+      spacer.style.height = `${h}px`;
+      spacer.style.pointerEvents = "none";
 
-        // Remove spacer usage
-        spacer.style.height = "0px";
-        spacer.style.display = "none";
-        main.style.marginBottom = "0px"; // CRITICAL: Ensure no gap
+      main.style.position = "relative";
+      main.style.zIndex = "10";
+      main.style.marginBottom = "0px";
 
-        // Reset transforms
-        const footerCard = footer.querySelector(".footer-card");
-        if (footerCard) gsap.set(footerCard, { clearProps: "all" });
-      } else {
-        // -- PARALLAX LAYOUT (Desktop/Short) --
-        footer.style.position = "fixed";
-        footer.style.left = "0";
-        footer.style.bottom = "0";
-        footer.style.width = "100%";
-        footer.style.zIndex = "0";
+      const footerCard = footer.querySelector(".footer-card");
 
-        spacer.style.display = "block";
-        spacer.style.height = `${h}px`;
-        spacer.style.pointerEvents = "none";
+      if (footerCard) {
+        // Reset or Initialize GSAP
+        // We need to kill old triggers? GSAP handles overwrites usually.
 
-        main.style.position = "relative";
-        main.style.zIndex = "10";
-        // Check if we need to re-apply margin?
-        // Actually with spacer div, we usually don't need margin-bottom on main if spacer is in flow?
-        // Wait, previous code used main.marginBottom logic?
-        // NO, previous code used SPACER for trigger but main.marginBottom = h in the resize bug.
-        // Let's stick to SPACER taking up the space.
-        // BUT: if Main is zIndex 10 and Relative, and Footer is Fixed zIndex 0,
-        // We need a visual gap in the 'flow' for the footer to be revealed behind.
-        // The SPACER (div appended to main) provides this height in the flow of Main.
-        // So main.marginBottom should actually be 0 if we use a real spacer div inside main?
-        // Let's ensure main.marginBottom IS 0 to avoid double spacing.
-        main.style.marginBottom = "0px";
-
-        const footerCard = footer.querySelector(".footer-card");
-
-        if (footerCard) {
-          gsap.fromTo(
-            footerCard,
-            {
-              scale: 0.8,
-              filter: "blur(20px)",
-              y: -50,
+        gsap.fromTo(
+          footerCard,
+          {
+            scale: 0.8,
+            filter: "blur(20px)",
+            y: -50,
+          },
+          {
+            scale: 1,
+            filter: "blur(0px)",
+            y: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: spacer,
+              start: "top bottom",
+              end: "bottom bottom",
+              scrub: true,
             },
-            {
-              scale: 1,
-              filter: "blur(0px)",
-              y: 0,
-              ease: "none",
-              scrollTrigger: {
-                trigger: spacer,
-                start: "top bottom",
-                end: "bottom bottom",
-                scrub: true,
-              },
-            }
-          );
-        }
+          },
+        );
       }
 
       ScrollTrigger.refresh();

@@ -17,15 +17,7 @@
 </div>
 
 <style>
-  .cursor {
-    pointer-events: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-  }
+  /* Wrapper only handles display logic via Tailwind classes */
 
   .cursor__ball {
     position: fixed;
@@ -79,48 +71,59 @@
     }
 
     // Hover effects
-    function onMouseHover() {
+    function setScale(scale: number) {
       gsap.to(bigBall, {
         duration: 0.3,
-        scale: 4,
+        scale: scale,
         ease: "power2.out",
       });
     }
 
-    function onMouseHoverOut() {
-      gsap.to(bigBall, {
-        duration: 0.3,
-        scale: 1,
-        ease: "power2.out",
-      });
-    }
+    const onButtonHover = (e: Event) => {
+      const target = e.currentTarget as HTMLElement;
+      const customScale = target.dataset.cursorScale;
+      setScale(customScale ? parseFloat(customScale) : 2.5);
+    };
+
+    const onTitleHover = (e: Event) => {
+      const target = e.currentTarget as HTMLElement;
+      const customScale = target.dataset.cursorScale;
+      setScale(customScale ? parseFloat(customScale) : 5);
+    };
+
+    const onHoverOut = () => setScale(1);
 
     // Listeners
+    document.body.removeEventListener("mousemove", onMouseMove);
     document.body.addEventListener("mousemove", onMouseMove);
 
-    // Attach hover listeners to interactive elements
-    const hoverables = document.querySelectorAll(
+    // Select Elements
+    const buttons = document.querySelectorAll(
       'a, button, .hoverable, [role="button"]'
     );
+    const titles = document.querySelectorAll("h1, h2, h3, h4, .title-hover");
 
-    hoverables.forEach((el) => {
-      el.addEventListener("mouseenter", onMouseHover);
-      el.addEventListener("mouseleave", onMouseHoverOut);
+    // Attach Button Listeners
+    buttons.forEach((el) => {
+      // Remove old listeners (if any) to prevent duplication is hard without ref,
+      // but since we are re-initializing, duplicate listeners are a risk if we don't clean up correctly.
+      // However, we can't clean up anonymous closures or diff refs.
+      // Ideally, we should store controllers.
+      // For now, trusting simple addEventListener.
+      el.addEventListener("mouseenter", onButtonHover);
+      el.addEventListener("mouseleave", onHoverOut);
     });
 
-    // Cleanup function for page transitions?
-    // Astro page transitions might re-run scripts. removeEventListener is good practice.
-    // However, for pure View Transitions, listeners on body persist?
-    // "astro:page-load" runs on every nav.
-    // We should probably deduplicate listeners logic if re-running.
-
-    // For now in Astro View Transitions:
-    // Simple way: re-query hoverables on new page load.
+    // Attach Title Listeners
+    titles.forEach((el) => {
+      el.addEventListener("mouseenter", onTitleHover);
+      el.addEventListener("mouseleave", onHoverOut);
+    });
   }
 
-  // Run on load
-  document.addEventListener("astro:page-load", initCustomCursor);
+  // Run on standard load
+  document.addEventListener("DOMContentLoaded", initCustomCursor);
 
-  // Also handle global cursor: none via script to be safe?
-  // Or CSS in Layout? CSS in Layout is cleaner.
+  // Run on Astro page load (for view transitions compatibility)
+  document.addEventListener("astro:page-load", initCustomCursor);
 </script>
