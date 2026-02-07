@@ -9,9 +9,9 @@ import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://jl-design.vercel.app',
+  site: process.env.NODE_ENV === 'development' ? undefined : 'https://jl-design.vercel.app',
   output: 'server',
-  adapter: vercel(),
+  adapter: process.env.NODE_ENV === 'production' ? vercel() : undefined,
   integrations: [
     react(),
     markdoc(),
