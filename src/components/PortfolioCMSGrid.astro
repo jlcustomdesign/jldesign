@@ -1,0 +1,130 @@
+---
+import { getCollection } from 'astro:content';
+
+// Fetch items from Keystatic CMS
+const portfolioEntries = await getCollection('portfolio');
+const portfolio = portfolioEntries.map(entry => entry.data);
+
+// Masonry Layout Logic - 3 columns
+type PortfolioItem = typeof portfolio[0];
+const columns: PortfolioItem[][] = [[], [], []];
+portfolio.forEach((item, i) => {
+  columns[i % 3].push(item);
+});
+---
+
+<section class="bg-secondary relative w-full py-20 px-4 md:px-8" id="portfolio-cms-section">
+  <div class="container mx-auto">
+    
+    {portfolio.length === 0 ? (
+      <div class="text-center py-20">
+        <p class="text-xl text-gray-500">Nu există proiecte în portofoliu.</p>
+        <p class="text-sm text-gray-400 mt-2">Adaugă proiecte din <a href="/keystatic" class="text-accent underline">panoul de administrare</a>.</p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-[1800px] mx-auto">
+        {
+          columns.map((col, colIndex) => (
+            <div class="flex flex-col gap-12 portfolio-cms-column" data-col-index={colIndex}>
+              {col.map((item) => (
+                <div class="group relative w-full cursor-pointer">
+                  <!-- Image Wrapper -->
+                  <div class="relative w-full overflow-hidden rounded-[2rem] bg-gray-900 aspect-[3/4] md:aspect-[4/5]">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      loading="lazy"
+                      class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    
+                    <!-- Overlay (Minimalist) -->
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
+                  </div>
+
+                  <!-- Info Below Image -->
+                  <div class="mt-6 flex justify-between items-end opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                      <div>
+                          <h3 class="font-serif text-2xl text-primary leading-tight">
+                              {item.name}
+                          </h3>
+                          <p class="text-sm text-accent uppercase tracking-widest mt-2 font-medium">
+                              {item.material}
+                          </p>
+                      </div>
+                      
+                      <!-- Arrow Icon -->
+                      <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center transform -rotate-45 group-hover:rotate-0 transition-transform duration-500 text-primary">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                      </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    )}
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initGridAnim() {
+    const cols = document.querySelectorAll(".portfolio-cms-column");
+    if (cols.length === 0) return;
+    
+    // Check if desktop (3 columns)
+    if (window.innerWidth >= 1024) {
+        // Middle column (index 1) moves differently
+        gsap.to(".portfolio-cms-column[data-col-index='1']", {
+            y: "5%",
+            ease: "none",
+            scrollTrigger: {
+                trigger: "#portfolio-cms-section",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+        
+         gsap.to([".portfolio-cms-column[data-col-index='0']", ".portfolio-cms-column[data-col-index='2']"], {
+            y: "-5%",
+            ease: "none",
+            scrollTrigger: {
+                trigger: "#portfolio-cms-section",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+    }
+
+    // Reveal Animation for items
+    const items = document.querySelectorAll(".portfolio-cms-column > div");
+    items.forEach((item) => {
+        gsap.fromTo(item, 
+            { opacity: 0, y: 50 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 90%",
+                    end: "bottom 20%",
+                    toggleActions: "play none none reverse"
+                }
+            }
+        );
+    });
+  }
+
+  // Run on load and transitions
+  initGridAnim();
+  document.addEventListener("astro:after-swap", initGridAnim);
+</script>
