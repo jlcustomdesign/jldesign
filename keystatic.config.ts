@@ -8,7 +8,7 @@ export default config({
         }
       : {
           kind: 'github',
-          repo: 'RobertGyorgy/JL-Design', // TODO: Replace with your actual GitHub repository (e.g., 'robertgyorgy/jl-mobila')
+          repo: 'RobertGyorgy/JL-Design',
         },
   collections: {
     portfolio: collection({
