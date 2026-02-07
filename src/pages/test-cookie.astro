@@ -1,0 +1,31 @@
+---
+export const prerender = false;
+
+// Try to set a cookie
+if (Astro.request.method === "POST") {
+  Astro.cookies.set("test-cookie", "hello-world", {
+    path: "/",
+    httpOnly: true,
+    secure: true,
+    maxAge: 60 * 60 * 24, // 1 day
+  });
+  return Astro.redirect("/test-cookie");
+}
+
+const cookie = Astro.cookies.get("test-cookie")?.value;
+---
+
+<html>
+  <body>
+    <h1>Cookie Test</h1>
+    <p>Current Cookie Value: <strong>{cookie || "MISSING"}</strong></p>
+
+    <form method="POST">
+      <button type="submit">Set Test Cookie</button>
+    </form>
+
+    <p>
+      Server Time: {new Date().toISOString()}
+    </p>
+  </body>
+</html>
