@@ -11,7 +11,7 @@ const links = [
 
 <nav
   id="nav-wrapper"
-  class="fixed top-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-md mx-auto px-4 transition-all duration-500"
+  class="fixed top-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-[24rem] mx-auto px-4 transition-all duration-500"
 >
   <div
     id="navbar-container"
@@ -166,7 +166,9 @@ const links = [
 
     if (navContainer && navWrapper) {
       // 1. Initial Load Animation
-      const hero = document.querySelector("#hero-section");
+      const hero = document.querySelector(
+        "#hero-section, #services-hero-section",
+      );
       const isDesktop = window.innerWidth >= 1024;
 
       // Force expanded state on non-home pages OR on mobile/tablet (if we want it expanded there)
@@ -219,7 +221,9 @@ const links = [
 
   function initHeroObserver() {
     const navContainer = document.querySelector("#navbar-container");
-    const hero = document.querySelector("#hero-section");
+    const hero = document.querySelector(
+      "#hero-section, #services-hero-section",
+    );
 
     if (!navContainer) return;
 
@@ -350,7 +354,7 @@ const links = [
         tl.to(
           navWrapper,
           {
-            maxWidth: "28rem",
+            maxWidth: "24rem",
             duration: 0.35,
             ease: "power2.inOut",
           },

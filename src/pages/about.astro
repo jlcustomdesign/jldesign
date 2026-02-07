@@ -115,472 +115,637 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
       </div>
     </section>
 
-    <!-- Story / Values Section -->
+    <!-- Story / Values Section: Geometric Bento -->
     <section
-      class="py-24 bg-secondary rounded-t-[3rem] relative z-10 -mt-10 min-h-screen flex flex-col justify-center"
+      class="py-24 md:py-32 bg-secondary text-primary relative z-10 -mt-10 rounded-t-[3rem] overflow-hidden"
       id="about-story-section"
     >
       <div class="container mx-auto px-4 md:px-8">
-        <div class="max-w-4xl mx-auto">
-          <span
-            class="block text-accent uppercase tracking-[0.2em] text-sm font-bold mb-8 text-center md:text-left reveal-text"
-            data-reveal="perspective"
-            data-reveal-blur
-            style="opacity: 0;">Filozofia Noastră</span
-          >
-
+        <!-- Bento Grid -->
+        <div
+          class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 auto-rows-min"
+        >
+          <!-- Cell 1: Header & Quote (Large Block) -->
           <div
-            class="prose prose-lg md:prose-xl prose-headings:font-serif prose-headings:font-normal text-primary/80"
+            class="lg:col-span-8 p-8 md:p-12 bg-white rounded-3xl relative overflow-hidden group border border-primary/5 bento-card"
           >
+            <div
+              class="absolute top-0 right-0 w-32 h-32 bg-secondary rounded-bl-full -mr-8 -mt-8 opacity-50 transition-transform duration-700 group-hover:scale-110"
+            >
+            </div>
+
+            <span
+              class="block text-accent uppercase tracking-[0.2em] text-sm font-bold mb-8 relative z-10"
+              >Filozofia Noastră</span
+            >
             <h2
-              class="text-4xl md:text-5xl text-primary mb-12 reveal-text"
-              data-reveal="perspective"
-              data-reveal-blur
-              style="opacity: 0;"
+              class="text-3xl md:text-5xl lg:text-6xl font-serif text-primary mb-8 leading-tight relative z-10"
             >
               Calitatea nu este un act, ci un obicei.
             </h2>
-
-            <p
-              class="mb-8 reveal-text"
-              data-reveal="perspective"
-              data-reveal-blur
-              style="opacity: 0;"
+            <div
+              class="h-1 w-24 bg-accent mt-8 transform origin-left transition-all duration-700 group-hover:w-full"
             >
+            </div>
+          </div>
+
+          <!-- Cell 2: Stat 1 (Square) -->
+          <div
+            class="lg:col-span-4 p-8 bg-[#1a1a1a] text-white rounded-3xl flex flex-col justify-center items-center text-center bento-card group relative overflow-hidden"
+          >
+            <span
+              class="text-6xl md:text-7xl font-serif text-accent mb-2 block scale-100 group-hover:scale-110 transition-transform duration-500 stat-number"
+              >15+</span
+            >
+            <span class="text-sm uppercase tracking-widest text-white/60"
+              >Ani de experiență</span
+            >
+          </div>
+
+          <!-- Cell 3: Manifesto (Medium Block) -->
+          <div
+            class="lg:col-span-5 p-8 md:p-10 bg-secondary border border-primary/10 rounded-3xl flex flex-col justify-center relative bento-card group"
+          >
+            <p class="text-lg md:text-xl text-primary/80 leading-relaxed">
               Într-o lume dominată de "fast furniture", noi am ales calea opusă.
               Credem în piese care îmbătrânesc frumos, în materiale care se simt
-              bine la atingere și în mecanisme care funcționează impecabil și
-              peste 20 de ani.
-            </p>
-
-            <p
-              class="reveal-text"
-              data-reveal="perspective"
-              data-reveal-blur
-              style="opacity: 0;"
-            >
-              Fiecare proiect este o colaborare strânsă între client și echipa
-              noastră de designeri. Nu vindem mobilă din stoc; transformăm
-              viziunea ta în realitate tangibilă, milimetru cu milimetru.
+              bine la atingere.
             </p>
           </div>
 
-          <!-- Simple Stats Grid -->
+          <!-- Cell 4: Stat 2 (Rectangle) -->
           <div
-            class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-12 border-t border-gray-100 pt-12"
-            id="about-stats-grid"
+            class="lg:col-span-3 p-8 bg-white border border-primary/5 rounded-3xl flex flex-col justify-between bento-card hover:shadow-lg transition-shadow duration-300"
           >
-            <div class="stat-item opacity-0">
-              <span
-                class="stat-number block text-4xl md:text-5xl font-serif text-accent mb-2"
-                >15+</span
-              >
-              <span class="text-sm uppercase tracking-wider text-gray-500"
-                >Ani de experiență</span
-              >
+            <span
+              class="text-sm uppercase tracking-widest text-primary/40 block text-right"
+              >Proiecte</span
+            >
+            <span
+              class="text-5xl md:text-6xl font-serif text-primary block stat-number"
+              >500+</span
+            >
+            <div
+              class="w-full bg-secondary h-1 mt-4 rounded-full overflow-hidden"
+            >
+              <div class="bg-primary h-full w-[85%]"></div>
             </div>
-            <div class="stat-item opacity-0">
-              <span
-                class="stat-number block text-4xl md:text-5xl font-serif text-accent mb-2"
-                >500+</span
-              >
-              <span class="text-sm uppercase tracking-wider text-gray-500"
-                >Proiecte livrate</span
-              >
-            </div>
-            <div class="stat-item opacity-0">
-              <span
-                class="stat-number block text-4xl md:text-5xl font-serif text-accent mb-2"
+          </div>
+
+          <!-- Cell 5: Stat 3 & 4 (Combined or Split) -->
+          <div class="lg:col-span-4 grid grid-cols-2 gap-4">
+            <div
+              class="p-6 bg-white rounded-3xl border border-primary/5 flex flex-col justify-center items-center text-center bento-card"
+            >
+              <span class="text-4xl font-serif text-primary mb-1 stat-number"
                 >100%</span
               >
-              <span class="text-sm uppercase tracking-wider text-gray-500"
+              <span class="text-[10px] uppercase tracking-wider text-primary/60"
                 >Dedicare</span
               >
             </div>
-            <div class="stat-item opacity-0">
+            <div
+              class="p-6 bg-[#d4af37] text-white rounded-3xl flex flex-col justify-center items-center text-center bento-card relative overflow-hidden"
+            >
               <span
-                class="stat-number block text-4xl md:text-5xl font-serif text-accent mb-2"
+                class="text-4xl font-serif text-white mb-1 relative z-10 stat-number"
                 >24h</span
               >
-              <span class="text-sm uppercase tracking-wider text-gray-500"
+              <span
+                class="text-[10px] uppercase tracking-wider text-white/80 relative z-10"
                 >Suport Rapid</span
               >
             </div>
           </div>
+
+          <!-- Cell 6: Collaboration Text -->
+          <div
+            class="lg:col-span-12 p-10 md:p-16 bg-white rounded-3xl border border-primary/5 mt-4 relative overflow-hidden bento-card items-center flex flex-col md:flex-row gap-8 md:gap-16"
+          >
+            <div class="md:w-1/2 relative z-10">
+              <h3 class="text-2xl md:text-4xl font-serif text-primary mb-4">
+                Nu vindem mobilă din stoc.
+              </h3>
+            </div>
+            <div class="md:w-1/2 relative z-10">
+              <p class="text-lg text-primary/70 leading-relaxed">
+                Fiecare proiect este o colaborare strânsă între client și echipa
+                noastră de designeri. Transformăm viziunea ta în realitate
+                tangibilă, <strong class="text-primary"
+                  >milimetru cu milimetru</strong
+                >.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
-    <!-- Atelier / Craftsmanship Section -->
+    <!-- Atelier / Craftsmanship Section: Hyper-Minimalist -->
     <section
-      class="py-24 bg-secondary text-primary relative overflow-hidden"
+      class="py-32 md:py-48 bg-secondary text-primary relative z-10"
       id="about-atelier-section"
     >
       <div class="container mx-auto px-4 md:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <!-- Text Content -->
-          <div class="lg:col-span-5 space-y-8">
-            <span
-              class="block text-accent uppercase tracking-[0.2em] text-sm font-bold reveal-text"
-              data-reveal="slide">Atelierul Nostru</span
-            >
+        <!-- Moment 3: The Philosophy (Redesigned Text-Only) -->
+        <div class="flex flex-col gap-12 md:gap-24 items-start pb-32">
+          <!-- Title: Full Width -->
+          <div class="w-full">
             <h2
-              class="font-serif text-4xl md:text-5xl text-primary leading-tight reveal-text"
-              data-reveal="perspective"
+              class="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-primary leading-[1.05] scrub-words uppercase"
             >
-              Măiestria Detaliului
+              Nu producem mobilă.<br />
+              Creăm liniște.
             </h2>
-            <p
-              class="text-primary/80 text-lg leading-relaxed reveal-text"
-              data-reveal="perspective"
-              data-reveal-delay="0.1"
-            >
-              Aici, tehnologia întâlnește tradiția. Nu folosim scurtături.
-              Fiecare piesă este finisată manual, verificată și testată pentru a
-              rezista generațiilor.
-            </p>
-            <p
-              class="text-primary/80 text-lg leading-relaxed reveal-text"
-              data-reveal="perspective"
-              data-reveal-delay="0.2"
-            >
-              Lemn masiv, furniruri rare și feronerie de top – ingredientele
-              care transformă o simplă mobilă într-o moștenire de familie.
-            </p>
           </div>
 
-          <!-- Visual Grid -->
-          <div class="lg:col-span-7 grid grid-cols-2 gap-4 md:gap-8">
-            <div class="mt-12 md:mt-0 space-y-4">
-              <div
-                class="aspect-[3/4] rounded-2xl overflow-hidden reveal-image video-trigger"
+          <!-- Moment 2: The Manifesto (Left 50%) & Visuals (Right 50%) -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 w-full items-start"
+          >
+            <!-- Left Col: Text -->
+            <div class="md:col-span-1 md:pr-12 md:sticky md:top-32">
+              <p
+                class="text-3xl md:text-5xl font-bold text-primary leading-tight scrub-words mb-16"
               >
+                În atelierul nostru, timpul curge altfel. Lemnul este lăsat să
+                respire.
+              </p>
+              <p
+                class="text-3xl md:text-5xl font-bold text-primary leading-tight scrub-words mb-16"
+              >
+                Fiecare îmbinare este o promisiune de durabilitate onorată
+                manual.
+              </p>
+            </div>
+
+            <!-- Right Col: Landscape Images -->
+            <div
+              class="md:col-span-1 flex flex-col gap-12 md:gap-24 pt-12 md:pt-0"
+            >
+              <!-- Image 1 -->
+              <div
+                class="fancy-card overflow-hidden rounded-2xl aspect-[16/10] relative group shadow-xl"
+              >
+                <div
+                  class="absolute inset-0 bg-primary/10 z-20 transition-opacity duration-700 group-hover:opacity-0 mixed-blend-overlay"
+                >
+                </div>
                 <img
-                  src="/Images/Proiecte-JL Custom Design-07.jpg"
-                  class="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-700"
-                  alt="Detail 1"
+                  src="/Images/Proiecte-JL Custom Design-09.jpg"
+                  alt="Workshop Process"
+                  class="object-cover w-full h-full scale-[1.15] fancy-image will-change-transform"
+                />
+              </div>
+
+              <!-- Image 2 -->
+              <div
+                class="fancy-card overflow-hidden rounded-2xl aspect-[16/10] relative group shadow-xl"
+              >
+                <div
+                  class="absolute inset-0 bg-primary/10 z-20 transition-opacity duration-700 group-hover:opacity-0 mixed-blend-overlay"
+                >
+                </div>
+                <img
+                  src="/Images/Proiecte-JL Custom Design-05.jpg"
+                  alt="Finished Detail"
+                  class="object-cover w-full h-full scale-[1.15] fancy-image will-change-transform"
                 />
               </div>
             </div>
-            <div class="-mt-12 md:-mt-24 space-y-4">
+          </div>
+
+          <!-- CTA (Dark Banner) -->
+          <div class="w-full mt-24">
+            <div
+              class="bg-primary text-[#EAE6DF] p-10 md:p-16 rounded-[2rem] flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden shadow-2xl scrub-card opacity-0 translate-y-24 will-change-transform"
+            >
               <div
-                class="aspect-[3/4] rounded-2xl overflow-hidden reveal-image"
-                data-delay="0.2"
+                class="flex flex-col gap-4 text-center md:text-left max-w-3xl"
               >
-                <img
-                  src="/Images/hero-image.jpg"
-                  class="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-700"
-                  alt="Detail 2"
-                />
+                <p
+                  class="text-[#EAE6DF]/60 uppercase tracking-widest text-sm font-bold scrub-fade"
+                >
+                  Portofoliu
+                </p>
+                <h3
+                  class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold leading-tight scrub-words"
+                >
+                  Rezultatul? O colecție de piese care vorbesc de la sine.
+                </h3>
+              </div>
+
+              <div class="shrink-0 scrub-fade">
+                <BubbleButton
+                  href="/portfolio"
+                  variant="primary"
+                  class="!px-12 !py-5 !text-lg"
+                >
+                  Vezi Proiectele
+                </BubbleButton>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <script>
-      import { gsap } from "gsap";
-      import { ScrollTrigger } from "gsap/ScrollTrigger";
-      import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
-      import { initTextAnimations } from "../utils/RevealAnimationHandler";
-      import { rectangle, cross } from "../scripts/hero-animation";
-
-      gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin);
-
-      let ctx: gsap.Context;
-
-      function initAboutAnimations() {
-        // 1. Initialize Global Text Animations (Perspective Blur)
-        initTextAnimations();
-
-        // 2. Custom GSAP for Non-Text Elements (Images, Backgrounds, Stats)
-        if (ctx) ctx.revert();
-
-        ctx = gsap.context((self) => {
-          const masterTl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-          // --- Background SVG Morph Animation ---
-          const svg = document.querySelector("#aboutHeroSVG");
-          const path = document.querySelector("#aboutHeroPath");
-
-          if (svg && path) {
-            const heroSection = document.querySelector("#about-hero-section");
-            let currentWidth = heroSection
-              ? heroSection.clientWidth
-              : window.innerWidth;
-            let currentHeight = heroSection
-              ? heroSection.clientHeight
-              : window.innerHeight;
-            const widthTarget = 1110;
-
-            const simpleRect = (w: number, h: number) => {
-              const r = 32; // Rounded corners
-              const mx = 20;
-              const mT = 50;
-              const mB = 120;
-              const activeW = w - 2 * mx;
-              const activeH = h - (mT + mB);
-
-              // Draw rounded rect with separate margins
-              return `M${mx + r},${mT} h${activeW - 2 * r} a${r},${r} 0 0 1 ${r},${r} v${activeH - 2 * r} a${r},${r} 0 0 1 -${r},${r} h-${activeW - 2 * r} a${r},${r} 0 0 1 -${r},-${r} v-${activeH - 2 * r} a${r},${r} 0 0 1 ${r},-${r} z`;
-            };
-
-            const setSvgDimensions = (width: number, height: number) => {
-              svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-              path.setAttribute("d", rectangle(width, height));
-            };
-
-            setSvgDimensions(currentWidth, currentHeight);
-
-            // Initial State
-            gsap.set(svg, {
-              opacity: 0,
-              scale: 1.15,
-              transformOrigin: "center center",
-            });
-
-            // Animate In: Scale Down + Morph + Fade In
-            masterTl
-              .to(svg, {
-                opacity: 1,
-                scale: 1,
-                duration: 2.5,
-                ease: "elastic.out(1, 0.75)",
-              })
-              .to(
-                path,
-                {
-                  duration: 2.5,
-                  morphSVG: simpleRect(currentWidth, currentHeight),
-                  ease:
-                    currentWidth > widthTarget
-                      ? "elastic.out(1, 0.75)"
-                      : "back.out(2)",
-                },
-                "<",
-              );
-
-            // Resize Listener
-            let resizeTimeout: ReturnType<typeof setTimeout>;
-            const handleResize = () => {
-              clearTimeout(resizeTimeout);
-              resizeTimeout = setTimeout(() => {
-                currentWidth = heroSection
-                  ? heroSection.clientWidth
-                  : window.innerWidth;
-                currentHeight = heroSection
-                  ? heroSection.clientHeight
-                  : window.innerHeight;
-                setSvgDimensions(currentWidth, currentHeight);
-                // Re-morph to cross on resize if needed, or just reset to rectangle
-                // For simplicity, we'll just reset to rectangle on resize.
-                // If the morph should re-run, more complex logic is needed.
-              }, 250); // Debounce resize
-            };
-            window.addEventListener("resize", handleResize);
-
-            // Clean up resize listener when context reverts
-            self.add(() => window.removeEventListener("resize", handleResize));
-          }
-
-          // --- Hero Card Reveal (Decoupled & Robust) ---
-          const cardTl = gsap.timeline({ delay: 0.5 });
-
-          // Animate TO visible state (Start state in HTML)
-          cardTl.to("#about-hero-image", {
-            scale: 1,
-            opacity: 1,
-            duration: 1.4,
-            ease: "expo.out",
-          });
-
-          // Stats Reveal (Keeping custom stagger for grid)
-          gsap.fromTo(
-            ".stat-item",
-            { y: 30, opacity: 0 }, // Init from invisible
-            {
-              y: 0,
-              opacity: 1,
-              duration: 1,
-              stagger: 0.1,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: "#about-stats-grid",
-                start: "top 95%", // Trigger earlier
-              },
-            },
-          );
-
-          // Stats Counter Animation
-          const statNumbers = document.querySelectorAll(".stat-number");
-          statNumbers.forEach((stat) => {
-            const originalText = stat.textContent || "";
-            const endValue = parseInt(originalText.replace(/\D/g, "")) || 0;
-            const suffix = originalText.replace(/[0-9]/g, "");
-
-            // Reset text immediately to start value to prevent "reload" flash
-            stat.textContent = "0" + suffix;
-
-            const counter = { val: 0 };
-
-            gsap.to(counter, {
-              val: endValue,
-              duration: 2.5,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: "#about-stats-grid",
-                start: "top 95%",
-              },
-              onUpdate: () => {
-                stat.textContent = Math.floor(counter.val) + suffix;
-              },
-            });
-          });
-
-          // Image Reveal Animation (Atelier)
-          const revealImageContainers =
-            document.querySelectorAll(".reveal-image");
-          revealImageContainers.forEach((container) => {
-            const img = container.querySelector("img");
-            // @ts-ignore
-            const delay = parseFloat(container.dataset.delay || 0);
-
-            // Animate Container (Fade Up)
-            gsap.fromTo(
-              container,
-              { y: 50, opacity: 0 },
-              {
-                y: 0,
-                opacity: 1,
-                duration: 1,
-                ease: "power2.out",
-                delay: delay,
-                scrollTrigger: {
-                  trigger: container,
-                  start: "top 85%",
-                },
-              },
-            );
-
-            // Animate Image (Zoom Out)
-            if (img) {
-              gsap.fromTo(
-                img,
-                { scale: 1.2 },
-                {
-                  scale: 1,
-                  duration: 1.5,
-                  ease: "power2.out",
-                  delay: delay,
-                  scrollTrigger: {
-                    trigger: container,
-                    start: "top 85%",
-                  },
-                },
-              );
-            }
-          });
-
-          // Slice Reveal Animation (Roll Down)
-          const revealRollContainers =
-            document.querySelectorAll(".reveal-roll");
-          if (revealRollContainers.length > 0) {
-            gsap.fromTo(
-              revealRollContainers,
-              { clipPath: "inset(0 0 100% 0)" },
-              {
-                clipPath: "inset(0 0 0% 0)",
-                duration: 1.5,
-                ease: "power2.out",
-                stagger: 0.2,
-                scrollTrigger: {
-                  trigger: "#about-hero-section",
-                  start: "top 80%",
-                },
-              },
-            );
-          }
-
-          // Title Reveal Animation (Clean Slide Up)
-          const heroTitle = document.querySelector("#about-hero-title");
-          if (heroTitle) {
-            gsap.to(heroTitle, {
-              y: 0,
-              opacity: 1,
-              duration: 1.5,
-              ease: "power3.out",
-              delay: 0.2, // Sync with slices
-              scrollTrigger: {
-                trigger: "#about-hero-section",
-                start: "top 80%",
-              },
-            });
-          }
-
-          const heroSection = document.querySelector("#about-hero-section");
-          const heroContent = document.querySelector("#about-hero-content");
-
-          if (heroSection && heroContent) {
-            // Unified parallax behavior for all devices (Mobile Parallax Enabled)
-
-            // Background Parallax (Layered Depth - Not Glued)
-            const heroBg = document.querySelector("#about-hero-bg");
-            if (heroBg) {
-              gsap.to(heroBg, {
-                scale: 0.94, // Consistent scale
-                opacity: 0,
-                filter: "blur(8px)",
-                ease: "none",
-                scrollTrigger: {
-                  trigger: heroSection,
-                  start: "bottom bottom",
-                  end: "bottom top",
-                  scrub: 0.5,
-                  invalidateOnRefresh: true,
-                },
-              });
-            }
-
-            gsap.to(heroContent, {
-              scale: 0.9,
-              filter: "blur(8px)",
-              opacity: 0,
-              ease: "none",
-              scrollTrigger: {
-                trigger: heroSection,
-                start: "bottom bottom",
-                end: "bottom top",
-                scrub: 0.5,
-                pin: true, // Enabled on all devices
-                pinSpacing: false,
-                invalidateOnRefresh: true,
-              },
-            });
-          }
-        });
-      }
-
-      // Initialize on load (MPA style)
-      if (
-        document.readyState === "complete" ||
-        document.readyState === "interactive"
-      ) {
-        setTimeout(initAboutAnimations, 100);
-      } else {
-        document.addEventListener("DOMContentLoaded", initAboutAnimations);
-      }
-
-      // Support for View Transitions
-      document.addEventListener("astro:page-load", initAboutAnimations);
-      document.addEventListener("astro:before-swap", () => ctx?.revert());
-    </script>
-
-    <!-- FAQ Section -->
     <FaqSection />
   </main>
 
-  <!-- Footer Slot -->
   <Footer slot="footer" />
 </Layout>
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
+  import { initTextAnimations } from "../utils/RevealAnimationHandler";
+  import { rectangle, cross } from "../scripts/hero-animation";
+
+  gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin);
+
+  let ctx: gsap.Context;
+
+  function initAboutAnimations() {
+    // 1. Initialize Global Text Animations (Perspective Blur)
+    initTextAnimations();
+
+    // 2. Custom GSAP for Non-Text Elements (Images, Backgrounds, Stats)
+    if (ctx) ctx.revert();
+
+    ctx = gsap.context((self) => {
+      // --- Scrub Words Animation (Optimized) ---
+      const scrubWordContainers = document.querySelectorAll(".scrub-words");
+      scrubWordContainers.forEach((container) => {
+        const text = container.textContent.trim().replace(/\s+/g, " "); // Normalize spaces
+        container.innerHTML = text
+          .split(" ")
+          .map(
+            (word) =>
+              `<span class="inline-block overflow-hidden pb-4 align-top"><span class="word-inner inline-block opacity-0 will-change-transform">${word}&nbsp;</span></span>`,
+          )
+          .join("");
+
+        const words = container.querySelectorAll(".word-inner");
+
+        // Performance: Hint browser before animation starts
+        gsap.set(words, { willChange: "transform, opacity", yPercent: 120 });
+
+        gsap.to(words, {
+          yPercent: 0,
+          opacity: 1,
+          stagger: 0.05,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: container,
+            start: "top 90%", // Trigger slightly earlier to separate from other paints
+            end: "bottom 60%",
+            scrub: 1,
+          },
+        });
+      });
+
+      // --- Scrub Button Animation ---
+      const scrubButtons = document.querySelectorAll(".scrub-button");
+      scrubButtons.forEach((btn) => {
+        gsap.to(btn, {
+          opacity: 1,
+          y: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: btn,
+            start: "top 95%", // Trigger lower
+            end: "bottom 80%",
+            scrub: 1,
+          },
+        });
+      });
+
+      // --- Scrub Fade (Generic) ---
+      gsap.utils.toArray(".scrub-fade").forEach((el: any) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 95%",
+              end: "bottom 80%",
+              scrub: 1,
+            },
+          },
+        );
+      });
+
+      // --- Scrub Card (Banner) ---
+      const scrubCards = document.querySelectorAll(".scrub-card");
+      scrubCards.forEach((card) => {
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 95%",
+            end: "center 80%", // Faster reveal
+            scrub: 1,
+          },
+        });
+      });
+
+      // --- Fancy Card Scrub Reveal (Right to Left) ---
+      const fancyCards = document.querySelectorAll(".fancy-card");
+      fancyCards.forEach((card) => {
+        const img = card.querySelector(".fancy-image");
+
+        // Optimization: Hint browser
+        gsap.set(card, { willChange: "opacity, transform" });
+
+        // Scrub Reveal (Opacity + Slide Left)
+        gsap.fromTo(
+          card,
+          { x: 150, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 95%",
+              end: "center 65%",
+              scrub: 1,
+            },
+          },
+        );
+
+        // Parallax (kept subtle)
+        if (img) {
+          gsap.fromTo(
+            img,
+            { scale: 1.15, yPercent: -5 },
+            {
+              scale: 1,
+              yPercent: 5,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.5,
+              },
+            },
+          );
+        }
+      });
+
+      const masterTl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+      });
+
+      // Background Parallax
+      const heroBg = document.querySelector("#about-hero-bg");
+      let currentWidth = window.innerWidth;
+      let currentHeight = window.innerHeight;
+
+      if (heroBg) {
+        // Function to set dimensions based on hero section size
+        const setSvgDimensions = (w: number, h: number) => {
+          // We want the SVG to cover the area.
+          // Logic is handled by CSS mostly, but we can ensure layout here if needed.
+          // For now, rely on CSS (w-full h-full object-cover like behavior)
+        };
+
+        let resizeTimer: ReturnType<typeof setTimeout>;
+        const handleResize = () => {
+          // Debounce resize
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            const heroSection = document.querySelector("#about-hero-section");
+            currentWidth = heroSection
+              ? heroSection.clientWidth
+              : window.innerWidth;
+            currentHeight = heroSection
+              ? heroSection.clientHeight
+              : window.innerHeight;
+            setSvgDimensions(currentWidth, currentHeight);
+          }, 250); // Debounce resize
+        };
+        window.addEventListener("resize", handleResize);
+        self.add(() => window.removeEventListener("resize", handleResize));
+
+        // Initial state for heroBg (assuming it's an SVG or similar)
+        gsap.set(heroBg, {
+          opacity: 0,
+          scale: 1.15,
+          transformOrigin: "center center",
+        });
+
+        // Animate In: Scale Down + Fade In
+        masterTl.to(heroBg, {
+          opacity: 1,
+          scale: 1,
+          duration: 2.5,
+          ease: "elastic.out(1, 0.75)",
+        });
+      }
+
+      // --- Hero Card Reveal (Decoupled & Robust) ---
+      const cardTl = gsap.timeline({ delay: 0.5 });
+
+      // Animate TO visible state (Start state in HTML)
+      cardTl.to("#about-hero-image", {
+        scale: 1,
+        opacity: 1,
+        duration: 1.4,
+        ease: "expo.out",
+      });
+
+      // Stats Reveal (Keeping custom stagger for grid)
+      gsap.fromTo(
+        ".stat-item",
+        { y: 30, opacity: 0 }, // Init from invisible
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#about-stats-grid",
+            start: "top 95%", // Trigger earlier
+          },
+        },
+      );
+
+      // --- Philosophy Section (Bento Grid) ---
+      const bentoCards = document.querySelectorAll(".bento-card");
+      if (bentoCards.length > 0) {
+        bentoCards.forEach((card, i) => {
+          gsap.set(card, { willChange: "transform, opacity" });
+
+          // "Construction" Effect: Come from different directions
+          let startVars: any = {};
+          const mode = i % 4;
+          if (mode === 0)
+            startVars.x = -100; // Left
+          else if (mode === 1)
+            startVars.y = 100; // Up
+          else if (mode === 2)
+            startVars.x = 100; // Right
+          else startVars.y = 100; // Up (again)
+
+          gsap.fromTo(card, startVars, {
+            x: 0,
+            y: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 95%",
+              end: "center 70%",
+              scrub: 1,
+            },
+          });
+        });
+      }
+
+      // Stats Counter Animation
+      const statNumbers = document.querySelectorAll(".stat-number");
+      statNumbers.forEach((stat) => {
+        const originalText = stat.textContent || "";
+        const endValue = parseInt(originalText.replace(/\D/g, "")) || 0;
+        const suffix = originalText.replace(/[0-9]/g, "");
+
+        // Reset text immediately to start value to prevent "reload" flash
+        stat.textContent = "0" + suffix;
+
+        const counter = { val: 0 };
+
+        gsap.to(counter, {
+          val: endValue,
+          duration: 2.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#about-story-section", // Changed to story section
+            start: "top 75%",
+          },
+          onUpdate: () => {
+            stat.textContent = Math.floor(counter.val) + suffix;
+          },
+        });
+      });
+
+      // Standard Reveal (for Bento/Other)
+      const revealImageContainers = document.querySelectorAll(".reveal-image");
+      revealImageContainers.forEach((container) => {
+        gsap.fromTo(
+          container,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: container,
+              start: "top 85%",
+            },
+          },
+        );
+      });
+
+      // Slice Reveal Animation (Roll Down)
+      const revealRollContainers = document.querySelectorAll(".reveal-roll");
+      if (revealRollContainers.length > 0) {
+        gsap.fromTo(
+          revealRollContainers,
+          { clipPath: "inset(0 0 100% 0)" },
+          {
+            clipPath: "inset(0 0 0% 0)",
+            duration: 1.5,
+            ease: "power2.out",
+            stagger: 0.2,
+            scrollTrigger: {
+              trigger: "#about-hero-section",
+              start: "top 80%",
+            },
+          },
+        );
+      }
+
+      // Title Reveal Animation (Clean Slide Up)
+      const heroTitle = document.querySelector("#about-hero-title");
+      if (heroTitle) {
+        gsap.to(heroTitle, {
+          y: 0,
+          opacity: 1,
+          duration: 1.5,
+          ease: "power3.out",
+          delay: 0.2, // Sync with slices
+          scrollTrigger: {
+            trigger: "#about-hero-section",
+            start: "top 80%",
+          },
+        });
+      }
+
+      const heroSection = document.querySelector("#about-hero-section");
+      const heroContent = document.querySelector("#about-hero-content");
+
+      if (heroSection && heroContent) {
+        // Unified parallax behavior for all devices (Mobile Parallax Enabled)
+
+        // Background Parallax (Layered Depth - Not Glued)
+        const heroBg = document.querySelector("#about-hero-bg");
+        if (heroBg) {
+          gsap.to(heroBg, {
+            scale: 0.94, // Consistent scale
+            opacity: 0,
+            filter: "blur(8px)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: heroSection,
+              start: "bottom bottom",
+              end: "bottom top",
+              scrub: 0.5,
+              invalidateOnRefresh: true,
+            },
+          });
+        }
+
+        gsap.to(heroContent, {
+          scale: 0.9,
+          filter: "blur(8px)",
+          opacity: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroSection,
+            start: "bottom bottom",
+            end: "bottom top",
+            scrub: 0.5,
+            pin: true, // Enabled on all devices
+            pinSpacing: false,
+            invalidateOnRefresh: true,
+          },
+        });
+      }
+    });
+  }
+
+  // Initialize on load (MPA style)
+  if (
+    document.readyState === "complete" ||
+    document.readyState === "interactive"
+  ) {
+    setTimeout(initAboutAnimations, 100);
+  } else {
+    document.addEventListener("DOMContentLoaded", initAboutAnimations);
+  }
+
+  // Support for View Transitions
+  document.addEventListener("astro:page-load", initAboutAnimations);
+  document.addEventListener("astro:before-swap", () => ctx?.revert());
+</script>
 
 <style is:global>
   /* Ensure body is transparent so fixed footer behind is visible */

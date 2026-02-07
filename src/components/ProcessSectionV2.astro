@@ -58,7 +58,7 @@ const steps = [
       >
         <!-- Step 1 Text -->
         <div
-          class="process-text origin-right opacity-20 blur-sm will-change-transform"
+          class="process-text origin-right opacity-0 pointer-events-none blur-sm will-change-transform"
           data-step="0"
         >
           <h3 class="font-serif text-2xl text-primary font-bold mb-3">
@@ -68,7 +68,7 @@ const steps = [
         </div>
         <!-- Step 3 Text -->
         <div
-          class="process-text origin-right opacity-20 blur-sm will-change-transform"
+          class="process-text origin-right opacity-0 pointer-events-none blur-sm will-change-transform"
           data-step="2"
         >
           <h3 class="font-serif text-2xl text-primary font-bold mb-3">
@@ -89,7 +89,7 @@ const steps = [
           <div class="flex flex-col">
             <div
               class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                           transform process-image lg:opacity-20 lg:blur-sm lg:will-change-transform"
+                           transform process-image lg:opacity-0 lg:pointer-events-none lg:blur-sm lg:will-change-transform"
               data-step="0"
             >
               <img
@@ -114,7 +114,7 @@ const steps = [
           <div class="flex flex-col">
             <div
               class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                           transform process-image lg:opacity-20 lg:blur-sm lg:will-change-transform"
+                           transform process-image lg:opacity-0 lg:pointer-events-none lg:blur-sm lg:will-change-transform"
               data-step="2"
             >
               <img
@@ -142,7 +142,7 @@ const steps = [
           <div class="flex flex-col">
             <div
               class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                           transform process-image lg:opacity-20 lg:blur-sm lg:will-change-transform"
+                           transform process-image lg:opacity-0 lg:pointer-events-none lg:blur-sm lg:will-change-transform"
               data-step="1"
             >
               <img
@@ -167,7 +167,7 @@ const steps = [
           <div class="flex flex-col">
             <div
               class="w-full aspect-[4/3] relative overflow-hidden rounded-2xl transition-all duration-500 ease-out
-                           transform process-image lg:opacity-20 lg:blur-sm lg:will-change-transform"
+                           transform process-image lg:opacity-0 lg:pointer-events-none lg:blur-sm lg:will-change-transform"
               data-step="3"
             >
               <img
@@ -196,7 +196,7 @@ const steps = [
       >
         <!-- Step 2 Text -->
         <div
-          class="process-text origin-left opacity-20 blur-sm will-change-transform"
+          class="process-text origin-left opacity-0 pointer-events-none blur-sm will-change-transform"
           data-step="1"
         >
           <h3 class="font-serif text-2xl text-primary font-bold mb-3">
@@ -206,7 +206,7 @@ const steps = [
         </div>
         <!-- Step 4 Text -->
         <div
-          class="process-text origin-left opacity-20 blur-sm will-change-transform"
+          class="process-text origin-left opacity-0 pointer-events-none blur-sm will-change-transform"
           data-step="3"
         >
           <h3 class="font-serif text-2xl text-primary font-bold mb-3">
@@ -320,13 +320,13 @@ const steps = [
           // 1, 3 are Right Column -> From Right (+x)
           const isLeft = i === 0 || i === 2;
           const textEl = section.querySelector(
-            `.process-text[data-step="${i}"]`
+            `.process-text[data-step="${i}"]`,
           );
 
           // Image Elements (Center Column)
           // From Bottom/Top randomly or consistently? Let's say Bottom Up for all for consistency
           const imgEl = section.querySelector(
-            `.process-image[data-step="${i}"]`
+            `.process-image[data-step="${i}"]`,
           );
 
           const timelinePosition = i * 1.5;
@@ -336,30 +336,32 @@ const steps = [
             // We use 'fromTo' to be safe with scrub
             tl.fromTo(
               textEl,
-              { x: isLeft ? -100 : 100, opacity: 0, filter: "blur(10px)" },
+              { x: isLeft ? -100 : 100, autoAlpha: 0, filter: "blur(10px)" },
               {
                 x: 0,
-                opacity: 1,
+                autoAlpha: 1,
+                pointerEvents: "auto",
                 filter: "blur(0px)",
                 duration: 1,
                 ease: "power2.out",
               },
-              timelinePosition
+              timelinePosition,
             );
           }
 
           if (imgEl) {
             tl.fromTo(
               imgEl,
-              { y: 50, opacity: 0, filter: "blur(10px)" },
+              { y: 50, autoAlpha: 0, filter: "blur(10px)" },
               {
                 y: 0,
-                opacity: 1,
+                autoAlpha: 1,
+                pointerEvents: "auto",
                 filter: "blur(0px)",
                 duration: 1,
                 ease: "power2.out",
               },
-              timelinePosition // Sync with text
+              timelinePosition, // Sync with text
             );
           }
         });
@@ -371,7 +373,7 @@ const steps = [
             cta,
             { opacity: 0, y: 30 },
             { opacity: 1, y: 0, duration: 1 },
-            "+=0.5"
+            "+=0.5",
           );
         }
       },
@@ -383,7 +385,7 @@ const steps = [
         // Mobile Reveal: Fade Up for groups
         // We target the container of each step (Image + Text)
         const mobileGroups = section.querySelectorAll(
-          ".flex.flex-col > .flex.flex-col"
+          ".flex.flex-col > .flex.flex-col",
         );
 
         if (mobileGroups.length) {
@@ -399,7 +401,7 @@ const steps = [
                   duration: 0.8,
                   stagger: 0.2,
                   ease: "power2.out",
-                }
+                },
               ),
             once: true, // Keep it clean
           });

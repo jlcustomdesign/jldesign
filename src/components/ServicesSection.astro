@@ -4,220 +4,447 @@ import BubbleButton from "./ui/BubbleButton.astro";
 const services = [
   {
     id: "kitchen",
-    num: "/01",
     title: "Bucătării Custom",
     desc: "Inima casei tale, regândită. Funcționalitate desăvârșită îmbrăcată în materiale nobile.",
     img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=2000&auto=format&fit=crop",
-    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-primary"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`
   },
   {
     id: "dressing",
-    num: "/02",
     title: "Dressing & Wardrobes",
     desc: "Mai mult decât depozitare. Un sanctuar al stilului tău. Iluminare ambientală și finisaje de catifea.",
     img: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?q=80&w=2000&auto=format&fit=crop",
-    isAlt: true
   },
   {
     id: "living",
-    num: "/03",
     title: "Living & Library",
     desc: "Povestea casei, scrisă în lemn masiv. Biblioteci impunătoare și piese care dau tonul conversației.",
     img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop",
-    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-primary"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`
   },
   {
     id: "office",
-    num: "/04",
     title: "Office & Comercial",
     desc: "Productivitate și stil. Spații de lucru ergonomice care impresionează clienții din prima clipă.",
     img: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop",
-    isAlt: true
   },
   {
     id: "bathroom",
-    num: "/05",
     title: "Baie & Wellness",
     desc: "Refugiul tău personal. Mobilier rezistent la umiditate, integrat perfect cu piatra și ceramica.",
     img: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?q=80&w=2000&auto=format&fit=crop",
-    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-primary"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`
   },
 ];
 ---
 
 <section
-  id="services-section"
-  class="py-24 md:py-40 bg-[#0a0a0a] text-white overflow-hidden"
-  data-theme="dark"
+  id="services-fullscreen-wrapper"
+  class="relative h-screen bg-secondary overflow-hidden text-primary"
+  data-theme="light"
 >
-  <div class="container mx-auto px-4 md:px-8">
-    <!-- Header -->
-    <div class="mb-20">
-      <div class="text-[10px] uppercase tracking-[0.3em] text-white/40 mb-8 font-mono">
-        [ SERVICII ]
-      </div>
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <h2 class="lg:col-span-7 font-serif text-5xl md:text-7xl lg:text-8xl leading-[1.1] reveal-text" data-reveal="slide">
-          Cum transformăm <br /> viziunea în realitate
-        </h2>
-        <div class="lg:col-span-5 lg:pt-4">
-          <p class="text-white/60 text-lg md:text-xl max-w-md reveal-text" data-reveal="slide" data-reveal-delay="0.2">
-            Creăm mobilier care nu doar ocupă spațiul, ci îl definește. De la concept la montaj, fiecare proiect este o călătorie către perfecțiune.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cards Carousel -->
-    <div class="relative">
-      <div 
-        id="services-carousel" 
-        class="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing"
-      >
-        {
-          services.map((service, i) => (
-            <div 
-              class="snap-start shrink-0 w-[85vw] md:w-[45vw] lg:w-[30%] group"
-              data-index={i}
-            >
-              <div class="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 bg-white/5 backdrop-blur-3xl p-8 flex flex-col justify-between transition-all duration-500 hover:border-white/20 hover:bg-white/10">
-                {service.isAlt ? (
-                  // Image Style Card
-                  <>
-                    <img 
-                      src={service.img} 
-                      alt={service.title}
-                      class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-40 transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80" />
-                    
-                    <div class="relative z-10 flex justify-end">
-                      <span class="font-mono text-sm tracking-widest text-white/40">{service.num}</span>
-                    </div>
-                    
-                    <div class="relative z-10 text-center px-4">
-                      <h3 class="font-serif text-3xl md:text-4xl leading-tight">
-                        {service.title}
-                      </h3>
-                    </div>
-
-                    <div class="relative z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                       <!-- Empty space to maintain layout -->
-                    </div>
-                  </>
-                ) : (
-                  // Content Style Card
-                  <>
-                    <div class="flex justify-between items-start">
-                      <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md" set:html={service.icon} />
-                      <span class="font-mono text-sm tracking-widest text-white/40">{service.num}</span>
-                    </div>
-
-                    <div class="space-y-4">
-                      <h3 class="font-serif text-3xl md:text-4xl leading-tight">
-                        {service.title}
-                      </h3>
-                      <p class="text-white/60 text-base leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
-                        {service.desc}
-                      </p>
-                    </div>
-                  </>
-                )}
-              </div>
+  <!-- BACKGROUNDS LAYER (Wrapped in Card) -->
+  <div
+    class="absolute inset-0 w-full h-full z-0 flex items-center justify-center"
+  >
+    <div
+      class="w-[90%] h-[90%] rounded-3xl overflow-hidden relative bg-secondary"
+    >
+      {
+        services.map((service, i) => (
+          <div
+            class="service-bg absolute inset-0 w-full h-full will-change-transform z-10"
+            data-index={i}
+          >
+            <div class="w-full h-full relative">
+              {[0, 1, 2, 3, 4].map((k) => (
+                <div
+                  class="service-slice absolute top-0 bottom-0 h-full overflow-hidden bg-secondary rounded-3xl"
+                  style={`left: ${k * 20}%; width: 20%;`}
+                >
+                  <img
+                    src={service.img}
+                    alt={service.title}
+                    loading="lazy"
+                    class="absolute top-0 bottom-0 h-full max-w-none object-cover"
+                    style={`left: -${k * 100}%; width: 500%;`}
+                  />
+                  <div class="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
+                </div>
+              ))}
             </div>
-          ))
-        }
-        <!-- Spacer for the "visible but cropped" effect -->
-        <div class="shrink-0 w-[5vw] lg:w-[10%]" />
-      </div>
-    </div>
-
-    <!-- CTA -->
-    <div class="mt-20 flex justify-center">
-      <BubbleButton 
-        href="/contact" 
-        variant="primary" 
-        class="!px-12 !py-5 !text-sm"
-      >
-        Cere o ofertă
-      </BubbleButton>
+          </div>
+        ))
+      }
     </div>
   </div>
+
+  <!-- CONTENT LAYER -->
+  <div
+    class="relative z-10 w-full h-full flex items-center justify-center pointer-events-none"
+  >
+    <!-- HEADER REMOVED -->
+
+    <!-- SLIDES LOOP -->
+    {
+      services.map((service, i) => (
+        <div
+          class="service-content absolute w-full max-w-4xl px-8 md:px-20 text-center flex flex-col items-center opacity-0 translate-y-10"
+          data-index={i}
+        >
+          <div class="font-sans text-xs md:text-sm text-accent tracking-[0.3em] uppercase mb-6">
+            {(i + 1).toString().padStart(2, "0")} — Servicii
+          </div>
+          <h2 class="font-serif font-bold text-5xl md:text-8xl mb-8 leading-tight text-white">
+            {service.title}
+          </h2>
+          <p class="font-sans text-lg md:text-2xl text-secondary/90 leading-relaxed max-w-2xl mb-12 font-light">
+            {service.desc}
+          </p>
+          <div class="pointer-events-auto">
+            <BubbleButton
+              href={`/services/${service.id}`}
+              variant="primary"
+              class="px-8 py-4"
+            >
+              Explorează
+            </BubbleButton>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+  <!-- SKIP BUTTON: Single rotating button deeper inside card -->
+  <button
+    id="skip-btn"
+    class="absolute bottom-20 right-[10%] translate-x-1/2 z-50 bg-black/20 backdrop-blur-md border border-white/20 text-white rounded-full p-4 hover:bg-black/40 transition-all duration-300 cursor-pointer shadow-xl pointer-events-auto"
+    aria-label="Skip Navigation"
+  >
+    <svg
+      id="skip-arrow"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      class="w-6 h-6"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
+    </svg>
+  </button>
 </section>
-
-<style>
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  /* Optional: Glassmorphism enhancement */
-  .backdrop-blur-3xl {
-    backdrop-filter: blur(64px);
-    -webkit-backdrop-filter: blur(64px);
-  }
-</style>
 
 <script>
   import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { ScrollTrigger, Observer, ScrollToPlugin } from "gsap/all";
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, Observer, ScrollToPlugin);
 
-  function initServicesAnim() {
-    const section = document.querySelector("#services-section");
-    const carousel = document.querySelector("#services-carousel");
-    const cards = document.querySelectorAll("#services-carousel > div");
+  initFullscreenScroll();
+  document.addEventListener("astro:page-load", initFullscreenScroll);
 
-    if (!section || !carousel) return;
+  function initFullscreenScroll() {
+    // if (window.innerWidth < 1024) return; // Removed to enable mobile scroll
 
-    // Horizontal drag/scroll check
-    let isDown = false;
-    let startX: number;
-    let scrollLeft: number;
+    const wrapper = document.querySelector("#services-fullscreen-wrapper");
+    const bgs = gsap.utils.toArray(".service-bg") as HTMLElement[];
+    const contents = gsap.utils.toArray(".service-content") as HTMLElement[];
+    const skipBtn = document.querySelector("#skip-btn") as HTMLElement;
+    const skipArrow = document.querySelector("#skip-arrow") as HTMLElement;
 
-    carousel.addEventListener('mousedown', (e) => {
-      isDown = true;
-      carousel.classList.add('active');
-      startX = (e as MouseEvent).pageX - (carousel as HTMLElement).offsetLeft;
-      scrollLeft = (carousel as HTMLElement).scrollLeft;
+    if (!wrapper) return;
+
+    const totalSlides = bgs.length;
+    let currentIndex = 0;
+    let isAnimating = false;
+
+    // --- BUTTON LOGIC ---
+    if (skipBtn) {
+      skipBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // If we are at the end, go to start
+        if (currentIndex === totalSlides - 1) {
+          gotoSlide(0, -1);
+
+          // Explicit Scroll Reset
+          const st = ScrollTrigger.getById("services-pin");
+          if (st) {
+            gsap.to(window, {
+              scrollTo: st.start,
+              duration: 1.2,
+              ease: "power2.out",
+            });
+          }
+        } else {
+          // Go to end
+          gotoSlide(totalSlides - 1, 1);
+        }
+      });
+    }
+
+    function updateSkipButtonState(index: number) {
+      if (!skipBtn || !skipArrow) return;
+
+      // If last slide: Rotate 180 (Point Up)
+      // Else: Rotate 0 (Point Down)
+      const isEnd = index === totalSlides - 1;
+
+      gsap.to(skipArrow, {
+        rotation: isEnd ? 180 : 0,
+        duration: 0.5,
+        ease: "back.out(1.7)",
+      });
+    }
+
+    // INITIAL STATE
+    // Prepare all BGs
+    // Hide all slices initially (yPercent: 100)
+    const allSlices = gsap.utils.toArray(".service-slice") as HTMLElement[];
+    gsap.set(allSlices, { yPercent: 100 });
+
+    // BGs container visibility
+    gsap.set(bgs, { autoAlpha: 1, zIndex: 1 });
+    gsap.set(contents, { autoAlpha: 0, y: 50 });
+
+    // Initial Button State
+    updateSkipButtonState(0);
+
+    // ANIMATION FUNCTION
+    function gotoSlide(index: number, direction: number, isIntro = false) {
+      if (isAnimating && !isIntro) return;
+      isAnimating = true;
+
+      // Current indices (if intro, current is same)
+      const prevIndex = isIntro ? index : currentIndex;
+
+      const prevBg = bgs[prevIndex];
+      const nextBg = bgs[index];
+      const prevContent = contents[prevIndex];
+      const nextContent = contents[index];
+
+      // Slices
+      const nextSlices = nextBg.querySelectorAll(".service-slice");
+      const prevSlices = prevBg.querySelectorAll(".service-slice");
+
+      // Update Buttons
+      updateSkipButtonState(index);
+
+      // Sync Scrollbar
+      const st = ScrollTrigger.getById("services-pin");
+      if (st && !isIntro) {
+        // Calculate scroll position based on slide index
+        const progress = index / (totalSlides - 1);
+        const scrollPos = st.start + (st.end - st.start) * progress;
+
+        // Force scroll to that position
+        gsap.to(window, {
+          scrollTo: scrollPos,
+          duration: 1.2, // Match animation duration
+          ease: "power2.out",
+          overwrite: true, // Ensure we override any fighting scroll
+        });
+      }
+
+      if (!isIntro) {
+        // Layers
+        gsap.set(prevBg, { zIndex: 1 });
+        gsap.set(nextBg, { zIndex: 2 });
+      } else {
+        gsap.set(nextBg, { zIndex: 2 });
+      }
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isAnimating = false;
+          currentIndex = index;
+          if (!isIntro) {
+            // Reset previous slices for future use (send to bottom)
+            gsap.set(prevSlices, { yPercent: 100 });
+            // Also restore opacity of prevBg container just in case it was faded
+            gsap.set(prevBg, { autoAlpha: 1 });
+          }
+        },
+      });
+
+      // 1. BG - "Slices Rise"
+      // Ensure next slices start at bottom
+      tl.set(nextSlices, { yPercent: 100 }, 0);
+
+      tl.to(
+        nextSlices,
+        {
+          yPercent: 0,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: "power4.out",
+        },
+        0,
+      );
+
+      // Previous slide exit
+      if (!isIntro) {
+        // Fade out prevBg behind nextBg to reveal white gaps between fingers
+        // We fade out the CONTAINER so all its slices disappear together
+        tl.to(prevBg, { autoAlpha: 0, duration: 0.4 }, 0);
+        tl.set(nextBg, { autoAlpha: 1 }, 0);
+      } else {
+        tl.set(nextBg, { autoAlpha: 1 }, 0);
+      }
+
+      // 2. Content
+      if (!isIntro) {
+        tl.to(
+          prevContent,
+          {
+            y: direction > 0 ? -50 : 50,
+            autoAlpha: 0,
+            duration: 0.4,
+            ease: "power2.in",
+            overwrite: true,
+          },
+          0,
+        );
+      }
+
+      tl.fromTo(
+        nextContent,
+        { y: 50, autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          overwrite: true,
+        },
+        0.6,
+      );
+    }
+
+    // Intro Trigger
+    ScrollTrigger.create({
+      trigger: wrapper,
+      start: "top 60%", // Trigger when section is in view
+      once: true,
+      onEnter: () => gotoSlide(0, 1, true),
     });
 
-    carousel.addEventListener('mouseleave', () => {
-      isDown = false;
-      carousel.classList.remove('active');
-    });
+    // OBSERVER LOGIC
+    // Hybrid Approach: Pin for distance, use Observer to hijack navigation.
 
-    carousel.addEventListener('mouseup', () => {
-      isDown = false;
-      carousel.classList.remove('active');
-    });
+    // Detect if mobile/touch device
+    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
 
-    carousel.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = (e as MouseEvent).pageX - (carousel as HTMLElement).offsetLeft;
-      const walk = (x - startX) * 2;
-      (carousel as HTMLElement).scrollLeft = scrollLeft - walk;
-    });
+    // Reference to observer (declared here, defined later)
+    let intentObserver: Observer;
 
-    // Reveal Animation
-    gsap.from(cards, {
-      scrollTrigger: {
-        trigger: carousel,
-        start: "top 80%",
+    // Helper functions for slide navigation
+    const goNext = () => {
+      if (isAnimating) return;
+      if (currentIndex < totalSlides - 1) {
+        gotoSlide(currentIndex + 1, 1);
+
+        // If this was the second-to-last slide, prepare for immediate exit
+        if (currentIndex + 1 === totalSlides - 1) {
+          // Next swipe will exit - no action needed here
+        }
+      } else {
+        // Already on last slide - exit section immediately
+        intentObserver.disable();
+        (wrapper as HTMLElement).style.touchAction = "auto";
+        const st = ScrollTrigger.getById("services-pin");
+        if (st) {
+          gsap.to(window, {
+            scrollTo: st.end + 100,
+            duration: 0.5,
+            overwrite: true,
+          });
+        }
+      }
+    };
+
+    const goPrev = () => {
+      if (isAnimating) return;
+      if (currentIndex > 0) {
+        gotoSlide(currentIndex - 1, -1);
+      } else {
+        // Already on first slide - exit section immediately
+        intentObserver.disable();
+        (wrapper as HTMLElement).style.touchAction = "auto";
+        const st = ScrollTrigger.getById("services-pin");
+        if (st) {
+          gsap.to(window, {
+            scrollTo: st.start - 100,
+            duration: 0.5,
+            overwrite: true,
+          });
+        }
+      }
+    };
+
+    intentObserver = Observer.create({
+      target: wrapper,
+      type: "wheel,touch,pointer",
+      tolerance: isMobile ? 50 : 10, // Higher tolerance for mobile touch
+      onUp: () => {
+        // Desktop: scroll wheel up = previous slide
+        // Mobile: swipe up = next slide (inverted)
+        if (isMobile) {
+          goNext();
+        } else {
+          goPrev();
+        }
       },
-      y: 100,
-      opacity: 0,
-      stagger: 0.1,
-      duration: 1,
-      ease: "power4.out"
+      onDown: () => {
+        // Desktop: scroll wheel down = next slide
+        // Mobile: swipe down = previous slide (inverted)
+        if (isMobile) {
+          goPrev();
+        } else {
+          goNext();
+        }
+      },
+      preventDefault: true,
     });
-  }
 
-  document.addEventListener("astro:page-load", initServicesAnim);
-  initServicesAnim();
+    // Kill scroll momentum helper
+    const killMomentum = () => {
+      if (isMobile) {
+        // Force stop any scroll momentum by setting scroll position
+        window.scrollTo(window.scrollX, window.scrollY);
+        // Also kill any GSAP scrolls
+        gsap.killTweensOf(window);
+      }
+    };
+
+    // We only enable this observer when the section is PINNED/ACTIVE
+    ScrollTrigger.create({
+      id: "services-pin",
+      trigger: wrapper,
+      start: "top top",
+      end: "+=5000",
+      pin: true,
+      onEnter: () => {
+        killMomentum();
+        (wrapper as HTMLElement).style.touchAction = "none";
+        intentObserver.enable();
+      },
+      onEnterBack: () => {
+        killMomentum();
+        (wrapper as HTMLElement).style.touchAction = "none";
+        intentObserver.enable();
+      },
+      onLeave: () => {
+        (wrapper as HTMLElement).style.touchAction = "auto";
+        intentObserver.disable();
+      },
+      onLeaveBack: () => {
+        (wrapper as HTMLElement).style.touchAction = "auto";
+        intentObserver.disable();
+      },
+    });
+
+    intentObserver.disable();
+  }
 </script>

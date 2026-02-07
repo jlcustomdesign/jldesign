@@ -1,0 +1,70 @@
+---
+
+---
+
+<section
+  class="relative w-full h-[60vh] md:h-[70vh] flex flex-col justify-end pb-20 px-4 md:px-8 bg-secondary overflow-hidden"
+  data-theme="dark"
+>
+  <!-- Background Elements (Optional: Subtle gradient or texture) -->
+  <div
+    class="absolute inset-0 bg-gradient-to-b from-secondary/50 to-secondary pointer-events-none z-0"
+  >
+  </div>
+
+  <div class="container mx-auto z-10 relative">
+    <!-- Small Label -->
+    <div class="overflow-hidden mb-4">
+      <span
+        class="text-accent text-sm md:text-base uppercase tracking-[0.2em] font-medium reveal-text block translate-y-full"
+      >
+        Portfolio
+      </span>
+    </div>
+
+    <!-- Main Title -->
+    <div class="overflow-hidden">
+      <h1
+        class="font-serif text-5xl md:text-7xl lg:text-8xl text-primary leading-[1.1] reveal-text block translate-y-full"
+      >
+        Selected Works
+      </h1>
+    </div>
+
+    <!-- Subtitle / Description -->
+    <div class="mt-8 max-w-xl overflow-hidden">
+      <p
+        class="text-gray-400 text-lg md:text-xl font-light leading-relaxed reveal-text block translate-y-full"
+      >
+        A curation of bespoke furniture and interior spaces, designed to elevate
+        the everyday through craftsmanship and quiet luxury.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import SplitType from "split-type";
+
+  function initHeroAnim() {
+    const textElements = document.querySelectorAll(".reveal-text");
+    if (textElements.length === 0) return;
+
+    // Reset initial state
+    gsap.set(textElements, { y: "100%" });
+
+    // Animate in
+    gsap.to(textElements, {
+      y: "0%",
+      duration: 1.5,
+      ease: "power4.out",
+      stagger: 0.15,
+      delay: 0.2, // Small delay after page load
+    });
+  }
+
+  // Run on load and transitions
+  initHeroAnim();
+  document.addEventListener("astro:after-swap", initHeroAnim);
+</script>

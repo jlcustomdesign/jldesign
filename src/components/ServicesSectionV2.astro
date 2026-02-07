@@ -1,0 +1,295 @@
+---
+
+const services = [
+  {
+    id: "kitchen",
+    title: "Bucătării Custom",
+    desc: "Inima casei tale, regândită. Funcționalitate desăvârșită îmbrăcată în materiale nobile.",
+    img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800&auto=format&fit=crop", // Vertical kitchen
+  },
+  {
+    id: "dressing",
+    title: "Dressing & Wardrobes",
+    desc: "Mai mult decât depozitare. Un sanctuar al stilului tău. Iluminare ambientală și finisaje de catifea.",
+    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop", // Vertical wardrobe
+  },
+  {
+    id: "living",
+    title: "Living & Library",
+    desc: "Povestea casei, scrisă în lemn masiv. Biblioteci impunătoare și piese care dau tonul conversației.",
+    img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=800&auto=format&fit=crop", // Vertical living
+  },
+  {
+    id: "office",
+    title: "Office & Comercial",
+    desc: "Productivitate și stil. Spații de lucru ergonomice care impresionează clienții din prima clipă.",
+    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop", // Office
+  },
+  {
+    id: "bathroom",
+    title: "Baie & Wellness",
+    desc: "Refugiul tău personal. Mobilier rezistent la umiditate, integrat perfect cu piatra și ceramica.",
+    img: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?q=80&w=800&auto=format&fit=crop", // Bathroom
+  },
+];
+---
+
+<section
+  id="services-section"
+  class="py-24 md:py-32 bg-secondary overflow-hidden"
+  data-theme="light"
+>
+  <div class="w-full px-4 pt-32 md:pt-48">
+    <div class="container mx-auto px-4 md:px-0 mb-12 md:mb-16">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-12">
+        <!-- Left: Title -->
+        <h2 class="services-title flex-shrink-0 font-serif text-4xl md:text-5xl lg:text-7xl text-primary leading-tight whitespace-nowrap">
+          Serviciile Noastre
+        </h2>
+        
+        <!-- Right: Buttons -->
+        <div class="flex gap-4 flex-shrink-0">
+          <button
+            id="services-prev"
+            class="services-nav-btn w-20 h-20 md:w-24 md:h-24 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300 group"
+            aria-label="Previous"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 md:w-10 md:h-10 group-hover:-translate-x-1.5 transition-transform">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+          <button
+            id="services-next"
+            class="services-nav-btn w-20 h-20 md:w-24 md:h-24 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300 group"
+            aria-label="Next"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 md:w-10 md:h-10 group-hover:translate-x-1.5 transition-transform">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carousel Container -->
+  <div class="relative">
+    <!-- Carousel Track -->
+    <div
+      id="services-carousel"
+      class="flex gap-4 md:gap-6 px-6 md:px-8"
+    >
+      {
+        services.map((service, i) => (
+          <div
+            class="service-card w-[75vw] md:w-[40vw] lg:w-[27%] rounded-2xl overflow-hidden relative group flex-shrink-0 bg-white shadow-lg"
+            data-index={i}
+          >
+            <!-- Image (Vertical/Portrait Aspect Ratio) -->
+            <div class="relative aspect-[4/5] overflow-hidden">
+              <img
+                src={service.img}
+                alt={service.title}
+                loading="lazy"
+                class="w-full h-[120%] object-cover absolute top-0 left-0"
+                style="transform: translateY(-10%);"
+              />
+
+              <!-- Top Elements: Title & Arrow Button -->
+              <div class="absolute top-4 left-0 w-full px-4 flex justify-between items-start z-20 pointer-events-none">
+                
+                <!-- Title Pill -->
+                <div class="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full shadow-md h-12 flex items-center">
+                  <span class="text-base font-bold text-primary tracking-wide">{service.title}</span>
+                </div>
+
+                <!-- Arrow Button (In Top Right) -->
+                <a
+                  href={`/services/${service.id}`}
+                  class="bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-accent hover:text-white transition-colors duration-300 pointer-events-auto"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="w-5 h-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                    />
+                  </svg>
+                </a>
+              </div>
+
+              <!-- Hover Overlay (Blur + Description) -->
+              <div class="absolute inset-0 bg-black/30 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400 z-10 flex flex-col justify-end p-6">
+                <p class="text-white/95 text-base md:text-lg font-medium leading-relaxed translate-y-4 group-hover:translate-y-0 transition-transform duration-400 delay-100">
+                  {service.desc}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initServicesCarousel() {
+    const section = document.querySelector("#services-section");
+    const carousel = document.querySelector("#services-carousel") as HTMLElement;
+    const prevBtn = document.querySelector("#services-prev") as HTMLButtonElement;
+    const nextBtn = document.querySelector("#services-next") as HTMLButtonElement;
+    const cards = document.querySelectorAll(".service-card");
+
+    if (!section || !carousel || !prevBtn || !nextBtn || cards.length === 0) return;
+
+    // --- ENTRANCE ANIMATIONS ---
+    const ctx = gsap.context(() => {
+      // 1. Header Reveal
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+          end: "top 20%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      tl.from(".services-title", {
+        y: 100,
+        opacity: 0,
+        duration: 1,
+        ease: "power4.out"
+      })
+      .from(".services-desc", {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out"
+      }, "-=0.6")
+      .from(".services-nav-btn", {
+        scale: 0,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: "back.out(1.7)"
+      }, "-=0.4");
+
+      // 2. Cards Staggered Entry
+      gsap.from(cards, {
+        scrollTrigger: {
+          trigger: carousel,
+          start: "top 85%",
+        },
+        x: 100,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.1,
+        ease: "power4.out"
+      });
+
+      // 3. Image Parallax Effect (Match Portfolio)
+      cards.forEach((card) => {
+        const img = card.querySelector("img");
+        if (img) {
+          gsap.to(img, {
+            y: "10%", // Move from -10% to 0% (relative to container, effectively moving down)
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true
+            }
+          });
+        }
+      });
+
+    }, section);
+
+    // --- CAROUSEL LOGIC ---
+
+    let isAnimating = false;
+
+    // Helper to get dynamic gap + width
+    const getStepSize = () => {
+      const card = carousel.firstElementChild as HTMLElement;
+      if (!card) return 0;
+      
+      const style = window.getComputedStyle(carousel);
+      const gap = parseFloat(style.columnGap) || 0;
+      
+      return card.offsetWidth + gap;
+    };
+
+    const moveNext = () => {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      const step = getStepSize();
+      
+      // GSAP Animation: Move Left
+      gsap.to(carousel, {
+        x: -step,
+        duration: 0.5,
+        ease: "power2.inOut",
+        onComplete: () => {
+          // Logical DOM Move
+          carousel.appendChild(carousel.firstElementChild!);
+          
+          // Instant Reset
+          gsap.set(carousel, { x: 0 });
+          isAnimating = false;
+        }
+      });
+    };
+
+    const movePrev = () => {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      const step = getStepSize();
+
+      // 1. Instant: Move Last Item -> Start, Shift Track Left (to hide it)
+      carousel.prepend(carousel.lastElementChild!);
+      gsap.set(carousel, { x: -step });
+
+      // 2. GSAP Animation: Move Right (to 0)
+      gsap.to(carousel, {
+        x: 0,
+        duration: 0.5,
+        ease: "power2.inOut",
+        onComplete: () => {
+          isAnimating = false;
+        }
+      });
+    };
+
+    prevBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        movePrev();
+    });
+
+    nextBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        moveNext();
+    });
+  }
+
+  // Run on load and Astro transitions
+  if (document.readyState !== "loading") initServicesCarousel();
+  else document.addEventListener("DOMContentLoaded", initServicesCarousel);
+
+  document.addEventListener("astro:page-load", initServicesCarousel);
+</script>

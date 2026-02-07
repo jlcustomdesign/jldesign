@@ -1,11 +1,169 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ServicesContent from "../components/ServicesContent.astro";
+import Footer from "../components/Footer.astro";
 ---
 
 <Layout title="Services | JL Mobila">
-  <main class="pt-32 px-4 md:px-8 max-w-7xl mx-auto">
-    <h1 class="text-4xl md:text-6xl font-serif text-primary mb-6">
-      Our Services
-    </h1>
-  </main>
+  <div
+    id="services-hero-section"
+    class="relative w-full h-screen overflow-hidden bg-secondary"
+  >
+    <!-- Text Content (Behind SVG) -->
+    <div class="absolute inset-0 w-full h-full z-0 pointer-events-none">
+      <div class="relative w-full h-full max-w-[1920px] mx-auto">
+        <!-- DESKTOP TEXT (Hidden on Mobile) -->
+        <div class="hidden md:block">
+          <!-- Text for Cutout 1: SERVICIILE -->
+          <div
+            class="absolute left-[4%] top-[16%] -translate-y-1/2 overflow-hidden"
+          >
+            <h1
+              class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
+            >
+              SERVICIILE
+            </h1>
+          </div>
+
+          <!-- Text for Cutout 2: PE CARE NOI -->
+          <div
+            class="absolute left-[4%] top-[36%] -translate-y-1/2 overflow-hidden"
+          >
+            <h2
+              class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
+            >
+              PE CARE NOI
+            </h2>
+          </div>
+
+          <!-- Text for Cutout 3: LE OFERIM -->
+          <div
+            class="absolute left-[4%] top-[56%] -translate-y-1/2 overflow-hidden"
+          >
+            <h2
+              class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
+            >
+              LE OFERIM
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SVG Background Container -->
+    <div
+      class="absolute inset-0 w-full h-full flex justify-center items-center pointer-events-none"
+    >
+      <svg
+        id="servicesHeroSVG"
+        width="101%"
+        height="101%"
+        viewBox="0 0 1920 1080"
+        preserveAspectRatio="xMidYMid slice"
+        class="w-full h-full"
+        style="transform-origin: center center;"
+      >
+        <defs>
+          <clipPath id="servicesHeroClip">
+            <path id="servicesHeroPath" d=""></path>
+          </clipPath>
+        </defs>
+
+        <!-- The background image content -->
+        <image
+          href="/Images/Gemini_Generated_Image_s64ql8s64ql8s64q.png"
+          x="0"
+          y="0"
+          width="1920"
+          height="1080"
+          preserveAspectRatio="xMidYMid slice"
+          clip-path="url(#servicesHeroClip)"
+        />
+      </svg>
+    </div>
+
+    <!-- Overlay: Right Text (Hidden on Mobile) -->
+    <!-- MOBILE TEXT (Moved here for Z-Index/Visibility) -->
+    <div
+      class="md:hidden absolute inset-0 flex flex-col justify-between px-6 pt-40 pb-24 z-30 pointer-events-auto"
+    >
+      <h1
+        class="font-serif text-6xl sm:text-7xl text-white uppercase leading-none"
+      >
+        SERVICIILE<br />
+        PE CARE NOI<br />
+        LE OFERIM
+      </h1>
+
+      <!-- Bottom Content Group -->
+      <div class="flex flex-col items-start gap-8">
+        <p
+          class="font-sans text-lg font-light text-white/90 leading-relaxed max-w-xs"
+        >
+          Transform your home with elegant, functional, and timeless interior
+          designs tailored to your style.
+        </p>
+        <div>
+          <a
+            href="/contact"
+            class="inline-block bg-white text-primary px-8 py-3 rounded-full font-medium hover:bg-accent hover:text-white transition-colors shadow-lg"
+          >
+            Book a Consultation &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay: Right Text (Hidden on Mobile) -->
+    <div
+      class="hidden md:block absolute right-[4%] xl:right-[10%] 2xl:right-[15%] top-[10%] 2xl:top-[8%] max-w-sm 2xl:max-w-2xl text-right z-20 pointer-events-auto opacity-0 hero-overlay-element"
+    >
+      <h3
+        class="text-white font-sans text-xl md:text-2xl 2xl:text-4xl font-light leading-relaxed mb-6 shadow-sm"
+      >
+        Transform your home with elegant, functional, and timeless interior
+        designs tailored to your style.
+      </h3>
+      <a
+        href="/contact"
+        class="inline-block bg-white text-primary px-8 py-3 2xl:px-10 2xl:py-4 2xl:text-lg rounded-full font-medium hover:bg-accent hover:text-white transition-colors shadow-lg"
+      >
+        Book a Consultation &rarr;
+      </a>
+    </div>
+
+    <!-- Overlay: Bottom Card (Hidden on Mobile) -->
+    <div
+      class="hidden md:block absolute bottom-[12%] 2xl:bottom-[15%] right-[4%] xl:right-[10%] 2xl:right-[15%] w-80 2xl:w-[28rem] bg-white rounded-3xl p-4 2xl:p-6 shadow-2xl z-20 pointer-events-auto opacity-0 hero-overlay-element"
+    >
+      <div class="w-full aspect-video rounded-xl overflow-hidden mb-4">
+        <img
+          src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=600"
+          class="w-full h-full object-cover"
+          alt="Custom Design"
+        />
+      </div>
+      <h4 class="font-serif text-xl 2xl:text-2xl text-primary mb-2">
+        Custom Design Solutions
+      </h4>
+      <p class="text-xs 2xl:text-base text-gray-500 mb-4 leading-relaxed">
+        Personalized interiors crafted to reflect your vision.
+      </p>
+      <a
+        href="/services"
+        class="inline-flex items-center text-sm 2xl:text-base font-medium text-primary hover:text-accent border border-gray-200 px-4 py-2 rounded-full transition-colors"
+      >
+        More info &rarr;
+      </a>
+    </div>
+  </div>
+
+  <ServicesContent />
+
+  <Footer />
+
+  <script>
+    import { initServicesHeroAnimations } from "../scripts/services-hero-animation";
+    initServicesHeroAnimations();
+  </script>
 </Layout>

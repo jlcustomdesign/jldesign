@@ -1,0 +1,388 @@
+---
+import BubbleButton from "./ui/BubbleButton.astro";
+
+const servicesRaw = [
+  {
+    id: "kitchen",
+    title: "Bucătării Custom",
+    desc: "Inima casei tale, regândită. Funcționalitate desăvârșită îmbrăcată în materiale nobile.",
+    img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=1200",
+  },
+  {
+    id: "dressing",
+    title: "Dressing & Wardrobes",
+    desc: "Mai mult decât depozitare. Un sanctuar al stilului tău.",
+    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200",
+  },
+  {
+    id: "living",
+    title: "Living & Library",
+    desc: "Povestea casei, scrisă în lemn masiv. Biblioteci impunătoare.",
+    img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1200",
+  },
+  {
+    id: "office",
+    title: "Office & Comercial",
+    desc: "Productivitate și stil. Spații de lucru ergonomice.",
+    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200",
+  },
+  {
+    id: "bathroom",
+    title: "Baie & Wellness",
+    desc: "Refugiul tău personal. Mobilier rezistent la umiditate.",
+    img: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?q=80&w=1200",
+  },
+];
+
+// Duplicate for density (Gallery Density) - REMOVED per user request
+const services = servicesRaw;
+
+// Split services: First item (Hero) vs Rest (Grid)
+const [firstService, ...restServices] = servicesRaw;
+
+// Split remaining 4 items into columns
+const col1 = restServices.filter((_, i) => i % 2 === 0);
+const col2 = restServices.filter((_, i) => i % 2 !== 0);
+---
+
+<section
+  id="services-detailed"
+  class="bg-secondary min-h-screen py-24 md:py-32 w-full overflow-hidden"
+>
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="flex flex-col gap-16 md:gap-32">
+      <!-- 1. FEATURED HERO ITEM (Full Width) -->
+      <!-- Solves the "5 items" odd number issue by giving the first one prominence -->
+      <!-- 1. FEATURED HERO ITEM (Full Width) -->
+      <!-- Solves the "5 items" odd number issue by giving the first one prominence -->
+      
+      <!-- We make the Hero Item also a Flip Card for consistency, or keep it static? 
+           User said "for each image". So we apply to all. -->
+           
+      <div class="group service-card w-full h-[60vh] md:h-[80vh] perspective-1000">
+         <div class="flip-card-inner relative w-full h-full transition-transform duration-700 transform-style-3d">
+            
+            <!-- FRONT -->
+            <div class="flip-card-front absolute inset-0 w-full h-full backface-hidden rounded-[2.5rem] overflow-hidden shadow-2xl">
+                 <img 
+                  src={firstService.img} 
+                  alt={firstService.title}
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
+                
+                <div class="absolute bottom-8 left-8 md:bottom-16 md:left-16 text-white max-w-2xl px-4">
+                   <h2 class="font-serif font-medium text-4xl md:text-7xl leading-none mb-6">
+                     {firstService.title}
+                   </h2>
+                   <p class="font-sans text-lg md:text-2xl text-white/90 leading-relaxed max-w-xl mb-8">
+                     {firstService.desc}
+                   </p>
+                   <button class="flip-trigger inline-block bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300">
+                      Citește mai multe
+                   </button>
+                </div>
+            </div>
+
+            <!-- BACK -->
+            <div class="flip-card-back absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-secondary rounded-[2.5rem] overflow-hidden p-8 md:p-16 flex flex-col justify-center items-start shadow-2xl">
+                <h3 class="font-serif text-3xl md:text-5xl text-primary mb-6">{firstService.title}</h3>
+                <p class="font-sans text-lg md:text-xl text-gray-600 leading-relaxed mb-8 max-w-3xl">
+                    Aici poti adauga detalii specifice despre {firstService.title.toLowerCase()}. 
+                    Abordarea noastra se concentreaza pe materiale premium, finisaje impecabile si un design care 
+                    rezista testului timului. Fiecare proiect este unic si personalizat.
+                </p>
+                <ul class="font-sans text-gray-500 space-y-2 mb-12 list-disc list-inside">
+                    <li>Consultanta personalizata</li>
+                    <li>Proiectare 3D detaliata</li>
+                    <li>Materiale de cea mai inalta calitate</li>
+                    <li>Montaj profesionist</li>
+                </ul>
+                <button class="flip-close text-primary border-b border-primary pb-1 hover:text-accent hover:border-accent transition-colors">
+                    &larr; Înapoi la imagine
+                </button>
+            </div>
+
+         </div>
+      </div>
+
+      <!-- 2. MASONRY GRID (Remaining 4 Items) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-start">
+        <!-- Column 1 -->
+        <div class="flex flex-col gap-12 md:gap-24 masonry-col" data-speed="1">
+          {
+            col1.map((service, i) => (
+              <div class="group service-card perspective-1000 h-[600px] w-full"> <!-- Fixed height for flip to work well -->
+                <div class="flip-card-inner relative w-full h-full transition-transform duration-700 transform-style-3d">
+                    
+                    <!-- FRONT -->
+                    <div class="flip-card-front absolute inset-0 w-full h-full backface-hidden rounded-[2.5rem] overflow-hidden shadow-2xl">
+                        <img
+                            src={service.img}
+                            alt={service.title}
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            loading="lazy"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+
+                        <div class="absolute bottom-0 left-0 w-full p-8 md:p-10 transform transition-transform duration-500 translate-y-2 group-hover:translate-y-0">
+                            <h2 class="font-serif font-medium text-3xl md:text-5xl text-white leading-tight mb-3">
+                            {service.title}
+                            </h2>
+                            <p class="font-sans text-gray-200 text-lg leading-relaxed max-w-sm opacity-90 group-hover:opacity-100 transition-opacity mb-6">
+                            {service.desc}
+                            </p>
+                            <button class="flip-trigger inline-block bg-white/10 backdrop-blur-md border border-white/30 text-white px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm">
+                                Citește mai multe
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- BACK -->
+                    <div class="flip-card-back absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-white rounded-[2.5rem] overflow-hidden p-8 md:p-12 flex flex-col justify-center shadow-2xl">
+                         <h3 class="font-serif text-2xl md:text-4xl text-primary mb-4">{service.title}</h3>
+                         <p class="font-sans text-gray-600 leading-relaxed mb-6">
+                            Detalii extinse despre {service.title.toLowerCase()}. Solutii adaptate spatiului tau, 
+                            optimizand functionalitatea fara a compromite estetica.
+                         </p>
+                         <button class="flip-close text-primary text-sm border-b border-primary pb-1 w-max hover:text-accent hover:border-accent transition-colors">
+                            &larr; Înapoi
+                         </button>
+                    </div>
+
+                </div>
+              </div>
+            ))
+          }
+        </div>
+
+        <!-- Column 2 -->
+        <div
+          class="flex flex-col gap-12 md:gap-24 masonry-col md:pt-32"
+          data-speed="1.1"
+        >
+          {
+            col2.map((service, i) => (
+              <div class="group service-card perspective-1000 h-[600px] w-full">
+                <div class="flip-card-inner relative w-full h-full transition-transform duration-700 transform-style-3d">
+                    <!-- FRONT -->
+                    <div class="flip-card-front absolute inset-0 w-full h-full backface-hidden rounded-[2.5rem] overflow-hidden shadow-2xl">
+                        <img
+                            src={service.img}
+                            alt={service.title}
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            loading="lazy"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+
+                        <div class="absolute bottom-0 left-0 w-full p-8 md:p-10 transform transition-transform duration-500 translate-y-2 group-hover:translate-y-0">
+                            <h2 class="font-serif font-medium text-3xl md:text-5xl text-white leading-tight mb-3">
+                            {service.title}
+                            </h2>
+                            <p class="font-sans text-gray-200 text-lg leading-relaxed max-w-sm opacity-90 group-hover:opacity-100 transition-opacity mb-6">
+                            {service.desc}
+                            </p>
+                             <button class="flip-trigger inline-block bg-white/10 backdrop-blur-md border border-white/30 text-white px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm">
+                                Citește mai multe
+                            </button>
+                        </div>
+                    </div>
+
+                     <!-- BACK -->
+                    <div class="flip-card-back absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-white rounded-[2.5rem] overflow-hidden p-8 md:p-12 flex flex-col justify-center shadow-2xl">
+                         <h3 class="font-serif text-2xl md:text-4xl text-primary mb-4">{service.title}</h3>
+                         <p class="font-sans text-gray-600 leading-relaxed mb-6">
+                            Detalii extinse despre {service.title.toLowerCase()}. Solutii adaptate spatiului tau, 
+                            optimizand functionalitatea fara a compromite estetica.
+                         </p>
+                         <button class="flip-close text-primary text-sm border-b border-primary pb-1 w-max hover:text-accent hover:border-accent transition-colors">
+                            &larr; Înapoi
+                         </button>
+                    </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="cta-wrapper h-screen flex items-center justify-center">
+      <!-- Wrapper for Pinning -->
+      <div class="text-center cta-container relative z-10">
+        <h3
+          class="cta-headline font-serif text-5xl md:text-8xl text-primary font-medium mb-12 leading-tight flex flex-wrap justify-center gap-x-4 md:gap-x-8 gap-y-2"
+        >
+          {
+            "Ai un proiect unic în minte?"
+              .split(" ")
+              .map((word) => <span class="inline-block cta-word">{word}</span>)
+          }
+        </h3>
+
+        <div class="cta-button-wrapper opacity-0 translate-y-20">
+          <BubbleButton
+            href="/contact"
+            variant="dark"
+            class="text-xl px-16 py-6 rounded-full"
+          >
+            Inițiază Conversația
+          </BubbleButton>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  .is-flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initServicesContentAnim() {
+    const section = document.querySelector("#services-detailed");
+    if (!section) return;
+
+    // FLIP CARD LOGIC
+    const flipCards = section.querySelectorAll('.service-card');
+    flipCards.forEach(card => {
+        const trigger = card.querySelector('.flip-trigger');
+        const close = card.querySelector('.flip-close');
+        
+        if(trigger && close) {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                card.classList.add('is-flipped');
+            });
+            
+            close.addEventListener('click', (e) => {
+                 e.preventDefault();
+                 card.classList.remove('is-flipped');
+            });
+        }
+    });
+
+
+    // Chaotic Reveal for Cards (Thrown on Table effect)
+    const cards = section.querySelectorAll(".service-card");
+    cards.forEach((card, i) => {
+      // Randomize direction and rotation for each card
+      const randomX = (Math.random() - 0.5) * 200; // -100 to 100
+      const randomY = 100 + Math.random() * 100; // 100 to 200 (always coming from slightly below)
+      const randomRot = (Math.random() - 0.5) * 15; // -7.5 to 7.5 deg
+      const randomScale = 0.8 + Math.random() * 0.2; // 0.8 to 1.0
+
+      gsap.fromTo(
+        card,
+        {
+          opacity: 0,
+          x: randomX,
+          y: randomY,
+          rotation: randomRot,
+          scale: 0.9,
+          transformOrigin: "center center",
+        },
+        {
+          opacity: 1,
+          x: 0,
+          y: 0,
+          rotation: 0,
+          scale: 1,
+          duration: 1.4,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+          },
+        },
+      );
+    });
+
+    // Parallax for Column 2 (on Desktop)
+    if (window.innerWidth >= 768) {
+      const col2 = section.querySelector('.masonry-col[data-speed="1.1"]');
+      if (col2) {
+        gsap.to(col2, {
+          y: -80, // Reduced travel distance
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true, // "True" binds directly to scrollbar (no lag), fixing the fight with smooth-scroll
+          },
+        });
+      }
+    }
+
+    // CTA CHAOTIC PIN ANIMATION
+    const ctaWrapper = section.querySelector(".cta-wrapper");
+    const ctaHeadline = section.querySelector(".cta-headline");
+    const ctaWords = section.querySelectorAll(".cta-word");
+    const ctaButton = section.querySelector(".cta-button-wrapper");
+
+    if (ctaWrapper && ctaWords.length > 0) {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ctaWrapper,
+          start: "center center", // Start when center of CTA hits center of viewport
+          end: "+=100%", // Pin for screen height duration
+          pin: true,
+          scrub: 1,
+          // markers: true // Debug if needed
+        },
+      });
+
+      // 1. Chaotic Word Assembly
+      // We set the FINAL state in CSS/Structure (normal text), so we animate FROM chaos.
+      tl.from(ctaWords, {
+        opacity: 0,
+        x: (i) => (Math.random() - 0.5) * 800, // Random X scatter
+        y: (i) => (Math.random() - 0.5) * 600, // Random Y scatter
+        rotation: (i) => (Math.random() - 0.5) * 360, // Random spin
+        scale: (i) => 0.5 + Math.random(), // Random scale
+        duration: 1.5,
+        ease: "power3.out",
+        stagger: 0.05,
+      });
+
+      // 2. Button Reveal (After words assemble)
+      tl.to(
+        ctaButton,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "back.out(1.7)",
+        },
+        "-=0.2",
+      );
+    }
+  }
+
+  // Run on load and transitions
+  document.addEventListener("astro:page-load", initServicesContentAnim);
+  if (document.readyState !== "loading") initServicesContentAnim();
+  else document.addEventListener("DOMContentLoaded", initServicesContentAnim);
+</script>
