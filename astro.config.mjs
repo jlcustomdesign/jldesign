@@ -5,25 +5,21 @@ import tailwindcss from '@tailwindcss/vite';
 // @ts-ignore
 import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
-
 import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'static',
-
+  output: 'hybrid',
+  adapter: vercel(),
   integrations: [
     react(),
     markdoc(),
-    process.env.NODE_ENV === 'development' ? keystatic() : null
+    keystatic()
   ].filter(Boolean),
-
   vite: {
     plugins: [tailwindcss()],
     ssr: {
       noExternal: ["gsap"],
     },
-  },
-
-  adapter: vercel()
+  }
 });
