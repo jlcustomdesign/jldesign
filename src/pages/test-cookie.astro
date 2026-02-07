@@ -1,15 +1,29 @@
 ---
 export const prerender = false;
 
-// Try to set a cookie
+// Helper to determine if we are in production
+const isProd = import.meta.env.PROD;
+
+// Try to set a cookie (Direct)
 if (Astro.request.method === "POST") {
   Astro.cookies.set("test-cookie", "hello-world", {
     path: "/",
     httpOnly: true,
-    secure: true,
+    secure: isProd, // Only secure in prod
     maxAge: 60 * 60 * 24, // 1 day
   });
   return Astro.redirect("/test-cookie");
+}
+
+// Redirect Test
+if (Astro.url.searchParams.has("try-redirect")) {
+  Astro.cookies.set("redirect-cookie", "survived-redirect", {
+    path: "/",
+    httpOnly: true,
+    secure: isProd, // Only secure in prod
+    maxAge: 60 * 60, // 1 hour
+  });
+  return Astro.redirect("/api/keystatic/github/oauth/callback");
 }
 
 const cookie = Astro.cookies.get("test-cookie")?.value;
@@ -19,10 +33,24 @@ const cookie = Astro.cookies.get("test-cookie")?.value;
   <body>
     <h1>Cookie Test</h1>
     <p>Current Cookie Value: <strong>{cookie || "MISSING"}</strong></p>
+    <p>Environment: <strong>{isProd ? "Production" : "Development"}</strong></p>
 
     <form method="POST">
-      <button type="submit">Set Test Cookie</button>
+      <button type="submit" style="padding: 10px; cursor: pointer;"
+        >Set Test Cookie</button
+      >
     </form>
+
+    <br />
+    <hr />
+    <br />
+
+    <!-- Button triggers the redirect logic via query param -->
+    <a href="?try-redirect=true">
+      <button style="padding: 10px; cursor: pointer; background: #e0e0e0;"
+        >Test Redirect Cookie (To Callback)</button
+      >
+    </a>
 
     <p>
       Server Time: {new Date().toISOString()}
