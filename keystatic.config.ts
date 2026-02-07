@@ -1,10 +1,15 @@
 import { config, fields, collection } from '@keystatic/core';
 
 export default config({
-  storage: {
-    kind: 'github',
-    repo: 'RobertGyorgy/JL-Design',
-  },
+  storage:
+    process.env.NODE_ENV === 'development'
+      ? {
+          kind: 'local',
+        }
+      : {
+          kind: 'github',
+          repo: 'RobertGyorgy/JL-Design',
+        },
   collections: {
     portfolio: collection({
       label: 'Portfolio',
