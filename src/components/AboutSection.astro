@@ -3,7 +3,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
 ---
 
 <section
-  class="relative bg-[#F4F1EA] py-24 md:py-32 overflow-hidden z-20"
+  class="relative bg-[#F4F1EA] py-24 md:py-32 overflow-hidden z-20 border-4 border-red-500"
   style="background-color: #F4F1EA; position: relative; z-index: 20;"
   id="about-section"
   data-theme="light"
@@ -80,12 +80,21 @@ import BubbleButton from "./ui/BubbleButton.astro";
   gsap.registerPlugin(ScrollTrigger);
 
   function initAboutRedesign() {
+    console.log("--- ABOUT SECTION INIT ---");
     const section = document.querySelector("#about-section");
     const headlineCard = document.querySelector(".about-card-headline");
     const ctaCard = document.querySelector(".about-card-cta");
     const rightCard = document.querySelector(".about-card-right");
 
-    if (!section || !headlineCard || !ctaCard || !rightCard) return;
+    if (!section || !headlineCard || !ctaCard || !rightCard) {
+      console.warn("About Section elements missing!", {
+        section,
+        headlineCard,
+        ctaCard,
+        rightCard,
+      });
+      return;
+    }
 
     // --- ANIMATIONS ---
     const ctx = gsap.context(() => {
@@ -95,6 +104,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
           trigger: headlineCard,
           start: "top 85%",
           toggleActions: "play none none reverse",
+          markers: true,
         },
         y: 50,
         opacity: 0,
