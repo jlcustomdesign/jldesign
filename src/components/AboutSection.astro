@@ -86,42 +86,57 @@ import BubbleButton from "./ui/BubbleButton.astro";
     // --- ANIMATIONS ---
     const ctx = gsap.context(() => {
       // 1. Headline Card Reveal
-      gsap.to(".about-card-headline", {
-        scrollTrigger: {
-          trigger: ".about-card-headline",
-          start: "top 85%",
+      gsap.fromTo(
+        ".about-card-headline",
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: ".about-card-headline",
+            start: "top bottom-=100", // Start when top of element is 100px from bottom of viewport
+            toggleActions: "play none none reverse",
+          },
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
         },
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power3.out",
-      });
+      );
 
       // 2. CTA Card Reveal (Delayed)
-      gsap.to(".about-card-cta", {
-        scrollTrigger: {
-          trigger: ".about-card-cta",
-          start: "top 90%", // Triggers slightly later or when in view
+      gsap.fromTo(
+        ".about-card-cta",
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: ".about-card-cta",
+            start: "top bottom-=100",
+            toggleActions: "play none none reverse",
+          },
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          delay: 0.1,
+          ease: "power3.out",
         },
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        delay: 0.1,
-        ease: "power3.out",
-      });
+      );
 
       // 3. Right Card Reveal (Delayed)
-      gsap.to(".about-card-right", {
-        scrollTrigger: {
-          trigger: ".about-card-right",
-          start: "top 85%",
+      gsap.fromTo(
+        ".about-card-right",
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: ".about-card-right",
+            start: "top bottom-=100",
+            toggleActions: "play none none reverse",
+          },
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          delay: 0.2,
+          ease: "power3.out",
         },
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        delay: 0.2,
-        ease: "power3.out",
-      });
+      );
 
       // 4. Image Parallax
       gsap.to(".about-image", {
@@ -140,4 +155,6 @@ import BubbleButton from "./ui/BubbleButton.astro";
   // Init on load and transition
   initAboutRedesign();
   document.addEventListener("astro:page-load", initAboutRedesign);
+  // Fallback for initial load if astro:page-load doesn't fire immediately
+  window.addEventListener("load", initAboutRedesign);
 </script>
