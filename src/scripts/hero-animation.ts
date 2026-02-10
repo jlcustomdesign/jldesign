@@ -112,13 +112,18 @@ function runHeroEnterAnimation(section: Element) {
 
       // Resize Listener
       let lastWidth = window.innerWidth;
+      let rafId: number;
       const onResize = () => {
         const w = window.innerWidth;
         const h = window.innerHeight;
         if (w === lastWidth) return;
         lastWidth = w;
-        svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-        path.setAttribute("d", cross(w, h));
+
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+          path.setAttribute("d", cross(w, h));
+        });
       };
       window.addEventListener("resize", onResize);
     } catch (e) {

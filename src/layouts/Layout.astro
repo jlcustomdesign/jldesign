@@ -22,6 +22,14 @@ const { title } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <link
+      rel="preload"
+      href="/Fonts/grift-2025-04-02-02-51-35-utc/Variable-TT/Grift Variable-VF.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link rel="preload" as="image" href="/Images/optimized/hero-image.webp" />
     <script is:inline>
       // Prevent scroll restoration (glitch prevention)
       if (history.scrollRestoration) {
