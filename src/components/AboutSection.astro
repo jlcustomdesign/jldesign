@@ -8,67 +8,52 @@ import BubbleButton from "./ui/BubbleButton.astro";
   data-theme="light"
 >
   <div class="container mx-auto px-4 md:px-8 relative z-10">
-    <!-- Split Layout Card -->
-    <div
-      class="bg-white p-8 md:p-12 lg:p-20 rounded-3xl md:rounded-[3rem] shadow-xl"
-    >
-      <div class="flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">
-        <!-- Left Column: Sticky Headline -->
-        <div class="lg:w-1/2 lg:sticky lg:top-32 self-start">
-          <h2
-            class="about-headline font-serif text-4xl md:text-5xl lg:text-7xl text-primary leading-[1.1] mb-8 lg:mb-0 opacity-0 translate-y-8"
-          >
-            Peste 15 ani de <br />
-            <span class="text-accent italic">excelență</span> în <br />
-            arta lemnului.
-          </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+      <!-- Container 1: Headline & CTA -->
+      <div
+        class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-left opacity-0 translate-y-8 flex flex-col justify-between h-full min-h-[400px]"
+      >
+        <h2
+          class="about-headline font-serif text-4xl md:text-5xl lg:text-7xl text-primary leading-[1.1]"
+        >
+          Peste 15 ani de <br />
+          <span class="text-accent">excelență</span> în <br />
+          arta lemnului.
+        </h2>
 
-          <!-- Decoration Line (Desktop) -->
-          <div
-            class="hidden lg:block w-24 h-[1px] bg-primary/20 mt-12 origin-left scale-x-0 about-line"
-          >
-          </div>
+        <div class="mt-12 about-cta">
+          <BubbleButton href="/about" variant="primary" class="!px-10 !py-4">
+            Descoperă Povestea
+          </BubbleButton>
+        </div>
+      </div>
+
+      <!-- Container 2: Subtitle & Image -->
+      <div
+        class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-right opacity-0 translate-y-8 flex flex-col gap-8"
+      >
+        <!-- Text Block -->
+        <div class="about-text-block">
+          <p class="text-lg md:text-xl text-primary/80 leading-relaxed">
+            Fiecare piesă de mobilier pe care o creăm este rezultatul unei
+            pasiuni pentru perfecțiune și al unui respect profund pentru
+            tradiția meșteșugului, combinat cu tehnologii moderne de producție.
+          </p>
+          <p class="text-lg md:text-xl text-primary/80 leading-relaxed mt-6">
+            Nu producem doar mobilă, ci conturăm spațiul în care viața ta se
+            desfășoară. De la concept la montaj, detaliul face diferența.
+          </p>
         </div>
 
-        <!-- Right Column: Content & Imagery -->
-        <div class="lg:w-1/2 flex flex-col gap-12 lg:pt-8">
-          <!-- Text Block -->
-          <div class="about-text-block opacity-0 translate-y-8">
-            <p
-              class="text-lg md:text-xl text-primary/80 leading-relaxed max-w-xl"
-            >
-              Fiecare piesă de mobilier pe care o creăm este rezultatul unei
-              pasiuni pentru perfecțiune și al unui respect profund pentru
-              tradiția meșteșugului, combinat cu tehnologii moderne de
-              producție.
-            </p>
-            <p
-              class="text-lg md:text-xl text-primary/80 leading-relaxed max-w-xl mt-6"
-            >
-              Nu producem doar mobilă, ci conturăm spațiul în care viața ta se
-              desfășoară. De la concept la montaj, detaliul face diferența.
-            </p>
-          </div>
-
-          <!-- Image with Parallax -->
-          <div
-            class="relative w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-sm about-image-wrapper opacity-0 scale-95"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?q=80&w=1200&auto=format&fit=crop"
-              alt="Craftsmanship detail"
-              class="absolute inset-0 w-full h-[120%] object-cover object-center about-image"
-            />
-            <!-- Subtle Grain Overlay -->
-            <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
-          </div>
-
-          <!-- CTA -->
-          <div class="about-cta opacity-0 translate-y-4">
-            <BubbleButton href="/about" variant="primary" class="!px-10 !py-4">
-              Descoperă Povestea
-            </BubbleButton>
-          </div>
+        <!-- Image -->
+        <div
+          class="relative w-full aspect-[4/3] overflow-hidden rounded-2xl about-image-wrapper mt-auto"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?q=80&w=1200&auto=format&fit=crop"
+            alt="Craftsmanship detail"
+            class="absolute inset-0 w-full h-[120%] object-cover object-center about-image"
+          />
         </div>
       </div>
     </div>
@@ -87,48 +72,33 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
     // --- ANIMATIONS ---
     const ctx = gsap.context(() => {
-      // 1. Headline Reveal
-      gsap.to(".about-headline", {
+      // 1. Left Card Reveal
+      gsap.to(".about-card-left", {
         scrollTrigger: {
-          trigger: "#about-section",
-          start: "top 70%",
+          trigger: ".about-card-left",
+          start: "top 85%",
         },
         y: 0,
         opacity: 1,
-        duration: 1.2,
+        duration: 1,
         ease: "power3.out",
       });
 
-      // 2. Line Expansion
-      gsap.to(".about-line", {
+      // 2. Right Card Reveal (Staggered)
+      gsap.to(".about-card-right", {
         scrollTrigger: {
-          trigger: "#about-section",
-          start: "top 60%",
-        },
-        scaleX: 1,
-        duration: 1,
-        delay: 0.5,
-        ease: "power2.out",
-      });
-
-      // 3. Right Column Stagger
-      const rightElements = [
-        ".about-text-block",
-        ".about-image-wrapper",
-        ".about-cta",
-      ];
-      gsap.to(rightElements, {
-        scrollTrigger: {
-          trigger: ".about-text-block",
-          start: "top 80%",
+          trigger: ".about-card-right",
+          start: "top 85%",
         },
         y: 0,
-        scale: 1,
         opacity: 1,
         duration: 1,
-        stagger: 0.2,
+        delay: 0.2, // Slight delay after left
         ease: "power3.out",
       });
+
+      // 3. Staggered Headline Words (Optional, keep simple fade for now as per request "same reveal animation")
+      // User asked for "same reveal as they had it before". Previous was fade-up.
 
       // 4. Image Parallax
       gsap.to(".about-image", {
