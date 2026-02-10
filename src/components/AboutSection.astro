@@ -14,7 +14,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
       <div class="flex flex-col gap-8 h-full">
         <!-- Container 1: Headline -->
         <div
-          class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-headline opacity-0 translate-y-8"
+          class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-headline"
         >
           <h2
             class="about-headline font-serif text-4xl md:text-5xl lg:text-7xl text-primary leading-[1.1]"
@@ -27,7 +27,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
         <!-- Container 2: CTA -->
         <div
-          class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-cta opacity-0 translate-y-8 flex flex-col justify-center flex-grow"
+          class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-cta flex flex-col justify-center flex-grow"
         >
           <p class="text-lg text-primary/80 mb-8 max-w-sm">
             Ești gata să transformi ideile în realitate? Haide să discutăm
@@ -43,7 +43,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
       <!-- Right Column: Subtitle & Image (Container 3) -->
       <div
-        class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-right opacity-0 translate-y-8 flex flex-col gap-8 h-full"
+        class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-right flex flex-col gap-8 h-full"
       >
         <!-- Text Block -->
         <div class="about-text-block">
@@ -81,80 +81,76 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
   function initAboutRedesign() {
     const section = document.querySelector("#about-section");
-    if (!section) return;
+    const headlineCard = document.querySelector(".about-card-headline");
+    const ctaCard = document.querySelector(".about-card-cta");
+    const rightCard = document.querySelector(".about-card-right");
+
+    if (!section || !headlineCard || !ctaCard || !rightCard) return;
 
     // --- ANIMATIONS ---
     const ctx = gsap.context(() => {
       // 1. Headline Card Reveal
-      gsap.fromTo(
-        ".about-card-headline",
-        { y: 50, opacity: 0 },
-        {
-          scrollTrigger: {
-            trigger: ".about-card-headline",
-            start: "top bottom-=100", // Start when top of element is 100px from bottom of viewport
-            toggleActions: "play none none reverse",
-          },
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power3.out",
+      gsap.from(headlineCard, {
+        scrollTrigger: {
+          trigger: headlineCard,
+          start: "top 85%",
+          toggleActions: "play none none reverse",
         },
-      );
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+      });
 
-      // 2. CTA Card Reveal (Delayed)
-      gsap.fromTo(
-        ".about-card-cta",
-        { y: 50, opacity: 0 },
-        {
-          scrollTrigger: {
-            trigger: ".about-card-cta",
-            start: "top bottom-=100",
-            toggleActions: "play none none reverse",
-          },
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          delay: 0.1,
-          ease: "power3.out",
+      // 2. CTA Card Reveal
+      gsap.from(ctaCard, {
+        scrollTrigger: {
+          trigger: ctaCard,
+          start: "top 90%",
+          toggleActions: "play none none reverse",
         },
-      );
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        delay: 0.1,
+        ease: "power3.out",
+      });
 
-      // 3. Right Card Reveal (Delayed)
-      gsap.fromTo(
-        ".about-card-right",
-        { y: 50, opacity: 0 },
-        {
-          scrollTrigger: {
-            trigger: ".about-card-right",
-            start: "top bottom-=100",
-            toggleActions: "play none none reverse",
-          },
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          delay: 0.2,
-          ease: "power3.out",
+      // 3. Right Card Reveal
+      gsap.from(rightCard, {
+        scrollTrigger: {
+          trigger: rightCard,
+          start: "top 85%",
+          toggleActions: "play none none reverse",
         },
-      );
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        delay: 0.2,
+        ease: "power3.out",
+      });
 
       // 4. Image Parallax
-      gsap.to(".about-image", {
-        y: "-20%", // Move up inside container
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".about-image-wrapper",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
+      const img = section.querySelector(".about-image");
+      const imgWrapper = section.querySelector(".about-image-wrapper");
+      if (img && imgWrapper) {
+        gsap.to(img, {
+          y: "-20%", // Move up inside container
+          ease: "none",
+          scrollTrigger: {
+            trigger: imgWrapper,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      }
     }, section);
   }
 
-  // Init on load and transition
-  initAboutRedesign();
+  // Robust Init Pattern used in ServicesSectionV2
+  if (document.readyState !== "loading") initAboutRedesign();
+  else document.addEventListener("DOMContentLoaded", initAboutRedesign);
+
   document.addEventListener("astro:page-load", initAboutRedesign);
-  // Fallback for initial load if astro:page-load doesn't fire immediately
-  window.addEventListener("load", initAboutRedesign);
 </script>
