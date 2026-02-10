@@ -69,7 +69,7 @@ portfolio.forEach((item, i) => {
   </div>
 
   <!-- Lightbox Modal -->
-  <div id="portfolio-lightbox" class="fixed inset-0 z-[100] bg-black/95 opacity-0 pointer-events-none flex items-center justify-center p-4">
+  <div id="portfolio-lightbox" class="fixed inset-0 z-[9999] bg-black/95 opacity-0 pointer-events-none flex items-center justify-center p-4">
     <!-- Close Button -->
     <button id="lightbox-close" class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white transition-colors bg-black/20 hover:bg-black/50 rounded-full">
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -141,6 +141,10 @@ portfolio.forEach((item, i) => {
 
   // LIGHTBOX LOGIC
   const lightbox = document.getElementById("portfolio-lightbox");
+  if (lightbox) {
+    document.body.appendChild(lightbox);
+  }
+
   const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
   const closeBtn = document.getElementById("lightbox-close");
   const prevBtn = document.getElementById("lightbox-prev");
