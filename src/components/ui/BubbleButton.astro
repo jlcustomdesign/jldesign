@@ -3,7 +3,7 @@ interface Props {
   href: string;
   class?: string;
   id?: string;
-  variant?: "primary" | "dark" | "outline" | "outline-white";
+  variant?: "primary" | "dark" | "outline";
 }
 
 const { href, class: className, id, variant = "primary" } = Astro.props;
@@ -58,16 +58,6 @@ const { href, class: className, id, variant = "primary" } = Astro.props;
      Let's fade border to transparent or gold.
   */
   .variant-outline:hover {
-    border-color: #d4af37;
-  }
-
-  .variant-outline-white {
-    background: transparent;
-    border: 1px solid white;
-    color: white;
-  }
-
-  .variant-outline-white:hover {
     border-color: #d4af37;
   }
 

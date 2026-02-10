@@ -1,155 +1,185 @@
 ---
 const currentYear = new Date().getFullYear();
-import BubbleButton from "./ui/BubbleButton.astro";
 ---
 
 <footer
-  class="bg-secondary pt-8 pb-4 md:pt-16 md:pb-8 px-4 md:px-8 relative overflow-hidden pointer-events-auto z-50"
+  class="bg-secondary pt-10 pb-8 md:pt-20 md:pb-10 px-4 md:px-8 relative"
   data-theme="light"
   id="main-footer"
 >
-  <div class="container mx-auto relative z-10">
-    <!-- Big Footer Card -->
+  <div class="container mx-auto h-full flex flex-col justify-center">
+    <!-- Big Card -->
     <div
-      class="footer-card bg-primary text-white rounded-[2.5rem] p-6 md:p-8 lg:p-10 relative overflow-hidden shadow-2xl pointer-events-auto"
-      style="will-change: transform"
+      class="footer-card bg-primary rounded-[2.5rem] p-6 md:p-20 text-white relative overflow-hidden shadow-2xl w-full"
+      data-theme="dark"
+      style="will-change: transform, filter;"
     >
-      <!-- Background Texture REMOVED as requested -->
-
-      <!-- Main Content Grid -->
+      <!-- Decorative Glow -->
       <div
-        class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10 items-center"
+        class="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"
       >
-        <!-- Left Column: CTA & Brand -->
-        <div
-          class="lg:col-span-7 flex flex-col justify-center h-full text-center lg:text-left items-center lg:items-start"
-        >
+      </div>
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-12 relative z-10"
+      >
+        <!-- Brand & CTA -->
+        <div class="lg:col-span-7 flex flex-col justify-between h-full">
           <div>
-            <!-- 2026 COLLECTION Removed -->
             <h2
-              class="font-serif text-3xl md:text-5xl lg:text-6xl leading-none mb-6"
+              class="font-serif text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-8 leading-tight"
             >
-              Transformăm <br />
-              <span class="text-white/50">viziunea ta</span>
-              în realitate.
+              Să construim ceva <br />
+              <span class="text-accent">remarcabil.</span>
             </h2>
-          </div>
-
-          <!-- Call Buttons using BubbleButton -->
-          <div
-            class="flex flex-wrap gap-3 mt-6 md:mt-8 justify-center lg:justify-start"
-          >
-            <BubbleButton
-              href="tel:+40700000000"
-              variant="primary"
-              class="px-8 py-4 text-base"
-            >
-              Sună-ne Acum
-            </BubbleButton>
-
-            <BubbleButton
+            <a
               href="/contact"
-              variant="outline-white"
-              class="px-8 py-4 text-base hover:border-accent"
+              class="inline-flex items-center gap-4 text-xl md:text-2xl font-medium group hover:text-accent transition-colors"
             >
-              Scrie-ne
-            </BubbleButton>
+              <span
+                class="border-b border-white/30 pb-1 group-hover:border-accent transition-colors"
+                >Discută cu noi</span
+              >
+              <span
+                class="group-hover:translate-x-2 transition-transform duration-300"
+                >→</span
+              >
+            </a>
           </div>
         </div>
 
-        <!-- Right Column: Navigation -->
-        <!-- Added mt-12 for downward spacing as requested -->
-        <div
-          class="lg:col-span-5 flex flex-col items-center lg:items-end justify-between h-full mt-8 lg:mt-24"
-        >
-          <div
-            class="grid grid-cols-2 gap-6 lg:gap-12 text-center lg:text-right w-full lg:w-auto"
+        <!-- Links -->
+        <div class="lg:col-span-2 lg:col-start-8">
+          <h4
+            class="text-accent uppercase tracking-wider text-sm font-semibold mb-6"
           >
-            <!-- Menu -->
-            <div class="space-y-4">
-              <h4
-                class="text-accent text-xs font-bold uppercase tracking-widest"
-              >
-                Meniu
-              </h4>
-              <ul class="space-y-2 font-medium text-base text-white/80">
-                <li>
-                  <a href="/" class="hover:text-white transition-colors"
-                    >Acasă</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="/portfolio"
-                    class="hover:text-white transition-colors">Portofoliu</a
-                  >
-                </li>
-                <li>
-                  <a href="/services" class="hover:text-white transition-colors"
-                    >Servicii</a
-                  >
-                </li>
-                <li>
-                  <a href="/about" class="hover:text-white transition-colors"
-                    >Despre Noi</a
-                  >
-                </li>
-              </ul>
-            </div>
+            Meniu
+          </h4>
+          <ul class="space-y-4">
+            <li>
+              <a
+                href="/"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Acasă
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/about"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Despre Noi
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/services"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Servicii
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/portfolio"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Portofoliu
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/contact"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >Contact
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+          </ul>
+        </div>
 
-            <!-- Contact -->
-            <div class="space-y-4">
-              <h4
-                class="text-accent text-xs font-bold uppercase tracking-widest"
-              >
-                Contact
-              </h4>
-              <ul class="space-y-2 text-white/70 text-sm">
-                <li>București, Sector 1</li>
-                <li>
-                  <a
-                    href="tel:+40700000000"
-                    class="hover:text-white transition-colors"
-                    >+40 700 000 000</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="mailto:contact@jlmobila.ro"
-                    class="hover:text-white transition-colors"
-                    >contact@jlmobila.ro</a
-                  >
-                </li>
-              </ul>
-            </div>
+        <!-- Socials & Contact -->
+        <div class="lg:col-span-3">
+          <h4
+            class="text-accent uppercase tracking-wider text-sm font-semibold mb-6"
+          >
+            Contact
+          </h4>
+          <ul class="space-y-4 mb-10">
+            <li class="text-white/70">
+              Strada Exemplului Nr. 10,<br />București, Sector 1
+            </li>
+            <li>
+              <a
+                href="tel:+40700000000"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >+40 700 000 000
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="mailto:contact@jlmobila.ro"
+                class="text-white/70 hover:text-accent transition-colors relative group inline-block"
+                >contact@jlmobila.ro
+                <span
+                  class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+                ></span>
+              </a>
+            </li>
+          </ul>
+
+          <div class="flex gap-4">
+            <!-- Social Icons placeholders -->
+            <a
+              href="#"
+              class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-primary transition-all"
+              >FB</a
+            >
+            <a
+              href="#"
+              class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-primary transition-all"
+              >IG</a
+            >
           </div>
         </div>
       </div>
 
-      <!-- Divider -->
-      <div class="w-full h-px bg-white/10 my-6 md:my-8"></div>
-
-      <!-- Bottom Bar -->
       <div
-        class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40"
+        class="border-t border-white/10 mt-20 pt-8 flex flex-col md:flex-row justify-between items-center text-white/40 text-sm"
       >
         <p>&copy; {currentYear} JL Mobila. Toate drepturile rezervate.</p>
-        <div class="flex gap-6">
-          <a href="#" class="hover:text-white transition-colors"
-            >Politica de Confidențialitate</a
-          >
-          <a href="#" class="hover:text-white transition-colors"
-            >Termeni și Condiții</a
-          >
+        <div class="flex gap-6 mt-4 md:mt-0">
+          <a href="#" class="hover:text-accent relative group inline-block"
+            >Termeni și Condiții
+            <span
+              class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+            ></span>
+          </a>
+          <a href="#" class="hover:text-accent relative group inline-block"
+            >Politica de Confidențialitate
+            <span
+              class="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"
+            ></span>
+          </a>
         </div>
       </div>
     </div>
   </div>
 </footer>
-
-<style>
-  /* Removed unused spin animation since badge is gone */
-</style>
 
 <script>
   import { gsap } from "gsap";
@@ -159,83 +189,99 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
   function initFooterParallax() {
     const footer = document.querySelector("#main-footer") as HTMLElement;
-    // We target #smooth-content for appending if needed
-    const smoothContent = document.querySelector("#smooth-content");
     const main = document.querySelector("main") as HTMLElement;
 
     if (!footer || !main) return;
-
-    // Flag to prevent multiple inits, but we allow re-init on resize now
-    if (!footer.dataset.parallaxInitialized) {
-      footer.dataset.parallaxInitialized = "true";
-    }
+    // Avoid double init
+    if (footer.dataset.parallaxInitialized) return;
+    footer.dataset.parallaxInitialized = "true";
 
     const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
 
+    // 1. Setup Logic
+    // 1. Setup Logic wrapped in a function to handle Resize correctly
     const updateFooterLayout = () => {
-      // UNCONDITIONAL RELATIVE MODE
-      // Logic: Always treat footer as part of the scroll flow to guarantee clickability.
-
       const h = footer.offsetHeight;
+      const viewportH = window.innerHeight;
 
-      // 1. DOM: Move inside scroll container if not already
-      if (smoothContent && footer.parentElement !== smoothContent) {
-        smoothContent.appendChild(footer);
-      }
+      // Re-check conditions on resize
+      // Always enable parallax as requested (Force Desktop behavior)
 
-      // 2. Styles (Nuclear Option)
-      footer.style.position = "relative";
+      // -- PARALLAX LAYOUT --
+      footer.style.position = "fixed";
+      footer.style.left = "0";
+      footer.style.bottom = "0";
       footer.style.width = "100%";
-      footer.style.zIndex = "9999"; // Nuclear Z-Index
-      footer.style.pointerEvents = "auto";
-      footer.style.left = "auto";
-      footer.style.bottom = "auto";
-      footer.style.height = "auto";
-      // Removed forced margins to eliminate white line gap
-      footer.style.clear = "both";
+      footer.style.zIndex = "0";
 
-      // 3. Cleanup Parallax Spacer (if it exists from old logic)
-      const spacer = document.getElementById("footer-spacer");
-      if (spacer) {
-        spacer.style.display = "none";
-        spacer.remove(); // Remove it entirely to be safe
+      let spacer = document.getElementById("footer-spacer");
+      if (!spacer) {
+        spacer = document.createElement("div");
+        spacer.id = "footer-spacer";
+        main.appendChild(spacer);
       }
 
-      // 4. Reset Parallax Transform
+      spacer.style.display = "block";
+      spacer.style.height = `${h}px`;
+      spacer.style.pointerEvents = "none";
+
+      main.style.position = "relative";
+      main.style.zIndex = "10";
+      main.style.marginBottom = "0px";
+
       const footerCard = footer.querySelector(".footer-card");
+
       if (footerCard) {
-        gsap.set(footerCard, { y: 0, scale: 1, filter: "none" });
+        // Reset or Initialize GSAP
+        // We need to kill old triggers? GSAP handles overwrites usually.
+
+        gsap.fromTo(
+          footerCard,
+          {
+            scale: 0.8,
+            filter: "blur(20px)",
+            y: -50,
+          },
+          {
+            scale: 1,
+            filter: "blur(0px)",
+            y: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: spacer,
+              start: "top bottom",
+              end: "bottom bottom",
+              scrub: true,
+            },
+          },
+        );
       }
 
-      // Force refresh multiple times to handle async layout shifts
       ScrollTrigger.refresh();
-      setTimeout(() => ScrollTrigger.refresh(), 100);
-      setTimeout(() => ScrollTrigger.refresh(), 500);
     };
 
-    // Run Updates
+    // Run Once
     requestAnimationFrame(updateFooterLayout);
 
+    // Run on Resize
+    // Run on Resize (Width only check)
     let lastWidth = window.innerWidth;
-    let lastHeight = window.innerHeight;
-
     window.addEventListener("resize", () => {
       const currentWidth = window.innerWidth;
-      const currentHeight = window.innerHeight;
-
-      // Re-run on width change or significant height change
-      if (
-        Math.abs(currentWidth - lastWidth) > 50 ||
-        Math.abs(currentHeight - lastHeight) > 100
-      ) {
+      // Ignore height-only resizes (mobile chrome)
+      if (currentWidth !== lastWidth) {
         lastWidth = currentWidth;
-        lastHeight = currentHeight;
-        requestAnimationFrame(updateFooterLayout);
+        updateFooterLayout();
       }
     });
   }
 
+  // Initialize only on Astro navigation/load
   document.addEventListener("astro:page-load", initFooterParallax);
-  if (document.readyState === "complete") initFooterParallax();
-  else window.addEventListener("load", initFooterParallax);
+  // Initial load fallback
+  if (document.readyState === "complete") {
+    initFooterParallax();
+  } else {
+    window.addEventListener("load", initFooterParallax);
+  }
 </script>

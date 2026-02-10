@@ -167,7 +167,7 @@ const links = [
     if (navContainer && navWrapper) {
       // 1. Initial Load Animation
       const hero = document.querySelector(
-        "#hero-section, #services-hero-section, #portfolio-hero-section",
+        "#hero-section, #services-hero-section",
       );
       const isDesktop = window.innerWidth >= 1024;
 
@@ -222,24 +222,16 @@ const links = [
   function initHeroObserver() {
     const navContainer = document.querySelector("#navbar-container");
     const hero = document.querySelector(
-      "#hero-section, #services-hero-section, #portfolio-hero-section",
+      "#hero-section, #services-hero-section",
     );
 
     if (!navContainer) return;
 
     // Check if Hero Exists
     if (hero) {
-      // Check for explicit theme override
-      const isLightTheme = hero.getAttribute("data-theme") === "light";
-
-      if (isLightTheme) {
-        navContainer.classList.add("nav-light");
-        navContainer.classList.remove("nav-dark");
-      } else {
-        // Default to Dark Theme (White Text)
-        navContainer.classList.add("nav-dark");
-        navContainer.classList.remove("nav-light");
-      }
+      // Scenario A: Hero Exists (Home) -> Default to Dark Theme (White Text)
+      navContainer.classList.add("nav-dark");
+      navContainer.classList.remove("nav-light");
 
       // Initialize scroll-reveal for nav elements
       initScrollRevealNav(hero);
@@ -257,33 +249,30 @@ const links = [
     }
 
     // Scenario B: Hero Exists -> Use ScrollTrigger to toggle theme
-    const isLightTheme = hero.getAttribute("data-theme") === "light";
-    const activeThemeClass = isLightTheme ? "nav-light" : "nav-dark";
-    const inactiveThemeClass = isLightTheme ? "nav-dark" : "nav-light";
-
+    // We want Dark Theme (White Text) ONLY when we are IN the Hero section
     ScrollTrigger.create({
       trigger: hero,
       start: "top top", // When hero starts
       end: "bottom top+=80", // When hero bottom passes top (plus buffer for nav height)
       onEnter: () => {
-        // Enters Hero -> Active Theme
-        navContainer.classList.add(activeThemeClass);
-        navContainer.classList.remove(inactiveThemeClass);
+        // Enters Hero -> Dark Theme
+        navContainer.classList.add("nav-dark");
+        navContainer.classList.remove("nav-light");
       },
       onLeave: () => {
-        // Leaves Hero (scrolling down) -> Always Light Theme (Default for content)
+        // Leaves Hero (scrolling down) -> Light Theme
         navContainer.classList.add("nav-light");
         navContainer.classList.remove("nav-dark");
       },
       onEnterBack: () => {
-        // Re-enters Hero (scrolling up) -> Active Theme
-        navContainer.classList.add(activeThemeClass);
-        navContainer.classList.remove(inactiveThemeClass);
+        // Re-enters Hero (scrolling up) -> Dark Theme
+        navContainer.classList.add("nav-dark");
+        navContainer.classList.remove("nav-light");
       },
       onLeaveBack: () => {
-        // Leaves Hero (scrolling up past top) -> Keep Active Theme (overscroll)
-        navContainer.classList.add(activeThemeClass);
-        navContainer.classList.remove(inactiveThemeClass);
+        // Leaves Hero (scrolling up past top) -> Keep Dark Theme (overscroll)
+        navContainer.classList.add("nav-dark");
+        navContainer.classList.remove("nav-light");
       },
     });
   }
@@ -309,12 +298,6 @@ const links = [
         const tl = gsap.timeline();
 
         // Step 1: Expand navbar width FULLY
-        // Hint browser
-        gsap.set(navWrapper, { willChange: "max-width" });
-        gsap.set([navLogoWrapper, navContact], {
-          willChange: "width, opacity, transform",
-        });
-
         tl.to(navWrapper, {
           maxWidth: "42rem", // Reduced from 48rem as requested
           duration: 0.35,

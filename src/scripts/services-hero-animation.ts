@@ -242,8 +242,8 @@ function runServicesHeroAnimation(section: Element) {
   // PHASE 2: Simultaneous Reveal (Quicker: 0.8s)
   tl.to(pathEl, {
     morphSVG: { shape: finalPath, shapeIndex: 0 },
-    duration: 1.2, // Slightly more time for the subtler ease
-    ease: "back.out(1.2)"
+    duration: 0.8, // Faster duration
+    ease: "power2.out"
   }, "-=0.5");
 
   // DESKTOP TITLE TEXT REVEAL
