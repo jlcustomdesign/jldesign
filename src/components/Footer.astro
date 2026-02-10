@@ -148,7 +148,10 @@ import BubbleButton from "./ui/BubbleButton.astro";
 </footer>
 
 <style>
-  /* Removed unused spin animation since badge is gone */
+  #main-footer {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
 </style>
 
 <script>
@@ -206,6 +209,9 @@ import BubbleButton from "./ui/BubbleButton.astro";
       if (footerCard) {
         gsap.set(footerCard, { y: 0, scale: 1, filter: "none" });
       }
+
+      // 5. Reveal Footer (Prevent Flash)
+      footer.style.opacity = "1";
 
       // Force refresh multiple times to handle async layout shifts
       ScrollTrigger.refresh();
