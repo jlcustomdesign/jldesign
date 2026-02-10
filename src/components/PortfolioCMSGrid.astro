@@ -183,14 +183,14 @@ portfolio.forEach((item, i) => {
     currentIndex = index;
     if (lightboxImg) lightboxImg.src = allImages[currentIndex];
 
-    gsap.to(lightbox, { autoAlpha: 1, duration: 0.3, ease: "power2.out" });
+    gsap.to(lightbox, { autoAlpha: 1, pointerEvents: "auto", duration: 0.3, ease: "power2.out" });
     if (lightboxImg) gsap.fromTo(lightboxImg, { scale: 0.95 }, { scale: 1, duration: 0.4, ease: "back.out(1.2)" });
     document.body.style.overflow = "hidden";
   }
 
   function closeLightbox() {
     if (!lightbox) return;
-    gsap.to(lightbox, { autoAlpha: 0, duration: 0.3, ease: "power2.in" });
+    gsap.to(lightbox, { autoAlpha: 0, pointerEvents: "none", duration: 0.3, ease: "power2.in" });
     document.body.style.overflow = "";
   }
 
