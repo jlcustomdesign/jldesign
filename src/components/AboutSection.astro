@@ -3,153 +3,163 @@ import BubbleButton from "./ui/BubbleButton.astro";
 ---
 
 <section
-  class="py-24 md:py-40 bg-secondary flex items-center justify-center min-h-screen relative overflow-hidden"
+  class="relative min-h-screen bg-secondary overflow-hidden"
   id="about-section"
   data-theme="light"
-  style="z-index: 10; position: relative;"
 >
-  <div class="container mx-auto px-4 md:px-8 relative z-10 text-center">
-    <div
-      class="max-w-5xl mx-auto p-12 md:p-16 w-full flex flex-col justify-center bg-white rounded-3xl md:rounded-[3rem] shadow-2xl about-card border border-gray-100 items-center gap-8"
-      style="min-height: 80vh !important;"
-    >
+  <!-- Sticky Wrapper for Pinning -->
+  <div
+    id="about-pinned-content"
+    class="w-full h-screen flex flex-col items-center justify-between py-12 md:py-24 relative overflow-hidden"
+  >
+    <!-- 1. Headline / Title (Top) -->
+    <div class="container mx-auto px-4 md:px-8 text-center z-10">
       <h2
-        class="font-serif text-4xl md:text-5xl lg:text-6xl text-primary leading-tight about-title"
+        class="about-headline font-serif text-4xl md:text-5xl lg:text-6xl text-primary leading-tight max-w-4xl mx-auto opacity-0 translate-y-10"
       >
         Peste 15 ani de experiență în prelucrarea lemnului și a materialelor
         compozite.
       </h2>
-      <p class="text-gray-600 text-lg md:text-xl max-w-2xl about-subtext">
-        Fiecare piesă de mobilier pe care o creăm este rezultatul unei pasiuni
-        pentru perfecțiune și al unui respect profund pentru tradiția
-        mâneșugului, combinat cu tehnologii moderne de producție.
-      </p>
-      <div class="mt-4 about-cta opacity-0 translate-y-4">
-        <BubbleButton
-          href="/about"
-          variant="primary"
-          class="!px-10 !py-4 !border !border-primary/20"
+    </div>
+
+    <!-- 2. SVG & Content (Lower Half) -->
+    <div
+      class="relative w-full max-w-[1920px] mx-auto flex-1 flex flex-col justify-end items-center mt-8 md:mt-0"
+    >
+      <!-- Text Overlay (Centered in the bottom area/SVG) -->
+      <div
+        class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none top-1/2"
+      >
+        <p
+          class="about-text text-primary text-lg md:text-2xl max-w-3xl text-center px-8 leading-relaxed opacity-0"
         >
-          Află mai multe
-        </BubbleButton>
+          Fiecare piesă de mobilier pe care o creăm este rezultatul unei pasiuni
+          pentru perfecțiune și al unui respect profund pentru tradiția
+          mâneșugului, combinat cu tehnologii moderne de producție.
+        </p>
+      </div>
+
+      <!-- Inline SVG -->
+      <div
+        class="w-full h-auto relative z-0 opacity-0 about-svg-container"
+        style="max-height: 60vh;"
+      >
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 1920 1080"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-full h-full object-contain"
+          preserveAspectRatio="xMidYMax meet"
+        >
+          <g class="svg-content-group">
+            <!-- Original Path from user file -->
+            <path
+              id="about-svg-path"
+              d="M171,999.001C171,1001.653 169.947,1004.196 168.072,1006.071C166.197,1007.947 163.654,1009 161.002,1009C124.957,1009 52.8,1009 52.8,1009C23.659,1009 -0,985.341 -0,956.2L-0,533.8C-0,504.659 23.659,481 52.8,481L161,481C166.523,481 170.999,485.477 170.999,491C171,491 171,491 171,491L171,691C171,696.519 175.481,701 181,701C181,701 201,701 201,701C206.523,701 211,705.477 211,711C211,745.441 211,815.559 211,850C211,855.523 206.523,859.999 201,859.999C201,860 201,860 201,860L181,860C175.481,860 171,864.481 171,870L171,999C171,999 171,999.001 171,999.001ZM211,491C211,485.477 215.477,481 221,481C409.518,481 1867.2,481 1867.2,481C1896.341,481 1920,504.659 1920,533.8L1920,956.2C1920,985.341 1896.341,1009 1867.2,1009L220.998,1009C215.476,1008.999 211,1004.523 211.001,999.001C211,999.001 211,999 211,999L211,895C211,889.477 215.477,885.001 221,885.001C221,885 221,885 221,885L241,885C246.519,885 251,880.519 251,875L251,675C251,669.481 246.519,665 241,665C241,665 221,665 221,665C215.477,665 211,660.523 211,655C211,607.337 211,491 211,491Z"
+              style="fill:none;stroke:currentColor;stroke-width:2;"
+              class="text-primary"></path>
+          </g>
+        </svg>
       </div>
     </div>
   </div>
-
-  <!-- Subtle Decorative Background Shape -->
 </section>
 
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "../utils/SplitText"; // Assuming we have or mimic this, or use manual split
 
   gsap.registerPlugin(ScrollTrigger);
 
-  initAboutAnim();
-  document.addEventListener("astro:page-load", initAboutAnim);
-
-  function initAboutAnim() {
+  function initAboutRedesign() {
     const section = document.querySelector("#about-section");
-    if (!section) return;
+    const pinnedContent = document.querySelector("#about-pinned-content");
+    const svgPath = document.querySelector("#about-svg-path") as SVGPathElement;
 
-    // Mobile detection - disable expensive blur on mobile
-    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
+    if (!section || !pinnedContent || !svgPath) return;
 
-    // Helper: Split text into words for stagger effect
-    const splitTextToWords = (selector: string) => {
-      const element = section.querySelector(selector);
-      if (!element) return;
-      const text = element.textContent?.trim() || "";
-      element.innerHTML = text
-        .split(" ")
+    // 1. Prepare SVG for drawing
+    const length = svgPath.getTotalLength();
+    gsap.set(svgPath, {
+      strokeDasharray: length,
+      strokeDashoffset: length,
+      fillOpacity: 0, // Ensure no fill initially if we decide to add fill later
+    });
+
+    // 2. Prepare Text
+    // Split headline for stagger
+    const headline = document.querySelector(".about-headline");
+    if (headline) {
+      headline.innerHTML = headline
+        .textContent!.split(" ")
         .map(
           (word) =>
-            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: ${isMobile ? "none" : "blur(8px)"}">${word}&nbsp;</span></span>`,
+            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">${word}&nbsp;</span></span>`,
         )
         .join("");
-    };
-
-    // Prepare text for animation
-    splitTextToWords(".about-title");
-    splitTextToWords(".about-subtext");
+    }
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: ".about-card",
-          start: "top bottom",
-          end: "center 60%",
+          trigger: section,
+          start: "top top",
+          end: "+=200%", // Pin for 2 screens
+          pin: pinnedContent,
           scrub: 1,
+          anticipatePin: 1,
         },
       });
 
-      // 1. Card Reveal (Scale + Fade + Blur) - No blur on mobile for performance
-      tl.from(".about-card", {
-        scale: 0.9,
-        y: 100,
-        opacity: 0,
-        filter: isMobile ? "none" : "blur(10px)",
-        duration: 1, // Relative duration in scrub
+      // SEQUENCE:
+
+      // 1. Headline Slide Up (Early)
+      tl.to(".about-headline span span", {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        stagger: 0.05,
         ease: "power2.out",
       });
 
-      // 2. Title Staggered Reveal - skip blur on mobile for performance
+      // 2. SVG Container Fade In & Path Draw
       tl.to(
-        ".about-title span span",
+        ".about-svg-container",
         {
-          y: 0,
           opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
-          duration: 1,
-          stagger: isMobile ? 0.03 : 0.1, // Faster stagger on mobile
-          ease: "none",
-        },
-        "-=0.5",
-      );
-
-      // 3. Subtext Staggered Reveal
-      tl.to(
-        ".about-subtext span span",
-        {
-          y: 0,
-          opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
-          duration: 1,
-          stagger: isMobile ? 0.02 : 0.05,
-          ease: "none",
-        },
-        "-=0.5",
-      );
-
-      // 4. Button Reveal
-      tl.fromTo(
-        ".about-cta",
-        {
-          y: 20,
-          opacity: 0,
-          filter: isMobile ? "none" : "blur(10px)",
-        },
-        {
-          y: 0,
-          opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
           duration: 0.5,
-          ease: "none",
         },
         "-=0.2",
+      ).to(
+        svgPath,
+        {
+          strokeDashoffset: 0,
+          duration: 3,
+          ease: "power1.inOut",
+        },
+        "<",
       );
 
-      // 5. Parallax for Background Shape
-      gsap.to(".about-bg-shape", {
-        y: "20%",
-        ease: "none",
-        scrollTrigger: {
-          trigger: "#about-section",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1,
+      // 3. Text Overlay Reveal (inside SVG area)
+      tl.to(
+        ".about-text",
+        {
+          opacity: 1,
+          y: -20, // Slide up slightly
+          duration: 1,
+          ease: "power2.out",
         },
-      });
+        "-=1",
+      );
+
+      // 4. Create a pause at the end for reading
+      tl.to({}, { duration: 1 });
     }, section);
   }
+
+  document.addEventListener("astro:page-load", initAboutRedesign);
+  initAboutRedesign();
 </script>
