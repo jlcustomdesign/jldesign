@@ -228,12 +228,10 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
               </h3>
             </div>
             <div class="md:w-1/2 relative z-10">
-              <p class="text-lg text-primary/70 leading-relaxed">
+              <p class="text-2xl md:text-3xl text-primary/80 leading-relaxed">
                 Fiecare proiect este o colaborare strânsă între client și echipa
                 noastră de designeri. Transformăm viziunea ta în realitate
-                tangibilă, <strong class="text-primary"
-                  >milimetru cu milimetru</strong
-                >.
+                tangibilă, milimetru cu milimetru.
               </p>
             </div>
           </div>
@@ -246,103 +244,69 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
       id="about-atelier-section"
     >
       <div class="container mx-auto px-4 md:px-8">
-        <!-- Moment 3: The Philosophy (Redesigned Text-Only) -->
-        <div class="flex flex-col gap-12 md:gap-24 items-start pb-32">
-          <!-- Title: Full Width -->
-          <div class="w-full">
-            <h2
-              class="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-primary leading-[1.05] scrub-words uppercase"
-            >
-              Nu producem mobilă.<br />
-              Creăm liniște.
-            </h2>
+        <!-- 1. Header (Centered) -->
+        <div
+          class="flex flex-col items-center text-center mb-20 md:mb-32 max-w-5xl mx-auto"
+        >
+          <h2
+            class="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-primary leading-[1.05] scrub-words uppercase mb-12"
+          >
+            Nu producem mobilă.<br />
+            Creăm liniște.
+          </h2>
+          <p
+            class="text-3xl md:text-4xl lg:text-5xl text-primary/80 leading-relaxed scrub-words max-w-3xl"
+          >
+            În atelierul nostru, timpul curge altfel. Lemnul este lăsat să
+            respire.
+          </p>
+        </div>
+
+        <!-- 2. Grid (Image + Dark Card) -->
+        <div
+          class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 min-h-[80vh]"
+        >
+          <!-- Left: Image -->
+          <div
+            class="relative overflow-hidden rounded-[2.5rem] w-full h-[60vh] lg:h-auto reveal-image aspect-[4/5] lg:aspect-auto"
+          >
+            <img
+              src="/Images/Proiecte-JL Custom Design-09.jpg"
+              alt="Workshop Detail"
+              class="absolute inset-0 w-full h-full object-cover scale-105 transition-transform duration-[3s] hover:scale-100"
+            />
           </div>
 
-          <!-- Moment 2: The Manifesto (Left 50%) & Visuals (Right 50%) -->
+          <!-- Right: Dark Card -->
           <div
-            class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 w-full items-start"
+            class="bg-primary text-secondary rounded-[2.5rem] p-10 md:p-16 flex flex-col justify-between reveal-image min-h-[50vh] lg:min-h-0 relative"
+            data-delay="0.2"
           >
-            <!-- Left Col: Text -->
-            <div class="md:col-span-1 md:pr-12 md:sticky md:top-32">
-              <p
-                class="text-3xl md:text-5xl font-bold text-primary leading-tight scrub-words mb-16"
+            <div class="space-y-8 relative z-10">
+              <span
+                class="uppercase tracking-[0.2em] text-sm font-bold opacity-60"
+                >Atelierul Nostru</span
               >
-                În atelierul nostru, timpul curge altfel. Lemnul este lăsat să
-                respire.
-              </p>
               <p
-                class="text-3xl md:text-5xl font-bold text-primary leading-tight scrub-words mb-16"
+                class="text-4xl md:text-5xl lg:text-6xl font-serif leading-[1.3] scrub-words"
               >
                 Fiecare îmbinare este o promisiune de durabilitate onorată
                 manual.
               </p>
             </div>
 
-            <!-- Right Col: Landscape Images -->
-            <div
-              class="md:col-span-1 flex flex-col gap-12 md:gap-24 pt-12 md:pt-0"
-            >
-              <!-- Image 1 -->
-              <div
-                class="fancy-card overflow-hidden rounded-2xl aspect-[16/10] relative group shadow-xl"
+            <div class="mt-24 flex flex-col items-start gap-8 relative z-10">
+              <p class="text-lg opacity-60 max-w-md">
+                Rezultatul? O colecție de piese care vorbesc de la sine. Nu doar
+                mobilă, ci moștenire.
+              </p>
+              <BubbleButton
+                href="/portfolio"
+                variant="primary"
+                class="!bg-secondary !text-primary !border-none hover:!bg-white"
               >
-                <div
-                  class="absolute inset-0 bg-primary/10 z-20 transition-opacity duration-700 group-hover:opacity-0 mixed-blend-overlay"
-                >
-                </div>
-                <img
-                  src="/Images/Proiecte-JL Custom Design-09.jpg"
-                  alt="Workshop Process"
-                  class="object-cover w-full h-full scale-[1.15] fancy-image will-change-transform"
-                />
-              </div>
-
-              <!-- Image 2 -->
-              <div
-                class="fancy-card overflow-hidden rounded-2xl aspect-[16/10] relative group shadow-xl"
-              >
-                <div
-                  class="absolute inset-0 bg-primary/10 z-20 transition-opacity duration-700 group-hover:opacity-0 mixed-blend-overlay"
-                >
-                </div>
-                <img
-                  src="/Images/Proiecte-JL Custom Design-05.jpg"
-                  alt="Finished Detail"
-                  class="object-cover w-full h-full scale-[1.15] fancy-image will-change-transform"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- CTA (Dark Banner) -->
-          <div class="w-full mt-24">
-            <div
-              class="bg-primary text-[#EAE6DF] p-10 md:p-16 rounded-[2rem] flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden shadow-2xl scrub-card opacity-0 translate-y-24 will-change-transform"
-            >
-              <div
-                class="flex flex-col gap-4 text-center md:text-left max-w-3xl"
-              >
-                <p
-                  class="text-[#EAE6DF]/60 uppercase tracking-widest text-sm font-bold scrub-fade"
-                >
-                  Portofoliu
-                </p>
-                <h3
-                  class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold leading-tight scrub-words"
-                >
-                  Rezultatul? O colecție de piese care vorbesc de la sine.
-                </h3>
-              </div>
-
-              <div class="shrink-0 scrub-fade">
-                <BubbleButton
-                  href="/portfolio"
-                  variant="primary"
-                  class="!px-12 !py-5 !text-lg"
-                >
-                  Vezi Proiectele
-                </BubbleButton>
-              </div>
+                Vezi Proiectele
+              </BubbleButton>
             </div>
           </div>
         </div>
@@ -584,26 +548,29 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
         bentoCards.forEach((card, i) => {
           gsap.set(card, { willChange: "transform, opacity" });
 
-          // "Construction" Effect: Come from different directions
+          // "Construction" Effect: Come from different directions (OUTSIDE VIEWPORT)
           let startVars: any = {};
           const mode = i % 4;
+          const w = window.innerWidth;
+          const h = window.innerHeight;
+
           if (mode === 0)
-            startVars.x = -100; // Left
+            startVars.x = -w * 0.3; // Left (Outside with buffer)
           else if (mode === 1)
-            startVars.y = 100; // Up
+            startVars.y = h * 0.3; // Bottom (Outside with buffer)
           else if (mode === 2)
-            startVars.x = 100; // Right
-          else startVars.y = 100; // Up (again)
+            startVars.x = w * 0.3; // Right (Outside with buffer)
+          else startVars.y = h * 0.3; // Bottom (Outside with buffer)
 
           gsap.fromTo(card, startVars, {
             x: 0,
             y: 0,
-            ease: "none",
+            ease: "none", // Linear scrub
             scrollTrigger: {
               trigger: card,
-              start: "top 95%",
-              end: "center 70%",
-              scrub: 1,
+              start: "top 95%", // Start just before entering
+              end: "center 65%", // End when visible but before center
+              scrub: 0.5,
             },
           });
         });

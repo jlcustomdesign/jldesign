@@ -5,7 +5,13 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function initThemeTransition() {
   const portfolioSection = document.querySelector("#portfolio-section");
-  if (!portfolioSection) return;
+  if (!portfolioSection) {
+     // Check if we are on the portfolio page by URL to be safe, as ID might be missing
+     if (window.location.pathname.includes("/portfolio")) return;
+     // Otherwise continue (might be Home page with ID issues, or other pages)
+  }
+  
+  if (!portfolioSection && !document.querySelector("#process-section-v2")) return; // Exit if no known sections
 
   // Use requestAnimationFrame to ensure DOM is ready
   requestAnimationFrame(() => {

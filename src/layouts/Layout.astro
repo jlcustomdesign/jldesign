@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import MobileMenu from "../components/MobileMenu.astro";
 import CustomCursor from "../components/ui/CustomCursor.astro";
+import ContactModal from "../components/ContactModal.astro";
 
 interface Props {
   title: string;
@@ -40,10 +41,13 @@ const { title } = Astro.props;
     <!-- ScrollSmoother Structure -->
     <div
       id="smooth-wrapper"
+      class="pointer-events-none"
       style="position: relative; z-index: 10 !important;"
     >
-      <div id="smooth-content">
-        <slot />
+      <div id="smooth-content" class="pointer-events-none">
+        <div class="pointer-events-auto">
+          <slot />
+        </div>
       </div>
     </div>
     <slot name="footer" />
@@ -63,23 +67,21 @@ const { title } = Astro.props;
       init();
       document.addEventListener("astro:page-load", init);
     </script>
+    <ContactModal />
   </body>
 </html>
 
 <style is:global>
-  /* Custom Scrollbar for 'Quiet Luxury' feel */
+  /* Custom Scrollbar HIDDEN as requested */
   ::-webkit-scrollbar {
-    width: 8px;
+    display: none;
+    width: 0px;
+    background: transparent;
   }
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 4px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
+
+  html {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
   }
 
   /* Performance Optimization */
