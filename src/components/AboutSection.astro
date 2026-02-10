@@ -3,34 +3,68 @@ import BubbleButton from "./ui/BubbleButton.astro";
 ---
 
 <section
-  class="py-24 md:py-40 bg-secondary flex items-center justify-center min-h-[70vh] relative overflow-hidden"
+  class="relative bg-secondary py-24 md:py-32 overflow-hidden"
   id="about-section"
   data-theme="light"
-  style="z-index: 10; position: relative;"
 >
-  <div class="container mx-auto px-4 md:px-8 relative z-10 text-center">
-    <div
-      class="max-w-5xl mx-auto p-12 md:p-16 bg-white rounded-3xl md:rounded-[3rem] shadow-2xl about-card border border-gray-100 flex flex-col items-center gap-8"
-    >
-      <h2
-        class="font-serif text-4xl md:text-5xl lg:text-6xl text-primary leading-tight about-title"
-      >
-        Peste 15 ani de experiență în prelucrarea lemnului și a materialelor
-        compozite.
-      </h2>
-      <p class="text-gray-600 text-lg md:text-xl max-w-2xl about-subtext">
-        Fiecare piesă de mobilier pe care o creăm este rezultatul unei pasiuni
-        pentru perfecțiune și al unui respect profund pentru tradiția
-        mâneșugului, combinat cu tehnologii moderne de producție.
-      </p>
-      <div class="mt-4 about-cta opacity-0 translate-y-4">
-        <BubbleButton
-          href="/about"
-          variant="primary"
-          class="!px-10 !py-4 !border !border-primary/20"
+  <div class="container mx-auto px-4 md:px-8 relative z-10">
+    <!-- Split Layout -->
+    <div class="flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">
+      <!-- Left Column: Sticky Headline -->
+      <div class="lg:w-1/2 lg:sticky lg:top-32 self-start">
+        <h2
+          class="about-headline font-serif text-4xl md:text-6xl lg:text-7xl text-primary leading-[1.1] mb-8 lg:mb-0 opacity-0 translate-y-8"
         >
-          Află mai multe
-        </BubbleButton>
+          Peste 15 ani de <br />
+          <span class="text-accent italic">excelență</span> în <br />
+          arta lemnului.
+        </h2>
+
+        <!-- Decoration Line (Desktop) -->
+        <div
+          class="hidden lg:block w-24 h-[1px] bg-primary/20 mt-12 origin-left scale-x-0 about-line"
+        >
+        </div>
+      </div>
+
+      <!-- Right Column: Content & Imagery -->
+      <div class="lg:w-1/2 flex flex-col gap-12 lg:pt-24">
+        <!-- Text Block -->
+        <div class="about-text-block opacity-0 translate-y-8">
+          <p
+            class="text-lg md:text-xl text-primary/80 leading-relaxed max-w-xl"
+          >
+            Fiecare piesă de mobilier pe care o creăm este rezultatul unei
+            pasiuni pentru perfecțiune și al unui respect profund pentru
+            tradiția meșteșugului, combinat cu tehnologii moderne de producție.
+          </p>
+          <p
+            class="text-lg md:text-xl text-primary/80 leading-relaxed max-w-xl mt-6"
+          >
+            Nu producem doar mobilă, ci conturăm spațiul în care viața ta se
+            desfășoară. De la concept la montaj, detaliul face diferența.
+          </p>
+        </div>
+
+        <!-- Image with Parallax -->
+        <div
+          class="relative w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-sm about-image-wrapper opacity-0 scale-95"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?q=80&w=1200&auto=format&fit=crop"
+            alt="Craftsmanship detail"
+            class="absolute inset-0 w-full h-[120%] object-cover object-center about-image"
+          />
+          <!-- Subtle Grain Overlay -->
+          <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
+        </div>
+
+        <!-- CTA -->
+        <div class="about-cta opacity-0 translate-y-4">
+          <BubbleButton href="/about" variant="primary" class="!px-10 !py-4">
+            Descoperă Povestea
+          </BubbleButton>
+        </div>
       </div>
     </div>
   </div>
@@ -42,111 +76,70 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
   gsap.registerPlugin(ScrollTrigger);
 
-  initAboutAnim();
-  document.addEventListener("astro:page-load", initAboutAnim);
-
-  function initAboutAnim() {
+  function initAboutRedesign() {
     const section = document.querySelector("#about-section");
     if (!section) return;
 
-    // Mobile detection - disable expensive blur on mobile
-    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
-
-    // Helper: Split text into words for stagger effect
-    const splitTextToWords = (selector: string) => {
-      const element = section.querySelector(selector);
-      if (!element) return;
-      const text = element.textContent?.trim() || "";
-      element.innerHTML = text
-        .split(" ")
-        .map(
-          (word) =>
-            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform" style="filter: ${isMobile ? "none" : "blur(8px)"}">${word}&nbsp;</span></span>`,
-        )
-        .join("");
-    };
-
-    // Prepare text for animation
-    splitTextToWords(".about-title");
-    splitTextToWords(".about-subtext");
-
+    // --- ANIMATIONS ---
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
+      // 1. Headline Reveal
+      gsap.to(".about-headline", {
         scrollTrigger: {
-          trigger: ".about-card",
-          start: "top bottom",
-          end: "center 60%",
-          scrub: 1,
+          trigger: "#about-section",
+          start: "top 70%",
         },
+        y: 0,
+        opacity: 1,
+        duration: 1.2,
+        ease: "power3.out",
       });
 
-      // 1. Card Reveal (Scale + Fade + Blur) - No blur on mobile for performance
-      tl.from(".about-card", {
-        scale: 0.9,
-        y: 100,
-        opacity: 0,
-        filter: isMobile ? "none" : "blur(10px)",
-        duration: 1, // Relative duration in scrub
+      // 2. Line Expansion
+      gsap.to(".about-line", {
+        scrollTrigger: {
+          trigger: "#about-section",
+          start: "top 60%",
+        },
+        scaleX: 1,
+        duration: 1,
+        delay: 0.5,
         ease: "power2.out",
       });
 
-      // 2. Title Staggered Reveal - skip blur on mobile for performance
-      tl.to(
-        ".about-title span span",
-        {
-          y: 0,
-          opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
-          duration: 1,
-          stagger: isMobile ? 0.03 : 0.1, // Faster stagger on mobile
-          ease: "none",
-        },
-        "-=0.5",
-      );
-
-      // 3. Subtext Staggered Reveal
-      tl.to(
-        ".about-subtext span span",
-        {
-          y: 0,
-          opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
-          duration: 1,
-          stagger: isMobile ? 0.02 : 0.05,
-          ease: "none",
-        },
-        "-=0.5",
-      );
-
-      // 4. Button Reveal
-      tl.fromTo(
+      // 3. Right Column Stagger
+      const rightElements = [
+        ".about-text-block",
+        ".about-image-wrapper",
         ".about-cta",
-        {
-          y: 20,
-          opacity: 0,
-          filter: isMobile ? "none" : "blur(10px)",
+      ];
+      gsap.to(rightElements, {
+        scrollTrigger: {
+          trigger: ".about-text-block",
+          start: "top 80%",
         },
-        {
-          y: 0,
-          opacity: 1,
-          filter: isMobile ? "none" : "blur(0px)",
-          duration: 0.5,
-          ease: "none",
-        },
-        "-=0.2",
-      );
+        y: 0,
+        scale: 1,
+        opacity: 1,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power3.out",
+      });
 
-      // 5. Parallax for Background Shape
-      gsap.to(".about-bg-shape", {
-        y: "20%",
+      // 4. Image Parallax
+      gsap.to(".about-image", {
+        y: "-20%", // Move up inside container
         ease: "none",
         scrollTrigger: {
-          trigger: "#about-section",
+          trigger: ".about-image-wrapper",
           start: "top bottom",
           end: "bottom top",
-          scrub: 1,
+          scrub: true,
         },
       });
     }, section);
   }
+
+  // Init on load and transition
+  initAboutRedesign();
+  document.addEventListener("astro:page-load", initAboutRedesign);
 </script>
