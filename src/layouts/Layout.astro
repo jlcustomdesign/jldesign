@@ -45,9 +45,9 @@ const { title } = Astro.props;
     >
       <div id="smooth-content">
         <slot />
+        <slot name="footer" />
       </div>
     </div>
-    <slot name="footer" />
 
     <script>
       import { initSmoothScroll } from "../scripts/smooth-scroll";

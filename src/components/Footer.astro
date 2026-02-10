@@ -148,10 +148,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
 </footer>
 
 <style>
-  #main-footer {
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-  }
+  /* Footer styles cleaned up */
 </style>
 
 <script>
@@ -181,10 +178,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
       const h = footer.offsetHeight;
 
-      // 1. DOM: Move inside scroll container if not already
-      if (smoothContent && footer.parentElement !== smoothContent) {
-        smoothContent.appendChild(footer);
-      }
+      // 1. DOM: Already inside smooth-content via Layout.astro
 
       // 2. Styles (Nuclear Option)
       footer.style.position = "relative";
@@ -209,9 +203,6 @@ import BubbleButton from "./ui/BubbleButton.astro";
       if (footerCard) {
         gsap.set(footerCard, { y: 0, scale: 1, filter: "none" });
       }
-
-      // 5. Reveal Footer (Prevent Flash)
-      footer.style.opacity = "1";
 
       // Force refresh multiple times to handle async layout shifts
       ScrollTrigger.refresh();
