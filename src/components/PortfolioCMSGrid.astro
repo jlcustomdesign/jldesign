@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 
+
 // Fetch items from Keystatic CMS
 const portfolioEntries = await getCollection('portfolio');
 const portfolio = portfolioEntries.map(entry => entry.data);
@@ -25,16 +26,17 @@ portfolio.forEach((item, i) => {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-[1800px] mx-auto">
         {
           columns.map((col, colIndex) => (
-            <div class="flex flex-col gap-12 portfolio-cms-column" data-col-index={colIndex}>
-              {col.map((item) => (
+            <div class="flex flex-col gap-12 portfolio-cms-column will-change-transform" data-col-index={colIndex}>
+              {col.map((item, i) => (
                 <div class="group relative w-full cursor-pointer">
                   <!-- Image Wrapper -->
                   <div class="relative w-full overflow-hidden rounded-[2rem] bg-gray-900 aspect-[3/4] md:aspect-[4/5]">
                     <img
                       src={item.image}
                       alt={item.name}
-                      loading="lazy"
-                      class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      decoding="async"
+                      loading={colIndex < 2 && i < 2 ? "eager" : "lazy"} 
+                      class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 will-change-transform"
                     />
                     
                     <!-- Overlay (Minimalist) -->
@@ -65,6 +67,27 @@ portfolio.forEach((item, i) => {
       </div>
     )}
   </div>
+
+  <!-- Lightbox Modal -->
+  <div id="portfolio-lightbox" class="fixed inset-0 z-[100] bg-black/95 opacity-0 pointer-events-none flex items-center justify-center p-4">
+    <!-- Close Button -->
+    <button id="lightbox-close" class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white transition-colors bg-black/20 hover:bg-black/50 rounded-full">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    
+    <!-- Prev Button -->
+    <button id="lightbox-prev" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-50 p-3 text-white/50 hover:text-white transition-colors bg-black/20 hover:bg-black/50 rounded-full hidden md:block">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+
+    <!-- Image -->
+    <img id="lightbox-img" src="" alt="Project Fullscreen" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" />
+
+    <!-- Next Button -->
+    <button id="lightbox-next" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 p-3 text-white/50 hover:text-white transition-colors bg-black/20 hover:bg-black/50 rounded-full hidden md:block">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
 </section>
 
 <script>
@@ -74,55 +97,117 @@ portfolio.forEach((item, i) => {
   gsap.registerPlugin(ScrollTrigger);
 
   function initGridAnim() {
+    // ... Existing Grid/Scroll Animation Code ...
     const cols = document.querySelectorAll(".portfolio-cms-column");
-    if (cols.length === 0) return;
-    
-    // Check if desktop (3 columns)
-    if (window.innerWidth >= 1024) {
-        // Middle column (index 1) moves differently
+    // (Preserve existing scroll logic here)
+    if (window.innerWidth >= 1024 && cols.length > 0) {
         gsap.to(".portfolio-cms-column[data-col-index='1']", {
-            y: "5%",
-            ease: "none",
-            scrollTrigger: {
-                trigger: "#portfolio-cms-section",
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true
-            }
+            y: "5%", ease: "none",
+            scrollTrigger: { trigger: "#portfolio-cms-section", start: "top bottom", end: "bottom top", scrub: true }
         });
-        
-         gsap.to([".portfolio-cms-column[data-col-index='0']", ".portfolio-cms-column[data-col-index='2']"], {
-            y: "-5%",
-            ease: "none",
-            scrollTrigger: {
-                trigger: "#portfolio-cms-section",
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true
-            }
+        gsap.to([".portfolio-cms-column[data-col-index='0']", ".portfolio-cms-column[data-col-index='2']"], {
+            y: "-5%", ease: "none",
+            scrollTrigger: { trigger: "#portfolio-cms-section", start: "top bottom", end: "bottom top", scrub: true }
         });
     }
 
-    // Reveal Animation for items
     const items = document.querySelectorAll(".portfolio-cms-column > div");
-    items.forEach((item) => {
+    items.forEach((item, index) => {
+        // Performance hint
+        gsap.set(item, { willChange: "transform, opacity" });
+
         gsap.fromTo(item, 
             { opacity: 0, y: 50 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: item,
-                    start: "top 90%",
-                    end: "bottom 20%",
-                    toggleActions: "play none none reverse"
+            { 
+                opacity: 1, 
+                y: 0, 
+                duration: 1, 
+                ease: "power3.out", 
+                force3D: true, // Hardware acceleration
+                scrollTrigger: { 
+                    trigger: item, 
+                    start: "top 90%", 
+                    end: "bottom 20%", 
+                    toggleActions: "play none none reverse",
+                    fastScrollEnd: true // Prevent glitches on fast scroll
                 }
             }
         );
+        
+        // LIGHTBOX CLICK LISTENER
+        item.addEventListener("click", () => openLightbox(index));
     });
   }
+
+  // LIGHTBOX LOGIC
+  const lightbox = document.getElementById("portfolio-lightbox");
+  const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
+  const closeBtn = document.getElementById("lightbox-close");
+  const prevBtn = document.getElementById("lightbox-prev");
+  const nextBtn = document.getElementById("lightbox-next");
+  
+  // Store all image sources for navigation
+  let allImages: string[] = [];
+  let currentIndex = 0;
+
+  function updateImageSources() {
+      const imgs = document.querySelectorAll(".portfolio-cms-column > div img");
+      allImages = Array.from(imgs).map(img => (img as HTMLImageElement).src);
+  }
+
+  function showImage(index: number) {
+      if (!lightboxImg || allImages.length === 0) return;
+      
+      // Wrap around
+      if (index < 0) index = allImages.length - 1;
+      if (index >= allImages.length) index = 0;
+      
+      currentIndex = index;
+      
+      // Fade out/in for transition
+      gsap.to(lightboxImg, { opacity: 0.5, duration: 0.1, onComplete: () => {
+          lightboxImg.src = allImages[currentIndex];
+          gsap.to(lightboxImg, { opacity: 1, duration: 0.2 });
+      }});
+  }
+
+  function openLightbox(index: number) {
+    if (!lightbox) return;
+    updateImageSources(); // Ensure fresh list
+    
+    // Initial Show
+    currentIndex = index;
+    if (lightboxImg) lightboxImg.src = allImages[currentIndex];
+
+    gsap.to(lightbox, { autoAlpha: 1, duration: 0.3, ease: "power2.out" });
+    if (lightboxImg) gsap.fromTo(lightboxImg, { scale: 0.95 }, { scale: 1, duration: 0.4, ease: "back.out(1.2)" });
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    gsap.to(lightbox, { autoAlpha: 0, duration: 0.3, ease: "power2.in" });
+    document.body.style.overflow = "";
+  }
+
+  // Event Listeners
+  if (closeBtn) closeBtn.addEventListener("click", (e) => { e.stopPropagation(); closeLightbox(); });
+  if (prevBtn) prevBtn.addEventListener("click", (e) => { e.stopPropagation(); showImage(currentIndex - 1); });
+  if (nextBtn) nextBtn.addEventListener("click", (e) => { e.stopPropagation(); showImage(currentIndex + 1); });
+
+  if (lightbox) {
+      lightbox.addEventListener("click", (e) => {
+          if (e.target === lightbox) closeLightbox();
+      });
+  }
+  
+  // Keyboard Nav
+  document.addEventListener("keydown", (e) => {
+      if (!lightbox || getComputedStyle(lightbox).opacity === "0") return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+      if (e.key === "ArrowRight") showImage(currentIndex + 1);
+  });
 
   // Run on load and transitions
   initGridAnim();

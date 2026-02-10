@@ -24,7 +24,7 @@
     top: 0;
     left: 0;
     mix-blend-mode: difference;
-    z-index: 9999;
+    z-index: 10000;
     pointer-events: none;
     opacity: 0; /* Hidden initially until moved */
   }
@@ -40,13 +40,13 @@
   function initCustomCursor() {
     // Only run on desktop/fine pointers
     const isDesktop = window.matchMedia(
-      "(hover: hover) and (pointer: fine)"
+      "(hover: hover) and (pointer: fine)",
     ).matches;
     if (!isDesktop) return;
 
     const bigBall = document.querySelector(".cursor__ball--big") as HTMLElement;
     const smallBall = document.querySelector(
-      ".cursor__ball--small"
+      ".cursor__ball--small",
     ) as HTMLElement;
 
     if (!bigBall || !smallBall) return;
@@ -99,7 +99,7 @@
 
     // Select Elements
     const buttons = document.querySelectorAll(
-      'a, button, .hoverable, [role="button"]'
+      'a, button, .hoverable, [role="button"]',
     );
     const titles = document.querySelectorAll("h1, h2, h3, h4, .title-hover");
 
