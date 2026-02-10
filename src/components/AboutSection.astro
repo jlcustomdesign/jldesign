@@ -10,28 +10,40 @@ import BubbleButton from "./ui/BubbleButton.astro";
 >
   <div class="container mx-auto px-4 md:px-8 relative z-10">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-      <!-- Container 1: Headline & CTA -->
-      <div
-        class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-left opacity-0 translate-y-8 flex flex-col justify-between h-full min-h-[400px]"
-      >
-        <h2
-          class="about-headline font-serif text-4xl md:text-5xl lg:text-7xl text-primary leading-[1.1]"
+      <!-- Left Column: Stacked Containers -->
+      <div class="flex flex-col gap-8 h-full">
+        <!-- Container 1: Headline -->
+        <div
+          class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-headline opacity-0 translate-y-8"
         >
-          Peste 15 ani de <br />
-          <span class="text-accent">excelență</span> în <br />
-          arta lemnului.
-        </h2>
+          <h2
+            class="about-headline font-serif text-4xl md:text-5xl lg:text-7xl text-primary leading-[1.1]"
+          >
+            Peste 15 ani de <br />
+            <span class="text-accent">excelență</span> în <br />
+            arta lemnului.
+          </h2>
+        </div>
 
-        <div class="mt-12 about-cta">
-          <BubbleButton href="/about" variant="primary" class="!px-10 !py-4">
-            Descoperă Povestea
-          </BubbleButton>
+        <!-- Container 2: CTA -->
+        <div
+          class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-cta opacity-0 translate-y-8 flex flex-col justify-center flex-grow"
+        >
+          <p class="text-lg text-primary/80 mb-8 max-w-sm">
+            Ești gata să transformi ideile în realitate? Haide să discutăm
+            despre proiectul tău.
+          </p>
+          <div class="about-cta">
+            <BubbleButton href="/about" variant="primary" class="!px-10 !py-4">
+              Descoperă Povestea
+            </BubbleButton>
+          </div>
         </div>
       </div>
 
-      <!-- Container 2: Subtitle & Image -->
+      <!-- Right Column: Subtitle & Image (Container 3) -->
       <div
-        class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-right opacity-0 translate-y-8 flex flex-col gap-8"
+        class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card-right opacity-0 translate-y-8 flex flex-col gap-8 h-full"
       >
         <!-- Text Block -->
         <div class="about-text-block">
@@ -73,10 +85,10 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
     // --- ANIMATIONS ---
     const ctx = gsap.context(() => {
-      // 1. Left Card Reveal
-      gsap.to(".about-card-left", {
+      // 1. Headline Card Reveal
+      gsap.to(".about-card-headline", {
         scrollTrigger: {
-          trigger: ".about-card-left",
+          trigger: ".about-card-headline",
           start: "top 85%",
         },
         y: 0,
@@ -85,7 +97,20 @@ import BubbleButton from "./ui/BubbleButton.astro";
         ease: "power3.out",
       });
 
-      // 2. Right Card Reveal (Staggered)
+      // 2. CTA Card Reveal (Delayed)
+      gsap.to(".about-card-cta", {
+        scrollTrigger: {
+          trigger: ".about-card-cta",
+          start: "top 90%", // Triggers slightly later or when in view
+        },
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        delay: 0.1,
+        ease: "power3.out",
+      });
+
+      // 3. Right Card Reveal (Delayed)
       gsap.to(".about-card-right", {
         scrollTrigger: {
           trigger: ".about-card-right",
@@ -94,12 +119,9 @@ import BubbleButton from "./ui/BubbleButton.astro";
         y: 0,
         opacity: 1,
         duration: 1,
-        delay: 0.2, // Slight delay after left
+        delay: 0.2,
         ease: "power3.out",
       });
-
-      // 3. Staggered Headline Words (Optional, keep simple fade for now as per request "same reveal animation")
-      // User asked for "same reveal as they had it before". Previous was fade-up.
 
       // 4. Image Parallax
       gsap.to(".about-image", {
