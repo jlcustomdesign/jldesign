@@ -42,7 +42,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
       <!-- Inline SVG -->
       <div
         class="w-full h-auto relative z-0 opacity-0 about-svg-container"
-        style="max-height: 60vh;"
+        style="max-height: 85vh;"
       >
         <svg
           width="100%"
@@ -62,6 +62,15 @@ import BubbleButton from "./ui/BubbleButton.astro";
               class="text-primary"></path>
           </g>
         </svg>
+      </div>
+
+      <!-- CTA Button (Restored) -->
+      <div
+        class="absolute bottom-8 md:bottom-12 z-20 about-cta opacity-0 translate-y-4"
+      >
+        <BubbleButton href="/about" variant="primary" class="!px-10 !py-4">
+          Află Povestea Noastră
+        </BubbleButton>
       </div>
     </div>
   </div>
@@ -153,7 +162,19 @@ import BubbleButton from "./ui/BubbleButton.astro";
         "-=1",
       );
 
-      // 4. Create a pause at the end for reading
+      // 4. CTA Button Reveal
+      tl.to(
+        ".about-cta",
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          ease: "back.out(1.7)",
+        },
+        "-=0.5",
+      );
+
+      // 5. Create a pause at the end for reading
       tl.to({}, { duration: 1 });
     }, section);
   }
