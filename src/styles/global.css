@@ -34,3 +34,12 @@ html, body {
 html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none;
 }
+
+/* Prevent Chrome mobile viewport resize jank when bottom bar hides/shows */
+html {
+  height: 100%;
+  overflow-anchor: none;
+}
+body {
+  min-height: 100%;
+}
