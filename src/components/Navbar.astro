@@ -19,16 +19,20 @@ const links = [
   >
     <!-- Logo (Hidden initially, revealed on scroll) -->
     <div
-      id="nav-logo-wrapper"
-      class="opacity-0 scale-0 flex justify-center md:justify-start origin-center md:origin-left absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0 md:w-auto w-auto"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0 flex justify-center md:justify-start pointer-events-none md:pointer-events-auto"
     >
-      <a
-        id="nav-logo"
-        href="/"
-        class="nav-text font-serif text-xl font-bold tracking-tight whitespace-nowrap"
+      <div
+        id="nav-logo-wrapper"
+        class="opacity-0 scale-0 flex justify-center md:justify-start origin-center md:origin-left md:w-auto w-auto pointer-events-auto"
       >
-        JL CUSTOM DESIGN
-      </a>
+        <a
+          id="nav-logo"
+          href="/"
+          class="nav-text font-serif text-xl font-bold tracking-tight whitespace-nowrap block text-center"
+        >
+          JL CUSTOM DESIGN
+        </a>
+      </div>
     </div>
 
     <!-- Links (Centered Absolutely) -->
