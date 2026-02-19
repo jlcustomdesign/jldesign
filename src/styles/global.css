@@ -35,11 +35,16 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none;
 }
 
-/* Prevent Chrome mobile viewport resize jank when bottom bar hides/shows */
+/* Root background: dark to match hero and prevent Safari/Chrome bar color issues */
+html, body {
+  background-color: #1a1a1a;
+  margin: 0;
+  padding: 0;
+}
 html {
   overflow-anchor: none;
-  background-color: white; /* Safari uses this for address bar tint; white = neutral */
 }
 body {
-  min-height: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available; /* Fill safe area on iOS */
 }
