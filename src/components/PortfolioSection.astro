@@ -86,11 +86,11 @@ portfolio.forEach((item, i) => {
                   />
                   
                   <!-- Overlay: Visible on Hover (Glassmorphism) -->
-                  <div class="absolute inset-0 bg-black/30 backdrop-blur-sm border border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-500 z-10 flex flex-col justify-center items-center text-center p-6">
-                    <h3 class="font-serif text-2xl text-accent translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
+                  <div class="absolute inset-0 bg-black/30 backdrop-blur-sm border border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-500 z-10 flex flex-col justify-center items-center text-center p-6 portfolio-overlay">
+                    <h3 class="font-serif text-2xl text-accent translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100 portfolio-text">
                       {item.name}
                     </h3>
-                     <p class="text-sm font-medium text-gray-300 mt-1 uppercase tracking-wider translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-200">
+                     <p class="text-sm font-medium text-gray-300 mt-1 uppercase tracking-wider translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-200 portfolio-text">
                       {item.material}
                     </p>
                   </div>
@@ -103,6 +103,18 @@ portfolio.forEach((item, i) => {
     </div>
   </div>
 </section>
+
+<style>
+  @media (hover: none) {
+    .portfolio-overlay {
+      opacity: 1 !important;
+      background-color: rgba(0, 0, 0, 0.4); /* Slightly darker for better readability without blur */
+    }
+    .portfolio-text {
+      transform: translateY(0) !important;
+    }
+  }
+</style>
 
 <script>
   import { gsap } from "gsap";
@@ -117,19 +129,9 @@ portfolio.forEach((item, i) => {
     const cols = document.querySelectorAll(".portfolio-column");
     if (cols.length === 0) return;
 
-    let ctx = gsap.context(() => {
-        // Performance configs
-        gsap.config({ autoSleep: 60, force3D: true, nullTargetWarn: false });
-
+    const setupParallax = (range: number) => {
         cols.forEach((col, i) => {
             const isOddVisual = (i + 1) % 2 !== 0; 
-            
-            // Movement: Total range 200px
-            // Odd (Up): Start at +100 (Down), End at -100 (Up)
-            // Even (Down): Start at -100 (Up), End at +100 (Down)
-            // This creates a "crossing" effect where they shear past each other
-            
-            const range = 100;
             const startY = isOddVisual ? range : -range;
             const endY = isOddVisual ? -range : range;
 
@@ -147,25 +149,35 @@ portfolio.forEach((item, i) => {
                 }
             );
         });
+    };
 
-        // Image Parallax (Subtle internal movement)
-        const images = document.querySelectorAll(".portfolio-img");
-        images.forEach((img) => {
-             gsap.to(img, {
-                 y: "10%",
-                 ease: "none",
-                 scrollTrigger: {
-                     trigger: img.parentElement,
-                     start: "top bottom",
-                     end: "bottom top",
-                     scrub: true
-                 }
-             });
-        });
+    let mm: any = ScrollTrigger.matchMedia({
+        // Desktop/Tablet: Full range
+        "(min-width: 768px)": function() {
+            setupParallax(100);
+        },
+        // Mobile: Reduced range
+        "(max-width: 767px)": function() {
+            setupParallax(30);
+        }
+    });
 
-    }, section);
+    // Image Parallax (Subtle internal movement) - Always minimal
+    const images = document.querySelectorAll(".portfolio-img");
+    images.forEach((img) => {
+            gsap.to(img, {
+                y: "10%",
+                ease: "none",
+                scrollTrigger: {
+                    trigger: img.parentElement,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+    });
 
-    return () => ctx.revert();
+    return () => mm.revert();
   }
 
   // Run on load and transitions

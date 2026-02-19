@@ -18,9 +18,7 @@ CATEGORY_ORDER.forEach(cat => groupedProjects[cat] = []);
 // Distribute
 allProjects.forEach(project => {
     let cat = project.category || 'Altele';
-    // Normalize if category matches one of our keys
     if (!groupedProjects[cat]) cat = 'Altele';
-    
     groupedProjects[cat].push(project);
 });
 
@@ -51,7 +49,7 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
                         </h2>
                      </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full" id={`grid-${category}`}>
                         {items.map((item, index) => (
                             <div 
                                 class={`group relative w-full cursor-pointer project-card ${index >= 3 ? 'hidden' : ''}`} 
@@ -90,12 +88,18 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
                     </div>
 
                     {hasMore && (
-                        <div class="mt-12 flex justify-center">
+                        <div class="mt-12 flex justify-center gap-4">
                             <button 
                                 class="view-more-btn px-8 py-3 rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 uppercase tracking-widest text-sm font-bold"
                                 data-target-category={category}
                             >
                                 Vezi mai multe
+                            </button>
+                             <button 
+                                class="view-less-btn hidden px-8 py-3 rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 uppercase tracking-widest text-sm font-bold"
+                                data-target-category={category}
+                            >
+                                Vezi mai puțin
                             </button>
                         </div>
                     )}
@@ -106,7 +110,7 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
     )}
   </div>
 
-  <!-- Lightbox Modal (Simplified) -->
+  <!-- Lightbox (Simplified) -->
   <div id="portfolio-lightbox" class="fixed inset-0 z-[9999] bg-black/95 opacity-0 pointer-events-none flex items-center justify-center p-4 transition-opacity duration-300">
     <button id="lightbox-close" class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white bg-black/20 rounded-full">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -115,6 +119,7 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
   </div>
 </section>
 
+<!-- Module script for GSAP animations and lightbox only -->
 <script>
   import { initTextAnimations } from "../utils/RevealAnimationHandler";
   import { gsap } from "gsap";
@@ -122,47 +127,15 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
   
   gsap.registerPlugin(ScrollTrigger);
 
-  // Init Animations
-  function init() {
+  function initPortfolioAnimations() {
      const section = document.querySelector("#portfolio-cms-section");
      if(section) initTextAnimations(section as HTMLElement);
      
-     // View More Logic
-     const buttons = document.querySelectorAll('.view-more-btn');
-     buttons.forEach(btn => {
-         btn.addEventListener('click', (e) => {
-             const button = e.target as HTMLElement;
-             const category = button.getAttribute('data-target-category');
-             if(!category) return;
-             
-             // Find wrapper
-             const wrapper = button.closest('.category-section');
-             if(!wrapper) return;
-             
-             // Find hidden items
-             const hiddenItems = wrapper.querySelectorAll('.project-card.hidden');
-             
-             // Reveal them with fade in
-             hiddenItems.forEach((item, i) => {
-                 item.classList.remove('hidden');
-                 gsap.fromTo(item, 
-                    { opacity: 0, y: 20 }, 
-                    { opacity: 1, y: 0, duration: 0.5, delay: i * 0.1 }
-                 );
-             });
-             
-             // Hide button
-             button.remove();
-         });
-     });
-     
-     // Lightbox Logic
+     // Lightbox Logic (Delegation)
      const lightbox = document.getElementById('portfolio-lightbox');
      const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
      const closeBtn = document.getElementById('lightbox-close');
      
-     // Open Logic attached to cards via event delegation or direct
-     // Since cards are dynamic/unhidden, safer to use delegation on section
      if(section && lightbox && lightboxImg) {
          section.addEventListener('click', (e) => {
              const target = e.target as HTMLElement;
@@ -192,5 +165,94 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
      }
   }
 
-  document.addEventListener("astro:page-load", init);
+  document.addEventListener("astro:page-load", initPortfolioAnimations);
 </script>
+
+<!-- Inline script for View More / View Less - runs directly in browser, no bundling -->
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Find all "View More" buttons
+    var moreButtons = document.querySelectorAll('.view-more-btn');
+    var lessButtons = document.querySelectorAll('.view-less-btn');
+    
+    moreButtons.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Find parent category section
+        var section = btn.closest('.category-section');
+        if (!section) return;
+        
+        var grid = section.querySelector('.grid');
+        if (!grid) return;
+        
+        var allCards = grid.querySelectorAll('.project-card');
+        var currentVisible = parseInt(section.getAttribute('data-visible') || '3');
+        var nextVisible = currentVisible + 6;
+        var revealed = 0;
+        
+        for (var i = currentVisible; i < nextVisible && i < allCards.length; i++) {
+          var card = allCards[i];
+          card.classList.remove('hidden');
+          card.style.display = '';
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          
+          // Animate in with a slight delay per card
+          (function(el, delay) {
+            setTimeout(function() {
+              el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+              el.style.opacity = '1';
+              el.style.transform = 'translateY(0)';
+            }, delay);
+          })(card, revealed * 100);
+          
+          revealed++;
+        }
+        
+        section.setAttribute('data-visible', String(nextVisible));
+        
+        // If we've shown all items, swap buttons
+        if (nextVisible >= allCards.length) {
+          btn.classList.add('hidden');
+          var lessBtn = section.querySelector('.view-less-btn');
+          if (lessBtn) lessBtn.classList.remove('hidden');
+        }
+      });
+    });
+    
+    lessButtons.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        var section = btn.closest('.category-section');
+        if (!section) return;
+        
+        var grid = section.querySelector('.grid');
+        if (!grid) return;
+        
+        var allCards = grid.querySelectorAll('.project-card');
+        
+        for (var i = 3; i < allCards.length; i++) {
+          allCards[i].classList.add('hidden');
+          allCards[i].style.display = '';
+          allCards[i].style.opacity = '';
+          allCards[i].style.transform = '';
+          allCards[i].style.transition = '';
+        }
+        
+        section.setAttribute('data-visible', '3');
+        
+        // Scroll back to section
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Swap buttons
+        btn.classList.add('hidden');
+        var moreBtn = section.querySelector('.view-more-btn');
+        if (moreBtn) moreBtn.classList.remove('hidden');
+      });
+    });
+  });
+</script>
+

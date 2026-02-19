@@ -382,7 +382,6 @@ const steps = [
                   filter: "blur(0px)",
                   duration: 1,
                   ease: "power2.out",
-                  // Enable pointer events only once fully revealed
                   onComplete: () => {
                     gsap.set(imgEl, { pointerEvents: "auto" });
                   },
@@ -411,33 +410,12 @@ const steps = [
       },
 
       // --------------------------------------------------------------------------
-      // MOBILE: REVEAL ANIMATION (SCROLLTRIGGER BATCH)
+      // MOBILE: STATIC (NO GSAP ANIMATION) TO PREVENT FLASH/RELOAD
       // --------------------------------------------------------------------------
       "(max-width: 1023px)": function () {
-        // Mobile Reveal: Fade Up for groups
-        // We target the container of each step (Image + Text)
-        const mobileGroups = section.querySelectorAll(
-          ".flex.flex-col > .flex.flex-col",
-        );
-
-        if (mobileGroups.length) {
-          ScrollTrigger.batch(mobileGroups, {
-            start: "top 85%",
-            onEnter: (batch) =>
-              gsap.fromTo(
-                batch,
-                { opacity: 0, y: 30 },
-                {
-                  opacity: 1,
-                  y: 0,
-                  duration: 0.8,
-                  stagger: 0.2,
-                  ease: "power2.out",
-                },
-              ),
-            once: true, // Keep it clean
-          });
-        }
+        // Deliberately empty! The elements are visible by default in HTML/CSS.
+        // This prevents the JS from hiding them and animating them back in,
+        // which was causing the visual "reload" or flash.
       },
     });
   }

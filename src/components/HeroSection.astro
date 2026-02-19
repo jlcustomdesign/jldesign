@@ -5,7 +5,7 @@ const heroImage = "/Images/optimized/hero-image.webp";
 ---
 
 <section
-  class="relative min-h-screen flex items-center bg-secondary overflow-hidden transition-[height] duration-300"
+  class="relative h-[100svh] flex items-center bg-secondary overflow-hidden"
   id="hero-section"
   data-theme="dark"
   style="z-index: 1;"
@@ -25,9 +25,9 @@ const heroImage = "/Images/optimized/hero-image.webp";
         xmlns="http://www.w3.org/2000/svg"
         width="100%"
         height="100%"
-        preserveAspectRatio="xMidYMid meet"
-        class="w-[98%] h-full opacity-0"
-        style="transform-origin: center center; max-height: 100dvh;"
+        preserveAspectRatio="none"
+        class="w-full h-full opacity-0"
+        style="transform-origin: center center;"
       >
         <defs>
           <clipPath id="heroClip">
@@ -85,14 +85,14 @@ const heroImage = "/Images/optimized/hero-image.webp";
         <BubbleButton
           href="/contact"
           variant="primary"
-          class="hero-btn w-full xl:w-auto text-center invisible opacity-0 translate-y-4 !bg-[#1a1a1a] !text-white hover:!border-[#d4af37] border border-[#1a1a1a] !px-8 !py-4 md:!text-sm md:!px-12 md:!py-5 xl:!text-sm xl:!px-12"
+          class="hero-btn w-full xl:w-auto text-center invisible opacity-0 translate-y-4 !bg-[#1a1a1a] !text-white hover:!border-[#d4af37] border border-[#1a1a1a] !px-8 !py-4 md:!text-sm md:!px-12 md:!py-5"
         >
           Cere o ofertă
         </BubbleButton>
         <BubbleButton
           href="/portfolio"
           id="glass-btn"
-          class="hero-btn w-full xl:w-auto text-center invisible opacity-0 translate-y-4 !border-white !text-white hover:!border-[#d4af37] !bg-white/20 backdrop-blur-md hover:!bg-white/30 !px-8 !py-4 md:!text-sm md:!px-12 md:!py-5 xl:!text-sm xl:!px-12"
+          class="hero-btn w-full xl:w-auto text-center invisible opacity-0 translate-y-4 !border-white !text-white hover:!border-[#d4af37] !bg-white/20 backdrop-blur-md hover:!bg-white/30 !px-8 !py-4 md:!text-sm md:!px-12 md:!py-5"
         >
           Vezi proiecte
         </BubbleButton>

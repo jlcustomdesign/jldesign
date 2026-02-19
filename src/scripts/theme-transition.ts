@@ -44,7 +44,9 @@ export function initThemeTransition() {
                 // Process V2: Text is already white by default spread, but we ensure consistency
                 "#process-section-v2 h2", "#process-section-v2 p", "#process-section-v2 h3",
                 "#faq-section-v2 h2", "#faq-section-v2 button", "#faq-section-v2 span", "#faq-section-v2 p", "#faq-section-v2 svg",
-                ".nav-text" // Added back
+                ".nav-text", // Added back
+                ".fab-text", // FAB Ring Text
+                ".fab-bg"    // FAB Circle Background
             ].join(", ");
 
             const elements = document.querySelectorAll(selectors);
@@ -66,12 +68,21 @@ export function initThemeTransition() {
         // Animate Body to Black
         tl.to("body", { backgroundColor: "#050505", duration: duration, ease: ease }, 0);
 
-        // Animate Text to White
+        // Animate Text/Elements to White (Dark Mode)
         textElementsToWhite.forEach(el => {
-            tl.to(el, { color: "#ffffff", duration: duration, ease: ease }, 0);
-            
-            if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
-                 tl.to(el, { stroke: "#ffffff", fill: "transparent", duration: duration, ease: ease }, 0);
+            if (el.classList.contains("fab-bg")) {
+                // FAB Circle: Gold -> White Background, Icon -> Black
+                tl.to(el, { backgroundColor: "#ffffff", color: "#000000", duration: duration, ease: ease }, 0);
+            } else if (el.classList.contains("fab-text")) {
+                // FAB Ring Text: Black -> White Fill
+                 tl.to(el, { fill: "#ffffff", duration: duration, ease: ease }, 0);
+            } else {
+                // Standard Text
+                tl.to(el, { color: "#ffffff", duration: duration, ease: ease }, 0);
+                
+                if (el.tagName.toLowerCase() === 'svg' || el.tagName.toLowerCase() === 'path') {
+                     tl.to(el, { stroke: "#ffffff", fill: "transparent", duration: duration, ease: ease }, 0);
+                }
             }
         });
         

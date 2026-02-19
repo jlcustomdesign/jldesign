@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar.astro";
 import MobileMenu from "../components/MobileMenu.astro";
 import CustomCursor from "../components/ui/CustomCursor.astro";
 import ContactModal from "../components/ContactModal.astro";
+import ContactFAB from "../components/ui/ContactFAB.astro";
 
 interface Props {
   title: string;
@@ -17,7 +18,10 @@ const { title } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Mobilă la comandă - Quiet Luxury" />
-    <meta name="viewport" content="width=device-width, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, viewport-fit=cover, interactive-widget=resizes-visual"
+    />
     <meta name="theme-color" content="#111111" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
@@ -73,6 +77,7 @@ const { title } = Astro.props;
       document.addEventListener("astro:page-load", init);
     </script>
     <ContactModal />
+    <ContactFAB />
   </body>
 </html>
 

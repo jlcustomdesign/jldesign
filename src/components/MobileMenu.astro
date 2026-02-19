@@ -11,7 +11,6 @@ const links = [
 
 <div
   id="mobile-menu-overlay"
-  id="mobile-menu-overlay"
   class="fixed inset-0 z-[60] pointer-events-none opacity-0"
 >
   <!-- Background SVG Container -->
@@ -95,7 +94,7 @@ const links = [
     <!-- Close Button (Absolute) -->
     <button
       id="close-mobile-menu"
-      class="absolute top-8 right-8 p-4 text-black opacity-0"
+      class="absolute top-[calc(2rem+env(safe-area-inset-top))] right-8 p-4 text-black opacity-0"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -192,7 +191,7 @@ const links = [
           duration: 0.8,
           ease: "power3.inOut",
         },
-        i === 0 ? ">" : "<+=0.3"
+        i === 0 ? ">" : "<+=0.3",
       );
     });
 
@@ -200,7 +199,7 @@ const links = [
     // 2.5 Vertical Growth (Taller - Separate Step)
     // "It needs to grow taller (both up/down directions) after animation is finished"
     menuTimeline?.to("#menu-bg-svg", {
-      scaleY: 1.8, // Massive growth to ensure full height coverage
+      scaleY: window.matchMedia("(orientation: landscape)").matches ? 1.2 : 1.8, // Less stretch on landscape
       scaleX: 1.0,
       transformOrigin: "center center",
       duration: 0.5, // Faster stretch
@@ -217,7 +216,7 @@ const links = [
         stagger: 0.1,
         ease: "power2.out",
       },
-      "-=0.6" // Undercut the growth slightly
+      "-=0.6", // Undercut the growth slightly
     );
 
     // 4. Reveal CTA and Close Button
@@ -229,7 +228,7 @@ const links = [
         duration: 0.6,
         ease: "power2.out",
       },
-      "<"
+      "<",
     );
 
     // Logic

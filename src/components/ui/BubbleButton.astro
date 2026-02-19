@@ -108,6 +108,9 @@ const { href, class: className, id, variant = "primary" } = Astro.props;
       btn.dataset.bubbleInit = "true";
 
       btn.addEventListener("mouseenter", function (e) {
+        // Disable on touch devices to prevent stuck blobs
+        if (!window.matchMedia("(hover: hover)").matches) return;
+
         const mouseEvent = e as MouseEvent;
         // @ts-ignore
         const self = this as HTMLElement;

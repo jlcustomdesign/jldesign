@@ -11,16 +11,16 @@ const links = [
 
 <nav
   id="nav-wrapper"
-  class="fixed top-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-[24rem] mx-auto px-4 transition-all duration-500"
+  class="fixed top-[calc(3rem+env(safe-area-inset-top))] left-1/2 -translate-x-1/2 z-50 w-full max-w-[calc(100%-2rem)] md:max-w-[24rem] mx-auto px-4 transition-all duration-500"
 >
   <div
     id="navbar-container"
-    class="bg-transparent backdrop-blur-xl shadow-lg rounded-2xl px-8 py-3 flex items-center gap-8 transition-colors transition-shadow duration-300 hover:shadow-xl w-full justify-between opacity-0 scale-0 origin-center nav-dark relative"
+    class="bg-transparent backdrop-blur-xl shadow-lg rounded-2xl px-4 md:px-8 py-3 flex items-center gap-8 transition-colors transition-shadow duration-300 hover:shadow-xl w-full justify-between opacity-0 scale-0 origin-center nav-dark relative"
   >
     <!-- Logo (Hidden initially, revealed on scroll) -->
     <div
       id="nav-logo-wrapper"
-      class="opacity-0 scale-0 w-0 flex justify-start origin-left"
+      class="opacity-0 scale-0 flex justify-center md:justify-start origin-center md:origin-left absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0 md:w-auto w-auto"
     >
       <a
         id="nav-logo"
@@ -53,7 +53,7 @@ const links = [
     <!-- CTA (Hidden initially, revealed on scroll) -->
     <div
       id="nav-contact"
-      class="opacity-0 scale-0 w-0 flex justify-end origin-right"
+      class="hidden md:flex opacity-0 scale-0 w-0 justify-end origin-right"
     >
       <BubbleButton
         href="/contact"
@@ -66,7 +66,7 @@ const links = [
     <!-- Mobile Menu Toggle -->
     <button
       id="open-mobile-menu"
-      class="nav-text md:hidden transition-colors duration-300"
+      class="nav-text md:hidden transition-colors duration-300 ml-auto"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -208,9 +208,17 @@ const links = [
         const navLogoWrapper = document.querySelector("#nav-logo-wrapper");
         const navContact = document.querySelector("#nav-contact");
         if (navLogoWrapper)
-          gsap.set(navLogoWrapper, { opacity: 1, scale: 1, width: "120px" });
+          gsap.set(navLogoWrapper, {
+            opacity: 1,
+            scale: 1,
+            width: isDesktop ? "120px" : "auto",
+          });
         if (navContact)
-          gsap.set(navContact, { opacity: 1, scale: 1, width: "120px" });
+          gsap.set(navContact, {
+            opacity: 1,
+            scale: 1,
+            width: isDesktop ? "120px" : "auto",
+          });
       } else {
         // Home Desktop: Start collapsed (Hero handles reveal)
         // DO NOT animate here. Let hero-animation.ts handle the reveal after SVG loads.

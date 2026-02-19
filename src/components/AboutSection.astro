@@ -8,18 +8,20 @@ import BubbleButton from "./ui/BubbleButton.astro";
   data-theme="light"
 >
   <div class="container mx-auto px-4 md:px-8 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+    <div
+      class="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12 items-start"
+    >
       <!-- Left Column -->
-      <div class="flex flex-col gap-8 h-full">
+      <div class="contents lg:flex lg:flex-col lg:gap-8 lg:h-full">
         <!-- Headline Card -->
         <div
-          class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card"
+          class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card w-full"
           data-reveal="block"
           data-reveal-delay="0"
           data-reveal-duration="0.8"
         >
           <h2
-            class="font-serif text-4xl lg:text-6xl text-primary leading-[1.1]"
+            class="font-serif text-4xl lg:text-6xl text-primary leading-none"
             data-reveal="word-slide"
             data-reveal-delay="0.3"
             data-reveal-stagger="0.05"
@@ -32,7 +34,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
         <!-- CTA Card -->
         <div
-          class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col justify-center flex-grow"
+          class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col justify-center flex-grow order-last lg:order-none w-full"
           data-reveal="block"
           data-reveal-delay="0.2"
           data-reveal-duration="0.8"
@@ -55,7 +57,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
       <!-- Right Column -->
       <div
-        class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col gap-8 h-full"
+        class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col gap-8 h-full w-full"
         data-reveal="block"
         data-reveal-delay="0.4"
         data-reveal-duration="0.8"
@@ -63,7 +65,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
         <!-- Text Block -->
         <div>
           <p
-            class="text-lg md:text-xl text-primary/80 leading-relaxed"
+            class="text-lg md:text-xl text-primary/80 leading-normal"
             data-reveal="word-slide"
             data-reveal-delay="0.6"
           >
