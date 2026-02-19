@@ -37,9 +37,10 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 
 /* Prevent Chrome mobile viewport resize jank when bottom bar hides/shows */
 html {
-  height: 100%;
   overflow-anchor: none;
+  overscroll-behavior-y: none;
 }
 body {
   min-height: 100%;
+  overscroll-behavior-y: none;
 }
