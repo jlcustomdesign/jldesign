@@ -232,13 +232,11 @@ function runSvgAnim(path: Element, width: number, height: number) {
 
 function runHeroExitAnimation() {
     const heroSection = document.querySelector("#hero-section");
-    const heroContent = document.querySelector("#hero-content-wrapper");
+    if (!heroSection) return;
 
-    if (!heroSection || !heroContent) return;
-
-    // Unified parallax behavior for all devices
-    
-    gsap.to(heroContent, {
+    // Animate the ENTIRE section (not just content wrapper) so bg-secondary
+    // never peeks through and Safari doesn't pick up the cream color for its bar.
+    gsap.to(heroSection, {
       scale: 0.9,
       filter: "blur(8px)",
       opacity: 0.5,
@@ -246,8 +244,8 @@ function runHeroExitAnimation() {
       force3D: true,
       scrollTrigger: {
         trigger: heroSection,
-        start: "top top", // Starts pinning and blurring when top of hero hits top of viewport
-        end: "bottom top", // Ends when the scrolled height equals the section height
+        start: "top top",
+        end: "bottom top",
         scrub: 0.5,
         pin: true, 
         pinSpacing: false,
