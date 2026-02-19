@@ -109,7 +109,7 @@ const heroImage = "/Images/optimized/hero-image.webp";
       <span
         class="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-serif font-black tracking-widest uppercase text-[#1A1A1A] opacity-0 invisible hero-top-left"
       >
-        JL Design
+        JL Custom Design
       </span>
     </div>
 
@@ -159,6 +159,8 @@ const heroImage = "/Images/optimized/hero-image.webp";
 
   // Initialize animations
   initHeroAnimations();
-  // Initialize text reveal
-  initTextAnimations();
+
+  // Initialize text reveal (Scoped to this section to prevent affecting other components)
+  const section = document.querySelector("#hero-section");
+  if (section) initTextAnimations(section as HTMLElement);
 </script>

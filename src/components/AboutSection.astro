@@ -3,24 +3,26 @@ import BubbleButton from "./ui/BubbleButton.astro";
 ---
 
 <section
-  class="relative bg-[#F4F1EA] py-24 md:py-32 overflow-hidden z-20"
-  style="background-color: #F4F1EA; position: relative; z-index: 20;"
+  class="relative bg-[#F4F1EA] py-16 md:py-24 overflow-hidden z-20"
   id="about-section"
   data-theme="light"
 >
   <div class="container mx-auto px-4 md:px-8 relative z-10">
-    <div
-      class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start"
-      id="about-grid"
-    >
-      <!-- Left Column: Stacked Containers -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+      <!-- Left Column -->
       <div class="flex flex-col gap-8 h-full">
-        <!-- Container 1: Headline -->
+        <!-- Headline Card -->
         <div
-          class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card about-card-headline"
+          class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card"
+          data-reveal="block"
+          data-reveal-delay="0"
+          data-reveal-duration="0.8"
         >
           <h2
-            class="about-headline font-serif text-4xl md:text-5xl lg:text-7xl text-primary leading-[1.1]"
+            class="font-serif text-4xl lg:text-6xl text-primary leading-[1.1]"
+            data-reveal="word-slide"
+            data-reveal-delay="0.3"
+            data-reveal-stagger="0.05"
           >
             Peste 15 ani de <br />
             <span class="text-accent">excelență</span> în <br />
@@ -28,15 +30,22 @@ import BubbleButton from "./ui/BubbleButton.astro";
           </h2>
         </div>
 
-        <!-- Container 2: CTA -->
+        <!-- CTA Card -->
         <div
-          class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card about-card-cta flex flex-col justify-center flex-grow"
+          class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col justify-center flex-grow"
+          data-reveal="block"
+          data-reveal-delay="0.2"
+          data-reveal-duration="0.8"
         >
-          <p class="about-cta-text text-lg text-primary/80 mb-8 max-w-sm">
+          <p
+            class="text-lg text-primary/80 mb-8 max-w-sm"
+            data-reveal="word-slide"
+            data-reveal-delay="0.5"
+          >
             Ești gata să transformi ideile în realitate? Haide să discutăm
             despre proiectul tău.
           </p>
-          <div class="about-cta-btn">
+          <div data-reveal="block" data-reveal-delay="0.7">
             <BubbleButton href="/about" variant="dark" class="!px-10 !py-4">
               Descoperă Povestea
             </BubbleButton>
@@ -44,21 +53,28 @@ import BubbleButton from "./ui/BubbleButton.astro";
         </div>
       </div>
 
-      <!-- Right Column: Subtitle & Image (Container 3) -->
+      <!-- Right Column -->
       <div
-        class="bg-white p-8 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl about-card about-card-right flex flex-col gap-8 h-full"
+        class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col gap-8 h-full"
+        data-reveal="block"
+        data-reveal-delay="0.4"
+        data-reveal-duration="0.8"
       >
         <!-- Text Block -->
-        <div class="about-text-block">
+        <div>
           <p
-            class="about-text-p text-lg md:text-xl text-primary/80 leading-relaxed"
+            class="text-lg md:text-xl text-primary/80 leading-relaxed"
+            data-reveal="word-slide"
+            data-reveal-delay="0.6"
           >
             Fiecare piesă de mobilier pe care o creăm este rezultatul unei
             pasiuni pentru perfecțiune și al unui respect profund pentru
             tradiția meșteșugului, combinat cu tehnologii moderne de producție.
           </p>
           <p
-            class="about-text-p text-lg md:text-xl text-primary/80 leading-relaxed mt-6"
+            class="text-lg md:text-xl text-primary/80 leading-relaxed mt-6"
+            data-reveal="word-slide"
+            data-reveal-delay="0.6"
           >
             Nu producem doar mobilă, ci conturăm spațiul în care viața ta se
             desfășoară. De la concept la montaj, detaliul face diferența.
@@ -67,13 +83,15 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
         <!-- Image -->
         <div
-          class="relative w-full aspect-[4/3] overflow-hidden about-image-wrapper mt-auto"
-          style="border-radius: 2.5rem; clip-path: inset(0 round 2.5rem);"
+          class="relative w-full aspect-[4/3] overflow-hidden rounded-[2.5rem] about-image-wrapper"
+          data-reveal="block"
+          data-reveal-delay="0.6"
+          data-reveal-duration="1.0"
         >
           <img
             src="https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?q=80&w=1200&auto=format&fit=crop"
             alt="Craftsmanship detail"
-            class="absolute inset-0 w-full h-[125%] object-cover object-center about-image"
+            class="absolute inset-0 w-full h-full object-cover object-center about-image"
           />
         </div>
       </div>
@@ -82,245 +100,41 @@ import BubbleButton from "./ui/BubbleButton.astro";
 </section>
 
 <script>
+  import { initTextAnimations } from "../utils/RevealAnimationHandler";
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
 
   gsap.registerPlugin(ScrollTrigger);
 
-  function initAboutRedesign() {
+  // Initialize specific to this component just in case global init missed it or for View Transitions
+  document.addEventListener("astro:page-load", () => {
     const section = document.querySelector("#about-section");
-    if (!section) return;
+    if (section) {
+      // Pass the section as scope to prevent double-binding if called elsewhere
+      initTextAnimations(section as HTMLElement);
 
-    // --- HELPER: Manual Split Text ---
-    const splitTextToSpans = (element: HTMLElement) => {
-      if (!element || element.classList.contains("split-done")) return;
-
-      const text = element.innerText;
-      const words = text.split(/\s+/).filter((w) => w.length > 0);
-
-      element.innerHTML = words
-        .map(
-          (word) =>
-            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">${word}&nbsp;</span></span>`,
-        )
-        .join("");
-
-      element.classList.add("split-done");
-    };
-
-    // 1. Split Headline (Custom)
-    const headline = document.querySelector(".about-headline") as HTMLElement;
-    if (headline && !headline.classList.contains("split-done")) {
-      const wrapWord = (word: string) =>
-        `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">${word}&nbsp;</span></span>`;
-
-      const part1 = "Peste 15 ani de".split(" ").map(wrapWord).join("");
-      const part2 = "excelență"
-        .split(" ")
-        .map(
-          (w) =>
-            `<span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">${w}</span></span>`,
-        )
-        .join("");
-      const part3 = "în".split(" ").map(wrapWord).join("");
-      const part4 = "arta lemnului.".split(" ").map(wrapWord).join("");
-
-      headline.innerHTML = `
-         ${part1}
-         <br />
-         <span class="text-accent inline-block">
-            ${part2}
-         </span>
-         ${part3}
-         <br />
-         ${part4}
-       `;
-      headline.classList.add("split-done");
+      // Optional: Keep the subtle parallax if desired
+      gsap.to(".about-image", {
+        y: "-15%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".about-image-wrapper",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
     }
+  });
 
-    // 2. Split Paragraphs
-    const paragraphs = section.querySelectorAll(
-      ".about-cta-text, .about-text-p",
-    );
-    paragraphs.forEach((p) => splitTextToSpans(p as HTMLElement));
-
-    // --- ANIMATIONS ---
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-
-      // Desktop: Pinned Sequence
-      mm.add("(min-width: 1024px)", () => {
-        // Initial States
-        gsap.set(".about-card-headline", { x: -100, opacity: 0 });
-        gsap.set(".about-card-cta", { x: -100, opacity: 0 });
-        gsap.set(".about-card-right", { x: 100, opacity: 0 });
-
-        gsap.set(".about-headline span span", { y: "100%", opacity: 0 });
-        gsap.set(".about-cta-text span span", { y: "100%", opacity: 0 });
-        gsap.set(".about-cta-btn", { y: 30, opacity: 0 });
-        gsap.set(".about-text-p span span", { y: "100%", opacity: 0 });
-
-        // Image Wrapper Initial
-        gsap.set(".about-image-wrapper", { opacity: 0, y: 30 });
-
-        // Timeline: Scrubbed Sequence
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "+=250%",
-            pin: true,
-            scrub: 1,
-            anticipatePin: 1,
-          },
-        });
-
-        // STEP 1: CARDS STAGGERED ENTRANCE
-        tl.to(".about-card-headline", {
-          x: 0,
-          opacity: 1,
-          duration: 2,
-          ease: "power2.out",
-        })
-          .to(
-            ".about-card-cta",
-            { x: 0, opacity: 1, duration: 2, ease: "power2.out" },
-            "-=1.5",
-          )
-          .to(
-            ".about-card-right",
-            { x: 0, opacity: 1, duration: 2, ease: "power2.out" },
-            "-=1.5",
-          );
-
-        // STEP 2: TEXTS REVEAL (After cards settle)
-        tl.to(
-          ".about-headline span span",
-          {
-            y: "0%",
-            opacity: 1,
-            stagger: 0.1,
-            duration: 2,
-            ease: "power2.out",
-          },
-          "-=1.0",
-        )
-          .to(
-            ".about-cta-text span span",
-            {
-              y: "0%",
-              opacity: 1,
-              stagger: 0.05,
-              duration: 2,
-              ease: "power2.out",
-            },
-            "-=1.5",
-          )
-          .to(
-            ".about-text-p span span",
-            {
-              y: "0%",
-              opacity: 1,
-              stagger: 0.03,
-              duration: 2,
-              ease: "power2.out",
-            },
-            "-=1.8",
-          );
-
-        // STEP 3: IMAGE REVEAL (Before Button)
-        tl.to(
-          ".about-image-wrapper",
-          { opacity: 1, y: 0, duration: 2, ease: "power2.out" },
-          "-=0.5",
-        );
-
-        // STEP 4: BUTTON (LAST)
-        // Moves after image reveal
-        tl.to(
-          ".about-cta-btn",
-          { y: 0, opacity: 1, duration: 1.5, ease: "power2.out" },
-          "-=0.2",
-        ); // Slight overlap for flow
-
-        // Image Parallax
-        const img = section.querySelector(".about-image");
-        if (img) {
-          tl.to(img, { y: "-20%", duration: 8, ease: "none" }, 0);
-        }
-      });
-
-      // Mobile: Standard Triggers
-      mm.add("(max-width: 1023px)", () => {
-        gsap.from(".about-card-headline", {
-          scrollTrigger: { trigger: ".about-card-headline", start: "top 85%" },
-          x: -50,
-          opacity: 0,
-          duration: 1,
-          ease: "power2.out",
-        });
-        gsap.from(".about-card-cta", {
-          scrollTrigger: { trigger: ".about-card-cta", start: "top 85%" },
-          x: -50,
-          opacity: 0,
-          duration: 1,
-          delay: 0.2,
-          ease: "power2.out",
-        });
-        gsap.from(".about-card-right", {
-          scrollTrigger: { trigger: ".about-card-right", start: "top 85%" },
-          x: 50,
-          opacity: 0,
-          duration: 1,
-          delay: 0.4,
-          ease: "power2.out",
-        });
-
-        const revealText = (trigger: string, target: string, delay = 0) => {
-          const els = section.querySelectorAll(target);
-          if (els.length) {
-            gsap.to(els, {
-              scrollTrigger: { trigger: trigger, start: "top 85%" },
-              y: 0,
-              opacity: 1,
-              stagger: 0.05,
-              duration: 0.8,
-              delay: delay,
-              ease: "power2.out",
-            });
-          }
-        };
-
-        revealText(".about-card-headline", ".about-headline span span", 0.5);
-        revealText(".about-card-cta", ".about-cta-text span span", 0.5);
-        revealText(".about-card-right", ".about-text-p span span", 0.5);
-
-        // Image Before Button
-        gsap.from(".about-image-wrapper", {
-          scrollTrigger: { trigger: ".about-image-wrapper", start: "top 85%" },
-          opacity: 0,
-          y: 30,
-          duration: 1,
-          delay: 0.5,
-        });
-
-        // Button Last
-        gsap.from(".about-cta-btn", {
-          scrollTrigger: { trigger: ".about-card-cta", start: "top 85%" },
-          y: 30,
-          opacity: 0,
-          duration: 1,
-          delay: 0.8,
-        });
-      });
-    }, section);
-
-    ScrollTrigger.refresh();
+  // Initial fallback
+  if (document.readyState === "complete") {
+    const section = document.querySelector("#about-section");
+    if (section) initTextAnimations(section as HTMLElement);
+  } else {
+    document.addEventListener("DOMContentLoaded", () => {
+      const section = document.querySelector("#about-section");
+      if (section) initTextAnimations(section as HTMLElement);
+    });
   }
-
-  // Robust Init Pattern
-  if (document.readyState !== "loading") initAboutRedesign();
-  else document.addEventListener("DOMContentLoaded", initAboutRedesign);
-
-  document.addEventListener("astro:page-load", initAboutRedesign);
 </script>

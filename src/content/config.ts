@@ -5,6 +5,7 @@ const portfolio = defineCollection({
     name: z.string(),
     material: z.string().optional(),
     image: z.string().optional(),
+    category: z.string().optional().default('Altele'), // Add category
   }),
 });
 

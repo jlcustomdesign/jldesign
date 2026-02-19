@@ -1,219 +1,196 @@
 ---
 import { getCollection } from 'astro:content';
 
-
 // Fetch items from Keystatic CMS
 const portfolioEntries = await getCollection('portfolio');
-const portfolio = portfolioEntries.map(entry => entry.data);
+const allProjects = portfolioEntries.map(entry => entry.data);
 
-// Masonry Layout Logic - 3 columns
-type PortfolioItem = typeof portfolio[0];
-const columns: PortfolioItem[][] = [[], [], []];
-portfolio.forEach((item, i) => {
-  columns[i % 3].push(item);
+// Define Category Order
+const CATEGORY_ORDER = ['Living', 'Dormitor', 'Bucătărie', 'Baie', 'Office', 'Commercial', 'Hol', 'Altele'];
+
+// Group Projects
+type Project = typeof allProjects[0];
+const groupedProjects: Record<string, Project[]> = {};
+
+// Initialize groups
+CATEGORY_ORDER.forEach(cat => groupedProjects[cat] = []);
+
+// Distribute
+allProjects.forEach(project => {
+    let cat = project.category || 'Altele';
+    // Normalize if category matches one of our keys
+    if (!groupedProjects[cat]) cat = 'Altele';
+    
+    groupedProjects[cat].push(project);
 });
+
+// Filter out empty categories for display
+const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].length > 0);
 ---
 
 <section class="bg-secondary relative w-full py-20 px-4 md:px-8" id="portfolio-cms-section">
   <div class="container mx-auto">
     
-    {portfolio.length === 0 ? (
+    {activeCategories.length === 0 ? (
       <div class="text-center py-20">
         <p class="text-xl text-gray-500">Nu există proiecte în portofoliu.</p>
         <p class="text-sm text-gray-400 mt-2">Adaugă proiecte din <a href="/keystatic" class="text-accent underline">panoul de administrare</a>.</p>
       </div>
     ) : (
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-[1800px] mx-auto">
-        {
-          columns.map((col, colIndex) => (
-            <div class="flex flex-col gap-12 portfolio-cms-column will-change-transform" data-col-index={colIndex}>
-              {col.map((item, i) => (
-                <div class="group relative w-full cursor-pointer">
-                  <!-- Image Wrapper -->
-                  <div class="relative w-full overflow-hidden rounded-[2rem] bg-gray-900 aspect-[3/4] md:aspect-[4/5]">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      decoding="async"
-                      loading={colIndex < 2 && i < 2 ? "eager" : "lazy"} 
-                      class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 will-change-transform"
-                    />
-                    
-                    <!-- Overlay (Minimalist) -->
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
-                  </div>
+      <div class="flex flex-col gap-24">
+        {activeCategories.map((category) => {
+            const items = groupedProjects[category];
+            const hasMore = items.length > 3;
+            
+            return (
+                <div class="category-section" data-category={category}>
+                     <div class="flex items-center gap-4 mb-12">
+                        <div class="h-[2px] w-8 bg-accent"></div>
+                        <h2 class="text-3xl md:text-4xl font-serif text-primary capitalize">
+                            {category}
+                        </h2>
+                     </div>
 
-                  <!-- Info Below Image -->
-                  <div class="mt-6 flex justify-between items-end opacity-80 group-hover:opacity-100 transition-opacity duration-500">
-                      <div>
-                          <h3 class="font-serif text-2xl text-primary leading-tight">
-                              {item.name}
-                          </h3>
-                          <p class="text-sm text-accent uppercase tracking-widest mt-2 font-medium">
-                              {item.material}
-                          </p>
-                      </div>
-                      
-                      <!-- Arrow Icon -->
-                      <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center transform -rotate-45 group-hover:rotate-0 transition-transform duration-500 text-primary">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                      </div>
-                  </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+                        {items.map((item, index) => (
+                            <div 
+                                class={`group relative w-full cursor-pointer project-card ${index >= 3 ? 'hidden' : ''}`} 
+                                data-index={index}
+                            >
+                                <!-- Image Wrapper -->
+                                <div class="relative w-full overflow-hidden rounded-[2rem] bg-gray-900 aspect-[3/4] md:aspect-[4/5]">
+                                    <img
+                                      src={item.image}
+                                      alt={item.name}
+                                      decoding="async"
+                                      loading="lazy" 
+                                      class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                    />
+                                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
+                                </div>
+
+                                <!-- Info Below Image -->
+                                <div class="mt-6 flex justify-between items-end opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                                    <div>
+                                        <h3 class="font-serif text-2xl text-primary leading-tight">
+                                            {item.name}
+                                        </h3>
+                                        <p class="text-sm text-accent uppercase tracking-widest mt-2 font-medium">
+                                            {item.material}
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Arrow Icon (Fixed) -->
+                                    <div class="w-10 h-10 flex-shrink-0 rounded-full border border-white/20 flex items-center justify-center transform -rotate-45 group-hover:rotate-0 transition-transform duration-500 text-primary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {hasMore && (
+                        <div class="mt-12 flex justify-center">
+                            <button 
+                                class="view-more-btn px-8 py-3 rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 uppercase tracking-widest text-sm font-bold"
+                                data-target-category={category}
+                            >
+                                Vezi mai multe
+                            </button>
+                        </div>
+                    )}
                 </div>
-              ))}
-            </div>
-          ))
-        }
+            )
+        })}
       </div>
     )}
   </div>
 
-  <!-- Lightbox Modal -->
-  <div id="portfolio-lightbox" class="fixed inset-0 z-[9999] bg-black/95 opacity-0 pointer-events-none flex items-center justify-center p-4">
-    <!-- Close Button -->
-    <button id="lightbox-close" class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white transition-colors bg-black/20 hover:bg-black/50 rounded-full">
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  <!-- Lightbox Modal (Simplified) -->
+  <div id="portfolio-lightbox" class="fixed inset-0 z-[9999] bg-black/95 opacity-0 pointer-events-none flex items-center justify-center p-4 transition-opacity duration-300">
+    <button id="lightbox-close" class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white bg-black/20 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
-    
-    <!-- Prev Button -->
-    <button id="lightbox-prev" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-50 p-3 text-white/50 hover:text-white transition-colors bg-black/20 hover:bg-black/50 rounded-full hidden md:block">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-    </button>
-
-    <!-- Image -->
-    <img id="lightbox-img" src="" alt="Project Fullscreen" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" />
-
-    <!-- Next Button -->
-    <button id="lightbox-next" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 p-3 text-white/50 hover:text-white transition-colors bg-black/20 hover:bg-black/50 rounded-full hidden md:block">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </button>
+    <img id="lightbox-img" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl scale-95 transition-transform duration-300" />
   </div>
 </section>
 
 <script>
+  import { initTextAnimations } from "../utils/RevealAnimationHandler";
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
-
+  
   gsap.registerPlugin(ScrollTrigger);
 
-  function initGridAnim() {
-    // ... Existing Grid/Scroll Animation Code ...
-    const cols = document.querySelectorAll(".portfolio-cms-column");
-    // (Preserve existing scroll logic here)
-    if (window.innerWidth >= 1024 && cols.length > 0) {
-        gsap.to(".portfolio-cms-column[data-col-index='1']", {
-            y: "5%", ease: "none",
-            scrollTrigger: { trigger: "#portfolio-cms-section", start: "top bottom", end: "bottom top", scrub: true }
-        });
-        gsap.to([".portfolio-cms-column[data-col-index='0']", ".portfolio-cms-column[data-col-index='2']"], {
-            y: "-5%", ease: "none",
-            scrollTrigger: { trigger: "#portfolio-cms-section", start: "top bottom", end: "bottom top", scrub: true }
-        });
-    }
-
-    const items = document.querySelectorAll(".portfolio-cms-column > div");
-    items.forEach((item, index) => {
-        // Performance hint
-        gsap.set(item, { willChange: "transform, opacity" });
-
-        gsap.fromTo(item, 
-            { opacity: 0, y: 50 },
-            { 
-                opacity: 1, 
-                y: 0, 
-                duration: 1, 
-                ease: "power3.out", 
-                force3D: true, // Hardware acceleration
-                scrollTrigger: { 
-                    trigger: item, 
-                    start: "top 90%", 
-                    end: "bottom 20%", 
-                    toggleActions: "play none none reverse",
-                    fastScrollEnd: true // Prevent glitches on fast scroll
+  // Init Animations
+  function init() {
+     const section = document.querySelector("#portfolio-cms-section");
+     if(section) initTextAnimations(section as HTMLElement);
+     
+     // View More Logic
+     const buttons = document.querySelectorAll('.view-more-btn');
+     buttons.forEach(btn => {
+         btn.addEventListener('click', (e) => {
+             const button = e.target as HTMLElement;
+             const category = button.getAttribute('data-target-category');
+             if(!category) return;
+             
+             // Find wrapper
+             const wrapper = button.closest('.category-section');
+             if(!wrapper) return;
+             
+             // Find hidden items
+             const hiddenItems = wrapper.querySelectorAll('.project-card.hidden');
+             
+             // Reveal them with fade in
+             hiddenItems.forEach((item, i) => {
+                 item.classList.remove('hidden');
+                 gsap.fromTo(item, 
+                    { opacity: 0, y: 20 }, 
+                    { opacity: 1, y: 0, duration: 0.5, delay: i * 0.1 }
+                 );
+             });
+             
+             // Hide button
+             button.remove();
+         });
+     });
+     
+     // Lightbox Logic
+     const lightbox = document.getElementById('portfolio-lightbox');
+     const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+     const closeBtn = document.getElementById('lightbox-close');
+     
+     // Open Logic attached to cards via event delegation or direct
+     // Since cards are dynamic/unhidden, safer to use delegation on section
+     if(section && lightbox && lightboxImg) {
+         section.addEventListener('click', (e) => {
+             const target = e.target as HTMLElement;
+             const card = target.closest('.project-card');
+             if(card) {
+                const img = card.querySelector('img');
+                if(img) {
+                    lightboxImg.src = img.src;
+                    lightbox.classList.remove('opacity-0', 'pointer-events-none');
+                    lightboxImg.classList.remove('scale-95');
+                    lightboxImg.classList.add('scale-100');
+                    document.body.style.overflow = 'hidden';
                 }
-            }
-        );
-        
-        // LIGHTBOX CLICK LISTENER
-        item.addEventListener("click", () => openLightbox(index));
-    });
+             }
+         });
+         
+         const close = () => {
+             lightbox.classList.add('opacity-0', 'pointer-events-none');
+             lightboxImg.classList.remove('scale-100');
+             lightboxImg.classList.add('scale-95');
+             document.body.style.overflow = '';
+         };
+         
+         if(closeBtn) closeBtn.onclick = close;
+         lightbox.onclick = (e) => { if(e.target === lightbox) close(); };
+         document.onkeydown = (e) => { if(e.key === "Escape") close(); };
+     }
   }
 
-  // LIGHTBOX LOGIC
-  const lightbox = document.getElementById("portfolio-lightbox");
-  if (lightbox) {
-    document.body.appendChild(lightbox);
-  }
-
-  const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
-  const closeBtn = document.getElementById("lightbox-close");
-  const prevBtn = document.getElementById("lightbox-prev");
-  const nextBtn = document.getElementById("lightbox-next");
-  
-  // Store all image sources for navigation
-  let allImages: string[] = [];
-  let currentIndex = 0;
-
-  function updateImageSources() {
-      const imgs = document.querySelectorAll(".portfolio-cms-column > div img");
-      allImages = Array.from(imgs).map(img => (img as HTMLImageElement).src);
-  }
-
-  function showImage(index: number) {
-      if (!lightboxImg || allImages.length === 0) return;
-      
-      // Wrap around
-      if (index < 0) index = allImages.length - 1;
-      if (index >= allImages.length) index = 0;
-      
-      currentIndex = index;
-      
-      // Fade out/in for transition
-      gsap.to(lightboxImg, { opacity: 0.5, duration: 0.1, onComplete: () => {
-          lightboxImg.src = allImages[currentIndex];
-          gsap.to(lightboxImg, { opacity: 1, duration: 0.2 });
-      }});
-  }
-
-  function openLightbox(index: number) {
-    if (!lightbox) return;
-    updateImageSources(); // Ensure fresh list
-    
-    // Initial Show
-    currentIndex = index;
-    if (lightboxImg) lightboxImg.src = allImages[currentIndex];
-
-    gsap.to(lightbox, { autoAlpha: 1, pointerEvents: "auto", duration: 0.3, ease: "power2.out" });
-    if (lightboxImg) gsap.fromTo(lightboxImg, { scale: 0.95 }, { scale: 1, duration: 0.4, ease: "back.out(1.2)" });
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeLightbox() {
-    if (!lightbox) return;
-    gsap.to(lightbox, { autoAlpha: 0, pointerEvents: "none", duration: 0.3, ease: "power2.in" });
-    document.body.style.overflow = "";
-  }
-
-  // Event Listeners
-  if (closeBtn) closeBtn.addEventListener("click", (e) => { e.stopPropagation(); closeLightbox(); });
-  if (prevBtn) prevBtn.addEventListener("click", (e) => { e.stopPropagation(); showImage(currentIndex - 1); });
-  if (nextBtn) nextBtn.addEventListener("click", (e) => { e.stopPropagation(); showImage(currentIndex + 1); });
-
-  if (lightbox) {
-      lightbox.addEventListener("click", (e) => {
-          if (e.target === lightbox) closeLightbox();
-      });
-  }
-  
-  // Keyboard Nav
-  document.addEventListener("keydown", (e) => {
-      if (!lightbox || getComputedStyle(lightbox).opacity === "0") return;
-      if (e.key === "Escape") closeLightbox();
-      if (e.key === "ArrowLeft") showImage(currentIndex - 1);
-      if (e.key === "ArrowRight") showImage(currentIndex + 1);
-  });
-
-  // Run on load and transitions
-  initGridAnim();
-  document.addEventListener("astro:after-swap", initGridAnim);
+  document.addEventListener("astro:page-load", init);
 </script>

@@ -22,5 +22,10 @@ export default defineConfig({
     ssr: {
       noExternal: ["gsap"],
     },
+    server: {
+      watch: {
+        ignored: ["**/public/assets/**"]
+      }
+    }
   }
 });

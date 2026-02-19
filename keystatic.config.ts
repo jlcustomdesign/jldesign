@@ -41,6 +41,21 @@ export default config({
           directory: 'public/assets/portfolio',
           publicPath: '/assets/portfolio/',
         }),
+        category: fields.select({
+            label: 'Categorie',
+            description: 'Categoria din care face parte proiectul',
+            options: [
+                { label: 'Living', value: 'Living' },
+                { label: 'Dormitor', value: 'Dormitor' },
+                { label: 'Bucătărie', value: 'Bucătărie' },
+                { label: 'Baie', value: 'Baie' },
+                { label: 'Office', value: 'Office' },
+                { label: 'Commercial', value: 'Commercial' },
+                { label: 'Hol', value: 'Hol' },
+                { label: 'Altele', value: 'Altele' },
+            ],
+            defaultValue: 'Altele',
+        }),
         content: fields.markdoc({
           label: 'Descriere',
           description: 'Detalii despre proiect (opțional)',

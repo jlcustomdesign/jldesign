@@ -333,8 +333,9 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
   let ctx: gsap.Context;
 
   function initAboutAnimations() {
-    // 1. Initialize Global Text Animations (Perspective Blur)
-    initTextAnimations();
+    // 1. Initialize Global Text Animations (Perspective Blur) - Scoped to Main
+    const main = document.querySelector("main");
+    if (main) initTextAnimations(main as HTMLElement);
 
     // 2. Custom GSAP for Non-Text Elements (Images, Backgrounds, Stats)
     if (ctx) ctx.revert();

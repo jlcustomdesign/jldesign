@@ -8,6 +8,7 @@
 	### TEXT REVEAL TYPES:
 	data-reveal="perspective" - Animates text with a 3D perspective effect
 	data-reveal="slide" - Animates text line by line with a reveal effect
+    data-reveal="block" - Animates the entire element as a block (fade up) without splitting text. Ideal for images, cards, buttons.
 
 	### Text Reveal Properties
 	data-reveal-fade - Add opacity animation (boolean attribute)
@@ -82,29 +83,72 @@ const standardizeOptions = (element: HTMLElement): AnimationOptions => {
 	};
 };
 
-// Store animated elements and their original text
-const animatedElements: HTMLElement[] = [];
-let resizeTimeout: number | null = null;
-
-// Helper: apply minimal inline style after animation is done
-const applyCleanStyles = (
-	node: HTMLElement,
-	isSpan: boolean,
-	keepWillChange: boolean
-): void => {
-	const base = `${
-		isSpan ? 'display: inline-block;' : 'display: block;'
-	} opacity: 1;`;
-	node.style.cssText = keepWillChange
-		? `${base} will-change: transform;`
-		: base;
-};
-
 /**
  * Initializes animations by finding elements with data-reveal attribute
- * and setting up intersection observers
+ * and setting up intersection observers.
+ * Returns a cleanup function.
  */
-export const initTextAnimations = (): void => {
+export const initTextAnimations = (scope: Document | HTMLElement = document): (() => void) => {
+	// Store animated elements locally for this instance
+    const localAnimatedElements: HTMLElement[] = [];
+    let resizeTimeout: number | null = null;
+
+    /**
+     * Handles intersection events for animated elements
+     */
+    const handleIntersection = (
+        entries: IntersectionObserverEntry[],
+        obs: IntersectionObserver
+    ): void => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const element = entry.target as HTMLElement;
+                const animType = element.getAttribute('data-reveal');
+
+                // Stop observing once animation is triggered
+                obs.unobserve(element);
+
+                // Get animation options
+                const options = standardizeOptions(element);
+
+                // Detect if this element acts as a container for multiple text nodes
+                const nestedTextElements = Array.from(
+                    element.querySelectorAll<HTMLElement>(SELECTORS.NESTED_TEXT_ELEMENTS)
+                );
+
+                // Whether the element contains nested text elements to treat as a grouped container
+                const hasNestedElements = nestedTextElements.length > 0;
+
+                // Trigger appropriate animation based on data-reveal value
+                switch (animType) {
+                    case 'perspective':
+                        if (hasNestedElements) {
+                            animateGroupedPerspective(element, nestedTextElements, options);
+                        } else {
+                            animatePerspective(element, options);
+                        }
+                        break;
+                    case 'slide':
+                        if (hasNestedElements) {
+                            animateGroupedSlide(element, nestedTextElements, options);
+                        } else {
+                            animateSlide(element, options);
+                        }
+                        break;
+                    case 'word-slide':
+                        animateWordSlide(element, options);
+                        break;
+                    case 'block':
+                        animateBlock(element, options);
+                        break;
+                    default:
+                        // Default to object animation for any unspecified animation type
+                        animateSlide(element, options);
+                }
+            }
+        });
+    };
+
 	// Initialize the observer
 	const observer = new IntersectionObserver(
 		(entries) => handleIntersection(entries, observer),
@@ -115,14 +159,28 @@ export const initTextAnimations = (): void => {
 		}
 	);
 
-	// Find all elements with data-reveal attribute
-	const elements = document.querySelectorAll('[data-reveal]');
+	// Find all elements with data-reveal attribute within scope
+	const elements = scope.querySelectorAll('[data-reveal]');
 
 	elements.forEach((element) => {
 		const htmlElement = element as HTMLElement;
 
-		// Store original text content
-		(htmlElement as any).originalText = htmlElement.innerHTML;
+        // SKIP if already initialized to prevent double-binding/splitting
+        if (htmlElement.getAttribute('data-reveal-initialized') === 'true') {
+            return;
+        }
+
+        // Mark as initialized immediately
+        htmlElement.setAttribute('data-reveal-initialized', 'true');
+
+        const animType = htmlElement.getAttribute('data-reveal');
+
+		// Store original text content ONLY for split-text types
+        if (['slide', 'perspective', 'word-slide'].includes(animType || '')) {
+             if(!(htmlElement as any).originalText) {
+                (htmlElement as any).originalText = htmlElement.innerHTML;
+            }
+        }
 
 		// Set initial opacity to 0 directly if it's not already set
 		if (htmlElement.style.opacity !== '0') {
@@ -130,170 +188,90 @@ export const initTextAnimations = (): void => {
 		}
 
 		// Add to animated elements array
-		animatedElements.push(htmlElement);
+		localAnimatedElements.push(htmlElement);
 
 		// Start observing the element
 		observer.observe(htmlElement);
 	});
+    
+    /**
+     * Restores an element to its original text form
+     */
+    const restoreOriginalText = (element: HTMLElement): void => {
+        // Skip if element doesn't have originalText property
+        if (!(element as any).originalText) return;
+
+        // Get computed style of the element
+        const computedStyle = window.getComputedStyle(element);
+        const originalStyle = {
+            opacity: computedStyle.opacity,
+        };
+
+        // Restore original HTML
+        element.innerHTML = (element as any).originalText;
+
+        // Ensure the sr-only span is present after restoring
+        insertSrOnlyText(element);
+
+        // Apply any styling that might have been applied during animation
+        if (originalStyle.opacity !== '0') {
+            element.style.opacity = originalStyle.opacity;
+        }
+
+        // If this element acts as a container for grouped line reveal, ensure nested text elements are visible
+        if (
+            ['slide', 'perspective', 'word-slide'].includes(element.getAttribute('data-reveal') || '')
+        ) {
+            const nestedTextEls = element.querySelectorAll<HTMLElement>(
+                SELECTORS.NESTED_TEXT_ELEMENTS
+            );
+            nestedTextEls.forEach((nested) => {
+                // Only override opacity if not explicitly set from CSS elsewhere
+                nested.style.opacity = '1';
+            });
+        }
+
+        // Clear any transform properties
+        element.style.transform = 'none';
+        element.style.transformOrigin = '';
+        element.style.willChange = 'auto';
+
+        // Remove any 3D transform properties if they exist
+        element.style.perspective = '';
+        element.style.transformStyle = '';
+    };
+
+    /**
+     * Handles window resize events
+     */
+    const handleWindowResize = (): void => {
+        if (resizeTimeout !== null) {
+            window.clearTimeout(resizeTimeout);
+        }
+
+        resizeTimeout = window.setTimeout(() => {
+            // Process only text-based animated elements
+            localAnimatedElements.forEach((element) => {
+                const animType = element.getAttribute('data-reveal');
+                if (animType && ['slide', 'perspective', 'word-slide'].includes(animType)) {
+                     if(document.body.contains(element)) {
+                        restoreOriginalText(element);
+                         element.style.opacity = '1';
+                    }
+                }
+            });
+        }, 100);
+    };
 
 	// Add window resize event listener
 	window.addEventListener('resize', handleWindowResize);
-};
 
-/**
- * Handles window resize events
- * Restores only text-based animated elements to their original form
- */
-const handleWindowResize = (): void => {
-	// Use a timeout to prevent excessive function calls during resize
-	if (resizeTimeout !== null) {
-		window.clearTimeout(resizeTimeout);
-	}
-
-	resizeTimeout = window.setTimeout(() => {
-		// Process only text-based animated elements
-		animatedElements.forEach((element) => {
-			const animType = element.getAttribute('data-reveal');
-			// Only restore text-based animations (slide, perspective, word-slide)
-			if (animType && ['slide', 'perspective', 'word-slide'].includes(animType)) {
-				restoreOriginalText(element);
-			}
-		});
-	}, 10);
-};
-
-/**
- * Restores an element to its original text form
- * Preserves styling and animations already applied
- */
-const restoreOriginalText = (element: HTMLElement): void => {
-	// Skip if element doesn't have originalText property
-	if (!(element as any).originalText) return;
-
-	// Get computed style of the element
-	const computedStyle = window.getComputedStyle(element);
-	const originalStyle = {
-		color: computedStyle.color,
-		fontWeight: computedStyle.fontWeight,
-		fontSize: computedStyle.fontSize,
-		lineHeight: computedStyle.lineHeight,
-		letterSpacing: computedStyle.letterSpacing,
-		textAlign: computedStyle.textAlign,
-		opacity: computedStyle.opacity,
-	};
-
-	// Get all text content from child spans while preserving line breaks
-	const textContent = extractTextWithLineBreaks(element);
-
-	// Restore original HTML
-	element.innerHTML = (element as any).originalText;
-
-	// Ensure the sr-only span is present after restoring
-	insertSrOnlyText(element);
-
-	// Apply any styling that might have been applied during animation
-	if (originalStyle.opacity !== '0') {
-		element.style.opacity = originalStyle.opacity;
-	}
-
-	// If this element acts as a container for grouped line reveal, ensure nested text elements are visible
-	if (
-		['slide', 'perspective', 'word-slide'].includes(element.getAttribute('data-reveal') || '')
-	) {
-		const nestedTextEls = element.querySelectorAll<HTMLElement>(
-			SELECTORS.NESTED_TEXT_ELEMENTS
-		);
-		nestedTextEls.forEach((nested) => {
-			// Only override opacity if not explicitly set from CSS elsewhere
-			nested.style.opacity = '1';
-		});
-	}
-
-	// Clear any transform properties to prevent performance issues
-	element.style.transform = 'none';
-	element.style.transformOrigin = '';
-	element.style.willChange = 'auto';
-
-	// Remove any 3D transform properties if they exist
-	element.style.perspective = '';
-	element.style.transformStyle = '';
-};
-
-/**
- * Extract text from an element while preserving line breaks
- */
-const extractTextWithLineBreaks = (element: HTMLElement): string => {
-	let result = '';
-	const lineElements = element.querySelectorAll('h1, h2, h3, h4, h5, h6, p');
-
-	if (lineElements.length > 0) {
-		// Extract text by lines
-		lineElements.forEach((lineElement, index) => {
-			result += lineElement.textContent;
-			// Add line break if not the last line
-			if (index < lineElements.length - 1) {
-				result += '\n';
-			}
-		});
-	} else {
-		// If no line elements, just get the text content
-		result = element.textContent || '';
-	}
-
-	return result;
-};
-
-/**
- * Handles intersection events for animated elements
- */
-const handleIntersection = (
-	entries: IntersectionObserverEntry[],
-	observer: IntersectionObserver
-): void => {
-	entries.forEach((entry) => {
-		if (entry.isIntersecting) {
-			const element = entry.target as HTMLElement;
-			const animType = element.getAttribute('data-reveal');
-
-			// Stop observing once animation is triggered
-			observer.unobserve(element);
-
-			// Get animation options
-			const options = standardizeOptions(element);
-
-			// Detect if this element acts as a container for multiple text nodes
-			const nestedTextElements = Array.from(
-				element.querySelectorAll<HTMLElement>(SELECTORS.NESTED_TEXT_ELEMENTS)
-			);
-
-			// Whether the element contains nested text elements to treat as a grouped container
-			const hasNestedElements = nestedTextElements.length > 0;
-
-			// Trigger appropriate animation based on data-reveal value
-			switch (animType) {
-				case 'perspective':
-					if (hasNestedElements) {
-						animateGroupedPerspective(element, nestedTextElements, options);
-					} else {
-						animatePerspective(element, options);
-					}
-					break;
-				case 'slide':
-					if (hasNestedElements) {
-						animateGroupedSlide(element, nestedTextElements, options);
-					} else {
-						animateSlide(element, options);
-					}
-					break;
-				case 'word-slide':
-                   animateWordSlide(element, options);
-                   break;
-				default:
-					// Default to object animation for any unspecified animation type
-					animateSlide(element, options);
-			}
-		}
-	});
+    // Return Cleanup Function
+    return () => {
+        window.removeEventListener('resize', handleWindowResize);
+        observer.disconnect();
+        if (resizeTimeout !== null) window.clearTimeout(resizeTimeout);
+    };
 };
 
 /**
@@ -340,63 +318,188 @@ const generateLinesHTML = (
 };
 
 /**
+ * Helper: apply minimal inline style after animation is done
+ */
+const applyCleanStyles = (
+	node: HTMLElement,
+	isSpan: boolean,
+	keepWillChange: boolean
+): void => {
+	const base = `${
+		isSpan ? 'display: inline-block;' : 'display: block;'
+	} opacity: 1;`;
+	node.style.cssText = keepWillChange
+		? `${base} will-change: transform;`
+		: base;
+};
+
+/**
+ * Animate entire block element (Simple Fade Up)
+ */
+const animateBlock = (
+    element: HTMLElement,
+    options: AnimationOptions
+): void => {
+    // Ensure initial state
+    element.style.opacity = '0';
+    
+    // We do NOT modify innerHTML or split text here.
+    // Pure GSAP Fade Up
+     gsap.fromTo(
+        element,
+        { 
+            y: 30, 
+            opacity: 0,
+            filter: options.blur ? 'blur(10px)' : 'blur(0px)'
+        },
+        {
+            y: 0,
+            opacity: 1,
+            filter: 'blur(0px)',
+            duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
+            delay: options.delay || 0,
+            ease: 'power2.out',
+            onComplete: () => {
+                element.style.transform = '';
+                element.style.opacity = '1';
+                element.style.filter = '';
+                if(!options.keepWillChange) {
+                    element.style.willChange = 'auto';
+                }
+            }
+        }
+    );
+};
+
+// ... [Existing split logic helpers below] ... 
+
+/**
+ * Split text into lines by wrapping words in spans and checking offsetTop
+ */
+const splitTextIntoLines = (element: HTMLElement): string[] => {
+	const originalHTML = element.innerHTML;
+	const { parentClone, elementClone } = createAnalysisClone(element);
+	if (!parentClone) return [originalHTML];
+
+	splitWordsInElement(elementClone);
+
+	const words = Array.from(elementClone.querySelectorAll('.split-word'));
+	if (words.length === 0) {
+		document.body.removeChild(parentClone);
+		return [originalHTML];
+	}
+
+	const lines: string[] = [];
+	let currentLine: string[] = [];
+	let currentTop = (words[0] as HTMLElement).offsetTop;
+
+	words.forEach((word) => {
+		const htmlWord = word as HTMLElement;
+		if (htmlWord.offsetTop > currentTop) {
+			lines.push(currentLine.join(' '));
+			currentLine = [];
+			currentTop = htmlWord.offsetTop;
+		}
+		currentLine.push(htmlWord.innerText); // using innerText to keep it clean
+	});
+	lines.push(currentLine.join(' '));
+
+	document.body.removeChild(parentClone);
+	return lines;
+};
+
+/**
+ * Split words in element recursively
+ */
+const splitWordsInElement = (element: Element): void => {
+	Array.from(element.childNodes).forEach((node) => {
+		if (node.nodeType === Node.TEXT_NODE) {
+			const text = node.textContent?.trim();
+			if (text && text.length > 0) {
+				const words = text.split(/\s+/);
+				const fragment = document.createDocumentFragment();
+				words.forEach((word, index) => {
+					const span = document.createElement('span');
+					span.textContent = word;
+					span.className = 'split-word';
+					span.style.display = 'inline-block';
+					fragment.appendChild(span);
+					if (index < words.length - 1) {
+						fragment.appendChild(document.createTextNode(' '));
+					}
+				});
+				node.parentNode?.replaceChild(fragment, node);
+			}
+		} else if (node.nodeType === Node.ELEMENT_NODE) {
+			splitWordsInElement(node as Element);
+		}
+	});
+};
+
+/**
+ * Create a clone of the element for analysis
+ */
+const createAnalysisClone = (
+	element: HTMLElement
+): { parentClone: HTMLElement | null; elementClone: HTMLElement } => {
+	const parent = element.parentElement;
+	if (!parent) return { parentClone: null, elementClone: element };
+
+	const parentClone = parent.cloneNode(false) as HTMLElement;
+	parentClone.style.position = 'absolute';
+	parentClone.style.top = '-9999px';
+	parentClone.style.left = '-9999px';
+	parentClone.style.visibility = 'hidden';
+	parentClone.style.width = getComputedStyle(parent).width;
+    parentClone.style.height = 'auto'; // ensure height adapts
+
+	const elementClone = element.cloneNode(true) as HTMLElement;
+    // Ensure element clone has same display properties
+    const computedStyle = getComputedStyle(element);
+    elementClone.style.display = computedStyle.display;
+    elementClone.style.flexDirection = computedStyle.flexDirection;
+    elementClone.style.alignItems = computedStyle.alignItems;
+    elementClone.style.justifyContent = computedStyle.justifyContent;
+    elementClone.style.gap = computedStyle.gap;
+
+	parentClone.appendChild(elementClone);
+	document.body.appendChild(parentClone);
+
+	return { parentClone, elementClone };
+};
+
+/**
  * Animate text with perspective style (3D effect)
  */
 const animatePerspective = (
 	element: HTMLElement,
 	options: AnimationOptions
 ): void => {
-	// Reset opacity
 	element.style.opacity = '1';
-
-	// Split text into lines
 	const lines = splitTextIntoLines(element);
-
-	// Create container with perspective
 	const container = document.createElement('div');
 	container.style.perspective = '1000px';
-
-	// Mark the animated container as hidden from assistive tech
 	container.setAttribute('aria-hidden', 'true');
-
-	// We will add the sr-only span AFTER clearing the element so it persists
-
-	// Create HTML structure with 3D styling for each line
 	const linesHTML = generateLinesHTML(
 		lines,
 		!(options.fade || options.blur),
 		true
 	);
-
 	container.innerHTML = linesHTML;
-	// Clear current content then insert sr-only span followed by container
 	element.innerHTML = '';
 	insertSrOnlyText(element);
 	element.appendChild(container);
-
-	// Get all elements for animation
 	const lineElements = container.querySelectorAll('div');
-
-	// Create GSAP timeline
 	const timeline = gsap.timeline({
 		delay: options.delay || 0,
 	});
-
-	// Animate each line
 	lineElements.forEach((lineElement, lineIndex) => {
-		// Get the span containing the line text
 		const lineSpan = lineElement.querySelector('span');
-
-		// Calculate the delay for each line based on the line index and the stagger value
 		const lineDelay =
 			lineIndex * (options.stagger || DEFAULT_ANIMATION_VALUES.STAGGER);
-
-		// Get keepWillChange flag from options
 		const keepWillChange = options.keepWillChange || false;
 
-		// Animate the entire line as a single element
 		if (options.blur) {
-			// For blur animation, only animate y position on the span
 			timeline.fromTo(
 				lineSpan,
 				{ y: '300%' },
@@ -410,8 +513,6 @@ const animatePerspective = (
 				},
 				lineDelay
 			);
-
-			// Apply blur animation only to the line element
 			timeline.fromTo(
 				lineElement,
 				{
@@ -450,8 +551,6 @@ const animatePerspective = (
 				},
 				lineDelay
 			);
-
-			// Apply 3D rotation to the entire line
 			timeline.fromTo(
 				lineElement,
 				{
@@ -485,8 +584,6 @@ const animatePerspective = (
 				},
 				lineDelay
 			);
-
-			// Apply 3D rotation to the entire line
 			timeline.fromTo(
 				lineElement,
 				{
@@ -512,7 +609,6 @@ const animatePerspective = (
 
 /**
  * Animate a single line element with its containing span
- * Used by both animateSlide and animateGroupedSlide to avoid code duplication
  */
 const animateSingleLine = (
 	lineElement: Element,
@@ -522,25 +618,17 @@ const animateSingleLine = (
 	options: AnimationOptions,
 	keepWillChange: boolean
 ): void => {
-	// Get the span containing the line text
 	const lineSpan = lineElement.querySelector('span');
 	if (!lineSpan) return;
 
-	// Calculate the delay for this line based on its index and the stagger value
 	const lineDelay =
 		lineIndex * (options.stagger || DEFAULT_ANIMATION_VALUES.STAGGER);
-
-	// Calculate the duration for the span and line animations
 	const spanDuration = options.duration || DEFAULT_ANIMATION_VALUES.DURATION;
-	const lineDuration = spanDuration * 1.5; // Line animation is 1.5 times slower
-
-	// Calculate the progressive starting position - 0% for first line, 50% for last line
+	const lineDuration = spanDuration * 1.5;
 	const progressiveOffset =
 		totalLines > 1 ? (lineIndex / (totalLines - 1)) * 50 : 0;
 
-	// Animate with blur, fade or without based on options
 	if (options.blur) {
-		// For blur animation, only animate the span's y position, but apply blur to the line element
 		timeline.fromTo(
 			lineSpan,
 			{ y: '100%' },
@@ -554,8 +642,6 @@ const animateSingleLine = (
 			},
 			lineDelay
 		);
-
-		// Animate the line element with blur and opacity
 		timeline.fromTo(
 			lineElement,
 			{
@@ -584,15 +670,12 @@ const animateSingleLine = (
 				opacity: 1,
 				duration: spanDuration,
 				ease: 'quart.out',
-				// Clean span as soon as its specific animation completes
 				onComplete: () => {
 					applyCleanStyles(lineSpan as HTMLElement, true, keepWillChange);
 				},
 			},
 			lineDelay
 		);
-
-		// Animate the line element with progressive starting position
 		timeline.fromTo(
 			lineElement,
 			{ y: `${progressiveOffset}%`, opacity: 0 },
@@ -615,15 +698,12 @@ const animateSingleLine = (
 				y: 0,
 				duration: spanDuration,
 				ease: 'quart.out',
-				// Clean span as soon as its specific animation completes
 				onComplete: () => {
 					applyCleanStyles(lineSpan as HTMLElement, true, keepWillChange);
 				},
 			},
 			lineDelay
 		);
-
-		// Animate the line element with progressive starting position
 		timeline.fromTo(
 			lineElement,
 			{ y: `${progressiveOffset}%` },
@@ -647,39 +727,21 @@ const animateSlide = (
 	element: HTMLElement,
 	options: AnimationOptions
 ): void => {
-	// Reset opacity
 	element.style.opacity = '1';
-
-	// Split text into lines
 	const lines = splitTextIntoLines(element);
-
-	// Create container
 	const container = document.createElement('div');
-
-	// Mark this animated container as hidden from assistive tech
 	container.setAttribute('aria-hidden', 'true');
-
-	// Create HTML structure for each line
 	const linesHTML = generateLinesHTML(lines, !options.fade);
-
 	container.innerHTML = linesHTML;
-	// Clear current content then insert sr-only span followed by container
 	element.innerHTML = '';
 	insertSrOnlyText(element);
 	element.appendChild(container);
-
-	// Get all elements for animation
 	const lineElements = container.querySelectorAll('div');
 	const totalLines = lineElements.length;
-
-	// Create GSAP timeline
 	const timeline = gsap.timeline({
 		delay: options.delay || 0,
 	});
-
-	// Animate each line
 	lineElements.forEach((lineElement, lineIndex) => {
-		// Use keepWillChange from options instead of checking attribute again
 		const keepWillChange = options.keepWillChange || false;
 		animateSingleLine(
 			lineElement,
@@ -699,45 +761,25 @@ const animateWordSlide = (
 	element: HTMLElement,
 	options: AnimationOptions
 ): void => {
-	// Reset opacity
 	element.style.opacity = '1';
-
-	// Split text into words
 	const wordsHTML = splitTextIntoWordsOnly(element);
-
-	// Create container
 	const container = document.createElement('div');
-    // Ensure container behaves like the original element text flow
     container.style.display = 'block'; 
     container.style.wordWrap = 'break-word';
-
-	// Mark this animated container as hidden from assistive tech
 	container.setAttribute('aria-hidden', 'true');
-
 	container.innerHTML = wordsHTML;
-	// Clear current content then insert sr-only span followed by container
 	element.innerHTML = '';
 	insertSrOnlyText(element);
 	element.appendChild(container);
-
-	// Get all word wrappers for animation
 	const wordWrappers = container.querySelectorAll('.word-wrapper');
-	const totalWords = wordWrappers.length;
-
-	// Create GSAP timeline
 	const timeline = gsap.timeline({
 		delay: options.delay || 0,
 	});
-
-	// Animate each word
 	wordWrappers.forEach((wordWrapper, index) => {
 		const wordSpan = wordWrapper.querySelector('.word-inner');
         if(!wordSpan) return;
-
-		const wordDelay = index * (options.stagger || 0.03); // Default faster stagger for words
+		const wordDelay = index * (options.stagger || 0.03); 
         const duration = options.duration || DEFAULT_ANIMATION_VALUES.DURATION;
-
-        // Slide Up Animation for the inner span
         timeline.fromTo(
             wordSpan,
             { y: '100%' },
@@ -746,7 +788,6 @@ const animateWordSlide = (
                 duration: duration,
                 ease: 'quart.out',
                 onComplete: () => {
-                     // Cleanup styles
                      (wordSpan as HTMLElement).style.transform = '';
                      (wordSpan as HTMLElement).style.willChange = 'auto';
                 }
@@ -757,556 +798,240 @@ const animateWordSlide = (
 };
 
 /**
- * Split text into words only (no line grouping)
+ * Split text into words only
  */
 const splitTextIntoWordsOnly = (element: HTMLElement): string => {
-	// Preserve the original HTML so it can be restored later
 	const originalHTML = element.innerHTML;
-
-	// Create a clone for processing
 	const { parentClone, elementClone } = createAnalysisClone(element);
 	if (!parentClone) return originalHTML;
-
-	// Perform word splitting
 	splitWordsInElement(elementClone);
-
-    // Get all the .split-word spans
-    const wordSpans = Array.from(elementClone.querySelectorAll('.split-word'));
-
-    // Build HTML with the animation wrappers
-    let resultHTML = '';
     
-    // We need to reconstruct the HTML preserving non-text nodes if possible, 
-    // but for simplicity and robustness with standard text elements, we often reconstruct from spans.
-    // However, splitWordsInElement operates IN PLACE on the clone.
-    // So if we just iterate the clone's children, we might get what we want?
-    // splitWordsInElement replaced text nodes with spans.
-    
-    // Let's iterate the clone's child nodes to preserve structure (like <br> or existing spans)
-    // But we need to wrap the .split-word spans in the animation div structure.
-    
+    // Recursive function to wrap .split-word elements
     const wrapWordsRecursively = (node: Node): string => {
         if (node.nodeType === Node.ELEMENT_NODE) {
             const el = node as HTMLElement;
             if (el.classList.contains('split-word')) {
                 const text = el.textContent || '';
-                // The wrapper structure for individual word slide
-                // Use inline-block to flow naturally
-                return `<span class="word-wrapper" style="display: inline-block; overflow: hidden; vertical-align: top; margin-right: 0.25em; will-change: transform;">
-                            <span class="word-inner" style="display: inline-block; transform: translateY(100%); will-change: transform;">${text}</span>
-                        </span>`;
+                return `<span class="word-wrapper" style="display: inline-block; overflow: hidden; vertical-align: top; margin-right: 0.25em; will-change: transform;"><span class="word-inner" style="display: inline-block; transform: translateY(100%); will-change: transform;">${text}</span></span>`;
             }
-            
-            // Recurse for other elements
-            let inner = '';
+            let innerHTML = '';
             el.childNodes.forEach(child => {
-                inner += wrapWordsRecursively(child);
+                innerHTML += wrapWordsRecursively(child);
             });
-            
-            // if it was just a container span/div/p, return it with new inner
-            // We strip the split-word class if it somehow got copied but handled above
-            const tag = el.tagName.toLowerCase();
-            const attrs = Array.from(el.attributes).map(a => `${a.name}="${a.value}"`).join(' ');
-            
-            // Check for void tags (elements that cannot have children/closing tag)
-            const voidTags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
-            if (voidTags.includes(tag)) {
-                return `<${tag} ${attrs} />`;
-            }
-
-            return `<${tag} ${attrs}>${inner}</${tag}>`;
+            const tagName = el.tagName.toLowerCase();
+            let attributes = '';
+            Array.from(el.attributes).forEach(attr => {
+                 attributes += ` ${attr.name}="${attr.value}"`;
+            });
+            return `<${tagName}${attributes}>${innerHTML}</${tagName}>`;
         } else if (node.nodeType === Node.TEXT_NODE) {
-            // Should be empty or whitespace if splitWordsInElement worked
             return node.textContent || '';
         }
         return '';
     };
 
-    resultHTML = '';
-    elementClone.childNodes.forEach(node => {
-        resultHTML += wrapWordsRecursively(node);
+    let result = '';
+    elementClone.childNodes.forEach(child => {
+        result += wrapWordsRecursively(child);
     });
 
-	// Clean up
-	parentClone.remove();
-
-    // Restore original is handled by the caller keeping originalHTML in the object property
-	return resultHTML;
+	document.body.removeChild(parentClone);
+	return result;
 };
 
+
 /**
- * Split text into lines to properly handle line breaks
+ * Inserts a screen-reader only span with the original text
  */
-const splitTextIntoLines = (element: HTMLElement): string[] => {
-	// Preserve the original HTML so it can be restored later
-	const originalHTML = element.innerHTML;
-
-	// Create a clone for analysis
-	const { parentClone, elementClone } = createAnalysisClone(element);
-	if (!parentClone) return [originalHTML];
-
-	// Perform word splitting
-	const wordSpans = splitWordsInElement(elementClone);
-	if (wordSpans.length === 0) {
-		parentClone.remove();
-		return [originalHTML];
-	}
-
-	// Group words into lines
-	const lineGroups = groupWordsByLine(wordSpans);
-
-	// Extract HTML for each line
-	const linesHTML = buildLinesHTML(lineGroups);
-
-	// Clean up - remove the temporary elements
-	parentClone.remove();
-
-	// Restore the original content
-	element.innerHTML = originalHTML;
-
-	return linesHTML;
+const insertSrOnlyText = (element: HTMLElement): void => {
+	const srOnlySpan = document.createElement('span');
+	srOnlySpan.className = ACCESSIBILITY.SR_ONLY_CLASS;
+	srOnlySpan.style.cssText = ACCESSIBILITY.SR_ONLY_STYLE;
+	srOnlySpan.textContent =
+		(element as any).originalText || element.innerText || element.textContent;
+	element.prepend(srOnlySpan);
 };
 
 /**
- * Creates a clone of the element for text analysis
- */
-const createAnalysisClone = (
-	element: HTMLElement
-): { parentClone: HTMLElement | null; elementClone: HTMLElement } => {
-	// Clone the entire parent element to maintain layout context
-	const parentClone = element.parentElement?.cloneNode(false) as HTMLElement;
-	if (!parentClone) return { parentClone: null, elementClone: element };
-
-	// Copy parent element styles and positioning
-	parentClone.style.cssText = window.getComputedStyle(
-		element.parentElement as HTMLElement
-	).cssText;
-	parentClone.style.position = 'absolute';
-	parentClone.style.top = '0';
-	parentClone.style.left = '0';
-	parentClone.style.visibility = 'hidden';
-	parentClone.style.pointerEvents = 'none';
-
-	// Deep-clone the element so ALL inline markup (<span>, <em>, etc.) is preserved
-	const elementClone = element.cloneNode(true) as HTMLElement;
-	const elementStyle = window.getComputedStyle(element);
-	elementClone.style.cssText = elementStyle.cssText;
-	elementClone.style.position = 'static';
-	elementClone.style.width = elementStyle.width;
-	elementClone.style.height = 'auto';
-	elementClone.style.transform = 'none';
-
-	// Add the cloned element to the cloned parent
-	parentClone.appendChild(elementClone);
-
-	// Add the parent clone to the document
-	document.body.appendChild(parentClone);
-
-	return { parentClone, elementClone };
-};
-
-/**
- * Splits element's content into individual word spans
- */
-const splitWordsInElement = (elementClone: HTMLElement): HTMLElement[] => {
-	// Wrap every WORD in an inline-block span (.split-word)
-	// We only process TEXT nodes, leaving any existing inline markup intact
-	let wordIndex = 0;
-	const walker = document.createTreeWalker(elementClone, NodeFilter.SHOW_TEXT);
-	const textNodes: Text[] = [];
-	while (walker.nextNode()) {
-		textNodes.push(walker.currentNode as Text);
-	}
-
-	textNodes.forEach((textNode) => {
-		const parts = (textNode.textContent || '').split(/(\s+)/);
-		const frag = document.createDocumentFragment();
-
-		parts.forEach((part) => {
-			if (part === '') return;
-			if (/^\s+$/.test(part)) {
-				// Preserve whitespace exactly
-				frag.appendChild(document.createTextNode(part));
-			} else {
-				const span = document.createElement('span');
-				span.className = 'split-word';
-				span.style.display = 'inline-block';
-				span.dataset.wordIndex = String(wordIndex++);
-				span.textContent = part;
-				frag.appendChild(span);
-			}
-		});
-
-		textNode.parentNode?.replaceChild(frag, textNode);
-	});
-
-	// Get all word spans for grouping into lines
-	return Array.from(
-		elementClone.querySelectorAll<HTMLElement>(SELECTORS.SPLIT_WORD)
-	);
-};
-
-/**
- * Groups words into lines based on their vertical position
- */
-const groupWordsByLine = (wordSpans: HTMLElement[]): HTMLElement[][] => {
-	const lineGroups: HTMLElement[][] = [[]];
-	let currentLine = 0;
-	let prevTop = wordSpans[0].getBoundingClientRect().top;
-
-	wordSpans.forEach((span) => {
-		const top = span.getBoundingClientRect().top;
-		if (Math.abs(top - prevTop) > 2) {
-			currentLine++;
-			prevTop = top;
-			lineGroups[currentLine] = [];
-		}
-		lineGroups[currentLine].push(span);
-	});
-
-	return lineGroups;
-};
-
-/**
- * Builds HTML for each line from grouped word spans
- */
-const buildLinesHTML = (lineGroups: HTMLElement[][]): string[] => {
-	// Build HTML for each visual line, removing helper spans but preserving
-	// original inline markup
-	return lineGroups.map((spansInLine) => {
-		if (spansInLine.length === 0) return '';
-
-		const range = document.createRange();
-		range.setStartBefore(spansInLine[0]);
-		range.setEndAfter(spansInLine[spansInLine.length - 1]);
-		const fragment = range.cloneContents();
-
-		const container = document.createElement('div');
-		container.appendChild(fragment);
-
-		// Remove our helper spans while keeping their content
-		container
-			.querySelectorAll<HTMLElement>(SELECTORS.SPLIT_WORD)
-			.forEach((helper) => {
-				helper.replaceWith(...Array.from(helper.childNodes));
-			});
-
-		return container.innerHTML.trim();
-	});
-};
-
-/**
- * Animate grouped text elements by lines as a single sequence.
- * This allows applying data-reveal="slide" to a container element (e.g., a div) and
- * automatically animating all nested text elements (h1–h6, p, li, etc.)
- * in the DOM order using the same gsap timeline and stagger configuration.
- */
-const animateGroupedSlide = (
-	container: HTMLElement,
-	nestedTextElements: HTMLElement[],
-	options: AnimationOptions
-): void => {
-	// Ensure container itself is visible before we start manipulating children
-	container.style.opacity = '1';
-
-	// Provide sr-only text on container once
-	insertSrOnlyText(container);
-
-	// Note: individual visual line containers will be hidden from assistive tech
-
-	// Aggregate line elements across all nested text elements
-	const aggregatedLineContainers: HTMLElement[] = [];
-
-	// Iterate over each nested text element and replace its HTML with split lines structure
-	nestedTextElements.forEach((nestedEl) => {
-		// Reset opacity for nested element (in case it had explicit css)
-		nestedEl.style.opacity = '1';
-
-		// Split the nested element text into visual lines
-		const lines = splitTextIntoLines(nestedEl);
-
-		// Build HTML for this nested element similar to animateSlide
-		const nestedContainer = document.createElement('div');
-		nestedContainer.setAttribute('aria-hidden', 'true');
-		nestedContainer.innerHTML = generateLinesHTML(lines, !options.fade);
-
-		// Replace nested element's contents with the generated structure
-		nestedEl.innerHTML = '';
-		nestedEl.appendChild(nestedContainer);
-
-		// Collect the line <div> elements for animation sequencing
-		aggregatedLineContainers.push(
-			...Array.from(nestedContainer.querySelectorAll('div'))
-		);
-	});
-
-	const totalLines = aggregatedLineContainers.length;
-
-	if (totalLines === 0) return; // Nothing to animate
-
-	// Create a single GSAP timeline for the entire group
-	const timeline = gsap.timeline({
-		delay: options.delay || 0,
-	});
-
-	// Iterate over all collected line containers sequentially
-	aggregatedLineContainers.forEach((lineElement, globalIndex) => {
-		const keepWillChange = options.keepWillChange || false;
-		animateSingleLine(
-			lineElement,
-			globalIndex,
-			totalLines,
-			timeline,
-			options,
-			keepWillChange
-		);
-	});
-};
-
-/**
- * Animate grouped text elements with 3D perspective effect.
- * This allows applying data-reveal="perspective" to a container element (e.g., a div) and
- * automatically animating all nested text elements (h1–h6, p, li, etc.)
- * in the DOM order using the same gsap timeline and stagger configuration.
+ * Animate grouped text elements with perspective style
  */
 const animateGroupedPerspective = (
 	container: HTMLElement,
-	nestedTextElements: HTMLElement[],
+	elements: HTMLElement[],
 	options: AnimationOptions
 ): void => {
-	// Ensure container itself is visible before we start manipulating children
 	container.style.opacity = '1';
-
-	// Provide sr-only text on container once
-	insertSrOnlyText(container);
-
-	// Note: individual visual line containers will be hidden from assistive tech
-
-	// Aggregate line elements across all nested text elements
-	const aggregatedLineContainers: HTMLElement[] = [];
-
-	// Iterate over each nested text element and replace its HTML with 3D perspective structure
-	nestedTextElements.forEach((nestedEl) => {
-		// Reset opacity for nested element (in case it had explicit css)
-		nestedEl.style.opacity = '1';
-
-		// Split the nested element text into visual lines
-		const lines = splitTextIntoLines(nestedEl);
-
-		// Create container with perspective
-		const nestedContainer = document.createElement('div');
-		nestedContainer.style.perspective = '1000px';
-		nestedContainer.setAttribute('aria-hidden', 'true');
-
-		// Create HTML structure with 3D effect
-		nestedContainer.innerHTML = generateLinesHTML(
+	const timeline = gsap.timeline({
+		delay: options.delay || 0,
+	});
+	let globalDelayIndex = 0;
+	elements.forEach((element) => {
+		if (!(element as any).originalText) {
+			(element as any).originalText = element.innerHTML;
+		}
+		element.style.opacity = '1';
+		const lines = splitTextIntoLines(element);
+		const perspectiveContainer = document.createElement('div');
+		perspectiveContainer.style.perspective = '1000px';
+		perspectiveContainer.setAttribute('aria-hidden', 'true');
+		const linesHTML = generateLinesHTML(
 			lines,
 			!(options.fade || options.blur),
 			true
 		);
+		perspectiveContainer.innerHTML = linesHTML;
+		element.innerHTML = '';
+		insertSrOnlyText(element);
+		element.appendChild(perspectiveContainer);
+		const lineElements = perspectiveContainer.querySelectorAll('div');
+		lineElements.forEach((lineElement) => {
+			const lineSpan = lineElement.querySelector('span');
+			const lineDelay =
+				globalDelayIndex * (options.stagger || DEFAULT_ANIMATION_VALUES.STAGGER);
+			globalDelayIndex++;
+			const keepWillChange = options.keepWillChange || false;
 
-		// Replace nested element's contents with the 3D structure
-		nestedEl.innerHTML = '';
-		nestedEl.appendChild(nestedContainer);
-
-		// Collect the line <div> elements for animation sequencing
-		aggregatedLineContainers.push(
-			...Array.from(nestedContainer.querySelectorAll('div'))
-		);
-	});
-
-	const totalLines = aggregatedLineContainers.length;
-
-	if (totalLines === 0) return; // Nothing to animate
-
-	// Create a single GSAP timeline for the entire group
-	const timeline = gsap.timeline({
-		delay: options.delay || 0,
-	});
-
-	// Iterate over all collected line containers sequentially
-	aggregatedLineContainers.forEach((lineElement, globalIndex) => {
-		// Get the span containing the line text
-		const lineSpan = lineElement.querySelector('span');
-		if (!lineSpan) return;
-
-		// Calculate delay based on stagger
-		const lineDelay =
-			globalIndex * (options.stagger || DEFAULT_ANIMATION_VALUES.STAGGER);
-
-		// Apply 3D perspective animation
-		if (options.blur) {
-			// For blur animation, only animate y position on the span
-			timeline.fromTo(
-				lineSpan,
-				{ y: '300%' },
-				{
-					y: 0,
-					duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
-					ease: 'quart.out',
-					onComplete: () => {
-						applyCleanStyles(
-							lineSpan as HTMLElement,
-							true,
-							options.keepWillChange || false
-						);
+			if (options.blur) {
+				timeline.fromTo(
+					lineSpan,
+					{ y: '300%' },
+					{
+						y: 0,
+						duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
+						ease: 'quart.out',
+						onComplete: () =>
+							applyCleanStyles(lineSpan as HTMLElement, true, keepWillChange),
 					},
-				},
-				lineDelay
-			);
-
-			// Apply blur animation only to the line element
-			timeline.fromTo(
-				lineElement,
-				{
-					rotateX: '-75deg',
-					rotateY: '0deg',
-					z: '2rem',
-					opacity: 0,
-					filter: 'blur(25px)',
-				},
-				{
-					rotateX: '0deg',
-					rotateY: '0deg',
-					z: '0rem',
-					opacity: 1,
-					filter: 'blur(0px)',
-					duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
-					ease: 'quad.out',
-					onComplete: () => {
-						applyCleanStyles(
-							lineElement as HTMLElement,
-							false,
-							options.keepWillChange || false
-						);
+					lineDelay
+				);
+				timeline.fromTo(
+					lineElement,
+					{
+						rotateX: '-75deg',
+						rotateY: '0deg',
+						z: '2rem',
+						opacity: 0,
+                        filter: 'blur(25px)'
 					},
-				},
-				lineDelay
-			);
-		} else if (options.fade) {
-			timeline.fromTo(
-				lineSpan,
-				{ y: '300%', opacity: 0 },
-				{
-					y: 0,
-					opacity: 1,
-					duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
-					ease: 'quart.out',
-					onComplete: () => {
-						applyCleanStyles(
-							lineSpan as HTMLElement,
-							true,
-							options.keepWillChange || false
-						);
+					{
+						rotateX: '0deg',
+						rotateY: '0deg',
+						z: '0rem',
+						opacity: 1,
+                        filter: 'blur(0px)',
+						duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
+						ease: 'quad.out',
+						onComplete: () =>
+							applyCleanStyles(lineElement as HTMLElement, false, keepWillChange),
 					},
-				},
-				lineDelay
-			);
-
-			// Apply 3D rotation to the entire line
-			timeline.fromTo(
-				lineElement,
-				{
-					rotateX: '-75deg',
-					rotateY: '0deg',
-					z: '2rem',
-				},
-				{
-					rotateX: '0deg',
-					rotateY: '0deg',
-					z: '0rem',
-					duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
-					ease: 'quad.out',
-					onComplete: () => {
-						applyCleanStyles(
-							lineElement as HTMLElement,
-							false,
-							options.keepWillChange || false
-						);
+					lineDelay
+				);
+			} else {
+				timeline.fromTo(
+					lineSpan,
+					{ y: '300%' },
+					{
+						y: 0,
+						duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
+						ease: 'quart.out',
+						onComplete: () =>
+							applyCleanStyles(lineSpan as HTMLElement, true, keepWillChange),
 					},
-				},
-				lineDelay
-			);
-		} else {
-			timeline.fromTo(
-				lineSpan,
-				{ y: '300%' },
-				{
-					y: 0,
-					duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
-					ease: 'quart.out',
-					onComplete: () => {
-						applyCleanStyles(
-							lineSpan as HTMLElement,
-							true,
-							options.keepWillChange || false
-						);
+					lineDelay
+				);
+				timeline.fromTo(
+					lineElement,
+					{
+						rotateX: '-75deg',
+						rotateY: '0deg',
+						z: '2rem',
 					},
-				},
-				lineDelay
-			);
-
-			// Apply 3D rotation to the entire line
-			timeline.fromTo(
-				lineElement,
-				{
-					rotateX: '-75deg',
-					rotateY: '0deg',
-					z: '2rem',
-				},
-				{
-					rotateX: '0deg',
-					rotateY: '0deg',
-					z: '0rem',
-					duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
-					ease: 'quad.out',
-					onComplete: () => {
-						applyCleanStyles(
-							lineElement as HTMLElement,
-							false,
-							options.keepWillChange || false
-						);
+					{
+						rotateX: '0deg',
+						rotateY: '0deg',
+						z: '0rem',
+						duration: options.duration || DEFAULT_ANIMATION_VALUES.DURATION,
+						ease: 'quad.out',
+						onComplete: () =>
+							applyCleanStyles(lineElement as HTMLElement, false, keepWillChange),
 					},
-				},
-				lineDelay
-			);
-		}
+					lineDelay
+				);
+			}
+		});
 	});
 };
 
-function insertSrOnlyText(element: HTMLElement): void {
-	// Avoid duplicating the helper span on subsequent calls
-	if (element.querySelector(`.${ACCESSIBILITY.SR_ONLY_CLASS}`)) return;
+/**
+ * Animate grouped text elements with slide style
+ */
+const animateGroupedSlide = (
+	container: HTMLElement,
+	elements: HTMLElement[],
+	options: AnimationOptions
+): void => {
+	container.style.opacity = '1';
+	const timeline = gsap.timeline({
+		delay: options.delay || 0,
+	});
+	let globalDelayIndex = 0;
+	elements.forEach((element) => {
+		if (!(element as any).originalText) {
+			(element as any).originalText = element.innerHTML;
+		}
+		element.style.opacity = '1';
+		const lines = splitTextIntoLines(element);
+		const slideContainer = document.createElement('div');
+		slideContainer.setAttribute('aria-hidden', 'true');
+		const linesHTML = generateLinesHTML(lines, !options.fade);
+		slideContainer.innerHTML = linesHTML;
+		element.innerHTML = '';
+		insertSrOnlyText(element);
+		element.appendChild(slideContainer);
+		const lineElements = slideContainer.querySelectorAll('div');
+		const totalLines = lineElements.length;
+		lineElements.forEach((lineElement, lineIndex) => {
+			const keepWillChange = options.keepWillChange || false;
+			const lineDelay =
+				globalDelayIndex * (options.stagger || DEFAULT_ANIMATION_VALUES.STAGGER);
+			globalDelayIndex++;
+			
+			const lineSpan = lineElement.querySelector('span');
+			if (!lineSpan) return;
 
-	const originalText =
-		(element as any).originalText || element.textContent || '';
-	if (!originalText.trim()) return;
+			const spanDuration = options.duration || DEFAULT_ANIMATION_VALUES.DURATION;
+			const lineDuration = spanDuration * 1.5;
 
-	const srSpan = document.createElement('span');
-	srSpan.className = ACCESSIBILITY.SR_ONLY_CLASS;
-	srSpan.textContent = originalText;
-	srSpan.style.cssText = ACCESSIBILITY.SR_ONLY_STYLE;
-
-	// Prepend so it is encountered first by screen readers
-	element.prepend(srSpan);
-}
-
-// Add standard DOM content loaded event to ensure initialization
-document.addEventListener('astro:page-load', () => {
-	initTextAnimations();
-});
-
-// Clean up event listeners when the page is unloaded
-document.addEventListener('astro:before-preparation', () => {
-	// Clear any pending resize timeouts
-	if (resizeTimeout !== null) {
-		window.clearTimeout(resizeTimeout);
-		resizeTimeout = null;
-	}
-
-	// Remove resize event listener
-	window.removeEventListener('resize', handleWindowResize);
-
-	// Clear animated elements array to prevent memory leaks
-	animatedElements.length = 0;
-});
+			if (options.fade) {
+				timeline.fromTo(
+					lineSpan,
+					{ y: '100%', opacity: 0 },
+					{
+						y: 0,
+						opacity: 1,
+						duration: spanDuration,
+						ease: 'quart.out',
+						onComplete: () => {
+							applyCleanStyles(lineSpan as HTMLElement, true, keepWillChange);
+						},
+					},
+					lineDelay
+				);
+			} else {
+				timeline.fromTo(
+					lineSpan,
+					{ y: '100%' },
+					{
+						y: 0,
+						duration: spanDuration,
+						ease: 'quart.out',
+						onComplete: () => {
+							applyCleanStyles(lineSpan as HTMLElement, true, keepWillChange);
+						},
+					},
+					lineDelay
+				);
+			}
+		});
+	});
+};
