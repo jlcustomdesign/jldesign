@@ -246,10 +246,10 @@ function runHeroExitAnimation() {
       force3D: true,
       scrollTrigger: {
         trigger: heroSection,
-        start: "bottom bottom",
-        end: "bottom top",
+        start: "top top", // Starts pinning and blurring when top of hero hits top of viewport
+        end: "bottom top", // Ends when the scrolled height equals the section height
         scrub: 0.5,
-        pin: true, // Enabled on all devices
+        pin: true, 
         pinSpacing: false,
         invalidateOnRefresh: true,
       },

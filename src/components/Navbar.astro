@@ -220,9 +220,17 @@ const links = [
             width: isDesktop ? "120px" : "auto",
           });
       } else {
-        // Home Desktop: Start collapsed (Hero handles reveal)
-        // DO NOT animate here. Let hero-animation.ts handle the reveal after SVG loads.
-        // Keeping it opacity-0 scale-0 initially.
+        // Home Page
+        if (window.innerWidth < 1024) {
+          // On mobile, show logo immediately (there's no top-left hero cutout)
+          const navLogoWrapper = document.querySelector("#nav-logo-wrapper");
+          if (navLogoWrapper) {
+            gsap.set(navLogoWrapper, { opacity: 1, scale: 1, width: "auto" });
+          }
+        } else {
+          // Home Desktop: Start collapsed (Hero handles reveal on scroll or load)
+          // Keeping it opacity-0 scale-0 initially.
+        }
       }
     }
   }
