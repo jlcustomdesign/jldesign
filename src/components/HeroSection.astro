@@ -10,6 +10,14 @@ const heroImage = "/Images/optimized/hero-image.webp";
   data-theme="dark"
   style="z-index: 1;"
 >
+  <!-- Visual background (not CSS bg-color, so Safari won't detect it for bar tint) -->
+  <div
+    class="absolute inset-0 z-0"
+    style="background: #F4F1EA;"
+    aria-hidden="true"
+  >
+  </div>
+
   <!-- Hero Content Wrapper (for scale/blur animation) -->
   <div
     id="hero-content-wrapper"
