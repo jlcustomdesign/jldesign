@@ -35,9 +35,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none;
 }
 
-/* Root background matches page sections so Safari bar blends in */
+/* Root background transparent so Safari bar has nothing to tint */
 html, body {
-  background-color: #F4F1EA;
+  background-color: transparent;
   margin: 0;
   padding: 0;
 }
