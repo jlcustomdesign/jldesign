@@ -108,36 +108,46 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Initialize specific to this component just in case global init missed it or for View Transitions
-  document.addEventListener("astro:page-load", () => {
+  // Centralized Initialization wrapper
+  function initAboutSection() {
     const section = document.querySelector("#about-section");
-    if (section) {
-      // Pass the section as scope to prevent double-binding if called elsewhere
-      initTextAnimations(section as HTMLElement);
+    if (!section) return;
 
-      // Optional: Keep the subtle parallax if desired
-      gsap.to(".about-image", {
-        y: "-15%",
-        ease: "none",
-        force3D: true, // Force GPU acceleration
-        scrollTrigger: {
-          trigger: ".about-image-wrapper",
-          start: "top 95%", // Start slightly earlier on mobile
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-    }
-  });
+    // Initialize reveal animations natively
+    initTextAnimations(section as HTMLElement);
 
-  // Initial fallback
-  if (document.readyState === "complete") {
-    const section = document.querySelector("#about-section");
-    if (section) initTextAnimations(section as HTMLElement);
-  } else {
-    document.addEventListener("DOMContentLoaded", () => {
-      const section = document.querySelector("#about-section");
-      if (section) initTextAnimations(section as HTMLElement);
+    // Optional: Keep the subtle parallax if desired
+    // Make sure we kill old triggers first to prevent duplicates on navigation
+    ScrollTrigger.getAll().forEach((t) => {
+      if (
+        (t.vars.trigger === ".about-image-wrapper" ||
+          t.vars.trigger === section) &&
+        t.vars.scrub
+      ) {
+        t.kill();
+      }
+    });
+
+    gsap.to(".about-image", {
+      y: "-15%",
+      ease: "none",
+      force3D: true, // Force GPU acceleration
+      scrollTrigger: {
+        trigger: ".about-image-wrapper",
+        start: "top 95%", // Start slightly earlier on mobile
+        end: "bottom top",
+        scrub: true,
+      },
     });
   }
+
+  // Run on first load
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAboutSection);
+  } else {
+    initAboutSection();
+  }
+
+  // Run on subsequent page navigations
+  document.addEventListener("astro:page-load", initAboutSection);
 </script>

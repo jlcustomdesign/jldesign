@@ -265,12 +265,15 @@ const services = [
         ease: "power4.out"
       });
 
-      // 3. Image Parallax Effect (Match Portfolio)
+      // 3. Image Parallax Effect (Removed for Mobile Performance)
+      // Running a vertical Scrub Parallax inside a horizontally animated Carousel track
+      // heavily degrades performance on mobile devices due to constant repaint/re-compositing.
+      /*
       cards.forEach((card) => {
         const img = card.querySelector("img");
         if (img) {
           gsap.to(img, {
-            y: "10%", // Move from -10% to 0% (relative to container, effectively moving down)
+            y: "10%",
             ease: "none",
             scrollTrigger: {
               trigger: card,
@@ -281,6 +284,7 @@ const services = [
           });
         }
       });
+      */
 
     }, section);
 
