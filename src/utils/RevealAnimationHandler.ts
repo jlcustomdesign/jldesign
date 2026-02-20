@@ -194,6 +194,22 @@ export const initTextAnimations = (scope: Document | HTMLElement = document): ((
 
 		// Start observing the element
 		observer.observe(htmlElement);
+
+        // Fallback: If element is already significantly in the viewport on load,
+        // trigger the animation manually to prevent it from getting stuck at opacity 0
+        const rect = htmlElement.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+            // Mock an intersection entry for elements already in view
+            handleIntersection([{
+                isIntersecting: true,
+                target: htmlElement,
+                boundingClientRect: rect,
+                intersectionRatio: 1,
+                intersectionRect: rect,
+                rootBounds: null,
+                time: performance.now()
+            }], observer);
+        }
 	});
     
     /**
