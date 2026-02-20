@@ -250,6 +250,8 @@ const col2 = restServices.filter((_, i) => i % 2 !== 0);
   }
   .backface-hidden {
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden; /* Fix for Safari/iOS shadow leaks */
+    transform: translateZ(1px); /* Force layer isolation to prevent shadow bleed during rotate */
   }
   .rotate-y-180 {
     transform: rotateY(180deg);
