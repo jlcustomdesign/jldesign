@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 // Mock portfolio for landing page (Keystatic content used on /portfolio page)
 const portfolio = [
   {
@@ -77,10 +78,13 @@ portfolio.forEach((item, i) => {
               <div class="group relative w-full overflow-hidden rounded-3xl">
                 <!-- Image Container -->
                 <div class="w-full aspect-[3/4] overflow-hidden relative bg-gray-200">
-                  <img
+                  <Image
                     src={item.image}
                     alt={item.name}
+                    inferSize={true}
                     loading="lazy"
+                    decoding="async"
+                    format="webp"
                     class="w-full h-[120%] object-cover absolute top-0 left-0 portfolio-img"
                     style="transform: translateY(-10%);" 
                   />

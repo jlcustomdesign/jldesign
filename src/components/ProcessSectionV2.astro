@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import BubbleButton from "./ui/BubbleButton.astro";
 
 const steps = [
@@ -92,11 +93,14 @@ const steps = [
                            transform process-image lg:opacity-0 lg:pointer-events-none lg:blur-sm lg:will-change-transform"
               data-step="0"
             >
-              <img
+              <Image
                 src={steps[0].img}
                 alt={steps[0].title}
+                inferSize={true}
+                format="webp"
                 class="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
               />
             </div>
             <!-- Mobile Text (Sibling) - Static on Mobile -->
@@ -117,11 +121,14 @@ const steps = [
                            transform process-image lg:opacity-0 lg:pointer-events-none lg:blur-sm lg:will-change-transform"
               data-step="2"
             >
-              <img
+              <Image
                 src={steps[2].img}
                 alt={steps[2].title}
+                inferSize={true}
+                format="webp"
                 class="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
               />
             </div>
             <!-- Mobile Text (Sibling) - Static on Mobile -->
@@ -145,11 +152,14 @@ const steps = [
                            transform process-image lg:opacity-0 lg:pointer-events-none lg:blur-sm lg:will-change-transform"
               data-step="1"
             >
-              <img
+              <Image
                 src={steps[1].img}
                 alt={steps[1].title}
+                inferSize={true}
+                format="webp"
                 class="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
               />
             </div>
             <!-- Mobile Text (Sibling) - Static on Mobile -->
@@ -170,11 +180,14 @@ const steps = [
                            transform process-image lg:opacity-0 lg:pointer-events-none lg:blur-sm lg:will-change-transform"
               data-step="3"
             >
-              <img
+              <Image
                 src={steps[3].img}
                 alt={steps[3].title}
+                inferSize={true}
+                format="webp"
                 class="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
               />
             </div>
             <!-- Mobile Text (Sibling) - Static on Mobile -->
