@@ -15,16 +15,10 @@ import BubbleButton from "./ui/BubbleButton.astro";
       <div class="contents lg:flex lg:flex-col lg:gap-8 lg:h-full">
         <!-- Headline Card -->
         <div
-          class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card w-full"
-          data-reveal="block"
-          data-reveal-delay="0"
-          data-reveal-duration="0.6"
+          class="about-fade-card bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card w-full"
         >
           <h2
-            class="font-serif text-4xl lg:text-6xl text-primary leading-none"
-            data-reveal="word-slide"
-            data-reveal-delay="0.4"
-            data-reveal-stagger="0.04"
+            class="about-fade-text font-serif text-4xl lg:text-6xl text-primary leading-none"
           >
             Peste 15 ani de <br />
             <span class="text-accent">excelență</span> în <br />
@@ -34,20 +28,13 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
         <!-- CTA Card -->
         <div
-          class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col justify-center flex-grow order-last lg:order-none w-full"
-          data-reveal="block"
-          data-reveal-delay="0.1"
-          data-reveal-duration="0.6"
+          class="about-fade-card bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col justify-center flex-grow order-last lg:order-none w-full"
         >
-          <p
-            class="text-lg text-primary/80 mb-8 max-w-sm"
-            data-reveal="word-slide"
-            data-reveal-delay="0.5"
-          >
+          <p class="about-fade-text text-lg text-primary/80 mb-8 max-w-sm">
             Ești gata să transformi ideile în realitate? Haide să discutăm
             despre proiectul tău.
           </p>
-          <div data-reveal="block" data-reveal-delay="0.6">
+          <div class="about-fade-text">
             <BubbleButton href="/about" variant="dark" class="!px-10 !py-4">
               Descoperă Povestea
             </BubbleButton>
@@ -57,26 +44,19 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
       <!-- Right Column -->
       <div
-        class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col gap-8 h-full w-full"
-        data-reveal="block"
-        data-reveal-delay="0.2"
-        data-reveal-duration="0.6"
+        class="about-fade-card bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col gap-8 h-full w-full"
       >
         <!-- Text Block -->
         <div>
           <p
-            class="text-lg md:text-xl text-primary/80 leading-normal"
-            data-reveal="word-slide"
-            data-reveal-delay="0.5"
+            class="about-fade-text text-lg md:text-xl text-primary/80 leading-normal"
           >
             Fiecare piesă de mobilier pe care o creăm este rezultatul unei
             pasiuni pentru perfecțiune și al unui respect profund pentru
             tradiția meșteșugului, combinat cu tehnologii moderne de producție.
           </p>
           <p
-            class="text-lg md:text-xl text-primary/80 leading-relaxed mt-6"
-            data-reveal="word-slide"
-            data-reveal-delay="0.6"
+            class="about-fade-text text-lg md:text-xl text-primary/80 leading-relaxed mt-6"
           >
             Nu producem doar mobilă, ci conturăm spațiul în care viața ta se
             desfășoară. De la concept la montaj, detaliul face diferența.
@@ -85,10 +65,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
         <!-- Image -->
         <div
-          class="relative w-full aspect-[4/3] overflow-hidden rounded-[2.5rem] about-image-wrapper"
-          data-reveal="block"
-          data-reveal-delay="0.7"
-          data-reveal-duration="0.8"
+          class="about-fade-card relative w-full aspect-[4/3] overflow-hidden rounded-[2.5rem] about-image-wrapper"
         >
           <img
             src="https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?q=80&w=1200&auto=format&fit=crop"
@@ -102,7 +79,6 @@ import BubbleButton from "./ui/BubbleButton.astro";
 </section>
 
 <script>
-  import { initTextAnimations } from "../utils/RevealAnimationHandler";
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -113,10 +89,6 @@ import BubbleButton from "./ui/BubbleButton.astro";
     const section = document.querySelector("#about-section");
     if (!section) return;
 
-    // Initialize reveal animations natively
-    initTextAnimations(section as HTMLElement);
-
-    // Optional: Keep the subtle parallax if desired
     // Make sure we kill old triggers first to prevent duplicates on navigation
     ScrollTrigger.getAll().forEach((t) => {
       if (
@@ -128,6 +100,36 @@ import BubbleButton from "./ui/BubbleButton.astro";
       }
     });
 
+    // 1. Explicit GSAP Animations instead of buggy data-reveal
+    const cards = gsap.utils.toArray(".about-fade-card");
+    const texts = gsap.utils.toArray(".about-fade-text");
+
+    gsap.from(cards, {
+      scrollTrigger: {
+        trigger: section,
+        start: "top 95%", // Trigger earlier on mobile viewport entry
+      },
+      y: 40,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power3.out",
+    });
+
+    gsap.from(texts, {
+      scrollTrigger: {
+        trigger: section,
+        start: "top 90%", // Start slightly after cards
+      },
+      y: 25,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: "power2.out",
+      delay: 0.2, // Delay to ensure parent cards have started fading in
+    });
+
+    // 2. Parallax Effect
     gsap.to(".about-image", {
       y: "-15%",
       ease: "none",

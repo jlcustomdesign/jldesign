@@ -267,7 +267,7 @@ const services = [
           trigger: carousel,
           start: "top 95%", // Start earlier
         },
-        x: 100,
+        y: 50, // Changed from x: 100 to prevent fighting CSS horizontal scroll-snap bounds
         opacity: 0,
         duration: 1,
         stagger: 0.1,
@@ -345,8 +345,27 @@ const services = [
       carousel.scrollBy({ left: -getStepSize(), behavior: 'smooth' });
     };
 
-    const prevBtns = document.querySelectorAll(".services-prev-btn");
-    const nextBtns = document.querySelectorAll(".services-next-btn");
+    const prevBtns = document.querySelectorAll<HTMLButtonElement>(".services-prev-btn");
+    const nextBtns = document.querySelectorAll<HTMLButtonElement>(".services-next-btn");
+
+    const updateButtons = () => {
+      // Small buffer (10px) for edge-case fractional pixels
+      const isAtStart = carousel.scrollLeft <= 5;
+      const isAtEnd = carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 5;
+      
+      prevBtns.forEach(btn => {
+         btn.style.opacity = isAtStart ? '0.3' : '1';
+         btn.style.pointerEvents = isAtStart ? 'none' : 'auto';
+      });
+      nextBtns.forEach(btn => {
+         btn.style.opacity = isAtEnd ? '0.3' : '1';
+         btn.style.pointerEvents = isAtEnd ? 'none' : 'auto';
+      });
+    };
+
+    carousel.addEventListener('scroll', updateButtons, { passive: true });
+    // Initialize immediately to disable prev button on load
+    updateButtons();
 
     prevBtns.forEach(btn => {
         btn.addEventListener("click", (e) => {
