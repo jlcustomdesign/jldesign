@@ -154,8 +154,10 @@ export const initTextAnimations = (scope: Document | HTMLElement = document): ((
 		(entries) => handleIntersection(entries, observer),
 		{
 			root: null,
-			rootMargin: '0px',
-			threshold: 0.1,
+			// Trigger slightly before it enters the viewport (50px) to prevent visible delay
+			rootMargin: '0px 0px 50px 0px', 
+			// Trigger as soon as 1 pixel (0%) is visible, rather than waiting for 10%
+			threshold: 0,
 		}
 	);
 

@@ -225,7 +225,7 @@ const services = [
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: "top 80%",
+          start: "top 95%", // Start much earlier to prevent delay
           end: "top 20%",
           toggleActions: "play none none reverse"
         }
@@ -255,7 +255,7 @@ const services = [
       gsap.from(cards, {
         scrollTrigger: {
           trigger: carousel,
-          start: "top 85%",
+          start: "top 95%", // Start earlier
         },
         x: 100,
         opacity: 0,

@@ -18,13 +18,13 @@ import BubbleButton from "./ui/BubbleButton.astro";
           class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card w-full"
           data-reveal="block"
           data-reveal-delay="0"
-          data-reveal-duration="0.8"
+          data-reveal-duration="0.6"
         >
           <h2
             class="font-serif text-4xl lg:text-6xl text-primary leading-none"
             data-reveal="word-slide"
-            data-reveal-delay="0.3"
-            data-reveal-stagger="0.05"
+            data-reveal-delay="0.1"
+            data-reveal-stagger="0.04"
           >
             Peste 15 ani de <br />
             <span class="text-accent">excelență</span> în <br />
@@ -36,18 +36,18 @@ import BubbleButton from "./ui/BubbleButton.astro";
         <div
           class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col justify-center flex-grow order-last lg:order-none w-full"
           data-reveal="block"
-          data-reveal-delay="0.2"
-          data-reveal-duration="0.8"
+          data-reveal-delay="0.1"
+          data-reveal-duration="0.6"
         >
           <p
             class="text-lg text-primary/80 mb-8 max-w-sm"
             data-reveal="word-slide"
-            data-reveal-delay="0.5"
+            data-reveal-delay="0.3"
           >
             Ești gata să transformi ideile în realitate? Haide să discutăm
             despre proiectul tău.
           </p>
-          <div data-reveal="block" data-reveal-delay="0.7">
+          <div data-reveal="block" data-reveal-delay="0.4">
             <BubbleButton href="/about" variant="dark" class="!px-10 !py-4">
               Descoperă Povestea
             </BubbleButton>
@@ -59,15 +59,15 @@ import BubbleButton from "./ui/BubbleButton.astro";
       <div
         class="bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col gap-8 h-full w-full"
         data-reveal="block"
-        data-reveal-delay="0.4"
-        data-reveal-duration="0.8"
+        data-reveal-delay="0.2"
+        data-reveal-duration="0.6"
       >
         <!-- Text Block -->
         <div>
           <p
             class="text-lg md:text-xl text-primary/80 leading-normal"
             data-reveal="word-slide"
-            data-reveal-delay="0.6"
+            data-reveal-delay="0.3"
           >
             Fiecare piesă de mobilier pe care o creăm este rezultatul unei
             pasiuni pentru perfecțiune și al unui respect profund pentru
@@ -76,7 +76,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
           <p
             class="text-lg md:text-xl text-primary/80 leading-relaxed mt-6"
             data-reveal="word-slide"
-            data-reveal-delay="0.6"
+            data-reveal-delay="0.4"
           >
             Nu producem doar mobilă, ci conturăm spațiul în care viața ta se
             desfășoară. De la concept la montaj, detaliul face diferența.
@@ -87,8 +87,8 @@ import BubbleButton from "./ui/BubbleButton.astro";
         <div
           class="relative w-full aspect-[4/3] overflow-hidden rounded-[2.5rem] about-image-wrapper"
           data-reveal="block"
-          data-reveal-delay="0.6"
-          data-reveal-duration="1.0"
+          data-reveal-delay="0.4"
+          data-reveal-duration="0.8"
         >
           <img
             src="https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?q=80&w=1200&auto=format&fit=crop"
@@ -121,7 +121,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
         ease: "none",
         scrollTrigger: {
           trigger: ".about-image-wrapper",
-          start: "top bottom",
+          start: "top 95%", // Start slightly earlier on mobile
           end: "bottom top",
           scrub: true,
         },
