@@ -75,7 +75,8 @@ const services = [
     <!-- Carousel Track -->
     <div
       id="services-carousel"
-      class="flex gap-4 md:gap-6 px-6 md:px-8"
+      class="flex gap-4 md:gap-6 px-6 md:px-8 will-change-transform"
+      style="transform: translate3d(0, 0, 0);"
     >
       {
         services.map((service, i) => (
@@ -339,6 +340,7 @@ const services = [
         x: -step,
         duration: 0.5,
         ease: "power2.inOut",
+        force3D: true, // Force GPU acceleration
         onComplete: () => {
           // Logical DOM Move
           carousel.appendChild(carousel.firstElementChild!);
@@ -365,6 +367,7 @@ const services = [
         x: 0,
         duration: 0.5,
         ease: "power2.inOut",
+        force3D: true, // Force GPU acceleration
         onComplete: () => {
           isAnimating = false;
         }

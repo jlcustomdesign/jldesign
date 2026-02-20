@@ -354,6 +354,7 @@ const steps = [
                   filter: "blur(0px)",
                   duration: 1,
                   ease: "power2.out",
+                  force3D: true, // Force GPU acceleration
                   onComplete: () => {
                     gsap.set(textEl, { pointerEvents: "auto" });
                   },
@@ -382,6 +383,7 @@ const steps = [
                   filter: "blur(0px)",
                   duration: 1,
                   ease: "power2.out",
+                  force3D: true, // Force GPU acceleration
                   onComplete: () => {
                     gsap.set(imgEl, { pointerEvents: "auto" });
                   },
@@ -430,6 +432,7 @@ const steps = [
                 duration: 0.8,
                 stagger: 0.2, // Text animates slightly after image
                 ease: "power2.out",
+                force3D: true, // Force GPU acceleration
                 scrollTrigger: {
                   trigger: imgEl,
                   start: "top 95%", // Start earlier on mobile

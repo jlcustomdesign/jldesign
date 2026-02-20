@@ -119,6 +119,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
       gsap.to(".about-image", {
         y: "-15%",
         ease: "none",
+        force3D: true, // Force GPU acceleration
         scrollTrigger: {
           trigger: ".about-image-wrapper",
           start: "top 95%", // Start slightly earlier on mobile

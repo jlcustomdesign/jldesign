@@ -81,8 +81,8 @@ portfolio.forEach((item, i) => {
                     src={item.image}
                     alt={item.name}
                     loading="lazy"
-                    class="w-full h-[120%] object-cover absolute top-0 left-0 portfolio-img"
-                    style="transform: translateY(-10%);" 
+                    class="w-full h-[120%] object-cover absolute top-0 left-0 portfolio-img will-change-transform"
+                    style="transform: translate3d(0, -10%, 0);" 
                   />
                   
                   <!-- Overlay: Visible on Hover (Glassmorphism) -->
@@ -128,6 +128,7 @@ portfolio.forEach((item, i) => {
                 {
                     y: endY,
                     ease: "none",
+                    force3D: true, // Force GPU acceleration
                     scrollTrigger: {
                         trigger: section,
                         start: "top bottom", 
@@ -156,6 +157,7 @@ portfolio.forEach((item, i) => {
             gsap.to(img, {
                 y: "10%",
                 ease: "none",
+                force3D: true, // Force GPU acceleration
                 scrollTrigger: {
                     trigger: img.parentElement,
                     start: "top bottom",
