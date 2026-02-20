@@ -75,13 +75,12 @@ const services = [
     <!-- Carousel Track -->
     <div
       id="services-carousel"
-      class="flex gap-4 md:gap-6 px-6 md:px-8 will-change-transform"
-      style="transform: translate3d(0, 0, 0);"
+      class="flex gap-4 md:gap-6 px-4 md:px-8 overflow-x-auto snap-x snap-mandatory scroll-smooth hide-scrollbar pb-12 pt-4 -mt-4"
     >
       {
         services.map((service, i) => (
           <div
-            class="service-card w-[75vw] md:w-[45vw] lg:w-[27%] h-[500px] rounded-2xl relative group flex-shrink-0 perspective-[1000px] bg-transparent shadow-none"
+            class="service-card w-[85vw] md:w-[45vw] lg:w-[27%] h-[500px] rounded-2xl relative group flex-shrink-0 perspective-[1000px] bg-transparent shadow-none snap-center md:snap-start"
             data-index={i}
           >
             <!-- Inner Card (Flippable) -->
@@ -203,6 +202,16 @@ const services = [
   .service-card-inner.is-flipped {
     transform: rotateY(180deg);
   }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 </style>
 
 <script>
@@ -318,64 +327,22 @@ const services = [
         }
     });
 
-    // --- CAROUSEL LOGIC ---
+    // --- CAROUSEL LOGIC (Native Scroll Snap) ---
 
-    let isAnimating = false;
-
-    // Helper to get dynamic gap + width
     const getStepSize = () => {
-      const card = carousel.firstElementChild as HTMLElement;
+      const card = carousel.querySelector('.service-card') as HTMLElement;
       if (!card) return 0;
-      
       const style = window.getComputedStyle(carousel);
       const gap = parseFloat(style.columnGap) || 0;
-      
       return card.offsetWidth + gap;
     };
 
     const moveNext = () => {
-      if (isAnimating) return;
-      isAnimating = true;
-
-      const step = getStepSize();
-      
-      // GSAP Animation: Move Left
-      gsap.to(carousel, {
-        x: -step,
-        duration: 0.5,
-        ease: "power2.inOut",
-        force3D: true, // Force GPU acceleration
-        onComplete: () => {
-          // Logical DOM Move
-          carousel.appendChild(carousel.firstElementChild!);
-          
-          // Instant Reset
-          gsap.set(carousel, { x: 0 });
-          isAnimating = false;
-        }
-      });
+      carousel.scrollBy({ left: getStepSize(), behavior: 'smooth' });
     };
 
     const movePrev = () => {
-      if (isAnimating) return;
-      isAnimating = true;
-
-      const step = getStepSize();
-
-      // 1. Instant: Move Last Item -> Start, Shift Track Left (to hide it)
-      carousel.prepend(carousel.lastElementChild!);
-      gsap.set(carousel, { x: -step });
-
-      // 2. GSAP Animation: Move Right (to 0)
-      gsap.to(carousel, {
-        x: 0,
-        duration: 0.5,
-        ease: "power2.inOut",
-        force3D: true, // Force GPU acceleration
-        onComplete: () => {
-          isAnimating = false;
-        }
-      });
+      carousel.scrollBy({ left: -getStepSize(), behavior: 'smooth' });
     };
 
     const prevBtns = document.querySelectorAll(".services-prev-btn");
@@ -395,33 +362,7 @@ const services = [
         });
     });
 
-    // --- TOUCH SWIPE SUPPORT ---
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const minSwipeDistance = 50;
-
-    carousel.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    carousel.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-
-    const handleSwipe = () => {
-        const distance = touchStartX - touchEndX;
-        
-        if (Math.abs(distance) > minSwipeDistance) {
-            if (distance > 0) {
-                // Swiped Left -> Next
-                moveNext();
-            } else {
-                // Swiped Right -> Prev
-                movePrev();
-            }
-        }
-    };
+    // Note: Touch swipe support is now handled flawlessly by CSS scroll-snap intrinsically.
   }
 
   // Run on load and Astro transitions
