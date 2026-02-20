@@ -13,8 +13,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
     <!-- Hero Section -->
     <section
       id="about-hero-section"
-      class="min-h-screen lg:min-h-[110vh] flex flex-col justify-center bg-secondary px-4 md:px-8 overflow-hidden relative pb-10 lg:pb-12"
-      style="min-height: 110vh !important;"
+      class="min-h-screen lg:min-h-[110vh] flex flex-col justify-center bg-secondary px-4 md:px-8 overflow-hidden relative pb-8 lg:pb-12"
     >
       <!-- Background SVG Container (COMMENTED OUT) -->
       <!-- <div
@@ -34,11 +33,16 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
         </svg>
       </div> -->
 
-      <div id="about-hero-content" class="container mx-auto h-[80vh] w-full">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full relative">
+      <div
+        id="about-hero-content"
+        class="container mx-auto h-auto lg:h-[80vh] w-full pt-24 lg:pt-0"
+      >
+        <div
+          class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 h-full relative"
+        >
           <!-- Left: Title Bottom Left -->
           <div
-            class="order-2 lg:order-1 lg:col-span-5 flex flex-col justify-end pb-0 relative z-20"
+            class="order-2 lg:order-1 lg:col-span-5 flex flex-col justify-start lg:justify-end pb-8 lg:pb-0 relative z-20"
           >
             <div class="space-y-6">
               <p
@@ -50,7 +54,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
               </p>
               <h1
                 id="about-hero-title"
-                class="font-serif text-[12vw] lg:text-[10rem] leading-[0.8] text-primary whitespace-nowrap opacity-0 -ml-1 md:-ml-2 lg:-ml-3 -mb-1 md:-mb-2 lg:-mb-4"
+                class="font-serif text-[18vw] lg:text-[10rem] leading-[0.8] text-primary whitespace-nowrap opacity-0 -ml-1 md:-ml-2 lg:-ml-3"
                 style="transform: translateY(100%);"
               >
                 DESPRE NOI
@@ -60,35 +64,35 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
 
           <!-- Right: 4 Slices Image (Continuous) -->
           <div
-            class="order-1 lg:order-2 lg:col-span-7 h-full grid grid-cols-4 gap-4 z-10"
+            class="order-1 lg:order-2 lg:col-span-7 h-[50vh] lg:h-full grid grid-cols-4 gap-3 md:gap-4 z-10"
           >
-            <!-- Slice 1 (Left) - SHORTENED -->
+            <!-- Slice 1 (Left) -->
             <div
-              class="relative overflow-hidden h-[75%] lg:h-[70%] w-full reveal-roll rounded-2xl"
+              class="relative overflow-hidden h-full lg:h-[70%] w-full reveal-roll rounded-xl lg:rounded-2xl"
               data-delay="0.1"
               style="clip-path: inset(0 0 100% 0);"
             >
               <img
                 src="/Images/optimized/hero-image.webp"
-                class="absolute inset-x-0 w-[400%] max-w-none h-[142.86%] object-cover top-0 left-0"
+                class="absolute inset-x-0 w-[400%] max-w-none h-full lg:h-[142.86%] object-cover top-0 left-0"
                 alt="Slice 1"
               />
             </div>
-            <!-- Slice 2 (Center Left) - SHORTENED -->
+            <!-- Slice 2 (Center Left) -->
             <div
-              class="relative overflow-hidden h-[75%] lg:h-[70%] w-full reveal-roll rounded-2xl"
+              class="relative overflow-hidden h-full lg:h-[70%] w-full reveal-roll rounded-xl lg:rounded-2xl"
               data-delay="0.3"
               style="clip-path: inset(0 0 100% 0);"
             >
               <img
                 src="/Images/optimized/hero-image.webp"
-                class="absolute inset-x-0 w-[400%] max-w-none h-[142.86%] object-cover top-0 -left-[100%]"
+                class="absolute inset-x-0 w-[400%] max-w-none h-full lg:h-[142.86%] object-cover top-0 -left-[100%]"
                 alt="Slice 2"
               />
             </div>
-            <!-- Slice 3 (Center Right) - FULL -->
+            <!-- Slice 3 (Center Right) -->
             <div
-              class="relative overflow-hidden h-full w-full reveal-roll rounded-2xl"
+              class="relative overflow-hidden h-full w-full reveal-roll rounded-xl lg:rounded-2xl"
               data-delay="0.5"
               style="clip-path: inset(0 0 100% 0);"
             >
@@ -98,9 +102,9 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
                 alt="Slice 3"
               />
             </div>
-            <!-- Slice 4 (Right) - FULL -->
+            <!-- Slice 4 (Right) -->
             <div
-              class="relative overflow-hidden h-full w-full reveal-roll rounded-2xl"
+              class="relative overflow-hidden h-full w-full reveal-roll rounded-xl lg:rounded-2xl"
               data-delay="0.7"
               style="clip-path: inset(0 0 100% 0);"
             >
