@@ -237,7 +237,8 @@ function runServicesHeroAnimation(section: Element) {
   const tl = gsap.timeline({ defaults: { ease: "power2.inOut" } });
 
   // PHASE 1: Zoom to normal with Bounce
-  tl.to(containerSvg, { scale: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" });
+  // Scale down slightly on mobile (0.94) so the rounded corners aren't clipped by the physical phone screen curves
+  tl.to(containerSvg, { scale: isMobile ? 0.94 : 1, duration: 1.5, ease: "elastic.out(1, 0.75)" });
 
   // PHASE 2: Simultaneous Reveal (Quicker: 0.8s)
   tl.to(pathEl, {
