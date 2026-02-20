@@ -232,11 +232,21 @@ function runSvgAnim(path: Element, width: number, height: number) {
 
 function runHeroExitAnimation() {
     const heroSection = document.querySelector("#hero-section");
+    const heroContent = document.querySelector("#hero-content-wrapper");
     if (!heroSection) return;
 
-    // Animate the ENTIRE section (not just content wrapper) so bg-secondary
-    // never peeks through and Safari doesn't pick up the cream color for its bar.
-    gsap.to(heroSection, {
+    const isMobile = window.innerWidth < 1024;
+
+    if (isMobile) {
+      // On mobile: NO pin (prevents Safari from detecting cream content behind pinned hero).
+      // Just let the hero scroll away naturally — no parallax blur.
+      // This avoids exposing the About section behind a fixed-positioned hero.
+      (heroSection as HTMLElement).dataset.exitAnimInit = "true";
+      return;
+    }
+
+    // Desktop: full parallax exit with pin
+    gsap.to(heroContent || heroSection, {
       scale: 0.9,
       filter: "blur(8px)",
       opacity: 0.5,
