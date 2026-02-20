@@ -13,7 +13,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
     <!-- Hero Section -->
     <section
       id="about-hero-section"
-      class="min-h-screen lg:min-h-[110vh] flex flex-col justify-center px-4 md:px-8 overflow-hidden relative pb-8 lg:pb-12"
+      class="min-h-[100svh] lg:min-h-[110vh] flex flex-col justify-center bg-secondary px-4 md:px-8 overflow-hidden relative pb-8 lg:pb-12"
     >
       <!-- Background SVG Container (COMMENTED OUT) -->
       <!-- <div
@@ -258,11 +258,11 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           <h2
             class="text-[11vw] md:text-7xl lg:text-8xl font-serif font-bold text-primary leading-[1.05] uppercase mb-12 flex flex-col items-center text-center w-full"
           >
-            <span class="scrub-words whitespace-nowrap block">Nu producem</span>
-            <span class="scrub-words whitespace-nowrap block mt-1 md:mt-2"
+            <span class="scrub-words block whitespace-nowrap">Nu producem</span>
+            <span class="scrub-words block whitespace-nowrap mt-1 md:mt-2"
               >doar mobilă.</span
             >
-            <span class="scrub-words whitespace-nowrap block mt-1 md:mt-2"
+            <span class="scrub-words block whitespace-nowrap mt-1 md:mt-2"
               >creăm liniște.</span
             >
           </h2>
@@ -733,13 +733,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
 </script>
 
 <style is:global>
-  /* 
-    Ensure body is transparent so fixed footer behind is visible. 
-    Also setting html to #050505 to ensure the Safari bottom bar matches the dark footer, not the cream sections.
-  */
-  html {
-    background-color: #050505 !important;
-  }
+  /* Ensure body is transparent so fixed footer behind is visible */
   body {
     background-color: transparent !important;
   }
