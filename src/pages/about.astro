@@ -381,6 +381,34 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
         });
       });
 
+      const heroSection = document.querySelector("#about-hero-section");
+
+      if (heroSection) {
+        const isMobile = window.innerWidth < 1024;
+
+        if (!isMobile) {
+          // Optimization: Hint browser
+          gsap.set(heroSection, { willChange: "transform, filter, opacity" });
+
+          gsap.to(heroSection, {
+            scale: 0.9,
+            filter: "blur(8px)",
+            opacity: 0,
+            duration: 1,
+            ease: "none",
+            force3D: true, // GPU acceleration
+            scrollTrigger: {
+              trigger: heroSection,
+              start: "top top", // Pin when Top of hero hits Top of viewport
+              end: "bottom top",
+              scrub: 0.5,
+              pin: true,
+              pinSpacing: false, // Let next section overlap
+            },
+          });
+        }
+      }
+
       // --- Scrub Button Animation ---
       const scrubButtons = document.querySelectorAll(".scrub-button");
       scrubButtons.forEach((btn) => {
@@ -674,7 +702,6 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
         );
       }
 
-      const heroSection = document.querySelector("#about-hero-section");
       const heroContent = document.querySelector("#about-hero-content");
 
       if (heroSection && heroContent) {
@@ -697,22 +724,6 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
             },
           });
         }
-
-        gsap.to(heroSection, {
-          scale: 0.9,
-          filter: "blur(8px)",
-          opacity: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSection,
-            start: "bottom bottom",
-            end: "bottom top",
-            scrub: 0.5,
-            pin: true, // Enabled on all devices
-            pinSpacing: false,
-            invalidateOnRefresh: true,
-          },
-        });
       }
     });
   }
