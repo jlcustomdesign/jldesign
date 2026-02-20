@@ -256,10 +256,15 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           class="flex flex-col items-center text-center mb-20 md:mb-32 max-w-5xl mx-auto"
         >
           <h2
-            class="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-primary leading-[1.05] scrub-words uppercase mb-12"
+            class="text-[11vw] md:text-7xl lg:text-8xl font-serif font-bold text-primary leading-[1.05] uppercase mb-12 flex flex-col items-center text-center w-full"
           >
-            Nu producem mobilă.<br />
-            Creăm liniște.
+            <div class="flex flex-wrap justify-center gap-x-2 md:gap-x-4">
+              <span class="scrub-words whitespace-nowrap">Nu producem</span>
+              <span class="scrub-words whitespace-nowrap">mobilă.</span>
+            </div>
+            <div class="scrub-words whitespace-nowrap mt-1 md:mt-2">
+              Creăm liniște.
+            </div>
           </h2>
           <p
             class="text-3xl md:text-4xl lg:text-5xl text-primary/80 leading-relaxed scrub-words max-w-3xl"
@@ -557,31 +562,17 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
         bentoCards.forEach((card, i) => {
           gsap.set(card, { willChange: "transform, opacity" });
 
-          // "Construction" Effect: Come from different directions (OUTSIDE VIEWPORT)
-          let startVars: any = {};
-          const mode = i % 4;
-          const w = window.innerWidth;
-          const h = window.innerHeight;
-
-          if (mode === 0)
-            startVars.x = -w * 0.3; // Left (Outside with buffer)
-          else if (mode === 1)
-            startVars.y = h * 0.3; // Bottom (Outside with buffer)
-          else if (mode === 2)
-            startVars.x = w * 0.3; // Right (Outside with buffer)
-          else startVars.y = h * 0.3; // Bottom (Outside with buffer)
-
-          gsap.fromTo(card, startVars, {
-            x: 0,
-            y: 0,
-            ease: "none", // Linear scrub
+          // "Construction" Effect Simplified for 60fps (No Scrub)
+          gsap.from(card, {
+            y: 80,
+            opacity: 0,
+            duration: 1.2,
+            ease: "power2.out",
             force3D: true, // GPU acceleration
             scrollTrigger: {
               trigger: card,
-              start: "top 95%", // Start just before entering
-              end: "center 65%", // End when visible but before center
-              scrub: 0.5,
-              pin: false, // Explicitly disable pinning here to avoid conflicts
+              start: "top 90%", // Start when it enters viewport
+              toggleActions: "play none none reverse",
             },
           });
         });
@@ -742,7 +733,14 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
 </script>
 
 <style is:global>
-  /* Ensure body is transparent so fixed footer behind is visible */
+  <style is:global>
+  /* 
+    Ensure body is transparent so fixed footer behind is visible. 
+    Also setting html to #050505 to ensure the Safari bottom bar matches the dark footer, not the cream sections.
+  */
+  html {
+    background-color: #050505 !important;
+  }
   body {
     background-color: transparent !important;
   }
