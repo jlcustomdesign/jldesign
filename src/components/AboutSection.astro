@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import BubbleButton from "./ui/BubbleButton.astro";
 ---
 
@@ -91,14 +90,10 @@ import BubbleButton from "./ui/BubbleButton.astro";
           data-reveal-delay="0.4"
           data-reveal-duration="0.8"
         >
-          <Image
+          <img
             src="https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?q=80&w=1200&auto=format&fit=crop"
             alt="Craftsmanship detail"
-            inferSize={true}
-            format="webp"
             class="absolute inset-0 w-full h-full object-cover object-center about-image"
-            loading="lazy"
-            decoding="async"
           />
         </div>
       </div>
