@@ -367,9 +367,10 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           opacity: 1,
           stagger: 0.05,
           ease: "power2.out",
+          force3D: true, // GPU acceleration
           scrollTrigger: {
             trigger: container,
-            start: "top 90%", // Trigger slightly earlier to separate from other paints
+            start: "top 92%", // Slightly delayed start for paint separation
             end: "bottom 60%",
             scrub: 1,
           },
@@ -612,9 +613,10 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
         });
       });
 
-      // Standard Reveal (for Bento/Other)
       const revealImageContainers = document.querySelectorAll(".reveal-image");
       revealImageContainers.forEach((container) => {
+        gsap.set(container, { willChange: "transform, opacity" }); // Hint browser
+
         gsap.fromTo(
           container,
           { y: 50, opacity: 0 },
@@ -623,9 +625,10 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
             opacity: 1,
             duration: 1.2,
             ease: "power2.out",
+            force3D: true, // GPU acceleration
             scrollTrigger: {
               trigger: container,
-              start: "top 85%",
+              start: "top 88%", // Paint separation
             },
           },
         );
