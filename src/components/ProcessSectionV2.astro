@@ -410,12 +410,35 @@ const steps = [
       },
 
       // --------------------------------------------------------------------------
-      // MOBILE: STATIC (NO GSAP ANIMATION) TO PREVENT FLASH/RELOAD
+      // MOBILE: SIMPLE REVEAL ANIMATION (PLAY ONCE)
       // --------------------------------------------------------------------------
       "(max-width: 1023px)": function () {
-        // Deliberately empty! The elements are visible by default in HTML/CSS.
-        // This prevents the JS from hiding them and animating them back in,
-        // which was causing the visual "reload" or flash.
+        const steps = [0, 1, 2, 3];
+        steps.forEach((i) => {
+          const imgEl = section.querySelector(
+            `.process-image[data-step="${i}"]`,
+          );
+          const textEl = section.querySelector(`[data-step-mobile="${i}"]`);
+
+          if (imgEl && textEl) {
+            gsap.fromTo(
+              [imgEl, textEl],
+              { y: 50, autoAlpha: 0 },
+              {
+                y: 0,
+                autoAlpha: 1,
+                duration: 0.8,
+                stagger: 0.2, // Text animates slightly after image
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: imgEl,
+                  start: "top 85%",
+                  toggleActions: "play none none none", // Only play once to prevent flashing on scroll
+                },
+              },
+            );
+          }
+        });
       },
     });
   }
