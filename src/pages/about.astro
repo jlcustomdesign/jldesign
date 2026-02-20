@@ -46,8 +46,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           >
             <div class="space-y-6">
               <p
-                class="text-primary/60 text-lg md:text-xl max-w-md reveal-text"
-                data-reveal="slide"
+                class="text-primary/60 text-lg md:text-xl max-w-md about-hero-subtitle"
               >
                 Our family's dedication to this noble material reflects a deep
                 respect for its history and potential.
@@ -576,6 +575,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
             x: 0,
             y: 0,
             ease: "none", // Linear scrub
+            force3D: true, // GPU acceleration
             scrollTrigger: {
               trigger: card,
               start: "top 95%", // Start just before entering
@@ -653,20 +653,34 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
         );
       }
 
-      // Title Reveal Animation (Clean Slide Up)
+      // Title & Subtitle Reveal Animation (Clean Slide Up)
       const heroTitle = document.querySelector("#about-hero-title");
+      const heroSubtitle = document.querySelector(".about-hero-subtitle");
+
       if (heroTitle) {
         gsap.to(heroTitle, {
           y: 0,
           opacity: 1,
           duration: 1.5,
           ease: "power3.out",
-          delay: 0.2, // Sync with slices
-          scrollTrigger: {
-            trigger: "#about-hero-section",
-            start: "top 80%",
-          },
+          delay: 0.2,
+          force3D: true,
         });
+      }
+
+      if (heroSubtitle) {
+        gsap.fromTo(
+          heroSubtitle,
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.5,
+            ease: "power3.out",
+            delay: 0.4,
+            force3D: true,
+          },
+        );
       }
 
       const heroSection = document.querySelector("#about-hero-section");
