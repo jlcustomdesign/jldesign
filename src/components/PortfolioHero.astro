@@ -169,61 +169,63 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
     <!-- Darkening Overlay to ensure text readability -->
     <div class="absolute inset-0 bg-black/40"></div>
 
-    <!-- Bottom Marquee Stack -->
-    <div class="absolute bottom-0 left-0 w-full flex flex-col pb-8">
-      <!-- Band 1: Title -->
-      <div
-        class="mobile-marquee w-full bg-accent/95 py-3 transform -skew-y-2 translate-y-2 relative z-10 border-y-4 border-black"
-      >
-        <div class="overflow-hidden flex items-center h-full">
-          <!-- Repeating Marquee effect -->
-          <h1
-            class="font-serif text-[12vw] leading-none text-black uppercase whitespace-nowrap px-4 font-bold flex animate-marquee"
-          >
-            <span>LUCRĂRI SELECTATE &bull;&nbsp;</span>
-            <span>LUCRĂRI SELECTATE &bull;&nbsp;</span>
-            <span>LUCRĂRI SELECTATE &bull;&nbsp;</span>
-          </h1>
+    <!-- Custom SCSS-Style Marquee Stack -->
+    <div
+      class="absolute bottom-16 left-0 w-full flex flex-col justify-end overflow-visible pb-8 pointer-events-auto"
+    >
+      <div class="custom-marquees z-20">
+        <!-- Band 1: Title -->
+        <div class="custom-marquee mobile-marquee" style="--char-count: 25">
+          <div class="custom-marquee-inner">
+            <p>LUCRĂRI SELECTATE</p>
+            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+          </div>
         </div>
-      </div>
 
-      <!-- Band 2: Subtitle/Description -->
-      <div
-        class="mobile-marquee w-full bg-white/95 py-4 transform skew-y-1 relative z-20 shadow-xl border-y-2 border-black/10"
-      >
-        <div class="px-6 relative">
-          <p
-            class="font-sans text-sm font-medium text-black leading-tight max-w-[85%]"
-          >
-            O colecție de mobilier și spații interioare, create să ridice
-            cotidianul prin eleganță și finisaje premium.
-          </p>
+        <!-- Band 2: Description -->
+        <div class="custom-marquee mobile-marquee" style="--char-count: 35">
+          <div class="custom-marquee-inner">
+            <p>MOBILIER ȘI DESIGN INTERIOR</p>
+            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+          </div>
         </div>
-      </div>
 
-      <!-- Band 3: CTA Button -->
-      <div
-        class="mobile-marquee w-full pt-8 px-6 relative z-30 flex justify-end"
-      >
+        <!-- Band 3: Qualities -->
+        <div class="custom-marquee mobile-marquee" style="--char-count: 28">
+          <div class="custom-marquee-inner">
+            <p>ELEGANȚĂ ȘI RAFINAMENT</p>
+            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+          </div>
+        </div>
+
+        <!-- Band 4: CTA Button -->
         <a
           href="/contact"
-          class="bg-black text-white rounded-full px-6 py-3 flex items-center gap-3 active:scale-95 transition-transform shadow-2xl"
+          class="custom-marquee mobile-marquee block group z-30"
+          style="--char-count: 30"
         >
-          <span class="font-sans font-medium text-sm">Începe un Proiect</span>
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            class="opacity-80"
+          <div
+            class="custom-marquee-inner cursor-pointer group-hover:opacity-80 transition-opacity"
           >
-            <path
-              d="M5 12H19M19 12L12 5M19 12L12 19"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"></path>
-          </svg>
+            <p>ÎNCEPE UN PROIECT ACUM</p>
+            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
+            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
+            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
+            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
+            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
+          </div>
         </a>
       </div>
     </div>
@@ -231,17 +233,79 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
 </section>
 
 <style>
-  @keyframes marquee {
+  .custom-marquees {
+    display: flex;
+    flex-direction: column;
+    gap: 3vw;
+    width: 110%;
+    margin-left: -5%;
+    overflow: visible;
+  }
+
+  .custom-marquee {
+    --marquee-color: #f3bb0b; /* Brand yellow */
+    --marquee-bg: var(--marquee-color);
+    --marquee-text: #000;
+    --anim-duration: calc(0.8s * var(--char-count, 20));
+
+    overflow: hidden;
+    background: var(--marquee-bg);
+    color: var(--marquee-text);
+    transform: rotate(-6deg);
+    padding: 0.2rem 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 2px solid transparent; /* Prevents jumping when even styles apply borders */
+  }
+
+  .custom-marquee:nth-child(even) {
+    --marquee-bg: #111;
+    --marquee-text: var(--marquee-color);
+    transform: rotate(5deg);
+    border-top: 2px solid var(--marquee-color);
+    border-bottom: 2px solid var(--marquee-color);
+  }
+
+  /* Specifically style the last link to look very actionable */
+  .custom-marquee:last-child {
+    box-shadow: 0 15px 40px rgba(243, 187, 11, 0.3);
+  }
+
+  .custom-marquee-inner {
+    width: max-content;
+    display: flex;
+    text-transform: uppercase;
+    animation: customMarquee var(--anim-duration) infinite linear;
+  }
+
+  .custom-marquee:nth-child(even) .custom-marquee-inner {
+    animation-direction: reverse;
+  }
+
+  .custom-marquee p {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 12vw, 6rem);
+    line-height: 1.1;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding-right: 0.5em; /* spacing before the star */
+  }
+
+  .custom-marquee p::after {
+    content: "✦";
+    font-size: 0.7em;
+    transform: translateY(-0.05em); /* visual centering */
+  }
+
+  @keyframes customMarquee {
     0% {
       transform: translateX(0);
     }
     100% {
-      transform: translateX(-33.33%);
-    }
-  }
-  .animate-marquee {
-    animation: marquee 10s linear infinite;
-    will-change: transform;
+      transform: translateX(calc(-100% / 6));
+    } /* 6 elements total */
   }
 </style>
 
