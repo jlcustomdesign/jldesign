@@ -85,7 +85,7 @@ function runHeroEnterAnimation(section: Element) {
   }
 
   // 2c. Mobile Static CTA
-  const mobileCTA = section.querySelector(".mobile-cta-btn");
+  const mobileCTA = section.querySelector(".mobile-cta-wrapper");
   if (mobileCTA) {
      tl.fromTo(mobileCTA,
         { y: 30, opacity: 0 },
@@ -143,4 +143,24 @@ function runPortfolioHeroExitAnimation(section: Element) {
         invalidateOnRefresh: true,
       },
     });
+
+    // 5. Navbar Theme Transition (Portfolio specific)
+    // theme-transition.ts ignores the Portfolio page, so we manually handle the Light switch here
+    const navbar = document.querySelector("#navbar-container");
+    const cmsSection = document.querySelector("#portfolio-cms-section");
+    
+    if (navbar && cmsSection) {
+        ScrollTrigger.create({
+            trigger: cmsSection,
+            start: "top 12%", // Triggers when the white background CMS section reaches the navbar area
+            onEnter: () => {
+                navbar.classList.remove("nav-dark");
+                navbar.classList.add("nav-light");
+            },
+            onLeaveBack: () => {
+                navbar.classList.remove("nav-light");
+                navbar.classList.add("nav-dark");
+            }
+        });
+    }
 }

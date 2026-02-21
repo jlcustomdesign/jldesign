@@ -92,14 +92,19 @@ const links = [
 <style>
   /* Theme Logic */
 
+  /* Base Transition for Text & SVG Inherited Color */
+  .nav-text {
+    transition: color 0.3s ease;
+  }
+
   /* Dark Navbar (for Dark Backgrounds/Hero) -> White Text */
   :global(.nav-dark) .nav-text {
-    color: white !important;
+    color: white;
   }
 
   /* Light Navbar (for Light Backgrounds) -> Black Text */
   :global(.nav-light) .nav-text {
-    color: #1a1a1a !important;
+    color: #1a1a1a;
   }
 
   /* Hover effects */

@@ -211,28 +211,33 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
         </div>
 
         <!-- Band 4: Static CTA Button -->
-        <a
-          href="/contact"
-          class="mobile-cta-btn block mx-auto w-[calc(100%-4rem)] max-w-[340px] mt-8 mb-4 z-30 bg-[#f3bb0b] hover:bg-[#d6a50b] active:scale-95 transition-all duration-300 rounded-2xl py-4 px-6 shadow-xl"
+        <div
+          class="mobile-cta-wrapper z-30 block mx-auto w-[calc(100%-4rem)] max-w-[340px] mt-8 mb-4"
         >
-          <div class="flex items-center justify-between w-full h-full">
-            <span class="font-sans font-semibold text-black text-xl lg:text-3xl"
-              >Începe un Proiect</span
-            >
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#000"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M5 19L19 5M19 5v14M19 5H5"></path>
-            </svg>
-          </div>
-        </a>
+          <a
+            href="/contact"
+            class="mobile-cta-btn block w-full bg-[#f3bb0b] hover:bg-[#d6a50b] active:scale-95 transition-all duration-300 rounded-2xl py-4 px-6 shadow-xl"
+          >
+            <div class="flex items-center justify-between w-full h-full">
+              <span
+                class="font-sans font-semibold text-black text-xl lg:text-3xl"
+                >Începe un Proiect</span
+              >
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#000"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 19L19 5M19 5v14M19 5H5"></path>
+              </svg>
+            </div>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -251,7 +256,7 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
   .custom-marquee {
     --marquee-color: #ffffff; /* User requested white */
     --marquee-bg: var(--marquee-color);
-    --marquee-text: #000;
+    --marquee-text: #f3bb0b; /* User requested gold text */
     --anim-duration: calc(0.8s * var(--char-count, 20));
 
     overflow: hidden;
