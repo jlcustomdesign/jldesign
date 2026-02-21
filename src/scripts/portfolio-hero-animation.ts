@@ -117,36 +117,20 @@ function runPortfolioHeroExitAnimation(section: Element) {
 
     if (targets.length === 0) return;
 
-    // Optional: Only pin on Desktop to prevent Safari mobile address bar issues, similar to About page
-    const isMobile = window.innerWidth < 1024;
-
-    if (!isMobile) {
-      gsap.to(targets, {
-        scale: 0.9,
-        filter: "blur(8px)", 
-        opacity: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "bottom bottom",
-          end: "bottom top",
-          scrub: 0.5,
-          pin: true,
-          pinSpacing: false,
-          invalidateOnRefresh: true,
-        },
-      });
-    } else {
-       // Mobile: just fade out slightly without a heavy pin
-       gsap.to(targets, {
-        opacity: 0.3,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "bottom bottom",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-    }
+    // Apply consistent parallax exit animation for both Desktop and Mobile
+    gsap.to(targets, {
+      scale: 0.9,
+      filter: "blur(8px)", 
+      opacity: 0,
+      ease: "none",
+      scrollTrigger: {
+        trigger: section,
+        start: "bottom bottom",
+        end: "bottom top",
+        scrub: 0.5,
+        pin: true,
+        pinSpacing: false,
+        invalidateOnRefresh: true,
+      },
+    });
 }

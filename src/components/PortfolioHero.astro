@@ -210,21 +210,27 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
           </div>
         </div>
 
-        <!-- Band 4: CTA Button -->
+        <!-- Band 4: Static CTA Button -->
         <a
           href="/contact"
-          class="custom-marquee mobile-marquee block group z-30"
-          style="--char-count: 30"
+          class="mobile-marquee block mx-6 mt-4 mb-2 z-30 bg-[#f3bb0b] hover:bg-[#d6a50b] active:scale-95 transition-all duration-300 rounded-[2rem] py-4 px-6 shadow-xl"
         >
-          <div
-            class="custom-marquee-inner cursor-pointer group-hover:opacity-80 transition-opacity"
-          >
-            <p>ÎNCEPE UN PROIECT ACUM</p>
-            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
-            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
-            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
-            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
-            <p aria-hidden="true">ÎNCEPE UN PROIECT ACUM</p>
+          <div class="flex items-center justify-between w-full h-full">
+            <span class="font-sans font-semibold text-black text-xl lg:text-3xl"
+              >Începe un Proiect</span
+            >
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#000"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 19L19 5M19 5v14M19 5H5"></path>
+            </svg>
           </div>
         </a>
       </div>
@@ -263,11 +269,6 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
     transform: rotate(5deg);
     border-top: 2px solid var(--marquee-color);
     border-bottom: 2px solid var(--marquee-color);
-  }
-
-  /* Specifically style the last link to look very actionable */
-  .custom-marquee:last-child {
-    box-shadow: 0 15px 40px rgba(243, 187, 11, 0.3);
   }
 
   .custom-marquee-inner {
