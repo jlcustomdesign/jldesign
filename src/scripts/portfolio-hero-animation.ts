@@ -84,6 +84,16 @@ function runHeroEnterAnimation(section: Element) {
      );
   }
 
+  // 2c. Mobile Static CTA
+  const mobileCTA = section.querySelector(".mobile-cta-btn");
+  if (mobileCTA) {
+     tl.fromTo(mobileCTA,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.0, ease: "power3.out" },
+        0.6 // Trigger exactly as the last marquee settles
+     );
+  }
+
   // 3. Text Reveal (Services Page Style - Build Animation)
   // ... (existing text reveal code) ...
   const textElements = section.querySelectorAll(".reveal-text");
