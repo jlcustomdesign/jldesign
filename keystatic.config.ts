@@ -1,4 +1,5 @@
 import { config, fields, collection } from '@keystatic/core';
+import { createElement } from 'react';
 
 export default config({
   storage:
@@ -10,6 +11,42 @@ export default config({
   ui: {
     brand: {
       name: 'JL Mobila',
+      mark: () => {
+        return createElement(
+          'div',
+          { style: { display: 'flex', alignItems: 'center' } },
+          // Inject a script/style globally into the Keystatic DOM to fix Safari Safe Area overlapping
+          createElement('div', {
+            dangerouslySetInnerHTML: {
+              __html: `
+                <style>
+                  /* Base padding for Safari notch */
+                  body { 
+                    padding-top: max(env(safe-area-inset-top), 20px) !important; 
+                  }
+                  /* Target Keystatic's fixed top navbars and panels by asserting a top margin */
+                  body > div, header, nav, [role="banner"] {
+                    margin-top: max(env(safe-area-inset-top), 20px) !important;
+                  }
+                </style>
+                <script>
+                  // Force viewport-fit=cover so iOS Safari honors safe-area-inset
+                  (function() {
+                    let meta = document.querySelector('meta[name="viewport"]');
+                    if (!meta) {
+                      meta = document.createElement('meta');
+                      meta.name = 'viewport';
+                      document.head.appendChild(meta);
+                    }
+                    meta.content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+                  })();
+                </script>
+              `
+            }
+          }),
+          'JL Mobila'
+        );
+      }
     },
     navigation: {
       'Conținut': ['portfolio'],
