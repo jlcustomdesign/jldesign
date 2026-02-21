@@ -74,6 +74,16 @@ function runHeroEnterAnimation(section: Element) {
     );
   }
 
+  // 2b. Mobile Marquees (If Visible)
+  const mobileMarquees = section.querySelectorAll(".mobile-marquee");
+  if (mobileMarquees.length > 0) {
+     tl.fromTo(mobileMarquees,
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.0, ease: "power3.out", stagger: 0.15 },
+        0.3 // Sync closely with navbar/page load
+     );
+  }
+
   // 3. Text Reveal (Services Page Style - Build Animation)
   // ... (existing text reveal code) ...
   const textElements = section.querySelectorAll(".reveal-text");
@@ -97,22 +107,46 @@ function runHeroEnterAnimation(section: Element) {
 }
 
 function runPortfolioHeroExitAnimation(section: Element) {
-    const container = section.querySelector(".container");
-    if (!container) return;
+    // Animate both Desktop and Mobile containers out if they exist
+    const desktopContainer = section.querySelector(".container");
+    const mobileContainer = section.querySelector(".mobile-hero-container");
+    
+    const targets = [];
+    if (desktopContainer) targets.push(desktopContainer);
+    if (mobileContainer) targets.push(mobileContainer);
 
-    gsap.to(container, {
-      scale: 0.9,
-      filter: "blur(8px)", 
-      opacity: 0,
-      ease: "none",
-      scrollTrigger: {
-        trigger: section,
-        start: "bottom bottom",
-        end: "bottom top",
-        scrub: 0.5,
-        pin: true,
-        pinSpacing: false,
-        invalidateOnRefresh: true,
-      },
-    });
+    if (targets.length === 0) return;
+
+    // Optional: Only pin on Desktop to prevent Safari mobile address bar issues, similar to About page
+    const isMobile = window.innerWidth < 1024;
+
+    if (!isMobile) {
+      gsap.to(targets, {
+        scale: 0.9,
+        filter: "blur(8px)", 
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "bottom bottom",
+          end: "bottom top",
+          scrub: 0.5,
+          pin: true,
+          pinSpacing: false,
+          invalidateOnRefresh: true,
+        },
+      });
+    } else {
+       // Mobile: just fade out slightly without a heavy pin
+       gsap.to(targets, {
+        opacity: 0.3,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "bottom bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    }
 }
