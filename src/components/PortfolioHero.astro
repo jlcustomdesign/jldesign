@@ -30,6 +30,25 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
         >
         </div>
 
+        <!-- Integrated Diagonal Marquee for Desktop -->
+        <div
+          class="absolute bottom-6 left-[-10%] right-[-10%] pointer-events-none hidden md:block"
+        >
+          <div
+            class="custom-marquee hero-marquee marquee-card"
+            style="--char-count: 25"
+          >
+            <div class="custom-marquee-inner">
+              <p>LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Title Removed for Marquee Integration -->
       </div>
 
@@ -72,6 +91,25 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
             ><path d="M12 2L2 19H22L12 2ZM12 5.8L18.5 17H5.5L12 5.8Z"
             ></path></svg
           >
+        </div>
+
+        <!-- Integrated Flat Marquee for Desktop -->
+        <div
+          class="absolute bottom-4 left-0 right-0 pointer-events-none hidden md:block"
+        >
+          <div
+            class="custom-marquee hero-marquee marquee-flat marquee-card"
+            style="--char-count: 35"
+          >
+            <div class="custom-marquee-inner">
+              <p>MOBILIER ȘI DESIGN INTERIOR</p>
+              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -121,7 +159,7 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              class="transform -rotate-45 group-hover:rotate-0 transition-transform duration-300"
+              class="transform -rotate-44"
             >
               <path
                 d="M5 12H19M19 12L12 5M19 12L12 19"
@@ -130,6 +168,25 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
                 stroke-linecap="round"
                 stroke-linejoin="round"></path>
             </svg>
+          </div>
+        </div>
+
+        <!-- Integrated Flat Marquee for Desktop -->
+        <div
+          class="absolute bottom-4 left-0 right-0 pointer-events-none hidden md:block"
+        >
+          <div
+            class="custom-marquee hero-marquee marquee-flat marquee-card"
+            style="--char-count: 28"
+          >
+            <div class="custom-marquee-inner">
+              <p>ELEGANȚĂ ȘI RAFINAMENT</p>
+              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
+            </div>
           </div>
         </div>
       </a>
@@ -150,9 +207,9 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
     <div class="absolute inset-0 bg-black/40"></div>
   </div>
 
-  <!-- SHARED MARQUEE STACK (Visible on Mobile & Desktop) -->
+  <!-- SHARED MARQUEE STACK (Visible ONLY on Mobile) -->
   <div
-    class="absolute bottom-4 left-0 w-full flex flex-col justify-end overflow-visible pb-4 md:pb-20 pointer-events-none z-40"
+    class="absolute bottom-4 left-0 w-full flex flex-col justify-end overflow-visible pb-4 md:hidden pointer-events-none z-40"
   >
     <div class="custom-marquees z-20">
       <!-- Band 1: Title -->
@@ -300,6 +357,15 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
     content: "•";
     font-size: 0.7em;
     transform: translateY(-0.05em); /* visual centering */
+  }
+
+  /* Desktop Card-Specific Adjustments */
+  .custom-marquee.marquee-card p {
+    font-size: clamp(1.2rem, 3vw, 2.5rem);
+    padding-right: 0.8em;
+  }
+  .custom-marquee.marquee-card p::after {
+    margin-left: 0.3em;
   }
 
   @keyframes customMarquee {
