@@ -74,10 +74,10 @@ function runHeroEnterAnimation(section: Element) {
     );
   }
 
-  // 2b. Mobile Marquees (If Visible)
-  const mobileMarquees = section.querySelectorAll(".mobile-marquee");
-  if (mobileMarquees.length > 0) {
-     tl.fromTo(mobileMarquees,
+  // 2b. Hero Marquees (Shared)
+  const heroMarquees = section.querySelectorAll(".hero-marquee");
+  if (heroMarquees.length > 0) {
+     tl.fromTo(heroMarquees,
         { y: 50, opacity: 0 },
         { y: 0, opacity: 1, duration: 1.0, ease: "power3.out", stagger: 0.15 },
         0.3 // Sync closely with navbar/page load
