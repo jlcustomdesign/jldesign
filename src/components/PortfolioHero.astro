@@ -187,7 +187,10 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
         </div>
 
         <!-- Band 2: Description -->
-        <div class="custom-marquee mobile-marquee" style="--char-count: 35">
+        <div
+          class="custom-marquee mobile-marquee marquee-flat"
+          style="--char-count: 35"
+        >
           <div class="custom-marquee-inner">
             <p>MOBILIER ȘI DESIGN INTERIOR</p>
             <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
@@ -199,7 +202,10 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
         </div>
 
         <!-- Band 3: Qualities -->
-        <div class="custom-marquee mobile-marquee" style="--char-count: 28">
+        <div
+          class="custom-marquee mobile-marquee marquee-flat"
+          style="--char-count: 28"
+        >
           <div class="custom-marquee-inner">
             <p>ELEGANȚĂ ȘI RAFINAMENT</p>
             <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
@@ -274,6 +280,15 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
     transform: rotate(5deg);
     border-top: 2px solid #f3bb0b;
     border-bottom: 2px solid #f3bb0b;
+  }
+
+  /* Override for flat, transparent marquees */
+  .custom-marquee.marquee-flat {
+    --marquee-bg: transparent !important;
+    --marquee-text: #ffffff !important;
+    transform: none !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .custom-marquee-inner {
