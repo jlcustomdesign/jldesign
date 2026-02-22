@@ -255,7 +255,12 @@ const links = [
     // Check if Hero Exists
     if (hero) {
       // Check for explicit theme override
-      const isLightTheme = hero.getAttribute("data-theme") === "light";
+      let isLightTheme = hero.getAttribute("data-theme") === "light";
+
+      // Override for Portfolio Desktop (White Grid Background)
+      if (hero.id === "portfolio-hero-section" && window.innerWidth >= 1024) {
+        isLightTheme = true;
+      }
 
       if (isLightTheme) {
         navContainer.classList.add("nav-light");
@@ -282,7 +287,13 @@ const links = [
     }
 
     // Scenario B: Hero Exists -> Use ScrollTrigger to toggle theme
-    const isLightTheme = hero.getAttribute("data-theme") === "light";
+    let isLightTheme = hero.getAttribute("data-theme") === "light";
+
+    // Override for Portfolio Desktop
+    if (hero.id === "portfolio-hero-section" && window.innerWidth >= 1024) {
+      isLightTheme = true;
+    }
+
     const activeThemeClass = isLightTheme ? "nav-light" : "nav-dark";
     const inactiveThemeClass = isLightTheme ? "nav-dark" : "nav-light";
 

@@ -149,7 +149,8 @@ function runPortfolioHeroExitAnimation(section: Element) {
     const navbar = document.querySelector("#navbar-container");
     const cmsSection = document.querySelector("#portfolio-cms-section");
     
-    if (navbar && cmsSection) {
+    // Only apply on mobile where the hero is Dark. On Desktop, the navbar is already Light.
+    if (navbar && cmsSection && window.innerWidth < 1024) {
         ScrollTrigger.create({
             trigger: cmsSection,
             start: "top 12%", // Triggers when the white background CMS section reaches the navbar area
