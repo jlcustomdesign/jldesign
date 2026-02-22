@@ -35,7 +35,7 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
           class="absolute bottom-6 left-0 right-0 w-[110%] -ml-[5%] overflow-visible pointer-events-auto"
         >
           <div
-            class="custom-marquee desktop-marquee marquee-flat bg-[#f3bb0b]! text-black!"
+            class="custom-marquee desktop-marquee marquee-flat bg-transparent text-white"
             style="--char-count: 25"
           >
             <div class="custom-marquee-inner">
@@ -173,7 +173,7 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
       <div class="custom-marquees z-20">
         <!-- Band 1: Title -->
         <div
-          class="custom-marquee mobile-marquee marquee-flat bg-[#f3bb0b]! text-black!"
+          class="custom-marquee mobile-marquee marquee-flat bg-transparent text-white"
           style="--char-count: 25"
         >
           <div class="custom-marquee-inner">
@@ -253,17 +253,11 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
 
   /* Override for flat scrolling layout */
   .custom-marquee.marquee-flat {
+    background: transparent !important;
+    color: #ffffff !important;
     transform: none !important;
     border: none !important;
     box-shadow: none !important;
-  }
-
-  /* Apply specific colors for the newly updated layout */
-  .custom-marquee.bg-\[\#f3bb0b\]\! {
-    background: #f3bb0b !important;
-  }
-  .custom-marquee.text-black\! {
-    color: #000000 !important;
   }
 
   .custom-marquee-inner {
