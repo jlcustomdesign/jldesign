@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        accent: "#D4AF37", // Gold
+        accent: "#FFC800", // Vibrant Gold
         primary: "#000000", // Black
         secondary: "#F4F1EA", // Cream (Quiet Luxury)
       },

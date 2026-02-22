@@ -1,7 +1,11 @@
 import { gsap } from "gsap";
 import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
+import { rectangle, WIDTH_TARGET, DESKTOP_RESOLUTION, MOBILE_RESOLUTION } from "../utils/svg-shapes";
 
 gsap.registerPlugin(MorphSVGPlugin);
+
+// Re-export rectangle for consumers
+export { rectangle };
 
 let servicesAnimInitialized = false;
 
@@ -37,10 +41,33 @@ const c3FinalX = 840;
 // Bezier Constant
 const K_FACTOR = 0.55228475;
 
-// Mobile/Landing Page Constants
-const widthTarget = 1110;
-const desktopResolution = { width: 1890, height: 916 };
-const mobileResolution = { width: 1020, height: 882 };
+/**
+ * Services-specific cross shape.
+ * Uses adjusted mobile heights compared to the home page cross.
+ */
+export function cross(w: number, h: number): string {
+  const isDesktop = w > WIDTH_TARGET;
+  const ref = isDesktop ? DESKTOP_RESOLUTION : MOBILE_RESOLUTION;
+  const rw = (val: number) => (val / ref.width) * w;
+  const rh = (val: number) => (val / ref.height) * h;
+
+  return isDesktop
+    ? `M${rw(470)} ${rh(145)} H${rw(19)} C${rw(9)} ${rh(145)} ${rw(1)} ${rh(153)} ${rw(1)} ${rh(163)} V${rh(754)} C${rw(1)} ${rh(763)} ${rw(9)} ${rh(772)} ${rw(19)} ${rh(772)} H${rw(320)} C${rw(330)} ${rh(772)} ${rw(338)} ${rh(780)} ${rw(338)} ${rh(790)} V${rh(898)} C${rw(338)} ${rh(907)} ${rw(346)} ${h} ${rw(356)} ${h} H${rw(1092)} C${rw(1102)} ${h} ${rw(1110)} ${rh(907)} ${rw(1110)} ${rh(898)} V${rh(789)} C${rw(1110)} ${rh(779)} ${rw(1118)} ${rh(771)} ${rw(1128)} ${rh(771)} H${rw(1872)} C${rw(1881)} ${rh(771)} ${w} ${rh(763)} ${w} ${rh(753)} V${rh(164)} C${w} ${rh(154)} ${rw(1881)} ${rh(146)} ${rw(1872)} ${rh(146)} H${rw(1420)} C${rw(1410)} ${rh(146)} ${rw(1402)} ${rh(137)} ${rw(1402)} ${rh(128)} V${rh(19)} C${rw(1402)} ${rh(9)} ${rw(1394)} ${rh(1)} ${rw(1384)} ${rh(1)} H${rw(506)} C${rw(496)} ${rh(1)} ${rw(488)} ${rh(9)} ${rw(488)} ${rh(19)} V${rh(127)} C${rw(488)} ${rh(137)} ${rw(480)} ${rh(145)} ${rw(470)} ${rh(145)} Z`
+    : `M${rw(1000)} ${rh(15)} H${rw(21)} C${rw(9.95)} ${rh(15)} ${rw(1)} ${rh(25)} ${rw(1)} ${rh(35)} ` +
+      `V${rh(780)} ` +
+      `C${rw(1)} ${rh(790)} ${rw(10)} ${rh(800)} ${rw(21)} ${rh(800)} ` +
+      `H${rw(220)} ` +
+      `C${rw(231)} ${rh(800)} ${rw(240)} ${rh(809)} ${rw(240)} ${rh(820)} ` +
+      `V${rh(830)} ` +
+      `C${rw(240)} ${rh(840)} ${rw(249)} ${rh(847)} ${rw(260)} ${rh(847)} ` +
+      `H${rw(741)} ` +
+      `C${rw(752)} ${rh(847)} ${rw(761)} ${rh(840)} ${rw(761)} ${rh(830)} ` +
+      `V${rh(820)} ` + 
+      `C${rw(761)} ${rh(809)} ${rw(770)} ${rh(800)} ${rw(781)} ${rh(800)} ` +
+      `H${rw(1000)} ` +
+      `C${rw(1011)} ${rh(800)} ${w} ${rh(790)} ${w} ${rh(780)} ` +
+      `V${rh(35)} C${w} ${rh(25)} ${rw(1011)} ${rh(15)} ${rw(1000)} ${rh(15)} Z`;
+}
 
 export function initServicesHeroAnimations() {
   if (document.readyState === "complete") {
@@ -62,56 +89,6 @@ function safeInitServicesAnim() {
   
   servicesAnimInitialized = true;
   runServicesHeroAnimation(section);
-}
-
-// Helper from Hero Animation (Mobile Logic)
-export function rectangle(w: number, h: number) {
-  const displayCond = w > widthTarget;
-  let w1 = mobileResolution.width;
-  let h1 = mobileResolution.height;
-
-  if (displayCond) {
-    w1 = desktopResolution.width;
-    h1 = desktopResolution.height;
-  }
-
-  const rw = (val: number) => (val / w1) * w;
-  const rh = (val: number) => (val / h1) * h;
-
-  return displayCond
-    ? `M${rw(12)} ${rh(1)} H${rw(12)} C${rw(4)} ${rh(1)} ${rw(1)} ${rh(4)} ${rw(1)} ${rh(12)} V${rh(905)} C${rw(1)} ${rh(913)} ${rw(4)} ${h} ${rw(12)} ${h} H${rw(1879)} C${rw(1879)} ${h} ${rw(1879)} ${h} ${rw(1879)} ${h} V${h} C${rw(1879)} ${h} ${rw(1879)} ${h} ${rw(1879)} ${h} H${rw(1879)} C${rw(1879)} ${h} ${rw(1879)} ${h} ${rw(1879)} ${h} V${h} C${rw(1879)} ${h} ${rw(1879)} ${h} ${rw(1879)} ${h} H${rw(1879)} C${rw(1887)} ${h} ${w} ${rh(913)} ${w} ${rh(905)} V${rh(12)} C${w} ${rh(12)} ${w} ${rh(12)} ${w} ${rh(12)} H${w} C${w} ${rh(4)} ${rw(1887)} ${rh(1)} ${rw(1879)} ${rh(1)} V${rh(1)} C${rw(1879)} ${rh(1)} ${rw(1879)} ${rh(1)} ${rw(1879)} ${rh(1)} H${rw(12)} V${rh(1)} C${rw(4)} ${rh(1)} ${rw(1)} ${rh(4)} ${rw(1)} ${rh(12)} Z`
-    : `M${rw(1000)} ${rh(15)} H${rw(21)} C${rw(9.9543)} ${rh(15)} ${rw(1)} ${rh(24.9543)} ${rw(1)} ${rh(35)} V${rh(845)} C${rw(1)} ${rh(845)} ${rw(1)} ${rh(845)} ${rw(1)} ${rh(845)} H${rw(1)} C${rw(1)} ${rh(860)} ${rw(6)} ${rh(867)} ${rw(21)} ${rh(867)} V${rh(867)} C${rw(21)} ${rh(867)} ${rw(21)} ${rh(867)} ${rw(21)} ${rh(867)} H${rw(997)} C${rw(997)} ${rh(867)} ${rw(997)} ${rh(867)} ${rw(997)} ${rh(867)} V${rh(867)} C${rw(1016)} ${rh(867)} ${w} ${rh(862)} ${w} ${rh(845)} H${w} C${w} ${rh(845)} ${w} ${rh(845)} ${w} ${rh(845)} V${rh(35)} C${w} ${rh(24.9543)} ${rw(1011.05)} ${rh(15)} ${rw(1000)} ${rh(15)} Z`;
-}
-
-export function cross(w: number, h: number) {
-  const displayCond = w > widthTarget;
-  let w1 = mobileResolution.width;
-  let h1 = mobileResolution.height;
-
-  if (displayCond) {
-    w1 = desktopResolution.width;
-    h1 = desktopResolution.height;
-  }
-
-  const rw = (val: number) => (val / w1) * w;
-  const rh = (val: number) => (val / h1) * h;
-
-  return displayCond
-    ? `M${rw(470)} ${rh(145)} H${rw(19)} C${rw(9)} ${rh(145)} ${rw(1)} ${rh(153)} ${rw(1)} ${rh(163)} V${rh(754)} C${rw(1)} ${rh(763)} ${rw(9)} ${rh(772)} ${rw(19)} ${rh(772)} H${rw(320)} C${rw(330)} ${rh(772)} ${rw(338)} ${rh(780)} ${rw(338)} ${rh(790)} V${rh(898)} C${rw(338)} ${rh(907)} ${rw(346)} ${h} ${rw(356)} ${h} H${rw(1092)} C${rw(1102)} ${h} ${rw(1110)} ${rh(907)} ${rw(1110)} ${rh(898)} V${rh(789)} C${rw(1110)} ${rh(779)} ${rw(1118)} ${rh(771)} ${rw(1128)} ${rh(771)} H${rw(1872)} C${rw(1881)} ${rh(771)} ${w} ${rh(763)} ${w} ${rh(753)} V${rh(164)} C${w} ${rh(154)} ${rw(1881)} ${rh(146)} ${rw(1872)} ${rh(146)} H${rw(1420)} C${rw(1410)} ${rh(146)} ${rw(1402)} ${rh(137)} ${rw(1402)} ${rh(128)} V${rh(19)} C${rw(1402)} ${rh(9)} ${rw(1394)} ${rh(1)} ${rw(1384)} ${rh(1)} H${rw(506)} C${rw(496)} ${rh(1)} ${rw(488)} ${rh(9)} ${rw(488)} ${rh(19)} V${rh(127)} C${rw(488)} ${rh(137)} ${rw(480)} ${rh(145)} ${rw(470)} ${rh(145)} Z`
-    : `M${rw(1000)} ${rh(15)} H${rw(21)} C${rw(9.95)} ${rh(15)} ${rw(1)} ${rh(25)} ${rw(1)} ${rh(35)} ` +
-      `V${rh(780)} ` + // "Taller" -> Moved UP to 780 (was 800)
-      `C${rw(1)} ${rh(790)} ${rw(10)} ${rh(800)} ${rw(21)} ${rh(800)} ` +
-      `H${rw(220)} ` +
-      `C${rw(231)} ${rh(800)} ${rw(240)} ${rh(809)} ${rw(240)} ${rh(820)} ` +
-      `V${rh(830)} ` + // "Shorter height" -> Bottom at 830 (was 850)
-      `C${rw(240)} ${rh(840)} ${rw(249)} ${rh(847)} ${rw(260)} ${rh(847)} ` +
-      `H${rw(741)} ` +
-      `C${rw(752)} ${rh(847)} ${rw(761)} ${rh(840)} ${rw(761)} ${rh(830)} ` +
-      `V${rh(820)} ` + 
-      `C${rw(761)} ${rh(809)} ${rw(770)} ${rh(800)} ${rw(781)} ${rh(800)} ` +
-      `H${rw(1000)} ` +
-      `C${rw(1011)} ${rh(800)} ${w} ${rh(790)} ${w} ${rh(780)} ` +
-      `V${rh(35)} C${w} ${rh(25)} ${rw(1011)} ${rh(15)} ${rw(1000)} ${rh(15)} Z`;
 }
 
 // Helper: Custom Cutout Path Generator (Desktop)

@@ -3,7 +3,14 @@ interface Props {
   href: string;
   class?: string;
   id?: string;
-  variant?: "primary" | "dark" | "outline" | "outline-white";
+  variant?:
+    | "primary"
+    | "dark"
+    | "outline"
+    | "outline-white"
+    | "hero-dark"
+    | "hero-glass"
+    | "secondary";
 }
 
 const { href, class: className, id, variant = "primary" } = Astro.props;
@@ -44,7 +51,47 @@ const { href, class: className, id, variant = "primary" } = Astro.props;
     background: transparent;
     border: 1px solid black;
     color: black;
-    /* Adjust padding to account for border if needed, or box-sizing handles it */
+  }
+
+  .variant-hero-dark {
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid #1a1a1a;
+    padding: 1rem 2rem;
+  }
+  .variant-hero-dark:hover {
+    border-color: #ffc800;
+  }
+
+  .variant-hero-glass {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid white;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 1rem 2rem;
+  }
+  .variant-hero-glass:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: #ffc800;
+  }
+
+  .variant-secondary {
+    background: var(--color-secondary, #f4f1ea);
+    color: black;
+    border: none;
+  }
+  .variant-secondary:hover {
+    background: white;
+  }
+
+  /* Responsive sizing for hero variants */
+  @media (min-width: 768px) {
+    .variant-hero-dark,
+    .variant-hero-glass {
+      font-size: 0.875rem;
+      padding: 1.25rem 3rem;
+    }
   }
 
   /* Hover state: Text turns White for all (blob is gold) */
