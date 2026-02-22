@@ -171,18 +171,37 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
       class="absolute bottom-4 left-0 w-full flex flex-col justify-end overflow-visible pb-4 md:pb-8 pointer-events-auto"
     >
       <div class="custom-marquees z-20">
-        <!-- Band 1: Title -->
+        <!-- Band 1: Title (Part 1 - Top, Left Scrolling) -->
         <div
           class="custom-marquee mobile-marquee marquee-flat bg-transparent text-white"
-          style="--char-count: 25"
+          style="--char-count: 20"
         >
           <div class="custom-marquee-inner">
-            <p>LUCRĂRI SELECTATE</p>
-            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-            <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+            <p>LUCRĂRI</p>
+            <p aria-hidden="true">LUCRĂRI</p>
+            <p aria-hidden="true">LUCRĂRI</p>
+            <p aria-hidden="true">LUCRĂRI</p>
+            <p aria-hidden="true">LUCRĂRI</p>
+            <p aria-hidden="true">LUCRĂRI</p>
+            <p aria-hidden="true">LUCRĂRI</p>
+            <p aria-hidden="true">LUCRĂRI</p>
+          </div>
+        </div>
+
+        <!-- Band 2: Title (Part 2 - Bottom, Right Scrolling) -->
+        <div
+          class="custom-marquee mobile-marquee marquee-flat bg-transparent text-white"
+          style="--char-count: 24"
+        >
+          <div class="custom-marquee-inner">
+            <p>SELECTATE</p>
+            <p aria-hidden="true">SELECTATE</p>
+            <p aria-hidden="true">SELECTATE</p>
+            <p aria-hidden="true">SELECTATE</p>
+            <p aria-hidden="true">SELECTATE</p>
+            <p aria-hidden="true">SELECTATE</p>
+            <p aria-hidden="true">SELECTATE</p>
+            <p aria-hidden="true">SELECTATE</p>
           </div>
         </div>
 
@@ -192,7 +211,7 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
         >
           <a
             href="/contact"
-            class="mobile-cta-btn block w-full bg-[#f3bb0b] hover:bg-[#d6a50b] active:scale-95 transition-all duration-300 rounded-2xl py-4 px-6 shadow-xl"
+            class="mobile-cta-btn block w-full bg-[#FFC800] hover:bg-[#e6b400] active:scale-95 transition-all duration-300 rounded-2xl py-4 px-6 shadow-xl"
           >
             <div class="flex items-center justify-between w-full h-full">
               <span
@@ -231,7 +250,7 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
 
   .custom-marquee,
   .custom-marquee.marquee-flat {
-    --marquee-color: #f3bb0b; /* Gold/Yellow background */
+    --marquee-color: #ffc800; /* Vibrant Gold/Yellow */
     --marquee-bg: var(--marquee-color);
     --marquee-text: #000000; /* Black text */
     --anim-duration: calc(0.8s * var(--char-count, 20));
@@ -245,10 +264,10 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
   }
 
   .custom-marquee:nth-child(even) {
-    --marquee-bg: #111;
-    --marquee-text: #f3bb0b; /* User requested gold text */
-    border-top: 2px solid #f3bb0b;
-    border-bottom: 2px solid #f3bb0b;
+    --marquee-bg: transparent;
+    --marquee-text: #ffffff;
+    border-top: none;
+    border-bottom: none;
   }
 
   /* Override for flat scrolling layout */
