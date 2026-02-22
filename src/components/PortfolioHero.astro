@@ -30,24 +30,21 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
         >
         </div>
 
-        <!-- Title (No Glassmorphism) -->
+        <!-- Title Marquee (Replaces Static Text) -->
         <div
-          class="absolute bottom-10 left-6 right-6 md:bottom-14 md:left-10 md:w-fit"
+          class="absolute bottom-6 left-0 right-0 w-[110%] -ml-[5%] overflow-visible pointer-events-auto"
         >
-          <div class="p-2 md:p-0 relative">
-            <div class="overflow-hidden pt-4 -mt-4">
-              <!-- Fix for clipped ascenders/accents -->
-              <h1
-                class="reveal-text font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.9] text-white uppercase drop-shadow-lg translate-y-full"
-              >
-                Lucrări
-              </h1>
-            </div>
-            <div class="overflow-hidden">
-              <span
-                class="reveal-text block font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.9] text-accent uppercase drop-shadow-lg translate-y-full"
-                >Selectate</span
-              >
+          <div
+            class="custom-marquee desktop-marquee marquee-flat bg-[#f3bb0b]! text-black!"
+            style="--char-count: 25"
+          >
+            <div class="custom-marquee-inner">
+              <p>LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
             </div>
           </div>
         </div>
@@ -175,7 +172,10 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
     >
       <div class="custom-marquees z-20">
         <!-- Band 1: Title -->
-        <div class="custom-marquee mobile-marquee" style="--char-count: 25">
+        <div
+          class="custom-marquee mobile-marquee marquee-flat bg-[#f3bb0b]! text-black!"
+          style="--char-count: 25"
+        >
           <div class="custom-marquee-inner">
             <p>LUCRĂRI SELECTATE</p>
             <p aria-hidden="true">LUCRĂRI SELECTATE</p>
@@ -183,36 +183,6 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
             <p aria-hidden="true">LUCRĂRI SELECTATE</p>
             <p aria-hidden="true">LUCRĂRI SELECTATE</p>
             <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-          </div>
-        </div>
-
-        <!-- Band 2: Description -->
-        <div
-          class="custom-marquee mobile-marquee marquee-flat"
-          style="--char-count: 35"
-        >
-          <div class="custom-marquee-inner">
-            <p>MOBILIER ȘI DESIGN INTERIOR</p>
-            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-            <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-          </div>
-        </div>
-
-        <!-- Band 3: Qualities -->
-        <div
-          class="custom-marquee mobile-marquee marquee-flat"
-          style="--char-count: 28"
-        >
-          <div class="custom-marquee-inner">
-            <p>ELEGANȚĂ ȘI RAFINAMENT</p>
-            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
-            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
-            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
-            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
-            <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
           </div>
         </div>
 
@@ -259,7 +229,8 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
     overflow: visible;
   }
 
-  .custom-marquee {
+  .custom-marquee,
+  .custom-marquee.marquee-flat {
     --marquee-color: #f3bb0b; /* Gold/Yellow background */
     --marquee-bg: var(--marquee-color);
     --marquee-text: #000000; /* Black text */
@@ -268,30 +239,31 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
     overflow: hidden;
     background: var(--marquee-bg);
     color: var(--marquee-text);
-    transform: rotate(-6deg);
     padding: 0.2rem 0;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border: 2px solid transparent; /* Prevents jumping when even styles apply borders */
-
-    /* Move diagonal marquee upwards */
-    margin-bottom: 2vh;
   }
 
   .custom-marquee:nth-child(even) {
     --marquee-bg: #111;
     --marquee-text: #f3bb0b; /* User requested gold text */
-    transform: rotate(5deg);
     border-top: 2px solid #f3bb0b;
     border-bottom: 2px solid #f3bb0b;
   }
 
-  /* Override for flat, transparent marquees */
+  /* Override for flat scrolling layout */
   .custom-marquee.marquee-flat {
-    --marquee-bg: transparent !important;
-    --marquee-text: #ffffff !important;
     transform: none !important;
     border: none !important;
     box-shadow: none !important;
+  }
+
+  /* Apply specific colors for the newly updated layout */
+  .custom-marquee.bg-\[\#f3bb0b\]\! {
+    background: #f3bb0b !important;
+  }
+  .custom-marquee.text-black\! {
+    color: #000000 !important;
   }
 
   .custom-marquee-inner {
