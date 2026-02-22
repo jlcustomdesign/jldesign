@@ -260,9 +260,9 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
   }
 
   .custom-marquee {
-    --marquee-color: #ffffff; /* User requested white */
+    --marquee-color: #f3bb0b; /* Gold/Yellow background */
     --marquee-bg: var(--marquee-color);
-    --marquee-text: #f3bb0b; /* User requested gold text */
+    --marquee-text: #000000; /* Black text */
     --anim-duration: calc(0.8s * var(--char-count, 20));
 
     overflow: hidden;
@@ -272,6 +272,9 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
     padding: 0.2rem 0;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border: 2px solid transparent; /* Prevents jumping when even styles apply borders */
+
+    /* Move diagonal marquee upwards */
+    margin-bottom: 2vh;
   }
 
   .custom-marquee:nth-child(even) {
