@@ -91,7 +91,37 @@
 
     if (!fab || !footer) return;
 
-    // Hide FAB when overlapping footer to avoid clutter
+    // Subpage Fade-in Logic (Only apply if NOT on the main Home Page)
+    // The home page hero id is simply "#hero-section".
+    // Subpages have specific IDs: #about-hero-section, #services-hero-section, #portfolio-hero-section
+    const subpageHero = document.querySelector(
+      "#about-hero-section, #services-hero-section, #portfolio-hero-section",
+    );
+
+    if (subpageHero) {
+      // Start hidden immediately via GSAP state
+      gsap.set(fab, { autoAlpha: 0, scale: 0.8 });
+
+      // Trigger reveal when scrolling past the subpage hero
+      ScrollTrigger.create({
+        trigger: subpageHero,
+        start: "bottom center", // When the bottom of the hero reaches the middle of the viewport
+        onEnter: () =>
+          gsap.to(fab, {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.4,
+            ease: "back.out(1.5)",
+          }),
+        onLeaveBack: () =>
+          gsap.to(fab, { autoAlpha: 0, scale: 0.8, duration: 0.3 }),
+      });
+    } else {
+      // Ensure it's visible if we navigate back to a non-subpage (like Home) during SPA transition
+      gsap.set(fab, { autoAlpha: 1, scale: 1 });
+    }
+
+    // Hide FAB when overlapping footer to avoid clutter (Applies everywhere)
     ScrollTrigger.create({
       trigger: footer,
       start: "top bottom-=100", // Start hiding a bit before footer enters
