@@ -42,74 +42,23 @@ function runHeroEnterAnimation(section: Element) {
     tl.to(navbar, { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.7)" }, 0.2);
   }
 
-  // 2. Minimalist Directional Card Slides
-  const mainCard = section.querySelector(".hero-card-main");
-  const descCard = section.querySelector(".hero-card-desc");
-  const ctaCard = section.querySelector(".hero-card-cta");
-
-  // Main Card: Left -> Center (Long Slide, Elastic Bounce)
-  if (mainCard) {
-    tl.fromTo(mainCard,
-      { xPercent: -100, x: 0, opacity: 0 }, // Start further out
-      { xPercent: 0, x: 0, y: 0, opacity: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" },
-      0.1
+  // 1.5. Subtle zoom-out on the background image 
+  const bgImg = section.querySelector(".overlay-bg");
+  if (bgImg) {
+    gsap.fromTo(bgImg, 
+      { scale: 1.1 },
+      { scale: 1, duration: 2.5, ease: "power2.out" }
     );
   }
 
-  // Desc Card: Top -> Center
-  if (descCard) {
-    tl.fromTo(descCard,
-      { yPercent: -100, y: 0, opacity: 0 },
-      { yPercent: 0, y: 0, opacity: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" },
-      0.4
-    );
-  }
-
-  // CTA Card: Bottom -> Center
-  if (ctaCard) {
-    tl.fromTo(ctaCard,
-      { yPercent: 100, y: 0, opacity: 0 },
-      { yPercent: 0, y: 0, opacity: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" },
-      0.7
-    );
-  }
-
-  // 2b. Hero Marquees (Shared)
+  // 2. Animate massive Hero Marquees sequentially
   const heroMarquees = section.querySelectorAll(".hero-marquee");
   if (heroMarquees.length > 0) {
      tl.fromTo(heroMarquees,
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.0, ease: "power3.out", stagger: 0.15 },
+        { y: 100, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2, ease: "power3.out", stagger: 0.15 },
         0.3 // Sync closely with navbar/page load
      );
-  }
-
-  // 2c. Mobile Static CTA
-  const mobileCTA = section.querySelector(".mobile-cta-wrapper");
-  if (mobileCTA) {
-     tl.fromTo(mobileCTA,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.0, ease: "power3.out" },
-        0.6 // Trigger exactly as the last marquee settles
-     );
-  }
-
-  // 3. Text Reveal (Services Page Style - Build Animation)
-  // ... (existing text reveal code) ...
-  const textElements = section.querySelectorAll(".reveal-text");
-  
-  if (textElements.length > 0) {
-    tl.fromTo(textElements,
-       { y: "100%", opacity: 0 },
-       { 
-         y: "0%", 
-         opacity: 1, 
-         duration: 1.0, 
-         ease: "power3.out",
-         stagger: 0.08
-       },
-       "-=1.0" // Sync deeper with card slide
-    );
   }
 
   // 4. Parallax Exit Animation (Like Home/About)

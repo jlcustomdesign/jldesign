@@ -9,207 +9,20 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
   id="portfolio-hero-section"
   data-theme="dark"
 >
-  <!-- DESKTOP BENTO GRID (Hidden on Mobile) -->
-  <div class="container mx-auto h-full w-full max-w-[1800px] hidden md:block">
-    <div
-      class="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 grid-rows-1 lg:grid-rows-2 gap-4 md:gap-6 h-[85vh] lg:h-[80vh]"
-    >
-      <!-- Card 1: Main Hero (Large, Left) -->
-      <div
-        class="portfolio-card hero-card-main col-span-1 md:col-span-12 lg:col-span-8 row-span-1 lg:row-span-2 relative rounded-[2.5rem] overflow-hidden group opacity-0 translate-y-8"
-      >
-        <!-- Background Image -->
-        <img
-          src={heroImage}
-          alt="Selected Works"
-          class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out"
-        />
-        <!-- Overlay -->
-        <div
-          class="absolute inset-0 bg-black/20 transition-colors duration-500"
-        >
-        </div>
-
-        <!-- Integrated Diagonal Marquee for Desktop -->
-        <div
-          class="absolute bottom-6 left-[-10%] right-[-10%] pointer-events-none hidden md:block"
-        >
-          <div
-            class="custom-marquee hero-marquee marquee-card"
-            style="--char-count: 25"
-          >
-            <div class="custom-marquee-inner">
-              <p>LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Title Removed for Marquee Integration -->
-      </div>
-
-      <!-- Card 2: Description (Top Right) -->
-      <div
-        class="portfolio-card hero-card-desc col-span-1 md:col-span-6 lg:col-span-4 row-span-1 relative rounded-[2.5rem] overflow-hidden bg-[#1a1a1a] border border-white/5 flex flex-col justify-center p-8 md:p-10 opacity-0 translate-y-8 group hover:border-white/10 transition-colors"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50"
-        >
-        </div>
-
-        <div class="overflow-hidden">
-          <h2
-            class="reveal-text relative z-10 font-serif text-2xl md:text-3xl text-white mb-4 block translate-y-full"
-          >
-            Viziune &
-          </h2>
-        </div>
-        <div class="overflow-hidden">
-          <h2
-            class="reveal-text relative z-10 font-serif text-2xl md:text-3xl text-white mb-4 block translate-y-full"
-          >
-            Măiestrie
-          </h2>
-        </div>
-
-        <div class="overflow-hidden">
-          <p
-            class="reveal-text relative z-10 text-white/70 text-base md:text-lg leading-relaxed block translate-y-full"
-          >
-            O colecție de mobilier și spații interioare, create să ridice
-            cotidianul prin eleganță discretă și finisaje premium.
-          </p>
-        </div>
-
-        <!-- Decoration -->
-        <div class="absolute top-4 right-4 text-white/10">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"
-            ><path d="M12 2L2 19H22L12 2ZM12 5.8L18.5 17H5.5L12 5.8Z"
-            ></path></svg
-          >
-        </div>
-
-        <!-- Integrated Flat Marquee for Desktop -->
-        <div
-          class="absolute bottom-4 left-0 right-0 pointer-events-none hidden md:block"
-        >
-          <div
-            class="custom-marquee hero-marquee marquee-flat marquee-card"
-            style="--char-count: 35"
-          >
-            <div class="custom-marquee-inner">
-              <p>MOBILIER ȘI DESIGN INTERIOR</p>
-              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-              <p aria-hidden="true">MOBILIER ȘI DESIGN INTERIOR</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3: CTA (Bottom Right) -->
-      <a
-        href="/contact"
-        class="portfolio-card hero-card-cta col-span-1 md:col-span-6 lg:col-span-4 row-span-1 relative rounded-[2.5rem] overflow-hidden bg-accent group cursor-pointer flex flex-col justify-between p-8 md:p-10 opacity-0 translate-y-8"
-      >
-        <!-- Background Hover Effect -->
-        <div
-          class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"
-        >
-        </div>
-
-        <div class="relative z-10">
-          <div class="overflow-hidden mb-4">
-            <span
-              class="reveal-text inline-block px-4 py-1.5 rounded-full border border-black/20 text-xs font-bold uppercase tracking-wider text-black translate-y-full"
-            >
-              Contact
-            </span>
-          </div>
-
-          <div class="overflow-hidden">
-            <h3
-              class="reveal-text font-serif text-3xl md:text-4xl text-black leading-tight translate-y-full"
-            >
-              Începe un
-            </h3>
-          </div>
-
-          <div class="overflow-hidden">
-            <h3
-              class="reveal-text font-serif text-3xl md:text-4xl text-black leading-tight translate-y-full"
-            >
-              Proiect
-            </h3>
-          </div>
-        </div>
-
-        <div class="relative z-10 self-end">
-          <div
-            class="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              class="transform -rotate-44"
-            >
-              <path
-                d="M5 12H19M19 12L12 5M19 12L12 19"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-            </svg>
-          </div>
-        </div>
-
-        <!-- Integrated Flat Marquee for Desktop -->
-        <div
-          class="absolute bottom-4 left-0 right-0 pointer-events-none hidden md:block"
-        >
-          <div
-            class="custom-marquee hero-marquee marquee-flat marquee-card"
-            style="--char-count: 28"
-          >
-            <div class="custom-marquee-inner">
-              <p>ELEGANȚĂ ȘI RAFINAMENT</p>
-              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
-              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
-              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
-              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
-              <p aria-hidden="true">ELEGANȚĂ ȘI RAFINAMENT</p>
-            </div>
-          </div>
-        </div>
-      </a>
-    </div>
-  </div>
-
-  <!-- MOBILE FULL-SCREEN MARQUEE HERO (Hidden on Desktop) -->
-  <div
-    class="mobile-hero-container block md:hidden absolute inset-0 w-full h-[100svh] overflow-hidden"
-  >
-    <!-- Full Screen Background Image -->
+  <!-- FULL-SCREEN HERO BACKGROUND (All Devices) -->
+  <div class="absolute inset-0 w-full h-[100svh] overflow-hidden">
     <img
       src={heroImage}
       alt="Selected Works"
-      class="absolute inset-0 w-full h-full object-cover rounded-t-3xl"
+      class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out overlay-bg"
     />
     <!-- Darkening Overlay to ensure text readability -->
     <div class="absolute inset-0 bg-black/40"></div>
   </div>
 
-  <!-- SHARED MARQUEE STACK (Visible ONLY on Mobile) -->
+  <!-- UNIFIED MARQUEE STACK (Visible on All Devices) -->
   <div
-    class="absolute bottom-4 left-0 w-full flex flex-col justify-end overflow-visible pb-4 md:hidden pointer-events-none z-40"
+    class="absolute bottom-4 md:bottom-12 left-0 w-full flex flex-col justify-end overflow-visible pb-4 md:pb-8 pointer-events-none z-40"
   >
     <div class="custom-marquees z-20">
       <!-- Band 1: Title -->
@@ -254,16 +67,16 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
         </div>
       </div>
 
-      <!-- Static CTA Button (Mobile Only) -->
+      <!-- Static CTA Button -->
       <div
-        class="mobile-cta-wrapper z-30 block md:hidden mx-auto w-[calc(100%-4rem)] max-w-[340px] mt-8 mb-4 pointer-events-auto"
+        class="mobile-cta-wrapper z-30 block mx-auto w-[calc(100%-4rem)] md:w-auto md:max-w-none md:absolute md:right-16 md:bottom-24 max-w-[340px] mt-8 mb-4 pointer-events-auto"
       >
         <a
           href="/contact"
-          class="mobile-cta-btn block w-full bg-[#f3bb0b] hover:bg-[#d6a50b] active:scale-95 transition-all duration-300 rounded-2xl py-4 px-6 shadow-xl"
+          class="mobile-cta-btn block w-full bg-[#f3bb0b] hover:bg-[#d6a50b] active:scale-95 transition-all duration-300 rounded-2xl py-4 px-6 md:py-5 md:px-8 shadow-xl"
         >
-          <div class="flex items-center justify-between w-full h-full">
-            <span class="font-sans font-semibold text-black text-xl"
+          <div class="flex items-center justify-between gap-6 w-full h-full">
+            <span class="font-sans font-semibold text-black text-xl md:text-2xl"
               >Începe un Proiect</span
             >
             <svg
@@ -275,6 +88,7 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
               stroke-width="2.5"
               stroke-linecap="round"
               stroke-linejoin="round"
+              class="md:w-8 md:h-8"
             >
               <path d="M5 19L19 5M19 5v14M19 5H5"></path>
             </svg>
@@ -344,28 +158,25 @@ const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
   .custom-marquee p {
     font-family: ui-sans-serif, system-ui, sans-serif;
     font-weight: 900;
-    font-size: clamp(2.5rem, 12vw, 6rem);
-    line-height: 1.1;
+    /* Massive desktop text, appropriate mobile text */
+    font-size: clamp(3rem, 15vw, 12rem);
+    line-height: 1.05;
     margin: 0;
     display: flex;
     align-items: center;
     gap: 0.5em;
-    padding-right: 0.5em; /* spacing before the star */
+    padding-right: 0.5em; /* spacing before the star/dot */
+  }
+
+  /* Make the title band even slightly larger if possible */
+  .custom-marquee:not(.marquee-flat) p {
+    font-size: clamp(3.5rem, 18vw, 14rem);
   }
 
   .custom-marquee p::after {
     content: "•";
     font-size: 0.7em;
     transform: translateY(-0.05em); /* visual centering */
-  }
-
-  /* Desktop Card-Specific Adjustments */
-  .custom-marquee.marquee-card p {
-    font-size: clamp(1.2rem, 3vw, 2.5rem);
-    padding-right: 0.8em;
-  }
-  .custom-marquee.marquee-card p::after {
-    margin-left: 0.3em;
   }
 
   @keyframes customMarquee {
