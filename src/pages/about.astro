@@ -583,22 +583,41 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
       // --- Philosophy Section (Bento Grid) ---
       const bentoCards = document.querySelectorAll(".bento-card");
       if (bentoCards.length > 0) {
+        // Directions for assembly effect (x, y offsets)
+        const directions = [
+          { x: -80, y: 80 }, // 0: From bottom-left
+          { x: 80, y: -80 }, // 1: From top-right
+          { x: 80, y: 80 }, // 2: From bottom-right
+          { x: -80, y: -80 }, // 3: From top-left
+          { x: 0, y: 100 }, // 4: Straight from bottom
+          { x: 0, y: -100 }, // 5: Straight from top
+          { x: -100, y: 0 }, // 6: Straight from left
+        ];
+
         bentoCards.forEach((card, i) => {
           gsap.set(card, { willChange: "transform, opacity" });
+          const dir = directions[i % directions.length];
 
-          // "Construction" Effect Simplified for 60fps (No Scrub)
-          gsap.from(card, {
-            y: 80,
-            opacity: 0,
-            duration: 1.2,
-            ease: "power2.out",
-            force3D: true, // GPU acceleration
-            scrollTrigger: {
-              trigger: card,
-              start: "top 90%", // Start when it enters viewport
-              toggleActions: "play none none reverse",
+          // "Building/Assembling" Effect
+          gsap.fromTo(
+            card,
+            { x: dir.x, y: dir.y, opacity: 0, scale: 0.95 },
+            {
+              x: 0,
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 1.4,
+              ease: "expo.out",
+              force3D: true, // GPU acceleration
+              delay: (i % 3) * 0.1, // Stagger effect for clustered elements
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%", // Start when it enters viewport
+                toggleActions: "play none none reverse",
+              },
             },
-          });
+          );
         });
       }
 

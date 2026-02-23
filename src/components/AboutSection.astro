@@ -104,29 +104,41 @@ import BubbleButton from "./ui/BubbleButton.astro";
     const cards = gsap.utils.toArray(".about-fade-card");
     const texts = gsap.utils.toArray(".about-fade-text");
 
-    gsap.from(cards, {
-      scrollTrigger: {
-        trigger: section,
-        start: "top 95%", // Trigger earlier on mobile viewport entry
-      },
-      y: 40,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.15,
-      ease: "power3.out",
+    cards.forEach((card: any, i) => {
+      gsap.fromTo(
+        card,
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%", // Trigger when the card itself enters viewport
+            toggleActions: "play none none reverse",
+          },
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "expo.out",
+          delay: (i % 3) * 0.1, // Stagger effect for items appearing together
+        },
+      );
     });
 
-    gsap.from(texts, {
-      scrollTrigger: {
-        trigger: section,
-        start: "top 90%", // Start slightly after cards
-      },
-      y: 25,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.1,
-      ease: "power2.out",
-      delay: 0.2, // Delay to ensure parent cards have started fading in
+    texts.forEach((text: any) => {
+      gsap.fromTo(
+        text,
+        { y: 30, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: text,
+            start: "top 90%", // Start slightly after card triggers
+            toggleActions: "play none none reverse",
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+      );
     });
 
     // 2. Parallax Effect
