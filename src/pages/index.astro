@@ -1,17 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import HeroSection from "../components/HeroSection.astro";
-import AboutSection from "../components/AboutSection.astro"; // Refresh import
+import AboutSection from "../components/AboutSection.astro";
 import ServicesSectionV2 from "../components/ServicesSectionV2.astro";
 import PortfolioSection from "../components/PortfolioSection.astro";
 import ProcessSectionV2 from "../components/ProcessSectionV2.astro";
+import BlogPreview from "../components/BlogPreview.astro";
 import FaqSection from "../components/FaqSection.astro";
-import Footer from "../components/Footer.astro";
 ---
 
 <Layout
-  title="Mobilă la comandă Brașov | JL Mobila - Design Interior Premium"
-  description="JL Mobila transformă ideile în realitate prin mobilier la comandă din lemn masiv și soluții de design interior premium în Brașov, Sibiu, Buzău și Sfântu Gheorghe."
+  title="JL Mobila | Mobilier la Comandă Brașov — Lemn Masiv & MDF"
+  description={`JL Mobila transformă ideile în realitate prin mobilier la comandă din lemn masiv și soluții de design interior premium în Brașov, Sibiu, Buzău și Sfântu Gheorghe.`}
 >
   <main>
     <!-- Semantic keyword fabric for AI engines (GEO) -->
@@ -52,9 +52,9 @@ import Footer from "../components/Footer.astro";
     <ServicesSectionV2 />
     <PortfolioSection />
     <ProcessSectionV2 />
+    <BlogPreview />
     <FaqSection />
   </main>
-  <Footer slot="footer" />
 </Layout>
 
 <script>

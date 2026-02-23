@@ -1,0 +1,104 @@
+---
+import { getCollection } from "astro:content";
+import { SITE } from "../config/site";
+import BubbleButton from "./ui/BubbleButton.astro";
+
+const posts = await getCollection("blog");
+
+// Sort by publishedDate descending and take top 3
+const latestPosts = posts
+  .sort((a, b) => {
+    const dateA = new Date(a.data.publishedDate).getTime();
+    const dateB = new Date(b.data.publishedDate).getTime();
+    return dateB - dateA;
+  })
+  .slice(0, 3);
+
+const categoryLabels: Record<string, string> = {
+  inspiratie: "Inspirație & Design",
+  ghid: "Ghid Practic",
+  materiale: "Materiale & Tehnologii",
+  proiecte: "Proiecte Finalizate",
+  noutati: "Noutăți",
+};
+---
+
+{
+  latestPosts.length > 0 && (
+    <section
+      class="py-24 px-4 md:px-8 bg-white relative overflow-hidden"
+      id="blog-preview"
+    >
+      <div class="max-w-6xl mx-auto relative z-10">
+        <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
+          <div>
+            <h2 class="font-serif text-4xl md:text-5xl text-primary leading-tight mb-4">
+              Din Atelierul de <span class="text-accent">Idei</span>
+            </h2>
+            <p class="text-primary/60 max-w-xl text-lg">
+              Descoperă ultimele tendințe în design interior, ghiduri despre
+              materiale premium și proiecte care prind viață în mâinile
+              meșterilor noștri.
+            </p>
+          </div>
+          <BubbleButton
+            href="/blog"
+            variant="outline"
+            class="hidden md:inline-flex"
+          >
+            Vezi Tot Blogul
+          </BubbleButton>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {latestPosts.map((post) => (
+            <a
+              href={`/blog/${post.slug}`}
+              class="group block bg-secondary rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-500 hover:-translate-y-2"
+            >
+              {post.data.coverImage && (
+                <div class="aspect-[16/10] overflow-hidden">
+                  <img
+                    src={post.data.coverImage}
+                    alt={post.data.coverImageAlt}
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+              <div class="p-6">
+                <div class="flex items-center gap-3 mb-3">
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-accent px-2 py-1 bg-white rounded-full">
+                    {categoryLabels[post.data.category] || post.data.category}
+                  </span>
+                  <span class="text-[10px] text-primary/40 font-bold uppercase tracking-widest">
+                    {new Date(post.data.publishedDate).toLocaleDateString(
+                      "ro-RO",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      },
+                    )}
+                  </span>
+                </div>
+                <h3 class="font-serif text-xl text-primary leading-snug mb-3 group-hover:text-accent transition-colors">
+                  {post.data.title}
+                </h3>
+                <p class="text-sm text-primary/60 line-clamp-2 leading-relaxed">
+                  {post.data.description}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <div class="md:hidden flex justify-center">
+          <BubbleButton href="/blog" variant="outline">
+            Vezi Tot Blogul
+          </BubbleButton>
+        </div>
+      </div>
+    </section>
+  )
+}
