@@ -5,6 +5,7 @@ import MobileMenu from "../components/MobileMenu.astro";
 import CustomCursor from "../components/ui/CustomCursor.astro";
 import ContactModal from "../components/ContactModal.astro";
 import ContactFAB from "../components/ui/ContactFAB.astro";
+import { SITE, absoluteUrl, targetCitiesString } from "../config/site";
 
 interface BreadcrumbItem {
   name: string;
@@ -20,70 +21,99 @@ interface Props {
   breadcrumbs?: BreadcrumbItem[];
 }
 
-const SITE_URL =
-  Astro.site?.toString().replace(/\/$/, "") || "https://jl-design.vercel.app";
-
 const {
   title,
-  description = "Mobilă la comandă - Design interior, mobilier din lemn masiv și soluții premium de la JL Mobila, realizate la cele mai înalte standarde.",
-  image = "/Images/optimized/hero-image.webp",
-  canonicalURL = new URL(Astro.url.pathname, SITE_URL),
+  description = `${SITE.tagline} — Design interior, mobilier din lemn masiv și soluții premium de la ${SITE.name} în ${targetCitiesString()}.`,
+  image = SITE.defaultOgImage,
+  canonicalURL = new URL(Astro.url.pathname, SITE.url),
   type = "website",
   breadcrumbs,
 } = Astro.props;
 
 // --- Structured Data Schemas ---
 
-// 1. Organization (replaces LocalBusiness — more flexible, includes sameAs)
+// 1. Organization with Wikidata entity disambiguation
 const organizationSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "JL Mobila",
-  url: SITE_URL,
-  logo: `${SITE_URL}/favicon.svg`,
-  image: `${SITE_URL}/Images/optimized/hero-image.webp`,
-  description:
-    "Mobilier la comandă din lemn masiv și soluții de design interior premium în Cluj-Napoca.",
-  telephone: "+40700000000",
-  sameAs: [
-    // Add your real social links here
-    // "https://www.facebook.com/jlmobila",
-    // "https://www.instagram.com/jlmobila",
+  "name": SITE.name,
+  "url": SITE.url,
+  "logo": absoluteUrl(SITE.logo),
+  "image": absoluteUrl(SITE.defaultOgImage),
+  "description": `${SITE.tagline} — soluții premium de design interior în ${targetCitiesString()}.`,
+  "telephone": SITE.phone,
+  "email": SITE.email,
+  "sameAs": [
+    ...SITE.sameAs,
+    // Wikidata entity disambiguation
+    "https://www.wikidata.org/wiki/Q82070",  // Brașov
+    "https://www.wikidata.org/wiki/Q193055", // Buzău
+    "https://www.wikidata.org/wiki/Q83364",  // Sibiu
+    "https://www.wikidata.org/wiki/Q179714", // Sfântu Gheorghe
   ],
-  areaServed: {
-    "@type": "Country",
-    name: "Romania",
-  },
+  "areaServed": SITE.targetCities.map(city => ({
+    "@type": "City",
+    "name": city,
+  })),
 });
 
-// 2. WebSite (enables Google Sitelinks search box)
+// 2. LocalBusiness with precise PostalAddress + GeoCoordinates
+const localBusinessSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": SITE.name,
+  "image": absoluteUrl(SITE.defaultOgImage),
+  "url": SITE.url,
+  "telephone": SITE.phone,
+  "email": SITE.email,
+  "priceRange": "$$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": SITE.address.street,
+    "addressLocality": SITE.address.city,
+    "addressRegion": SITE.address.region,
+    "postalCode": SITE.address.postalCode,
+    "addressCountry": SITE.address.country,
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": SITE.geo.latitude,
+    "longitude": SITE.geo.longitude,
+  },
+  "areaServed": SITE.targetCities.map(city => ({
+    "@type": "City",
+    "name": city,
+  })),
+});
+
+// 3. WebSite (enables Google Sitelinks search box)
 const webSiteSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "JL Mobila",
-  url: SITE_URL,
-  potentialAction: {
+  "name": SITE.name,
+  "url": SITE.url,
+  "potentialAction": {
     "@type": "SearchAction",
-    target: `${SITE_URL}/?s={search_term_string}`,
+    "target": `${SITE.url}/?s={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 });
 
-// 3. BreadcrumbList (per-page, only if breadcrumbs prop is passed)
-const breadcrumbSchema = breadcrumbs
-  ? JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: breadcrumbs.map((crumb, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        name: crumb.name,
-        item: crumb.url.startsWith("http")
-          ? crumb.url
-          : `${SITE_URL}${crumb.url}`,
-      })),
-    })
-  : null;
+// 4. BreadcrumbList (per-page, only if breadcrumbs prop is passed)
+const breadcrumbSchema = breadcrumbs ? JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": breadcrumbs.map((crumb, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "name": crumb.name,
+    "item": crumb.url.startsWith("http") ? crumb.url : absoluteUrl(crumb.url),
+  })),
+}) : null;
+
+// GTM
+const GTM_ID = SITE.gtmId;
+const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
 ---
 
 <!doctype html>
@@ -94,6 +124,21 @@ const breadcrumbSchema = breadcrumbs
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="index, follow" />
+    <meta name="geo.region" content="RO-BV" />
+    <meta name="geo.placename" content={SITE.address.city} />
+    <meta name="geo.position" content={`${SITE.geo.latitude};${SITE.geo.longitude}`} />
+    <meta name="ICBM" content={`${SITE.geo.latitude}, ${SITE.geo.longitude}`} />
+
+    {/* Google Tag Manager — head script */}
+    {hasGTM && (
+      <script is:inline define:vars={{ GTM_ID }}>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer',GTM_ID);
+      </script>
+    )}
 
     <!-- Primary Meta Tags -->
     <title>{title}</title>
@@ -106,25 +151,22 @@ const breadcrumbSchema = breadcrumbs
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, SITE_URL)} />
+    <meta property="og:image" content={new URL(image, SITE.url)} />
     <meta property="og:locale" content="ro_RO" />
-    <meta property="og:site_name" content="JL Mobila" />
+    <meta property="og:site_name" content={SITE.name} />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={new URL(image, SITE_URL)} />
+    <meta property="twitter:image" content={new URL(image, SITE.url)} />
 
     <!-- Structured Data -->
-    <script type="application/ld+json" set:html={organizationSchema} />
-    <script type="application/ld+json" set:html={webSiteSchema} />
-    {
-      breadcrumbSchema && (
-        <script type="application/ld+json" set:html={breadcrumbSchema} />
-      )
-    }
+    <script type="application/ld+json" set:html={organizationSchema}></script>
+    <script type="application/ld+json" set:html={localBusinessSchema}></script>
+    <script type="application/ld+json" set:html={webSiteSchema}></script>
+    {breadcrumbSchema && <script type="application/ld+json" set:html={breadcrumbSchema}></script>}
 
     <link
       rel="preload"
@@ -143,6 +185,12 @@ const breadcrumbSchema = breadcrumbs
     </script>
   </head>
   <body class="text-primary font-sans antialiased overflow-x-hidden">
+    {/* Google Tag Manager — noscript fallback */}
+    {hasGTM && (
+      <noscript>
+        <iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`} height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      </noscript>
+    )}
     <!--  Navbar must be outside smooth-wrapper to be fixed/sticky correctly -->
     <Navbar />
     <MobileMenu />
