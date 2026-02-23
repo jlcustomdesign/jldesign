@@ -56,6 +56,27 @@ export const SITE = {
   /** Google Tag Manager Container ID — replace with your real GTM-XXXXXXX */
   gtmId: "GTM-XXXXXXX",
 
+  /**
+   * Target keywords (used in meta tags and internal linking).
+   * Covers brand, service, product, material, and location variations.
+   */
+  keywords: [
+    // Brand
+    "JL Mobila", "JL Design", "JL Custom Design",
+    // Service
+    "mobilă la comandă", "mobilier custom", "mobilier personalizat", "mobilier pe comandă",
+    "design interior", "proiectare 3D", "montaj profesional",
+    // Product
+    "bucătării la comandă", "dressinguri", "biblioteci", "mobilier living",
+    "mobilier dormitor", "mobilier baie", "mobilier birouri", "mobilier comercial",
+    // Material
+    "lemn masiv", "MDF vopsit", "PAL melaminat", "furnir natural",
+    "Egger", "Kronospan", "feronerie Blum", "Hettich", "Hafele",
+    // Location
+    "mobilă Brașov", "mobilier Brașov", "mobilier Buzău", "mobilier Sibiu",
+    "mobilier Sfântu Gheorghe", "mobilier Făgăraș",
+  ],
+
   /** Images */
   defaultOgImage: "/Images/optimized/hero-image.webp",
   logo: "/favicon.svg",
