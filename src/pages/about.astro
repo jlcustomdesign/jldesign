@@ -10,8 +10,19 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
 <Layout
   title="Despre Noi | JL Mobila - Excelență în Arta Lemnului de Peste 15 Ani"
   description="Află povestea JL Mobila. Cu peste 15 ani de experiență și 500+ proiecte finalizate, echipa noastră creează mobilier la comandă din materiale premium, cu atenție absolută la detalii."
+  breadcrumbs={[
+    { name: "Acasă", url: "/" },
+    { name: "Despre Noi", url: "/about" },
+  ]}
 >
   <main class="w-full relative z-10">
+    <!-- Answer-first summary for AI engines (AEO/GEO) -->
+    <p class="sr-only">
+      JL Mobila este o companie românească cu peste 15 ani de experiență în
+      mobilier la comandă din lemn masiv. Cu peste 500 de proiecte finalizate,
+      oferim consultanță, design 3D, producție custom și montaj profesional.
+      Sediul nostru se află în Cluj-Napoca, România.
+    </p>
     <!-- Hero Section -->
     <!-- Hero Section -->
     <section
@@ -77,7 +88,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
               <img
                 src="/Images/optimized/hero-image.webp"
                 class="absolute inset-x-0 w-[400%] max-w-none h-full lg:h-[142.86%] object-cover top-0 left-0"
-                alt="Slice 1"
+                alt="Atelier JL Mobila — detaliu mobilier din lemn masiv"
               />
             </div>
             <!-- Slice 2 (Center Left) -->
@@ -89,7 +100,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
               <img
                 src="/Images/optimized/hero-image.webp"
                 class="absolute inset-x-0 w-[400%] max-w-none h-full lg:h-[142.86%] object-cover top-0 -left-[100%]"
-                alt="Slice 2"
+                alt="Design interior premium — bucătărie la comandă JL Mobila"
               />
             </div>
             <!-- Slice 3 (Center Right) -->
@@ -101,7 +112,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
               <img
                 src="/Images/optimized/hero-image.webp"
                 class="absolute inset-x-0 w-[400%] max-w-none h-full object-cover top-0 -left-[200%]"
-                alt="Slice 3"
+                alt="Producție mobilier personalizat — finisaje lemn natural"
               />
             </div>
             <!-- Slice 4 (Right) -->
@@ -113,7 +124,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
               <img
                 src="/Images/optimized/hero-image.webp"
                 class="absolute inset-x-0 w-[400%] max-w-none h-full object-cover top-0 -left-[300%]"
-                alt="Slice 4"
+                alt="Montaj profesional mobilier la comandă Cluj-Napoca"
               />
             </div>
           </div>

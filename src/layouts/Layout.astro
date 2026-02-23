@@ -6,39 +6,84 @@ import CustomCursor from "../components/ui/CustomCursor.astro";
 import ContactModal from "../components/ContactModal.astro";
 import ContactFAB from "../components/ui/ContactFAB.astro";
 
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
 interface Props {
   title: string;
   description?: string;
   image?: string;
   canonicalURL?: string | URL;
   type?: "website" | "article";
+  breadcrumbs?: BreadcrumbItem[];
 }
+
+const SITE_URL =
+  Astro.site?.toString().replace(/\/$/, "") || "https://jl-design.vercel.app";
 
 const {
   title,
   description = "Mobilă la comandă - Design interior, mobilier din lemn masiv și soluții premium de la JL Mobila, realizate la cele mai înalte standarde.",
   image = "/Images/optimized/hero-image.webp",
-  canonicalURL = new URL(
-    Astro.url.pathname,
-    Astro.site || "https://jl-design.vercel.app",
-  ),
+  canonicalURL = new URL(Astro.url.pathname, SITE_URL),
   type = "website",
+  breadcrumbs,
 } = Astro.props;
 
-// Default LocalBusiness JSON-LD Schema
-const localBusinessSchema = JSON.stringify({
+// --- Structured Data Schemas ---
+
+// 1. Organization (replaces LocalBusiness — more flexible, includes sameAs)
+const organizationSchema = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  "@type": "Organization",
   name: "JL Mobila",
-  image: new URL(
-    "/Images/optimized/hero-image.webp",
-    Astro.site || "https://jl-design.vercel.app",
-  ),
-  description: description,
-  url: Astro.site || "https://jl-design.vercel.app",
+  url: SITE_URL,
+  logo: `${SITE_URL}/favicon.svg`,
+  image: `${SITE_URL}/Images/optimized/hero-image.webp`,
+  description:
+    "Mobilier la comandă din lemn masiv și soluții de design interior premium în Cluj-Napoca.",
   telephone: "+40700000000",
-  priceRange: "$$$",
+  sameAs: [
+    // Add your real social links here
+    // "https://www.facebook.com/jlmobila",
+    // "https://www.instagram.com/jlmobila",
+  ],
+  areaServed: {
+    "@type": "Country",
+    name: "Romania",
+  },
 });
+
+// 2. WebSite (enables Google Sitelinks search box)
+const webSiteSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "JL Mobila",
+  url: SITE_URL,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${SITE_URL}/?s={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+});
+
+// 3. BreadcrumbList (per-page, only if breadcrumbs prop is passed)
+const breadcrumbSchema = breadcrumbs
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: breadcrumbs.map((crumb, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: crumb.name,
+        item: crumb.url.startsWith("http")
+          ? crumb.url
+          : `${SITE_URL}${crumb.url}`,
+      })),
+    })
+  : null;
 ---
 
 <!doctype html>
@@ -48,6 +93,7 @@ const localBusinessSchema = JSON.stringify({
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content="index, follow" />
 
     <!-- Primary Meta Tags -->
     <title>{title}</title>
@@ -60,10 +106,7 @@ const localBusinessSchema = JSON.stringify({
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta
-      property="og:image"
-      content={new URL(image, Astro.site || "https://jl-design.vercel.app")}
-    />
+    <meta property="og:image" content={new URL(image, SITE_URL)} />
     <meta property="og:locale" content="ro_RO" />
     <meta property="og:site_name" content="JL Mobila" />
 
@@ -72,12 +115,17 @@ const localBusinessSchema = JSON.stringify({
     <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta
-      property="twitter:image"
-      content={new URL(image, Astro.site || "https://jl-design.vercel.app")}
-    />
+    <meta property="twitter:image" content={new URL(image, SITE_URL)} />
 
-    <script type="application/ld+json" set:html={localBusinessSchema} />
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={organizationSchema} />
+    <script type="application/ld+json" set:html={webSiteSchema} />
+    {
+      breadcrumbSchema && (
+        <script type="application/ld+json" set:html={breadcrumbSchema} />
+      )
+    }
+
     <link
       rel="preload"
       href="/Fonts/grift-2025-04-02-02-51-35-utc/Variable-TT/Grift Variable-VF.ttf"

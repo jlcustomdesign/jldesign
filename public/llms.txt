@@ -1,0 +1,25 @@
+# JL Mobila
+> Mobilier la comandă din lemn masiv și soluții de design interior premium, realizate la cele mai înalte standarde de calitate.
+
+## Despre
+JL Mobila este o companie românească specializată în mobilier personalizat din lemn masiv și design interior. Cu peste 15 ani de experiență și peste 500 de proiecte finalizate, oferim servicii complete: consultanță, proiectare 3D, producție custom și montaj profesional.
+
+## Pagini Prioritare
+- https://jl-design.vercel.app/ : Pagina principală — prezentare generală, servicii, portofoliu, proces de lucru și întrebări frecvente
+- https://jl-design.vercel.app/about : Despre noi — povestea, valorile și filozofia JL Mobila
+- https://jl-design.vercel.app/services : Servicii — consultanță & design 3D, producție custom, montaj profesional
+- https://jl-design.vercel.app/portfolio : Portofoliu — proiecte rezidențiale și comerciale finalizate
+
+## Servicii Oferite
+- Consultanță și Design Interior 3D
+- Producție Mobilier la Comandă din Lemn Masiv
+- Montaj Profesional
+- Mobilier pentru Bucătărie, Living, Dormitor, Birou
+- Soluții Comerciale și Rezidențiale
+
+## Locație
+Cluj-Napoca, România
+
+## Contact
+Telefon: +40700000000
+Website: https://jl-design.vercel.app

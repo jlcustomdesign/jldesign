@@ -8,6 +8,10 @@ import Footer from "../components/Footer.astro";
 <Layout
   title="Portofoliu Proiecte | JL Mobila - Mobila la Comanda Cluj"
   description="Explorează portofoliul JL Mobila de mobilier la comandă și design interior. Descoperă proiectele noastre rezidențiale și comerciale premium realizate în Cluj și nu numai."
+  breadcrumbs={[
+    { name: "Acasă", url: "/" },
+    { name: "Portofoliu", url: "/portfolio" },
+  ]}
 >
   <main>
     <PortfolioHero />
