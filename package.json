@@ -4,7 +4,9 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node scripts/convert-to-webp.mjs",
     "build": "astro build",
+    "convert:images": "node scripts/convert-to-webp.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
