@@ -118,10 +118,10 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
 
   <!-- Lightbox (Simplified) -->
   <div id="portfolio-lightbox" class="fixed inset-0 z-[9999] bg-black/95 opacity-0 pointer-events-none flex items-center justify-center p-4 transition-opacity duration-300">
-    <button id="lightbox-close" class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white bg-black/20 rounded-full">
+    <button id="lightbox-close" class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white bg-black/20 rounded-full" aria-label="Închide galeria">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
-    <img id="lightbox-img" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl scale-95 transition-transform duration-300" />
+    <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl scale-95 transition-transform duration-300" />
   </div>
 </section>
 
@@ -150,6 +150,7 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
                 const img = card.querySelector('img');
                 if(img) {
                     lightboxImg.src = img.src;
+                     lightboxImg.alt = img.alt || 'Proiect portofoliu';
                     lightbox.classList.remove('opacity-0', 'pointer-events-none');
                     lightboxImg.classList.remove('scale-95');
                     lightboxImg.classList.add('scale-100');
