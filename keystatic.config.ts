@@ -7,7 +7,6 @@ export default config({
       ? { kind: 'local' }
       : { kind: 'github', repo: 'RobertGyorgy/JL-Design' },
   
-  // Branding
   ui: {
     brand: {
       name: 'JL Mobila',
@@ -49,7 +48,7 @@ export default config({
       }
     },
     navigation: {
-      'Conținut': ['portfolio'],
+      'Conținut': ['portfolio', 'blog'],
     },
   },
 
@@ -96,6 +95,63 @@ export default config({
         content: fields.markdoc({
           label: 'Descriere',
           description: 'Detalii despre proiect (opțional)',
+        }),
+      },
+    }),
+
+    blog: collection({
+      label: 'Blog',
+      slugField: 'title',
+      path: 'src/content/blog/*',
+      format: { contentField: 'content' },
+      entryLayout: 'content',
+      schema: {
+        title: fields.slug({
+          name: {
+            label: 'Titlu Articol',
+            description: 'Titlul care va apărea pe site și în motoarele de căutare',
+          },
+        }),
+        description: fields.text({
+          label: 'Descriere SEO',
+          description: 'Meta description (150-160 caractere) — apare în rezultatele Google',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        coverImage: fields.image({
+          label: 'Imagine de Copertă',
+          description: 'Imaginea principală a articolului (recomandată: 1200x630px)',
+          directory: 'public/assets/blog',
+          publicPath: '/assets/blog/',
+        }),
+        coverImageAlt: fields.text({
+          label: 'Text Alternativ Imagine (Alt)',
+          description: 'Descriere pentru Google Images — ex: "Bucătărie modernă MDF vopsit mat alb"',
+          validation: { isRequired: true },
+        }),
+        category: fields.select({
+          label: 'Categorie',
+          options: [
+            { label: 'Inspirație & Design', value: 'inspiratie' },
+            { label: 'Ghid Practic', value: 'ghid' },
+            { label: 'Materiale & Tehnologii', value: 'materiale' },
+            { label: 'Proiecte Finalizate', value: 'proiecte' },
+            { label: 'Noutăți', value: 'noutati' },
+          ],
+          defaultValue: 'inspiratie',
+        }),
+        author: fields.text({
+          label: 'Autor',
+          defaultValue: 'JL Mobila',
+        }),
+        publishedDate: fields.date({
+          label: 'Data Publicării',
+          description: 'Data publicării articolului',
+          validation: { isRequired: true },
+        }),
+        content: fields.markdoc({
+          label: 'Conținut Articol',
+          description: 'Conținutul complet al articolului',
         }),
       },
     }),

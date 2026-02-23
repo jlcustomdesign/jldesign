@@ -1,0 +1,155 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { SITE, absoluteUrl } from "../../config/site";
+
+// In server mode, we get the slug from the URL params
+const { slug } = Astro.params;
+
+const posts = await getCollection("blog");
+const post = posts.find((p) => p.slug === slug);
+
+if (!post) {
+  return Astro.redirect("/blog");
+}
+
+const { Content } = await post.render();
+
+const categoryLabels: Record<string, string> = {
+  inspiratie: "Inspirație & Design",
+  ghid: "Ghid Practic",
+  materiale: "Materiale & Tehnologii",
+  proiecte: "Proiecte Finalizate",
+  noutati: "Noutăți",
+};
+
+// Article JSON-LD schema for Google rich snippets
+const articleSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: post.data.title,
+  description: post.data.description,
+  image: post.data.coverImage
+    ? absoluteUrl(post.data.coverImage)
+    : absoluteUrl(SITE.defaultOgImage),
+  author: {
+    "@type": "Organization",
+    name: post.data.author || SITE.name,
+    url: SITE.url,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: SITE.name,
+    logo: {
+      "@type": "ImageObject",
+      url: absoluteUrl(SITE.logo),
+    },
+  },
+  datePublished: post.data.publishedDate,
+  dateModified: post.data.publishedDate,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": absoluteUrl(`/blog/${post.slug}`),
+  },
+});
+
+const formattedDate = new Date(post.data.publishedDate).toLocaleDateString(
+  "ro-RO",
+  {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  },
+);
+---
+
+<Layout
+  title={`${post.data.title} | Blog ${SITE.name}`}
+  description={post.data.description}
+  image={post.data.coverImage || SITE.defaultOgImage}
+  type="article"
+  breadcrumbs={[
+    { name: "Acasă", url: "/" },
+    { name: "Blog", url: "/blog" },
+    { name: post.data.title, url: `/blog/${post.slug}` },
+  ]}
+>
+  <main class="bg-secondary min-h-screen">
+    <!-- Article JSON-LD -->
+    <script type="application/ld+json" set:html={articleSchema} />
+
+    <article class="max-w-3xl mx-auto px-4 md:px-8 pt-32 pb-24">
+      <!-- Header -->
+      <header class="mb-10">
+        <div class="flex items-center gap-3 mb-4">
+          <a
+            href="/blog"
+            class="text-xs font-bold uppercase tracking-widest text-accent hover:text-primary transition-colors"
+          >
+            ← Blog
+          </a>
+          <span class="text-primary/20">|</span>
+          <span class="text-xs font-bold uppercase tracking-widest text-accent">
+            {categoryLabels[post.data.category] || post.data.category}
+          </span>
+        </div>
+        <h1
+          class="font-serif text-4xl md:text-5xl lg:text-6xl text-primary leading-tight mb-4"
+        >
+          {post.data.title}
+        </h1>
+        <p class="text-primary/60 text-lg mb-6">
+          {post.data.description}
+        </p>
+        <div class="flex items-center gap-4 text-sm text-primary/50">
+          <span
+            >De <strong class="text-primary/70">{post.data.author}</strong
+            ></span
+          >
+          <span>•</span>
+          <time datetime={post.data.publishedDate}>{formattedDate}</time>
+        </div>
+      </header>
+
+      <!-- Cover Image -->
+      {
+        post.data.coverImage && (
+          <figure class="mb-12">
+            <img
+              src={post.data.coverImage}
+              alt={post.data.coverImageAlt}
+              class="w-full rounded-2xl shadow-lg"
+              loading="eager"
+            />
+            <figcaption class="mt-3 text-sm text-primary/40 text-center">
+              {post.data.coverImageAlt}
+            </figcaption>
+          </figure>
+        )
+      }
+
+      <!-- Markdoc Content -->
+      <div
+        class="prose prose-lg prose-stone max-w-none
+        prose-headings:font-serif prose-headings:text-primary
+        prose-p:text-primary/80 prose-p:leading-relaxed
+        prose-a:text-accent prose-a:no-underline hover:prose-a:underline
+        prose-img:rounded-xl prose-img:shadow-md
+        prose-strong:text-primary
+        prose-blockquote:border-accent prose-blockquote:text-primary/70"
+      >
+        <Content />
+      </div>
+
+      <!-- Back to Blog -->
+      <div class="mt-16 pt-8 border-t border-primary/10">
+        <a
+          href="/blog"
+          class="inline-flex items-center gap-2 text-accent font-medium hover:text-primary transition-colors"
+        >
+          ← Înapoi la Blog
+        </a>
+      </div>
+    </article>
+  </main>
+</Layout>
