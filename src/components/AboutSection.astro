@@ -111,14 +111,14 @@ import BubbleButton from "./ui/BubbleButton.astro";
         {
           scrollTrigger: {
             trigger: card,
-            start: "top 85%", // Trigger when the card itself enters viewport
+            start: "top 65%", // Trigger later when it's more visibly in viewport
             toggleActions: "play none none reverse",
           },
           y: 0,
           opacity: 1,
-          duration: 1,
+          duration: 1.2,
           ease: "expo.out",
-          delay: (i % 3) * 0.1, // Stagger effect for items appearing together
+          delay: (i % 3) * 0.15, // Stagger effect
         },
       );
     });
@@ -130,7 +130,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
         {
           scrollTrigger: {
             trigger: text,
-            start: "top 90%", // Start slightly after card triggers
+            start: "top 70%", // Start immediately after card triggers
             toggleActions: "play none none reverse",
           },
           y: 0,
