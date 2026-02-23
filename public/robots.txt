@@ -1,4 +1,35 @@
+# robots.txt
+# Generat pentru JL Mobila
+
 User-agent: *
 Allow: /
 
+# Disallow backend/admin areas
+Disallow: /keystatic/
+Disallow: /api/
+
+# Block AI crawlers (Optional - Un-comment to prevent AI scraping if desired)
+# User-agent: CCBot
+# Disallow: /
+# User-agent: ChatGPT-User
+# Disallow: /
+# User-agent: GPTBot
+# Disallow: /
+# User-agent: Google-Extended
+# Disallow: /
+# User-agent: Anthropic-ai
+# Disallow: /
+# User-agent: Claude-Web
+# Disallow: /
+
+# Allow all critical assets for rendering
+Allow: /_astro/
+Allow: /assets/
+Allow: /Fonts/
+Allow: /Images/
+
+# Sitemap location
 Sitemap: https://jl-design.vercel.app/sitemap-index.xml
+
+# Crawl-delay (optional, helps prevent server overload)
+Crawl-delay: 1
