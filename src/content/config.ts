@@ -17,7 +17,7 @@ const blog = defineCollection({
     coverImageAlt: z.string(),
     category: z.string().default('inspiratie'),
     author: z.string().default('JL Mobila'),
-    publishedDate: z.string(),
+    publishedDate: z.union([z.string(), z.date()]),
   }),
 });
 
