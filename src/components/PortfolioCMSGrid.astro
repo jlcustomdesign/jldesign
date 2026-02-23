@@ -57,13 +57,19 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
                             >
                                 <!-- Image Wrapper -->
                                 <div class="relative w-full overflow-hidden rounded-[2rem] bg-gray-900 aspect-[3/4] md:aspect-[4/5]">
-                                    <img
-                                      src={item.image}
-                                      alt={item.name}
-                                      decoding="async"
-                                      loading="lazy" 
-                                      class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                                    />
+                                    {item.image ? (
+                                      <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        decoding="async"
+                                        loading="lazy" 
+                                        class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                      />
+                                    ) : (
+                                      <div class="w-full h-full bg-gray-800 flex items-center justify-center">
+                                        <span class="text-white/30 text-sm uppercase tracking-widest">Fără imagine</span>
+                                      </div>
+                                    )}
                                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
                                 </div>
 
