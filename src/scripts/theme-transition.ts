@@ -20,6 +20,7 @@ export function initThemeTransition() {
         // 1. Identify Sections AFTER Portfolio
         // Order: Portfolio -> Process -> FAQ -> Footer
         const processSection = document.querySelector("#process-section-v2");
+        const blogPreview = document.querySelector("#blog-preview");
         const faqSection = document.querySelector("#faq-section-v2");
         const footer = document.querySelector("footer");
         const main = document.querySelector("main");
@@ -32,6 +33,7 @@ export function initThemeTransition() {
         // Include Portfolio because it might still be visible
         if (portfolioSection) backgroundElementsToBlack.push(portfolioSection as HTMLElement);
         if (processSection) backgroundElementsToBlack.push(processSection as HTMLElement);
+        if (blogPreview) backgroundElementsToBlack.push(blogPreview as HTMLElement);
         if (faqSection) backgroundElementsToBlack.push(faqSection as HTMLElement);
         if (footer) backgroundElementsToBlack.push(footer as HTMLElement);
         
@@ -43,6 +45,7 @@ export function initThemeTransition() {
                 "#portfolio-section h2", "#portfolio-section h3", "#portfolio-section p", "#portfolio-section span", "#portfolio-section .text-primary",
                 // Process V2: Text is already white by default spread, but we ensure consistency
                 "#process-section-v2 h2", "#process-section-v2 p", "#process-section-v2 h3",
+                "#blog-preview h2", "#blog-preview h3", "#blog-preview p", "#blog-preview span",
                 "#faq-section-v2 h2", "#faq-section-v2 button", "#faq-section-v2 span", "#faq-section-v2 p", "#faq-section-v2 svg",
                 ".nav-text", // Added back
                 ".fab-text", // FAB Ring Text
