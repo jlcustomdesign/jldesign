@@ -4,7 +4,10 @@ import ServicesContent from "../components/ServicesContent.astro";
 import Footer from "../components/Footer.astro";
 ---
 
-<Layout title="Services | JL Mobila">
+<Layout
+  title="Servicii Mobilier la Comandă | JL Mobila - Design, Producție și Montaj"
+  description="Descoperă serviciile complete JL Mobila: Consultanță & Design 3D, Producție Custom cu materiale premium și Montaj Profesional. Fiecare poiect de mobilier la comandă este unic."
+>
   <div
     id="services-hero-section"
     class="relative w-full h-[100svh] lg:h-screen overflow-hidden bg-secondary"
@@ -12,39 +15,42 @@ import Footer from "../components/Footer.astro";
     <!-- Text Content (Behind SVG) -->
     <div class="absolute inset-0 w-full h-full z-0 pointer-events-none">
       <div class="relative w-full h-full max-w-[1920px] mx-auto">
+        <h1 class="sr-only">
+          Servicii mobilier la comandă Cluj: Design, Producție, Montaj
+        </h1>
         <!-- DESKTOP TEXT (Hidden on Mobile) -->
-        <div class="hidden md:block">
+        <div class="hidden md:block" aria-hidden="true">
           <!-- Text for Cutout 1: SERVICIILE -->
           <div
             class="absolute left-[4%] top-[16%] -translate-y-1/2 overflow-hidden"
           >
-            <h1
+            <div
               class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
             >
               SERVICIILE
-            </h1>
+            </div>
           </div>
 
           <!-- Text for Cutout 2: PE CARE NOI -->
           <div
             class="absolute left-[4%] top-[36%] -translate-y-1/2 overflow-hidden"
           >
-            <h2
+            <div
               class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
             >
               PE CARE NOI
-            </h2>
+            </div>
           </div>
 
           <!-- Text for Cutout 3: LE OFERIM -->
           <div
             class="absolute left-[4%] top-[56%] -translate-y-1/2 overflow-hidden"
           >
-            <h2
+            <div
               class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
             >
               LE OFERIM
-            </h2>
+            </div>
           </div>
         </div>
       </div>
@@ -87,11 +93,14 @@ import Footer from "../components/Footer.astro";
     <div
       class="md:hidden absolute inset-0 flex flex-col justify-between px-6 pt-40 pb-24 z-30 pointer-events-auto"
     >
-      <h1 class="font-serif text-[16vw] sm:text-7xl text-white leading-[1.05]">
+      <div
+        class="font-serif text-[16vw] sm:text-7xl text-white leading-[1.05]"
+        aria-hidden="true"
+      >
         <span class="block whitespace-nowrap">Serviciile</span>
         <span class="block whitespace-nowrap">pe care noi</span>
         <span class="block whitespace-nowrap">le oferim</span>
-      </h1>
+      </div>
 
       <!-- Bottom Content Group -->
       <div class="flex flex-col items-start gap-8">

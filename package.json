@@ -11,6 +11,7 @@
   "dependencies": {
     "@astrojs/markdoc": "^0.15.10",
     "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.7.0",
     "@astrojs/vercel": "^9.0.4",
     "@fontsource/manrope": "^5.2.8",
     "@fontsource/playfair-display": "^5.2.8",

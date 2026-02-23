@@ -33,9 +33,23 @@ const faqs = [
     a: "Da, realizăm proiecte la nivel național. Pentru livrările în afara zonei București-Ilfov, se va calcula un cost suplimentar de transport și logistică.",
   },
 ];
+
+const faqSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((faq) => ({
+    "@type": "Question",
+    "name": faq.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.a,
+    },
+  })),
+});
 ---
 
 <section class="py-24 bg-secondary" id="faq-section-v2" data-theme="light">
+  <script type="application/ld+json" set:html={faqSchema}></script>
   <div class="container mx-auto px-4 md:px-8">
     <div
       class="flex flex-col lg:flex-row gap-16 items-start relative wrapper-v2"

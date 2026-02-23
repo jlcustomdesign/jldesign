@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
 import vercel from '@astrojs/vercel';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,7 +16,8 @@ export default defineConfig({
   integrations: [
     react(),
     markdoc(),
-    keystatic()
+    keystatic(),
+    sitemap()
   ].filter(Boolean),
   vite: {
     plugins: [tailwindcss()],
