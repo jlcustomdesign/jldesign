@@ -123,6 +123,7 @@ export default config({
           description: 'Imaginea principală a articolului (recomandată: 1200x630px)',
           directory: 'public/assets/blog',
           publicPath: '/assets/blog/',
+          validation: { isRequired: true },
         }),
         coverImageAlt: fields.text({
           label: 'Text Alternativ Imagine (Alt)',

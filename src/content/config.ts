@@ -13,7 +13,7 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    coverImage: z.string().optional(),
+    coverImage: z.string(),
     coverImageAlt: z.string(),
     category: z.string().default('inspiratie'),
     author: z.string().default('JL Mobila'),

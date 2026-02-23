@@ -68,6 +68,13 @@ export function initThemeTransition() {
         backgroundElementsToBlack.forEach(el => {
             tl.to(el, { backgroundColor: "#050505", duration: duration, ease: ease }, 0);
         });
+        
+        // Animate Blog Preview Cards (Elevated Dark Background & Subtle Border)
+        const blogCards = document.querySelectorAll(".blog-preview-card");
+        blogCards.forEach(card => {
+             tl.to(card, { backgroundColor: "#111111", borderColor: "#222222", duration: duration, ease: ease }, 0);
+        });
+
         // Animate Body to Black
         tl.to("body", { backgroundColor: "#050505", duration: duration, ease: ease }, 0);
 
