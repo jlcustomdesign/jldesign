@@ -61,6 +61,7 @@ const formattedDate = new Date(post.data.publishedDate).toLocaleDateString(
     day: "numeric",
   },
 );
+const publishDateString = new Date(post.data.publishedDate).toISOString();
 ---
 
 <Layout
@@ -89,7 +90,14 @@ const formattedDate = new Date(post.data.publishedDate).toLocaleDateString(
             ← Blog
           </a>
           <span class="text-primary/20">|</span>
-          <span class="text-xs font-bold uppercase tracking-widest text-accent">
+          <span
+            class:list={[
+              "text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full",
+              post.data.category === "ghid"
+                ? "bg-accent text-primary"
+                : "bg-secondary text-accent",
+            ]}
+          >
             {categoryLabels[post.data.category] || post.data.category}
           </span>
         </div>
@@ -107,7 +115,7 @@ const formattedDate = new Date(post.data.publishedDate).toLocaleDateString(
             ></span
           >
           <span>•</span>
-          <time datetime={post.data.publishedDate}>{formattedDate}</time>
+          <time datetime={publishDateString}>{formattedDate}</time>
         </div>
       </header>
 

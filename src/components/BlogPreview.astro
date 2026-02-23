@@ -67,7 +67,14 @@ const categoryLabels: Record<string, string> = {
               </div>
               <div class="p-8 flex flex-col flex-grow">
                 <div class="flex items-center gap-3 mb-4">
-                  <span class="text-[10px] font-bold uppercase tracking-widest text-accent px-3 py-1 bg-secondary rounded-full">
+                  <span
+                    class:list={[
+                      "text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full transition-colors duration-500",
+                      post.data.category === "ghid"
+                        ? "bg-accent text-primary"
+                        : "bg-secondary text-accent",
+                    ]}
+                  >
                     {categoryLabels[post.data.category] || post.data.category}
                   </span>
                   <span class="text-[10px] text-primary/40 font-bold uppercase tracking-widest">
