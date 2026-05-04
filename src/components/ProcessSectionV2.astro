@@ -1,36 +1,8 @@
 ---
 import BubbleButton from "./ui/BubbleButton.astro";
+import { PROCESS } from "../config/content";
 
-const steps = [
-  {
-    step: "01",
-    title: "Consultanță",
-    desc: "Discutăm viziunea ta. Luăm măsurători precise și înțelegem fluxul spațiului.",
-    // Meeting / Discussion
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-06.webp",
-  },
-  {
-    step: "02",
-    title: "Proiectare 3D",
-    desc: "Randări fotorealiste. Vezi exact cum va arăta mobilierul în casa ta.",
-    // Blueprint / Sketch
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-09.webp",
-  },
-  {
-    step: "03",
-    title: "Producție",
-    desc: "Folosim utilaje CNC de ultimă generație și finisaje manuale pentru detalii impecabile.",
-    // Workshop - Woodworking
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-04.webp",
-  },
-  {
-    step: "04",
-    title: "Montaj",
-    desc: "Echipa noastră instalează totul, reglează feroneria și lasă totul curat.",
-    // Modern Interior / Installation
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-02.webp",
-  },
-];
+const steps = PROCESS.steps;
 ---
 
 <section
@@ -42,7 +14,7 @@ const steps = [
     <!-- Title Section (Left Aligned) -->
     <div class="text-left mb-16 md:mb-24 max-w-2xl process-header">
       <h2 class="font-serif text-4xl md:text-6xl text-primary mb-6">
-        Procesul Nostru
+        {PROCESS.title}
       </h2>
     </div>
 
@@ -220,7 +192,7 @@ const steps = [
     <!-- CTA -->
     <div class="mt-16 text-center relative z-20">
       <BubbleButton href="/contact" class="!px-10 !py-4"
-        >Începe Proiectul</BubbleButton
+        >{PROCESS.ctaButton}</BubbleButton
       >
     </div>
   </div>

@@ -1,15 +1,18 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import ServicesContent from "../components/ServicesContent.astro";
+import PortfolioCategoriesHover from "../components/PortfolioCategoriesHover.astro";
+import ServicesGridV2 from "../components/ServicesGridV2.astro";
+import ServicesCTA from "../components/ServicesCTA.astro";
 import Footer from "../components/Footer.astro";
+import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
 ---
 
 <Layout
-  title="Servicii Mobilier la Comandă | JL Mobila - Design, Producție și Montaj"
-  description="Descoperă serviciile complete JL Mobila: Consultanță & Design 3D, Producție Custom cu materiale premium și Montaj Profesional. Fiecare poiect de mobilier la comandă este unic."
+  title={SERVICES_PAGE.title}
+  description={SERVICES_PAGE.description}
   breadcrumbs={[
-    { name: "Acasă", url: "/" },
-    { name: "Servicii", url: "/services" },
+    { name: BREADCRUMBS.home, url: "/" },
+    { name: BREADCRUMBS.services, url: "/services" },
   ]}
 >
   <div
@@ -18,26 +21,13 @@ import Footer from "../components/Footer.astro";
   >
     <!-- Answer-first summary + semantic keywords for AI engines (AEO/GEO) -->
     <div class="sr-only">
-      <p>
-        JL Mobila oferă servicii complete de mobilier la comandă în Brașov,
-        Buzău, Sibiu și Sfântu Gheorghe: Consultanță & Design 3D, Producție
-        Custom din lemn masiv cu materiale premium, și Montaj Profesional.
-        Fiecare proiect include măsurători la fața locului, randări
-        fotorealistice, și o garanție de 24 de luni.
-      </p>
-      <p>
-        Servicii mobilier: bucătării custom, dressinguri și wardrobes, living și
-        biblioteci, birouri și mobilier comercial, mobilier de baie rezistent la
-        umiditate. Materiale: MDF vopsit mat/lucios, PAL melaminat Egger, lemn
-        masiv stejar/fag/frasin, furnir natural, sticlă, metal. Feronerie Blum
-        soft-close, Hettich, Hafele. Utilaje CNC de ultimă generație.
-      </p>
+      {SERVICES_PAGE.seoFabric.map((paragraph) => <p>{paragraph}</p>)}
     </div>
     <!-- Text Content (Behind SVG) -->
     <div class="absolute inset-0 w-full h-full z-0 pointer-events-none">
       <div class="relative w-full h-full max-w-[1920px] mx-auto">
         <h1 class="sr-only">
-          Servicii mobilier la comandă Brașov: Design, Producție, Montaj —
+          {SERVICES_PAGE.heroH1}
         </h1>
         <!-- DESKTOP TEXT (Hidden on Mobile) -->
         <div class="hidden md:block" aria-hidden="true">
@@ -48,7 +38,7 @@ import Footer from "../components/Footer.astro";
             <div
               class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
             >
-              SERVICIILE
+              {SERVICES_PAGE.heroDesktopLines[0]}
             </div>
           </div>
 
@@ -59,7 +49,7 @@ import Footer from "../components/Footer.astro";
             <div
               class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
             >
-              PE CARE NOI
+              {SERVICES_PAGE.heroDesktopLines[1]}
             </div>
           </div>
 
@@ -70,7 +60,7 @@ import Footer from "../components/Footer.astro";
             <div
               class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
             >
-              LE OFERIM
+              {SERVICES_PAGE.heroDesktopLines[2]}
             </div>
           </div>
         </div>
@@ -118,9 +108,11 @@ import Footer from "../components/Footer.astro";
         class="font-serif text-[16vw] sm:text-7xl text-white leading-[1.05]"
         aria-hidden="true"
       >
-        <span class="block whitespace-nowrap">Serviciile</span>
-        <span class="block whitespace-nowrap">pe care noi</span>
-        <span class="block whitespace-nowrap">le oferim</span>
+        {
+          SERVICES_PAGE.heroMobileLines.map((line) => (
+            <span class="block whitespace-nowrap">{line}</span>
+          ))
+        }
       </div>
 
       <!-- Bottom Content Group -->
@@ -128,65 +120,53 @@ import Footer from "../components/Footer.astro";
         <p
           class="font-sans text-lg font-light text-white/90 leading-relaxed max-w-xs"
         >
-          Transformă-ți casa cu design interior elegant, funcțional și
-          atemporal, adaptat stilului tău unic.
+          {SERVICES_PAGE.heroSubtitle}
         </p>
         <div>
           <a
             href="/contact"
             class="inline-block bg-white text-primary px-8 py-3 rounded-full font-medium hover:bg-accent hover:text-white transition-colors shadow-lg"
           >
-            Programează o Consultanță &rarr;
+            {SERVICES_PAGE.heroCta}
           </a>
         </div>
       </div>
     </div>
 
-    <!-- Overlay: Right Text (Hidden on Mobile) -->
+    <!-- Overlay: Bottom-Right Content Card (Hidden on Mobile) -->
     <div
-      class="hidden md:block absolute right-[4%] xl:right-[10%] 2xl:right-[15%] top-[10%] 2xl:top-[8%] max-w-sm 2xl:max-w-2xl text-right z-20 pointer-events-auto opacity-0 hero-overlay-element"
+      class="hidden md:block absolute bottom-[12%] 2xl:bottom-[15%] right-[4%] xl:right-[10%] 2xl:right-[15%] w-96 2xl:w-[32rem] bg-white rounded-3xl p-8 2xl:p-10 shadow-2xl z-20 pointer-events-auto opacity-0 hero-overlay-element"
     >
       <h3
-        class="text-white font-sans text-xl md:text-2xl 2xl:text-4xl font-light leading-relaxed mb-6 shadow-sm"
+        class="text-primary font-serif text-lg md:text-xl 2xl:text-3xl font-normal leading-relaxed mb-8"
       >
-        Transformă-ți casa cu design interior elegant, funcțional și atemporal,
-        adaptat stilului tău unic.
+        {SERVICES_PAGE.heroSubtitle}
       </h3>
       <a
         href="/contact"
-        class="inline-block bg-white text-primary px-8 py-3 2xl:px-10 2xl:py-4 2xl:text-lg rounded-full font-medium hover:bg-accent hover:text-white transition-colors shadow-lg"
+        class="inline-block bg-primary text-white px-8 py-3 2xl:px-10 2xl:py-4 2xl:text-lg rounded-full font-medium hover:bg-accent transition-all duration-300 shadow-lg"
       >
-        Programează o Consultanță &rarr;
+        {SERVICES_PAGE.heroCta}
       </a>
     </div>
 
-    <!-- Overlay: Bottom Card (Hidden on Mobile) -->
-    <div
-      class="hidden md:block absolute bottom-[12%] 2xl:bottom-[15%] right-[4%] xl:right-[10%] 2xl:right-[15%] w-80 2xl:w-[28rem] bg-white rounded-3xl p-4 2xl:p-6 shadow-2xl z-20 pointer-events-auto opacity-0 hero-overlay-element"
-    >
-      <div class="w-full aspect-video rounded-xl overflow-hidden mb-4">
-        <img
-          src="/Images/optimized/Proiecte-JL-Custom-Design-02.webp"
-          class="w-full h-full object-cover"
-          alt="Custom Design"
-        />
-      </div>
-      <h4 class="font-serif text-xl 2xl:text-2xl text-primary mb-2">
-        Soluții de Design Personalizate
-      </h4>
-      <p class="text-xs 2xl:text-base text-gray-500 mb-4 leading-relaxed">
-        Interioare create special pentru a reflecta viziunea ta.
-      </p>
-      <a
-        href="/services"
-        class="inline-flex items-center text-sm 2xl:text-base font-medium text-primary hover:text-accent border border-gray-200 px-4 py-2 rounded-full transition-colors"
-      >
-        Mai multe detalii &rarr;
-      </a>
-    </div>
+
   </div>
 
-  <ServicesContent />
+  <ServicesGridV2 
+    items={SERVICES_PAGE.process}
+    title="Ce putem face pentru tine"
+    subtitle="Expertiza Noastră"
+    description="De la consultanță și proiectare 3D la execuție impecabilă, suntem partenerul tău pentru un interior deosebit."
+  />
+
+  <PortfolioCategoriesHover 
+    id="services-products"
+    title="Categorii de Mobilier"
+    items={SERVICES_PAGE.services} 
+  />
+
+  <ServicesCTA />
 
   <Footer />
 

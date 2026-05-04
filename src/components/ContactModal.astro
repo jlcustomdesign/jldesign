@@ -1,14 +1,8 @@
 ---
 import BubbleButton from "./ui/BubbleButton.astro";
+import { CONTACT_MODAL } from "../config/content";
 
-const services = [
-  "Mobilier la Comandă",
-  "Bucătării Premium",
-  "Dressing & Depozitare",
-  "Spații Comerciale / Horeca",
-  "Proiectare 3D & Design",
-  "Altele",
-];
+const services = CONTACT_MODAL.serviceOptions;
 ---
 
 <div
@@ -37,7 +31,7 @@ const services = [
       <button
         id="close-modal"
         class="absolute top-6 right-6 z-20 p-4 text-primary/50 hover:text-primary transition-colors bg-white/50 hover:bg-white rounded-full"
-        aria-label="Close modal"
+        aria-label={CONTACT_MODAL.closeAriaLabel}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -62,14 +56,18 @@ const services = [
           <h2
             class="font-serif text-3xl md:text-5xl text-primary mb-2 leading-tight"
           >
-            Să începem proiectul
+            {CONTACT_MODAL.title}
           </h2>
           <p class="text-primary/60 text-lg">
-            Povestește-ne despre spațiul tău ideal.
+            {CONTACT_MODAL.subtitle}
           </p>
         </div>
 
-        <form class="flex-1 flex flex-col min-h-0" id="contact-form">
+        <form
+          class="flex-1 flex flex-col min-h-0"
+          id="contact-form"
+          data-success-message={CONTACT_MODAL.successMessage}
+        >
           <!-- Scrollable Content area -->
           <div
             class="flex-1 overflow-y-auto hide-scrollbar pr-2 -mr-2 space-y-8 pb-4"
@@ -79,7 +77,7 @@ const services = [
               <label
                 class="block text-sm font-bold text-primary/80 uppercase tracking-widest text-xs"
               >
-                Ce te interesează?
+                {CONTACT_MODAL.servicesLabel}
               </label>
               <div class="flex flex-wrap gap-2">
                 {
@@ -107,7 +105,7 @@ const services = [
                   <input
                     type="text"
                     name="name"
-                    placeholder="Numele tău"
+                    placeholder={CONTACT_MODAL.namePlaceholder}
                     required
                     class="w-full bg-white border border-primary/10 rounded-2xl px-5 py-4 text-base text-primary placeholder:text-primary/30 focus:outline-none focus:border-accent transition-colors"
                   />
@@ -116,7 +114,7 @@ const services = [
                   <input
                     type="email"
                     name="email"
-                    placeholder="Email"
+                    placeholder={CONTACT_MODAL.emailPlaceholder}
                     required
                     class="w-full bg-white border border-primary/10 rounded-2xl px-5 py-4 text-base text-primary placeholder:text-primary/30 focus:outline-none focus:border-accent transition-colors"
                   />
@@ -127,7 +125,7 @@ const services = [
                 <input
                   type="tel"
                   name="phone"
-                  placeholder="Telefon (Opțional)"
+                  placeholder={CONTACT_MODAL.phonePlaceholder}
                   class="w-full bg-white border border-primary/10 rounded-2xl px-5 py-4 text-base text-primary placeholder:text-primary/30 focus:outline-none focus:border-accent transition-colors"
                 />
               </div>
@@ -136,7 +134,7 @@ const services = [
                 <textarea
                   name="project"
                   rows="3"
-                  placeholder="Detalii despre proiect..."
+                  placeholder={CONTACT_MODAL.projectPlaceholder}
                   class="w-full bg-white border border-primary/10 rounded-2xl px-5 py-4 text-base text-primary placeholder:text-primary/30 focus:outline-none focus:border-accent transition-colors resize-none"
                 ></textarea>
               </div>
@@ -168,7 +166,7 @@ const services = [
                   ></path></svg
                 >
               </span>
-              Sună Direct
+              {CONTACT_MODAL.callButton}
             </a>
 
             <!-- Send Message Button -->
@@ -176,7 +174,7 @@ const services = [
               id="submit-btn"
               class="w-full md:w-1/2 relative inline-flex items-center justify-center text-center px-6 py-4 rounded-2xl font-bold uppercase tracking-wider overflow-hidden transition-colors duration-300 bg-primary text-white hover:bg-accent hover:text-white"
             >
-              Trimite
+              {CONTACT_MODAL.sendButton}
             </button>
           </div>
         </form>
@@ -289,7 +287,10 @@ const services = [
     // Handle Form Submit
     submitBtn?.addEventListener("click", (e) => {
       e.preventDefault();
-      alert("Mesajul a fost trimis! Vă vom contacta în curând.");
+      const successMessage =
+        form?.dataset.successMessage ||
+        "Mesaj trimis.";
+      alert(successMessage);
       closeModal();
       form?.reset();
     });

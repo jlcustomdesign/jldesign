@@ -1,6 +1,7 @@
 ---
 const currentYear = new Date().getFullYear();
 import BubbleButton from "./ui/BubbleButton.astro";
+import { FOOTER } from "../config/content";
 ---
 
 <footer
@@ -25,14 +26,10 @@ import BubbleButton from "./ui/BubbleButton.astro";
           class="lg:col-span-7 flex flex-col justify-center h-full text-center lg:text-left items-center lg:items-start"
         >
           <div>
-            <!-- 2026 COLLECTION Removed -->
             <h2
               class="font-serif text-3xl md:text-5xl lg:text-6xl leading-none mb-6"
-            >
-              Transformăm <br />
-              <span class="text-accent">viziunea ta</span>
-              în realitate.
-            </h2>
+              set:html={FOOTER.headline}
+            />
           </div>
 
           <!-- Call Buttons using BubbleButton -->
@@ -44,7 +41,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
               variant="primary"
               class="px-8 py-4 text-base"
             >
-              Sună-ne Acum
+              {FOOTER.ctaPrimary}
             </BubbleButton>
 
             <BubbleButton
@@ -52,7 +49,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
               variant="outline-white"
               class="px-8 py-4 text-base hover:border-accent"
             >
-              Scrie-ne
+              {FOOTER.ctaSecondary}
             </BubbleButton>
           </div>
         </div>
@@ -70,35 +67,18 @@ import BubbleButton from "./ui/BubbleButton.astro";
               <h3
                 class="text-accent text-xs font-bold uppercase tracking-widest"
               >
-                Meniu
+                {FOOTER.menuTitle}
               </h3>
               <ul class="space-y-2 font-medium text-base text-white/80">
-                <li>
-                  <a href="/" class="hover:text-white transition-colors"
-                    >Acasă</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="/portfolio"
-                    class="hover:text-white transition-colors">Portofoliu</a
-                  >
-                </li>
-                <li>
-                  <a href="/services" class="hover:text-white transition-colors"
-                    >Servicii</a
-                  >
-                </li>
-                <li>
-                  <a href="/about" class="hover:text-white transition-colors"
-                    >Despre Noi</a
-                  >
-                </li>
-                <li>
-                  <a href="/blog" class="hover:text-white transition-colors"
-                    >Blog</a
-                  >
-                </li>
+                {
+                  FOOTER.menuLinks.map((link) => (
+                    <li>
+                      <a href={link.href} class="hover:text-white transition-colors"
+                        >{link.name}</a
+                      >
+                    </li>
+                  ))
+                }
               </ul>
             </div>
 
@@ -107,22 +87,22 @@ import BubbleButton from "./ui/BubbleButton.astro";
               <h3
                 class="text-accent text-xs font-bold uppercase tracking-widest"
               >
-                Contact
+                {FOOTER.contactTitle}
               </h3>
               <ul class="space-y-2 text-white/70 text-sm">
-                <li>Brașov, România</li>
+                <li>{FOOTER.contactLocation}</li>
                 <li>
                   <a
-                    href="tel:+40700000000"
+                    href={FOOTER.contactPhoneHref}
                     class="hover:text-white transition-colors"
-                    >+40 700 000 000</a
+                    >{FOOTER.contactPhone}</a
                   >
                 </li>
                 <li>
                   <a
-                    href="mailto:contact@jlmobila.ro"
+                    href={FOOTER.contactEmailHref}
                     class="hover:text-white transition-colors"
-                    >contact@jlmobila.ro</a
+                    >{FOOTER.contactEmail}</a
                   >
                 </li>
               </ul>
@@ -138,13 +118,26 @@ import BubbleButton from "./ui/BubbleButton.astro";
       <div
         class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/60"
       >
-        <p>&copy; {currentYear} JL Mobila. Toate drepturile rezervate.</p>
+        <p>&copy; {currentYear} {FOOTER.copyright}</p>
+
+        <p class="text-center md:text-left">
+          {FOOTER.designCredit}
+          <a
+            href={FOOTER.designCreditUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-white hover:text-accent font-medium transition-colors"
+          >
+            {FOOTER.designCreditLink}
+          </a>
+        </p>
+
         <div class="flex gap-6">
           <a href="#" class="hover:text-white transition-colors"
-            >Politica de Confidențialitate</a
+            >{FOOTER.privacyLink}</a
           >
           <a href="#" class="hover:text-white transition-colors"
-            >Termeni și Condiții</a
+            >{FOOTER.termsLink}</a
           >
         </div>
       </div>

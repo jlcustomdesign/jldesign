@@ -1,7 +1,8 @@
 ---
 import { getCollection } from "astro:content";
-import { SITE } from "../config/site";
 import BubbleButton from "./ui/BubbleButton.astro";
+import { BLOG_PREVIEW } from "../config/content";
+import { preferWebp } from "../utils/prefer-webp";
 
 const posts = await getCollection("blog");
 
@@ -12,15 +13,16 @@ const latestPosts = posts
     const dateB = new Date(b.data.publishedDate).getTime();
     return dateB - dateA;
   })
-  .slice(0, 3);
+  .slice(0, 3)
+  .map((post) => ({
+    ...post,
+    data: {
+      ...post.data,
+      coverImage: preferWebp(post.data.coverImage),
+    },
+  }));
 
-const categoryLabels: Record<string, string> = {
-  inspiratie: "Inspirație & Design",
-  ghid: "Ghid Practic",
-  materiale: "Materiale & Tehnologii",
-  proiecte: "Proiecte Finalizate",
-  noutati: "Noutăți",
-};
+const categoryLabels = BLOG_PREVIEW.categoryLabels;
 ---
 
 {
@@ -32,13 +34,12 @@ const categoryLabels: Record<string, string> = {
       <div class="max-w-6xl mx-auto relative z-10">
         <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
           <div>
-            <h2 class="font-serif text-4xl md:text-5xl text-primary leading-tight mb-4">
-              Din Atelierul de <span class="text-accent">Idei</span>
-            </h2>
+            <h2
+              class="font-serif text-4xl md:text-5xl text-primary leading-tight mb-4"
+              set:html={BLOG_PREVIEW.title}
+            />
             <p class="text-primary/60 max-w-xl text-lg">
-              Descoperă ultimele tendințe în design interior, ghiduri despre
-              materiale premium și proiecte care prind viață în mâinile
-              meșterilor noștri.
+              {BLOG_PREVIEW.subtitle}
             </p>
           </div>
           <BubbleButton
@@ -46,7 +47,7 @@ const categoryLabels: Record<string, string> = {
             variant="outline"
             class="hidden md:inline-flex"
           >
-            Vezi Tot Blogul
+            {BLOG_PREVIEW.ctaButton}
           </BubbleButton>
         </div>
 
@@ -101,7 +102,7 @@ const categoryLabels: Record<string, string> = {
 
         <div class="md:hidden flex justify-center mt-8">
           <BubbleButton href="/blog" variant="outline">
-            Vezi Tot Blogul
+            {BLOG_PREVIEW.ctaButton}
           </BubbleButton>
         </div>
       </div>

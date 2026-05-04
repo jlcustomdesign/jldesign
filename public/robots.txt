@@ -7,6 +7,7 @@ Allow: /
 # Disallow backend/admin areas
 Disallow: /keystatic/
 Disallow: /api/
+Disallow: /test-simultaneous
 
 # Block AI crawlers (Optional - Un-comment to prevent AI scraping if desired)
 # User-agent: CCBot

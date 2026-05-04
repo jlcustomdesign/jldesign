@@ -1,13 +1,8 @@
 ---
 import BubbleButton from "./ui/BubbleButton.astro";
+import { NAV } from "../config/content";
 
-const links = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Services", href: "/services" },
-  { name: "Portfolio", href: "/portfolio" },
-  { name: "Blog", href: "/blog" },
-];
+const links = NAV.links;
 ---
 
 <nav
@@ -31,7 +26,7 @@ const links = [
           href="/"
           class="nav-text font-serif text-xl font-bold tracking-tight whitespace-nowrap block text-center"
         >
-          JL CUSTOM DESIGN
+          {NAV.logo}
         </a>
       </div>
     </div>
@@ -64,7 +59,7 @@ const links = [
         href="/contact"
         class="hidden md:inline-flex whitespace-nowrap !px-6 !py-2.5"
       >
-        Contact
+        {NAV.ctaLabel}
       </BubbleButton>
     </div>
 
@@ -72,7 +67,7 @@ const links = [
     <button
       id="open-mobile-menu"
       class="nav-text md:hidden transition-colors duration-300 ml-auto"
-      aria-label="Deschide meniu"
+      aria-label={NAV.openMenuAria}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

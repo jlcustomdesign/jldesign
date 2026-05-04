@@ -27,8 +27,6 @@ function safeInitHeroAnim() {
 }
 
 function runHeroEnterAnimation(section: Element) {
-  // Clear any existing markers if needed, but mainly just run.
-
   const cards = section.querySelectorAll(".portfolio-card");
   const navbar = document.querySelector("#navbar-container");
 
@@ -43,34 +41,44 @@ function runHeroEnterAnimation(section: Element) {
   }
 
   // 2. Minimalist Directional Card Slides
+  const textCard = section.querySelector(".hero-card-text");
   const mainCard = section.querySelector(".hero-card-main");
-  const descCard = section.querySelector(".hero-card-desc");
   const ctaCard = section.querySelector(".hero-card-cta");
 
-  // Main Card: Left -> Center (Long Slide, Elastic Bounce)
+  // Main Card: Center Zoom/Slide
   if (mainCard) {
     tl.fromTo(mainCard,
-      { xPercent: -100, x: 0, opacity: 0 }, // Start further out
-      { xPercent: 0, x: 0, y: 0, opacity: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" },
+      { scale: 0.95, y: 50, opacity: 0 }, 
+      { scale: 1, y: 0, opacity: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" },
       0.1
     );
   }
 
-  // Desc Card: Top -> Center
-  if (descCard) {
-    tl.fromTo(descCard,
-      { yPercent: -100, y: 0, opacity: 0 },
-      { yPercent: 0, y: 0, opacity: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" },
+  // Text Card inside Main Card: Fade and float in
+  if (textCard) {
+    tl.fromTo(textCard,
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
+      0.6
+    );
+  }
+
+  // Desktop Title (LUCRARI SELECTATE)
+  const desktopTitle = section.querySelector(".hero-desktop-title");
+  if (desktopTitle) {
+    tl.fromTo(desktopTitle,
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
       0.4
     );
   }
 
-  // CTA Card: Bottom -> Center
+  // CTA Button inside Text Card
   if (ctaCard) {
     tl.fromTo(ctaCard,
-      { yPercent: 100, y: 0, opacity: 0 },
-      { yPercent: 0, y: 0, opacity: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" },
-      0.7
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
+      0.8
     );
   }
 
@@ -94,8 +102,7 @@ function runHeroEnterAnimation(section: Element) {
      );
   }
 
-  // 3. Text Reveal (Services Page Style - Build Animation)
-  // ... (existing text reveal code) ...
+  // 3. Text Reveal
   const textElements = section.querySelectorAll(".reveal-text");
   
   if (textElements.length > 0) {

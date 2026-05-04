@@ -3,35 +3,24 @@ import Layout from "../layouts/Layout.astro";
 import FaqSection from "../components/FaqSection.astro";
 import Footer from "../components/Footer.astro";
 import BubbleButton from "../components/ui/BubbleButton.astro";
+import AboutRevealSection from "../components/about/AboutRevealSection.astro";
+import { ABOUT_PAGE, BREADCRUMBS } from "../config/content";
 
 const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placeholder path, will fallback visually if missing or user needs to add it
 ---
 
 <Layout
-  title="Despre Noi | JL Mobila - Excelență în Arta Lemnului de Peste 15 Ani"
-  description="Află povestea JL Mobila. Cu peste 15 ani de experiență și 500+ proiecte finalizate, echipa noastră creează mobilier la comandă din materiale premium, cu atenție absolută la detalii."
+  title={ABOUT_PAGE.title}
+  description={ABOUT_PAGE.description}
   breadcrumbs={[
-    { name: "Acasă", url: "/" },
-    { name: "Despre Noi", url: "/about" },
+    { name: BREADCRUMBS.home, url: "/" },
+    { name: BREADCRUMBS.about, url: "/about" },
   ]}
 >
   <main class="w-full relative z-10">
     <!-- Answer-first summary + semantic keywords for AI engines (AEO/GEO) -->
     <div class="sr-only">
-      <p>
-        JL Mobila (JL Design, JL Custom Design) este o companie românească cu
-        sediul în Brașov, specializată în mobilier la comandă din lemn masiv. Cu
-        peste 15 ani de experiență și peste 500 de proiecte finalizate, oferim
-        consultanță, design 3D, producție custom și montaj profesional în
-        Brașov, Buzău, Sibiu și Sfântu Gheorghe.
-      </p>
-      <p>
-        Atelier de mobilă în Brașov. Producător mobilier personalizat. Echipă de
-        designeri și meșteri cu experiență în mobilier de bucătărie, living,
-        dormitor, dressing, baie și birouri. Procesul include măsurători la fața
-        locului, proiectare 3D fotorealistică, producție cu utilaje CNC și
-        finisaje manuale, montaj și reglaj final.
-      </p>
+      {ABOUT_PAGE.seoFabric.map((paragraph) => <p>{paragraph}</p>)}
     </div>
     <!-- Hero Section -->
     <!-- Hero Section -->
@@ -72,15 +61,14 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
               <h2
                 class="text-primary/60 text-lg md:text-xl max-w-md font-sans font-normal about-hero-subtitle"
               >
-                Dedicarea familiei noastre pentru acest material nobil reflectă
-                un respect profund pentru istoria și potențialul său.
+                {ABOUT_PAGE.heroSubtitle}
               </h2>
               <h1
                 id="about-hero-title"
                 class="font-serif text-[18vw] lg:text-[10rem] leading-[0.8] text-primary whitespace-nowrap opacity-0 -ml-1 md:-ml-2 lg:-ml-3"
                 style="transform: translateY(100%);"
               >
-                DESPRE NOI
+                {ABOUT_PAGE.heroTitle}
               </h1>
             </div>
           </div>
@@ -142,6 +130,32 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
       </div>
     </section>
 
+    <AboutRevealSection />
+
+    <!-- Values Section -->
+    <section class="py-24 md:py-32 bg-secondary relative z-10" id="values-section">
+      <div class="container mx-auto px-4 md:px-8">
+        <div class="mb-16 md:mb-24">
+          <h2 class="font-serif text-4xl md:text-6xl text-primary reveal-text">{ABOUT_PAGE.valuesTitle}</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          {ABOUT_PAGE.values.map((value, i) => (
+            <div class="value-card-reveal opacity-0 translate-y-12">
+              <div class="group h-full p-10 bg-white rounded-[2.5rem] border border-primary/5 transition-[background-color,color] duration-500 hover:bg-primary hover:text-white flex flex-col">
+                <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 shrink-0">
+                   <span class="text-white font-serif text-xl">{i + 1}</span>
+                </div>
+                <h3 class="font-serif text-2xl mb-4 transition-colors duration-500">{value.title}</h3>
+                <p class="text-primary/70 group-hover:text-white/80 leading-relaxed transition-colors duration-500 flex-grow">
+                  {value.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <!-- Story / Values Section: Geometric Bento -->
     <section
       class="py-24 md:py-32 bg-secondary text-primary relative z-10 -mt-10 rounded-t-[3rem] overflow-hidden"
@@ -163,12 +177,12 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
 
             <span
               class="block text-accent uppercase tracking-[0.2em] text-sm font-bold mb-8 relative z-10"
-              >Filozofia Noastră</span
+              >{ABOUT_PAGE.philosophyLabel}</span
             >
             <h2
               class="text-3xl md:text-5xl lg:text-6xl font-serif text-primary mb-8 leading-tight relative z-10"
             >
-              Calitatea nu este un act, ci un obicei.
+              {ABOUT_PAGE.philosophyQuote}
             </h2>
             <div
               class="h-1 w-24 bg-accent mt-8 transform origin-left transition-all duration-700 group-hover:w-full"
@@ -182,10 +196,10 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           >
             <span
               class="text-6xl md:text-7xl font-serif text-accent mb-2 block scale-100 group-hover:scale-110 transition-transform duration-500 stat-number"
-              >15+</span
+              >{ABOUT_PAGE.stat1Value}</span
             >
             <span class="text-sm uppercase tracking-widest text-white/60"
-              >Ani de experiență</span
+              >{ABOUT_PAGE.stat1Label}</span
             >
             <div
               class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -198,9 +212,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
             class="lg:col-span-5 p-8 md:p-10 bg-secondary border border-primary/10 rounded-3xl flex flex-col justify-center relative bento-card group"
           >
             <p class="text-lg md:text-xl text-primary/80 leading-relaxed">
-              Într-o lume dominată de "fast furniture", noi am ales calea opusă.
-              Credem în piese care îmbătrânesc frumos, în materiale care se simt
-              bine la atingere.
+              {ABOUT_PAGE.manifesto}
             </p>
           </div>
 
@@ -210,11 +222,11 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           >
             <span
               class="text-sm uppercase tracking-widest text-primary/60 block text-right"
-              >Proiecte</span
+              >{ABOUT_PAGE.stat2Label}</span
             >
             <span
               class="text-5xl md:text-6xl font-serif text-primary block stat-number"
-              >500+</span
+              >{ABOUT_PAGE.stat2Value}</span
             >
             <div
               class="w-full bg-secondary h-1 mt-4 rounded-full overflow-hidden"
@@ -229,10 +241,10 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
               class="p-6 bg-white rounded-3xl border border-primary/5 flex flex-col justify-center items-center text-center bento-card"
             >
               <span class="text-4xl font-serif text-primary mb-1 stat-number"
-                >100%</span
+                >{ABOUT_PAGE.stat3Value}</span
               >
               <span class="text-[10px] uppercase tracking-wider text-primary/60"
-                >Dedicare</span
+                >{ABOUT_PAGE.stat3Label}</span
               >
             </div>
             <div
@@ -240,11 +252,11 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
             >
               <span
                 class="text-4xl font-serif text-white mb-1 relative z-10 stat-number"
-                >24h</span
+                >{ABOUT_PAGE.stat4Value}</span
               >
               <span
                 class="text-[10px] uppercase tracking-wider text-white/80 relative z-10"
-                >Suport Rapid</span
+                >{ABOUT_PAGE.stat4Label}</span
               >
             </div>
           </div>
@@ -255,95 +267,19 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           >
             <div class="md:w-1/2 relative z-10">
               <h3 class="text-2xl md:text-4xl font-serif text-primary mb-4">
-                Nu vindem mobilă din stoc.
+                {ABOUT_PAGE.collaborationTitle}
               </h3>
             </div>
             <div class="md:w-1/2 relative z-10">
               <p class="text-2xl md:text-3xl text-primary/80 leading-relaxed">
-                Fiecare proiect este o colaborare strânsă între client și echipa
-                noastră de designeri. Transformăm viziunea ta în realitate
-                tangibilă, milimetru cu milimetru.
+                {ABOUT_PAGE.collaborationText}
               </p>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <!-- Atelier / Craftsmanship Section: Hyper-Minimalist -->
-    <section
-      class="py-32 md:py-48 bg-secondary text-primary relative z-10"
-      id="about-atelier-section"
-    >
-      <div class="container mx-auto px-4 md:px-8">
-        <!-- 1. Header (Centered) -->
-        <div
-          class="flex flex-col items-center text-center mb-20 md:mb-32 max-w-5xl mx-auto"
-        >
-          <h2
-            class="text-[11vw] md:text-7xl lg:text-8xl font-serif font-bold text-primary leading-[1.05] uppercase mb-12 flex flex-col items-center text-center w-full"
-          >
-            <span class="scrub-words block whitespace-nowrap">Nu producem</span>
-            <span class="scrub-words block whitespace-nowrap mt-1 md:mt-2"
-              >doar mobilă.</span
-            >
-            <span class="scrub-words block whitespace-nowrap mt-1 md:mt-2"
-              >creăm liniște.</span
-            >
-          </h2>
-          <p
-            class="text-3xl md:text-4xl lg:text-5xl text-primary/80 leading-relaxed scrub-words max-w-3xl"
-          >
-            În atelierul nostru, timpul curge altfel. Lemnul este lăsat să
-            respire.
-          </p>
-        </div>
 
-        <!-- 2. Grid (Image + Dark Card) -->
-        <div
-          class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 min-h-[80vh]"
-        >
-          <!-- Left: Image -->
-          <div
-            class="relative overflow-hidden rounded-[2.5rem] w-full h-[60vh] lg:h-auto reveal-image aspect-[4/5] lg:aspect-auto"
-          >
-            <img
-              src="/Images/optimized/Proiecte-JL-Custom-Design-09.webp"
-              alt="Workshop Detail"
-              class="absolute inset-0 w-full h-full object-cover scale-105 transition-transform duration-[3s] hover:scale-100"
-            />
-          </div>
-
-          <!-- Right: Dark Card -->
-          <div
-            class="bg-primary text-secondary rounded-[2.5rem] p-10 md:p-16 flex flex-col justify-between reveal-image min-h-[50vh] lg:min-h-0 relative"
-            data-delay="0.2"
-          >
-            <div class="space-y-8 relative z-10">
-              <span
-                class="uppercase tracking-[0.2em] text-sm font-bold opacity-60"
-                >Atelierul Nostru</span
-              >
-              <p
-                class="text-4xl md:text-5xl lg:text-6xl font-serif leading-[1.3] scrub-words"
-              >
-                Fiecare îmbinare este o promisiune de durabilitate onorată
-                manual.
-              </p>
-            </div>
-
-            <div class="mt-24 flex flex-col items-start gap-8 relative z-10">
-              <p class="text-lg opacity-60 max-w-md">
-                Rezultatul? O colecție de piese care vorbesc de la sine. Nu doar
-                mobilă, ci moștenire.
-              </p>
-              <BubbleButton href="/portfolio" variant="secondary">
-                Vezi Proiectele
-              </BubbleButton>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
     <FaqSection />
   </main>
 
@@ -383,69 +319,63 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
 
         const words = container.querySelectorAll(".word-inner");
 
-        // Performance: Hint browser before animation starts
         gsap.set(words, { willChange: "transform, opacity", yPercent: 120 });
 
         gsap.to(words, {
           yPercent: 0,
           opacity: 1,
           stagger: 0.05,
-          ease: "power2.out",
-          force3D: true, // GPU acceleration
+          duration: 1.2,
+          ease: "expo.out",
+          force3D: true,
           scrollTrigger: {
             trigger: container,
-            start: "top 92%", // Slightly delayed start for paint separation
-            end: "bottom 60%",
-            scrub: 1,
+            start: "top 85%",
+            toggleActions: "play none none reverse",
           },
         });
       });
 
       const heroSection = document.querySelector("#about-hero-section");
 
-      if (heroSection) {
-        const isMobile = window.innerWidth < 1024;
 
-        if (!isMobile) {
-          // Optimization: Hint browser
-          gsap.set(heroSection, { willChange: "transform, filter, opacity" });
 
-          gsap.to(heroSection, {
-            scale: 0.9,
-            filter: "blur(8px)",
-            opacity: 0,
-            duration: 1,
-            ease: "none",
-            force3D: true, // GPU acceleration
-            scrollTrigger: {
-              trigger: heroSection,
-              start: "top top", // Pin when Top of hero hits Top of viewport
-              end: "bottom top",
-              scrub: 0.5,
-              pin: true,
-              pinSpacing: false, // Let next section overlap
-            },
-          });
-        }
+      // --- Values Section Cards: HIGH PERFORMANCE REVEAL ---
+      const valueCards = document.querySelectorAll(".value-card-reveal");
+      if (valueCards.length > 0) {
+        ScrollTrigger.batch(".value-card-reveal", {
+          onEnter: (elements) => {
+            gsap.to(elements, {
+              opacity: 1,
+              y: 0,
+              stagger: 0.1,
+              duration: 1.2,
+              ease: "expo.out",
+              overwrite: true,
+            });
+          },
+          start: "top 85%",
+        });
       }
 
-      // --- Scrub Button Animation ---
       const scrubButtons = document.querySelectorAll(".scrub-button");
       scrubButtons.forEach((btn) => {
-        gsap.to(btn, {
-          opacity: 1,
-          y: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: btn,
-            start: "top 95%", // Trigger lower
-            end: "bottom 80%",
-            scrub: 1,
-          },
-        });
+        gsap.fromTo(btn, 
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "expo.out",
+            scrollTrigger: {
+              trigger: btn,
+              start: "top 88%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
       });
 
-      // --- Scrub Fade (Generic) ---
       gsap.utils.toArray(".scrub-fade").forEach((el: any) => {
         gsap.fromTo(
           el,
@@ -453,59 +383,39 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           {
             opacity: 1,
             y: 0,
-            ease: "none",
+            duration: 1,
+            ease: "expo.out",
             scrollTrigger: {
               trigger: el,
-              start: "top 95%",
-              end: "bottom 80%",
-              scrub: 1,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
             },
           },
         );
       });
 
-      // --- Scrub Card (Banner) ---
-      const scrubCards = document.querySelectorAll(".scrub-card");
-      scrubCards.forEach((card) => {
-        gsap.to(card, {
-          opacity: 1,
-          y: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 95%",
-            end: "center 80%", // Faster reveal
-            scrub: 1,
-          },
-        });
-      });
-
-      // --- Fancy Card Scrub Reveal (Right to Left) ---
       const fancyCards = document.querySelectorAll(".fancy-card");
       fancyCards.forEach((card) => {
         const img = card.querySelector(".fancy-image");
 
-        // Optimization: Hint browser
         gsap.set(card, { willChange: "opacity, transform" });
 
-        // Scrub Reveal (Opacity + Slide Left)
         gsap.fromTo(
           card,
-          { x: 150, opacity: 0 },
+          { x: 80, opacity: 0 },
           {
             x: 0,
             opacity: 1,
-            ease: "none",
+            duration: 1.4,
+            ease: "expo.out",
             scrollTrigger: {
               trigger: card,
-              start: "top 95%",
-              end: "center 65%",
-              scrub: 1,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
             },
           },
         );
 
-        // Parallax (kept subtle)
         if (img) {
           gsap.fromTo(
             img,
@@ -516,7 +426,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
               ease: "none",
               scrollTrigger: {
                 trigger: card,
-                start: "top bottom",
+                start: "top 85%",
                 end: "bottom top",
                 scrub: 0.5,
               },
@@ -525,119 +435,37 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
         }
       });
 
-      const masterTl = gsap.timeline({
-        defaults: { ease: "power3.out" },
-      });
-
-      // Background Parallax
-      const heroBg = document.querySelector("#about-hero-bg");
-      let currentWidth = window.innerWidth;
-      let currentHeight = window.innerHeight;
-
-      if (heroBg) {
-        // Function to set dimensions based on hero section size
-        const setSvgDimensions = (w: number, h: number) => {
-          // We want the SVG to cover the area.
-          // Logic is handled by CSS mostly, but we can ensure layout here if needed.
-          // For now, rely on CSS (w-full h-full object-cover like behavior)
-        };
-
-        let resizeTimer: ReturnType<typeof setTimeout>;
-        const handleResize = () => {
-          // Debounce resize
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(() => {
-            const heroSection = document.querySelector("#about-hero-section");
-            currentWidth = heroSection
-              ? heroSection.clientWidth
-              : window.innerWidth;
-            currentHeight = heroSection
-              ? heroSection.clientHeight
-              : window.innerHeight;
-            setSvgDimensions(currentWidth, currentHeight);
-          }, 250); // Debounce resize
-        };
-        window.addEventListener("resize", handleResize);
-        self.add(() => window.removeEventListener("resize", handleResize));
-
-        // Initial state for heroBg (assuming it's an SVG or similar)
-        gsap.set(heroBg, {
-          opacity: 0,
-          scale: 1.15,
-          transformOrigin: "center center",
-        });
-
-        // Animate In: Scale Down + Fade In
-        masterTl.to(heroBg, {
-          opacity: 1,
-          scale: 1,
-          duration: 2.5,
-          ease: "elastic.out(1, 0.75)",
-        });
-      }
-
-      // --- Hero Card Reveal (Decoupled & Robust) ---
-      const cardTl = gsap.timeline({ delay: 0.5 });
-
-      // Animate TO visible state (Start state in HTML)
-      cardTl.to("#about-hero-image", {
-        scale: 1,
-        opacity: 1,
-        duration: 1.4,
-        ease: "expo.out",
-      });
-
-      // Stats Reveal (Keeping custom stagger for grid)
-      gsap.fromTo(
-        ".stat-item",
-        { y: 30, opacity: 0 }, // Init from invisible
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          stagger: 0.1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#about-stats-grid",
-            start: "top 95%", // Trigger earlier
-          },
-        },
-      );
-
-      // --- Philosophy Section (Bento Grid) ---
       const bentoCards = document.querySelectorAll(".bento-card");
       if (bentoCards.length > 0) {
-        // Directions for assembly effect (x, y offsets)
         const directions = [
-          { x: -80, y: 80 }, // 0: From bottom-left
-          { x: 80, y: -80 }, // 1: From top-right
-          { x: 80, y: 80 }, // 2: From bottom-right
-          { x: -80, y: -80 }, // 3: From top-left
-          { x: 0, y: 100 }, // 4: Straight from bottom
-          { x: 0, y: -100 }, // 5: Straight from top
-          { x: -100, y: 0 }, // 6: Straight from left
+          { x: -60, y: 60 },
+          { x: 60, y: -60 },
+          { x: 60, y: 60 },
+          { x: -60, y: -60 },
+          { x: 0, y: 80 },
+          { x: 0, y: -80 },
+          { x: -80, y: 0 },
         ];
 
         bentoCards.forEach((card, i) => {
           gsap.set(card, { willChange: "transform, opacity" });
           const dir = directions[i % directions.length];
 
-          // "Building/Assembling" Effect
           gsap.fromTo(
             card,
-            { x: dir.x, y: dir.y, opacity: 0, scale: 0.95 },
+            { x: dir.x, y: dir.y, opacity: 0, scale: 0.96 },
             {
               x: 0,
               y: 0,
               opacity: 1,
               scale: 1,
-              duration: 1.4,
+              duration: 1.5,
               ease: "expo.out",
-              force3D: true, // GPU acceleration
-              delay: (i % 3) * 0.1, // Stagger effect for clustered elements
+              force3D: true,
+              delay: (i % 3) * 0.08,
               scrollTrigger: {
                 trigger: card,
-                start: "top 85%", // Start when it enters viewport
+                start: "top 85%",
                 toggleActions: "play none none reverse",
               },
             },
@@ -645,54 +473,53 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
         });
       }
 
-      // Stats Counter Animation
       const statNumbers = document.querySelectorAll(".stat-number");
       statNumbers.forEach((stat) => {
         const originalText = stat.textContent || "";
-        const endValue = parseInt(originalText.replace(/\D/g, "")) || 0;
-        const suffix = originalText.replace(/[0-9]/g, "");
+        const numericMatch = originalText.match(/\d+/);
+        
+        if (numericMatch) {
+          const endValue = parseInt(numericMatch[0]) || 0;
+          const suffix = originalText.replace(/\d+/g, "");
+          stat.textContent = "0" + suffix;
+          const counter = { val: 0 };
 
-        // Reset text immediately to start value to prevent "reload" flash
-        stat.textContent = "0" + suffix;
-
-        const counter = { val: 0 };
-
-        gsap.to(counter, {
-          val: endValue,
-          duration: 2.5,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#about-story-section", // Changed to story section
-            start: "top 75%",
-          },
-          onUpdate: () => {
-            stat.textContent = Math.floor(counter.val) + suffix;
-          },
-        });
+          gsap.to(counter, {
+            val: endValue,
+            duration: 2.5,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: "#about-story-section",
+              start: "top 80%",
+            },
+            onUpdate: () => {
+              stat.textContent = Math.floor(counter.val) + suffix;
+            },
+          });
+        }
       });
 
       const revealImageContainers = document.querySelectorAll(".reveal-image");
       revealImageContainers.forEach((container) => {
-        gsap.set(container, { willChange: "transform, opacity" }); // Hint browser
+        gsap.set(container, { willChange: "transform, opacity" });
 
         gsap.fromTo(
           container,
-          { y: 50, opacity: 0 },
+          { y: 40, opacity: 0 },
           {
             y: 0,
             opacity: 1,
-            duration: 1.2,
-            ease: "power2.out",
-            force3D: true, // GPU acceleration
+            duration: 1.4,
+            ease: "expo.out",
+            force3D: true,
             scrollTrigger: {
               trigger: container,
-              start: "top 88%", // Paint separation
+              start: "top 85%",
             },
           },
         );
       });
 
-      // Slice Reveal Animation (Roll Down)
       const revealRollContainers = document.querySelectorAll(".reveal-roll");
       if (revealRollContainers.length > 0) {
         gsap.fromTo(

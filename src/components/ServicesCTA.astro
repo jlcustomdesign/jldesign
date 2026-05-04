@@ -1,0 +1,87 @@
+---
+import BubbleButton from "./ui/BubbleButton.astro";
+import { SERVICES_PAGE } from "../config/content";
+---
+
+<section class="bg-secondary overflow-hidden relative">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="cta-wrapper h-screen flex items-center justify-center">
+      <!-- Wrapper for Pinning -->
+      <div class="text-center cta-container relative z-10">
+        <h3
+          class="cta-headline font-serif text-5xl md:text-8xl text-primary font-medium mb-12 leading-tight flex flex-wrap justify-center gap-x-4 md:gap-x-8 gap-y-2"
+        >
+          {
+            SERVICES_PAGE.ctaHeadline
+              .split(" ")
+              .map((word) => <span class="inline-block cta-word">{word}</span>)
+          }
+        </h3>
+
+        <div class="cta-button-wrapper opacity-0 translate-y-20">
+          <BubbleButton
+            href="/contact"
+            variant="dark"
+            class="text-xl px-16 py-6 rounded-full"
+          >
+            {SERVICES_PAGE.ctaButton}
+          </BubbleButton>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initServicesCTAAnim() {
+    const section = document.querySelector(".cta-wrapper");
+    if (!section) return;
+
+    const ctaHeadline = section.querySelector(".cta-headline");
+    const ctaWords = section.querySelectorAll(".cta-word");
+    const ctaButton = section.querySelector(".cta-button-wrapper");
+
+    if (section && ctaWords.length > 0) {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "center center",
+          end: "+=100%",
+          pin: true,
+          scrub: 1,
+        },
+      });
+
+      tl.from(ctaWords, {
+        opacity: 0,
+        x: (i) => (Math.random() - 0.5) * 800,
+        y: (i) => (Math.random() - 0.5) * 600,
+        rotation: (i) => (Math.random() - 0.5) * 360,
+        scale: (i) => 0.5 + Math.random(),
+        duration: 1.5,
+        ease: "power3.out",
+        stagger: 0.05,
+      });
+
+      tl.to(
+        ctaButton,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "back.out(1.7)",
+        },
+        "-=0.2",
+      );
+    }
+  }
+
+  document.addEventListener("astro:page-load", initServicesCTAAnim);
+  if (document.readyState !== "loading") initServicesCTAAnim();
+  else document.addEventListener("DOMContentLoaded", initServicesCTAAnim);
+</script>

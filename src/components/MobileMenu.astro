@@ -1,13 +1,8 @@
 ---
 import BubbleButton from "./ui/BubbleButton.astro";
+import { NAV } from "../config/content";
 
-const links = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Services", href: "/services" },
-  { name: "Portfolio", href: "/portfolio" },
-  { name: "Blog", href: "/blog" },
-];
+const links = NAV.links;
 ---
 
 <div
@@ -88,7 +83,7 @@ const links = [
       <BubbleButton
         href="/contact"
         class="!text-xl !px-8 !py-3 !bg-transparent !border-2 !border-solid !border-[#C5A059] !text-[#C5A059]"
-        >Contact</BubbleButton
+        >{NAV.ctaLabel}</BubbleButton
       >
     </div>
 
@@ -96,7 +91,7 @@ const links = [
     <button
       id="close-mobile-menu"
       class="absolute top-[calc(2rem+env(safe-area-inset-top))] right-8 p-4 text-black opacity-0"
-      aria-label="Închide meniu"
+      aria-label={NAV.closeMenuAria}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

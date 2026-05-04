@@ -6,5 +6,5 @@
     "esModuleInterop": true
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "gsap-public"]
+  "exclude": ["dist", "gsap-public", "reveal-animation-handler-main"]
 }

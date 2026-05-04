@@ -1,0 +1,89 @@
+---
+// src/components/about/AboutRevealSection.astro
+import { ABOUT_PAGE } from "../../config/content";
+---
+
+<section class="reveal-section py-24 md:py-32 bg-secondary overflow-hidden">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="reveal-container flex flex-col items-center justify-center text-center">
+      <!-- Line 1: Pasiune [IMAGE] -->
+      <div class="reveal-line flex items-center justify-center gap-x-4 md:gap-x-6">
+        <span class="reveal-text-large font-serif text-primary">Pasiune</span>
+        <div class="reveal-img-wrap h-[60px] md:h-[110px] w-0 overflow-hidden relative rounded-lg">
+          <img src="/Images/optimized/Proiecte-JL-Custom-Design-09.webp" class="absolute left-1/2 -translate-x-1/2 h-full w-[200px] md:w-[300px] object-cover" alt="JL Mobila Craftsmanship" />
+        </div>
+      </div>
+
+      <!-- Line 2: pentru [IMAGE] lemn. -->
+      <div class="reveal-line flex items-center justify-center gap-x-4 md:gap-x-6 mt-2 md:mt-4">
+        <span class="reveal-text-large font-serif text-primary">pentru</span>
+        <div class="reveal-img-wrap h-[60px] md:h-[110px] w-0 overflow-hidden relative rounded-lg">
+          <img src="/Images/optimized/Proiecte-JL-Custom-Design-14.webp" class="absolute left-1/2 -translate-x-1/2 h-full w-[200px] md:w-[300px] object-cover" alt="Wood details" />
+        </div>
+        <span class="reveal-text-large font-serif text-primary">lemn.</span>
+      </div>
+
+      <!-- Line 3: Atenție [IMAGE] la detalii -->
+      <div class="reveal-line flex flex-wrap items-center justify-center gap-x-4 md:gap-x-6 mt-2 md:mt-4">
+        <span class="reveal-text-large font-serif text-primary">Atenție</span>
+        <div class="reveal-img-wrap h-[60px] md:h-[110px] w-0 overflow-hidden relative rounded-lg shrink-0">
+          <img src="/Images/optimized/Proiecte-JL-Custom-Design-04.webp" class="absolute left-1/2 -translate-x-1/2 h-full w-[200px] md:w-[300px] object-cover" alt="Precision details" />
+        </div>
+        <span class="reveal-text-large font-serif text-primary">la detalii.</span>
+      </div>
+
+<style>
+  .reveal-text-large {
+    font-size: clamp(2.2rem, 10vw, 8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  .reveal-line {
+    width: 100%;
+  }
+
+  /* Specific image sizing for mobile */
+  @media (max-width: 768px) {
+    .reveal-img-wrap {
+      margin: 10px 0;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  function initRevealSection() {
+    const lines = document.querySelectorAll('.reveal-line');
+    
+    lines.forEach((line) => {
+      const imgWrap = line.querySelector('.reveal-img-wrap');
+      if (imgWrap) {
+        const isMobile = window.innerWidth < 768;
+        const targetWidth = isMobile ? 180 : 300;
+
+        gsap.to(imgWrap, {
+          width: targetWidth,
+          ease: "power2.inOut",
+          scrollTrigger: {
+            trigger: line,
+            start: "top 90%",
+            end: "top 40%",
+            scrub: 1,
+          }
+        });
+      }
+    });
+  }
+
+  document.addEventListener("astro:page-load", initRevealSection);
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    initRevealSection();
+  } else {
+    document.addEventListener("DOMContentLoaded", initRevealSection);
+  }
+</script>

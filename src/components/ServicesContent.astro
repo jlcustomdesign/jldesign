@@ -1,55 +1,37 @@
 ---
 import BubbleButton from "./ui/BubbleButton.astro";
+import { SERVICES_PAGE } from "../config/content";
 
-const servicesRaw = [
-  {
-    id: "kitchen",
-    title: "Bucătării Custom",
-    desc: "Bucătării la comandă din MDF vopsit, PAL melaminat Egger sau lemn masiv. Sisteme soft-close Blum, sertare tandem, integrare perfectă a electrocasnicelor.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-01.webp",
-  },
-  {
-    id: "dressing",
-    title: "Dressing & Wardrobes",
-    desc: "Dressinguri și dulapuri walk-in personalizate. Organizatoare interne, sertare cu glisiere, iluminare LED integrată și sisteme push-to-open.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-11.webp",
-  },
-  {
-    id: "living",
-    title: "Living & Biblioteci",
-    desc: "Biblioteci impunătoare și mobilier de living din lemn masiv sau furnir natural. Rafturi custom, comode, console TV — proiectate milimetric.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-14.webp",
-  },
-  {
-    id: "office",
-    title: "Office & Comercial",
-    desc: "Birouri executive, recepții, mobilier open-space și soluții comerciale HoReCa. Ergonomie și design funcțional pentru productivitate maximă.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-24.webp",
-  },
-  {
-    id: "bathroom",
-    title: "Baie & Wellness",
-    desc: "Mobilier de baie rezistent la umiditate din MDF hidrofug sau PAL melaminat. Dulapuri suspendate, oglinzi cu iluminare și blaturi compozit.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-18.webp",
-  },
-];
+interface Props {
+  items?: any[];
+  title?: string;
+  id?: string;
+}
 
-// Duplicate for density (Gallery Density) - REMOVED per user request
-const services = servicesRaw;
+const { 
+  items = SERVICES_PAGE.services, 
+  title,
+  id = "services-detailed"
+} = Astro.props;
 
 // Split services: First item (Hero) vs Rest (Grid)
-const [firstService, ...restServices] = servicesRaw;
+const [firstService, ...restServices] = items;
 
-// Split remaining 4 items into columns
+// Split remaining items into columns
 const col1 = restServices.filter((_, i) => i % 2 === 0);
 const col2 = restServices.filter((_, i) => i % 2 !== 0);
 ---
 
 <section
-  id="services-detailed"
-  class="bg-secondary min-h-screen py-24 md:py-32 w-full overflow-hidden"
+  id={id}
+  class="bg-secondary py-24 md:py-32 w-full overflow-hidden border-t border-primary/5"
 >
   <div class="container mx-auto px-4 md:px-8">
+    {title && (
+      <div class="mb-16 md:mb-24">
+        <h2 class="font-serif text-4xl md:text-6xl text-primary">{title}</h2>
+      </div>
+    )}
     <div class="flex flex-col gap-16 md:gap-32">
       <!-- 1. FEATURED HERO ITEM (Full Width) -->
       <!-- Solves the "5 items" odd number issue by giving the first one prominence -->
@@ -84,7 +66,7 @@ const col2 = restServices.filter((_, i) => i % 2 !== 0);
                      {firstService.desc}
                    </p>
                    <button class="flip-trigger inline-block bg-white/10 backdrop-blur-md border border-white/30 text-white px-6 md:px-8 py-2 md:py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm md:text-base">
-                      Citește mai multe
+                      {SERVICES_PAGE.flipReadMore}
                    </button>
                 </div>
             </div>
@@ -93,19 +75,16 @@ const col2 = restServices.filter((_, i) => i % 2 !== 0);
             <div class="flip-card-back absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-white md:bg-secondary rounded-[2.5rem] overflow-hidden p-8 md:p-16 flex flex-col justify-center md:items-start shadow-2xl">
                 <h3 class="font-serif text-2xl md:text-5xl text-primary mb-4 md:mb-6">{firstService.title}</h3>
                 <p class="font-sans text-gray-600 text-base md:text-xl leading-relaxed mb-6 md:mb-8 max-w-3xl">
-                    Detalii extinse despre {firstService.title.toLowerCase()}. Solutii adaptate spatiului tau, 
-                    optimizand functionalitatea fara a compromite estetica. Pe desktop abordarea noastra se concentreaza pe materiale premium, finisaje impecabile si un design care 
-                    rezista testului timului. Fiecare proiect este unic si personalizat.
+                    {firstService.backDesc}
                 </p>
                 <ul class="font-sans text-gray-500 space-y-2 mb-8 md:mb-12 list-disc list-inside hidden md:block">
-                    <li>Consultanta personalizata</li>
-                    <li>Proiectare 3D detaliata</li>
-                    <li>Materiale de cea mai inalta calitate</li>
-                    <li>Montaj profesionist</li>
+                    {SERVICES_PAGE.flipBackItems.map((item) => (
+                      <li>{item}</li>
+                    ))}
                 </ul>
                 <button class="flip-close text-primary text-sm md:text-base border-b border-primary pb-1 w-max md:w-auto hover:text-accent hover:border-accent transition-colors">
-                    <span class="md:hidden">&larr; Înapoi</span>
-                    <span class="hidden md:inline">&larr; Înapoi la imagine</span>
+                    <span class="md:hidden">{SERVICES_PAGE.flipBack}</span>
+                    <span class="hidden md:inline">{SERVICES_PAGE.flipBackDesktop}</span>
                 </button>
             </div>
 
@@ -139,7 +118,7 @@ const col2 = restServices.filter((_, i) => i % 2 !== 0);
                             {service.desc}
                             </p>
                             <button class="flip-trigger inline-block bg-white/10 backdrop-blur-md border border-white/30 text-white px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm">
-                                Citește mai multe
+                                {SERVICES_PAGE.flipReadMore}
                             </button>
                         </div>
                     </div>
@@ -148,11 +127,10 @@ const col2 = restServices.filter((_, i) => i % 2 !== 0);
                     <div class="flip-card-back absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-white rounded-[2.5rem] overflow-hidden p-8 md:p-12 flex flex-col justify-center shadow-2xl">
                          <h3 class="font-serif text-2xl md:text-4xl text-primary mb-4">{service.title}</h3>
                          <p class="font-sans text-gray-600 leading-relaxed mb-6">
-                            Detalii extinse despre {service.title.toLowerCase()}. Solutii adaptate spatiului tau, 
-                            optimizand functionalitatea fara a compromite estetica.
+                            {service.backDesc}
                          </p>
                          <button class="flip-close text-primary text-sm border-b border-primary pb-1 w-max hover:text-accent hover:border-accent transition-colors">
-                            &larr; Înapoi
+                            {SERVICES_PAGE.flipBack}
                          </button>
                     </div>
 
@@ -189,7 +167,7 @@ const col2 = restServices.filter((_, i) => i % 2 !== 0);
                             {service.desc}
                             </p>
                              <button class="flip-trigger inline-block bg-white/10 backdrop-blur-md border border-white/30 text-white px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm">
-                                Citește mai multe
+                                {SERVICES_PAGE.flipReadMore}
                             </button>
                         </div>
                     </div>
@@ -198,11 +176,10 @@ const col2 = restServices.filter((_, i) => i % 2 !== 0);
                     <div class="flip-card-back absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-white rounded-[2.5rem] overflow-hidden p-8 md:p-12 flex flex-col justify-center shadow-2xl">
                          <h3 class="font-serif text-2xl md:text-4xl text-primary mb-4">{service.title}</h3>
                          <p class="font-sans text-gray-600 leading-relaxed mb-6">
-                            Detalii extinse despre {service.title.toLowerCase()}. Solutii adaptate spatiului tau, 
-                            optimizand functionalitatea fara a compromite estetica.
+                            {service.backDesc}
                          </p>
                          <button class="flip-close text-primary text-sm border-b border-primary pb-1 w-max hover:text-accent hover:border-accent transition-colors">
-                            &larr; Înapoi
+                            {SERVICES_PAGE.flipBack}
                          </button>
                     </div>
                 </div>
@@ -213,30 +190,6 @@ const col2 = restServices.filter((_, i) => i % 2 !== 0);
       </div>
     </div>
 
-    <!-- Final CTA -->
-    <div class="cta-wrapper h-screen flex items-center justify-center">
-      <!-- Wrapper for Pinning -->
-      <div class="text-center cta-container relative z-10">
-        <h3
-          class="cta-headline font-serif text-5xl md:text-8xl text-primary font-medium mb-12 leading-tight flex flex-wrap justify-center gap-x-4 md:gap-x-8 gap-y-2"
-        >
-          {
-            "Ai un proiect unic în minte?"
-              .split(" ")
-              .map((word) => <span class="inline-block cta-word">{word}</span>)
-          }
-        </h3>
-
-        <div class="cta-button-wrapper opacity-0 translate-y-20">
-          <BubbleButton
-            href="/contact"
-            variant="dark"
-            class="text-xl px-16 py-6 rounded-full"
-          >
-            Inițiază Conversația
-          </BubbleButton>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -268,127 +221,85 @@ const col2 = restServices.filter((_, i) => i % 2 !== 0);
   gsap.registerPlugin(ScrollTrigger);
 
   function initServicesContentAnim() {
-    const section = document.querySelector("#services-detailed");
-    if (!section) return;
+    const sections = document.querySelectorAll("section[id^='services-detailed']");
+    if (sections.length === 0) return;
 
-    // FLIP CARD LOGIC
-    const flipCards = section.querySelectorAll('.service-card');
-    flipCards.forEach(card => {
-        const trigger = card.querySelector('.flip-trigger');
-        const close = card.querySelector('.flip-close');
-        
-        if(trigger && close) {
-            trigger.addEventListener('click', (e) => {
-                e.preventDefault();
-                card.classList.add('is-flipped');
-            });
-            
-            close.addEventListener('click', (e) => {
-                 e.preventDefault();
-                 card.classList.remove('is-flipped');
-            });
+    sections.forEach(section => {
+      // FLIP CARD LOGIC
+      const flipCards = section.querySelectorAll('.service-card');
+      flipCards.forEach(card => {
+          const trigger = card.querySelector('.flip-trigger');
+          const close = card.querySelector('.flip-close');
+          
+          if(trigger && close) {
+              trigger.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  card.classList.add('is-flipped');
+              });
+              
+              close.addEventListener('click', (e) => {
+                   e.preventDefault();
+                   card.classList.remove('is-flipped');
+              });
+          }
+      });
+
+
+      // Chaotic Reveal for Cards (Thrown on Table effect)
+      const cards = section.querySelectorAll(".service-card");
+      cards.forEach((card, i) => {
+        // Randomize direction and rotation for each card
+        const randomX = (Math.random() - 0.5) * 200; // -100 to 100
+        const randomY = 100 + Math.random() * 100; // 100 to 200 (always coming from slightly below)
+        const randomRot = (Math.random() - 0.5) * 15; // -7.5 to 7.5 deg
+        const randomScale = 0.8 + Math.random() * 0.2; // 0.8 to 1.0
+
+        gsap.fromTo(
+          card,
+          {
+            opacity: 0,
+            x: randomX,
+            y: randomY,
+            rotation: randomRot,
+            scale: 0.9,
+            transformOrigin: "center center",
+          },
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            rotation: 0,
+            scale: 1,
+            duration: 1.4,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+            },
+          },
+        );
+      });
+
+      // Parallax for Column 2 (on Desktop)
+      if (window.innerWidth >= 768) {
+        const col2 = section.querySelector('.masonry-col[data-speed="1.1"]');
+        if (col2) {
+          gsap.to(col2, {
+            y: -80, // Reduced travel distance
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true, // "True" binds directly to scrollbar (no lag), fixing the fight with smooth-scroll
+            },
+          });
         }
-    });
-
-
-    // Chaotic Reveal for Cards (Thrown on Table effect)
-    const cards = section.querySelectorAll(".service-card");
-    cards.forEach((card, i) => {
-      // Randomize direction and rotation for each card
-      const randomX = (Math.random() - 0.5) * 200; // -100 to 100
-      const randomY = 100 + Math.random() * 100; // 100 to 200 (always coming from slightly below)
-      const randomRot = (Math.random() - 0.5) * 15; // -7.5 to 7.5 deg
-      const randomScale = 0.8 + Math.random() * 0.2; // 0.8 to 1.0
-
-      gsap.fromTo(
-        card,
-        {
-          opacity: 0,
-          x: randomX,
-          y: randomY,
-          rotation: randomRot,
-          scale: 0.9,
-          transformOrigin: "center center",
-        },
-        {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          rotation: 0,
-          scale: 1,
-          duration: 1.4,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 85%",
-          },
-        },
-      );
-    });
-
-    // Parallax for Column 2 (on Desktop)
-    if (window.innerWidth >= 768) {
-      const col2 = section.querySelector('.masonry-col[data-speed="1.1"]');
-      if (col2) {
-        gsap.to(col2, {
-          y: -80, // Reduced travel distance
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true, // "True" binds directly to scrollbar (no lag), fixing the fight with smooth-scroll
-          },
-        });
       }
-    }
-
-    // CTA CHAOTIC PIN ANIMATION
-    const ctaWrapper = section.querySelector(".cta-wrapper");
-    const ctaHeadline = section.querySelector(".cta-headline");
-    const ctaWords = section.querySelectorAll(".cta-word");
-    const ctaButton = section.querySelector(".cta-button-wrapper");
-
-    if (ctaWrapper && ctaWords.length > 0) {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ctaWrapper,
-          start: "center center", // Start when center of CTA hits center of viewport
-          end: "+=100%", // Pin for screen height duration
-          pin: true,
-          scrub: 1,
-          // markers: true // Debug if needed
-        },
-      });
-
-      // 1. Chaotic Word Assembly
-      // We set the FINAL state in CSS/Structure (normal text), so we animate FROM chaos.
-      tl.from(ctaWords, {
-        opacity: 0,
-        x: (i) => (Math.random() - 0.5) * 800, // Random X scatter
-        y: (i) => (Math.random() - 0.5) * 600, // Random Y scatter
-        rotation: (i) => (Math.random() - 0.5) * 360, // Random spin
-        scale: (i) => 0.5 + Math.random(), // Random scale
-        duration: 1.5,
-        ease: "power3.out",
-        stagger: 0.05,
-      });
-
-      // 2. Button Reveal (After words assemble)
-      tl.to(
-        ctaButton,
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "back.out(1.7)",
-        },
-        "-=0.2",
-      );
-    }
+    });
   }
 
-  // Run on load and transitions
+  // Run on Page Load (View Transitions)
   document.addEventListener("astro:page-load", initServicesContentAnim);
   if (document.readyState !== "loading") initServicesContentAnim();
   else document.addEventListener("DOMContentLoaded", initServicesContentAnim);

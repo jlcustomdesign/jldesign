@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { TEST_PAGE } from "../config/content";
 
 const heroImage = "/Images/optimized/hero-image.webp";
 ---
@@ -8,7 +9,7 @@ const heroImage = "/Images/optimized/hero-image.webp";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Test Simultaneous Reveal</title>
+    <title>{TEST_PAGE.title}</title>
   </head>
   <body class="bg-secondary text-white overflow-hidden">
     <section
@@ -54,8 +55,8 @@ const heroImage = "/Images/optimized/hero-image.webp";
       </div>
 
       <div class="relative z-10 text-center pointer-events-none">
-        <h1 class="text-4xl md:text-6xl font-serif mb-4">Test Page</h1>
-        <p class="text-xl opacity-80 debug-status">Initializing...</p>
+        <h1 class="text-4xl md:text-6xl font-serif mb-4">{TEST_PAGE.heading}</h1>
+        <p class="text-xl opacity-80 debug-status">{TEST_PAGE.status}</p>
       </div>
     </section>
 

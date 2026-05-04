@@ -1,20 +1,21 @@
 /**
- * convert-to-webp.mjs — Automatic WebP conversion + resize + EXIF rotation fix.
+ * convert-to-webp.mjs — Automatic non-destructive WebP conversion + resize.
  *
  * Runs as a prebuild step. Does TWO things:
  * 1. Converts any JPG/PNG/BMP/TIFF → WebP (with auto-rotation & resize)
  * 2. Re-compresses existing oversized WebP files (> MAX_DIMENSION)
  *
+ * Note: Source files are kept intact; this script only creates/updates .webp files.
+ *
  * Usage: node scripts/convert-to-webp.mjs [--resize-existing]
  */
-import { readdir, stat, unlink, readFile, writeFile } from 'node:fs/promises';
+import { readdir, stat, writeFile } from 'node:fs/promises';
 import { join, extname, basename, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(__dirname, '..', 'public');
-const CONTENT_DIR = join(__dirname, '..', 'src', 'content');
 
 // --- Config ---
 const NON_WEBP_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.bmp', '.tiff']);
@@ -72,8 +73,7 @@ async function convertFile(filePath) {
       .webp({ quality: QUALITY })
       .toFile(webpPath);
 
-    await unlink(filePath);
-    console.log(`  ✓ ${basename(filePath)} → ${basename(webpPath)}`);
+    console.log(`  ✓ ${basename(filePath)} -> ${basename(webpPath)}`);
     converted++;
   } catch (err) {
     console.error(`  ✗ ${basename(filePath)}: ${err.message}`);
@@ -130,25 +130,8 @@ for await (const filePath of walk(PUBLIC_DIR)) {
   }
 }
 
-// Phase 3: Patch .mdoc content files to reference .webp
-let patched = 0;
-try {
-  for await (const filePath of walk(CONTENT_DIR)) {
-    if (!filePath.endsWith('.mdoc')) continue;
-    const content = await readFile(filePath, 'utf-8');
-    const updated = content.replace(/\.(jpg|jpeg|png)/gi, '.webp');
-    if (updated !== content) {
-      await writeFile(filePath, updated);
-      console.log(`  📝 Patched: ${basename(filePath)}`);
-      patched++;
-    }
-  }
-} catch {
-  // Content dir may not exist yet
-}
-
 const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-console.log(`\n  Done in ${elapsed}s — ${converted} converted, ${resized} resized, ${skipped} skipped, ${patched} patched, ${errors} errors\n`);
+console.log(`\n  Done in ${elapsed}s — ${converted} converted, ${resized} resized, ${skipped} skipped, ${errors} errors\n`);
 
 if (errors > 0) {
   process.exit(1);

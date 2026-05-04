@@ -179,11 +179,49 @@ function runHeroEnterAnimation(section: Element) {
         "svgComplete+=0.1"
     );
 
-    // Main Text Reveal (Title & Subtitle) - Synced
-    masterTl.fromTo(".hero-text-element", 
-        { y: 50, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, duration: 1.0, stagger: 0.2, ease: "power3.out" },
-        "svgComplete"
+    // Main Text Reveal (Title & Subtitle) - Word by Word
+    const textElements = section.querySelectorAll(".hero-text-element");
+    textElements.forEach((el) => {
+      const parent = document.createElement("div");
+      // move all children to arbitrary parent
+      while (el.firstChild) {
+         parent.appendChild(el.firstChild);
+      }
+      
+      const processNode = (node: ChildNode) => {
+         if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.textContent || "";
+            const words = text.split(/\s+/);
+            words.forEach(word => {
+               if(!word) return;
+               const span = document.createElement("span");
+               span.className = "hero-word inline-block will-change-transform";
+               span.textContent = word;
+               el.appendChild(span);
+               el.appendChild(document.createTextNode(" "));
+            });
+         } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node as Element;
+            if (element.tagName.toLowerCase() === "br") {
+               el.appendChild(document.createElement("br"));
+            } else {
+               el.appendChild(element.cloneNode(true));
+            }
+         }
+      };
+      
+      Array.from(parent.childNodes).forEach(processNode);
+
+      // Remove the hardcoded utility classes that hide the parent
+      el.classList.remove("opacity-0", "invisible");
+      gsap.set(el, { opacity: 1, visibility: "visible" });
+    });
+
+    masterTl.fromTo(
+      ".hero-word",
+      { y: 50, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.05, ease: "power3.out" },
+      "svgComplete"
     );
 
     // Enable interaction on Title ONLY after animation completes (approx 1.8s delay + 1.5s anim)

@@ -1,4 +1,5 @@
 ---
+import { CONTACT_FAB } from "../../config/content";
 
 ---
 
@@ -6,7 +7,7 @@
   href="/contact"
   class="fixed bottom-[calc(2rem+env(safe-area-inset-bottom))] left-4 md:left-8 z-40 group cursor-pointer block md:hidden"
   id="contact-fab"
-  aria-label="Contact Us"
+  aria-label={CONTACT_FAB.ariaLabel}
 >
   <!-- Main Container -->
   <div
@@ -34,7 +35,7 @@
           class="fab-text transition-colors duration-500"
         >
           <textPath href="#circlePath" startOffset="0%">
-            • CONTACT • CONTACT • CONTACT
+            {CONTACT_FAB.ringText}
           </textPath>
         </text>
       </svg>

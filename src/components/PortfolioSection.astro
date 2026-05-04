@@ -1,47 +1,7 @@
 ---
-// Mock portfolio for landing page (Keystatic content used on /portfolio page)
-const portfolio = [
-  {
-    name: "Apartament Băneasa",
-    material: "Nuc American",
-    image: "/Images/optimized/Proiecte-JL-Custom-Design-03.webp",
-  },
-  {
-    name: "Villa Pipera",
-    material: "Stejar Masiv",
-    image: "/Images/optimized/Proiecte-JL-Custom-Design-05.webp",
-  },
-  {
-    name: "Penthouse Herăstrău",
-    material: "MDF Vopsit & Marmură",
-    image: "/Images/optimized/Proiecte-JL-Custom-Design-08.webp",
-  },
-  {
-    name: "Loft Timpuri Noi",
-    material: "Metal & Lemn Recuperat",
-    image: "/Images/optimized/Proiecte-JL-Custom-Design-10.webp",
-  },
-  {
-    name: "Brașov Residence",
-    material: "Furnir Eucalipt",
-    image: "/Images/optimized/Proiecte-JL-Custom-Design-25.webp",
-  },
-  {
-    name: "Office Space Unirii",
-    material: "Sticlă & Oțel",
-    image: "/Images/optimized/Proiecte-JL-Custom-Design-24.webp",
-  },
-  {
-    name: "Duplex Primăverii",
-    material: "Marmură Carrara",
-    image: "/Images/optimized/Proiecte-JL-Custom-Design-27.webp",
-  },
-  {
-    name: "Showroom Victoriei",
-    material: "Compozit & Velvet",
-    image: "/Images/optimized/Proiecte-JL-Custom-Design-30.webp",
-  },
-];
+import { PORTFOLIO_SECTION } from "../config/content";
+
+const portfolio = PORTFOLIO_SECTION.projects;
 
 // Split into 4 columns for masonry effect
 type PortfolioItem = typeof portfolio[0];
@@ -60,7 +20,7 @@ portfolio.forEach((item, i) => {
     <div class="container mx-auto mb-20 md:mb-32 px-4 md:px-0">
       <!-- Title Left Aligned -->
       <h2 class="font-serif text-4xl md:text-6xl text-primary text-left">
-        Portofoliu Selectiv
+        {PORTFOLIO_SECTION.title}
       </h2>
     </div>
 

@@ -1,0 +1,193 @@
+---
+import { SERVICES_PAGE } from "../config/content";
+
+interface Props {
+  items?: any[];
+  title?: string;
+  id?: string;
+}
+
+const { 
+  items = SERVICES_PAGE.services, 
+  title = "Categorii de Mobilier",
+  id = "services-hover-grid" 
+} = Astro.props;
+---
+
+<div class="index bg-secondary py-20 md:py-32" id={id}>
+    <div class="index__container max-w-[90rem] mx-auto px-4 md:px-12">
+        <div class="mb-12 md:mb-20">
+          <h2 class="font-serif text-4xl md:text-7xl text-primary">{title}</h2>
+        </div>
+        
+        <div class="projects flex flex-col w-full border-t border-primary/10">
+            {items.map((item, index) => (
+                <div class="project-wrapper w-full border-b border-primary/10 group" data-index={index}>
+                    <!-- Desktop: Direct Link | Mobile: Accordion Trigger -->
+                    <div class="project-row relative">
+                      <!-- Desktop Link Layer (Visible/Active only on desktop) -->
+                      <a href="/portfolio" class="hidden lg:flex project w-full items-center justify-between py-12 cursor-pointer no-underline group/link">
+                          <h2 class="font-serif text-6xl font-medium transition-transform duration-500 group-hover/link:-translate-x-4 text-primary">
+                            {item.title}
+                          </h2>
+                          <div class="flex items-center gap-6">
+                              <p class="font-sans text-primary/60 transition-transform duration-500 group-hover/link:translate-x-4 max-w-xs text-right">
+                                {item.desc.substring(0, 45)}...
+                              </p>
+                              <div class="text-primary/40">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                              </div>
+                          </div>
+                      </a>
+
+                      <!-- Mobile Accordion Trigger (Visible/Active only on mobile) -->
+                      <button class="lg:hidden project-mobile-btn w-full flex items-center justify-between py-8 cursor-pointer text-left focus:outline-none">
+                          <h2 class="font-serif text-3xl font-medium text-primary">
+                            {item.title}
+                          </h2>
+                          <div class="text-primary/40 transition-transform duration-500 accordion-icon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                          </div>
+                      </button>
+                    </div>
+
+                    <!-- Accordion Content (Mobile Only) -->
+                    <div class="project-content lg:hidden overflow-hidden h-0">
+                        <div class="pb-10 pt-2 flex flex-col gap-6">
+                            <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden">
+                                <img src={item.img} alt={item.title} class="w-full h-full object-cover" />
+                            </div>
+                            <div class="flex flex-col items-start">
+                                <p class="font-sans text-lg text-primary/70 mb-6 leading-relaxed">
+                                    {item.desc}
+                                </p>
+                                <a href="/portfolio" class="inline-flex items-center gap-3 bg-primary text-white px-8 py-4 rounded-full font-medium">
+                                    <span>Vezi Galerie</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+
+        <!-- Floating Thumbnails Container (Desktop Only) -->
+        <div class="project-thumbnail fixed w-[320px] h-[400px] flex-col overflow-hidden pointer-events-none top-0 left-0 z-[999999] opacity-0 invisible rounded-[24px] shadow-2xl hidden lg:flex">
+            {items.map((item) => (
+                <div class="thumbnail w-full h-full flex-shrink-0">
+                    <img src={item.img} alt={item.title} class="w-full h-full object-cover" />
+                </div>
+            ))}
+        </div>
+    </div>
+</div>
+
+<style is:global>
+@media (hover: hover) {
+    .project:hover {
+        opacity: 0.5;
+    }
+}
+
+.project-thumbnail {
+	transform-origin: center center;
+    will-change: transform, opacity;
+}
+
+.accordion-icon.active {
+    transform: rotate(45deg);
+}
+</style>
+
+<script>
+    import { gsap } from "gsap";
+
+    function initHoverReveal() {
+        const wrapper = document.querySelector('.index');
+        if (!wrapper) return;
+
+        // --- Mobile Accordion Logic ---
+        if (window.innerWidth < 1024) {
+            const wrappers = gsap.utils.toArray('.project-wrapper', wrapper) as HTMLElement[];
+            let activeIndex = -1;
+
+            wrappers.forEach((projWrapper, index) => {
+                const btn = projWrapper.querySelector('.project-mobile-btn') as HTMLElement;
+                const content = projWrapper.querySelector('.project-content') as HTMLElement;
+                const icon = projWrapper.querySelector('.accordion-icon') as HTMLElement;
+
+                if (!btn || !content) return;
+
+                btn.addEventListener('click', () => {
+                    if (activeIndex === index) {
+                        gsap.to(content, { height: 0, duration: 0.5, ease: "power3.inOut" });
+                        icon.classList.remove('active');
+                        activeIndex = -1;
+                        return;
+                    }
+
+                    if (activeIndex !== -1) {
+                        const prevContent = wrappers[activeIndex].querySelector('.project-content') as HTMLElement;
+                        const prevIcon = wrappers[activeIndex].querySelector('.accordion-icon') as HTMLElement;
+                        gsap.to(prevContent, { height: 0, duration: 0.5, ease: "power3.inOut" });
+                        prevIcon.classList.remove('active');
+                    }
+
+                    gsap.set(content, { height: "auto" });
+                    const fullHeight = content.offsetHeight;
+                    gsap.fromTo(content, { height: 0 }, { height: fullHeight, duration: 0.5, ease: "power3.inOut" });
+                    icon.classList.add('active');
+                    activeIndex = index;
+                });
+            });
+            return;
+        }
+
+        // --- Desktop Hover Logic ---
+        let projectThumbnail = document.querySelector('.project-thumbnail') as HTMLElement | null;
+        const projects = gsap.utils.toArray('.project', wrapper) as HTMLElement[];
+        const thumbnails = gsap.utils.toArray('.thumbnail', wrapper) as HTMLElement[];
+        const projectsContainer = wrapper.querySelector('.projects') as HTMLElement | null;
+
+        if (!projectThumbnail || !projectsContainer) return;
+
+        if (projectThumbnail.parentNode !== document.body) {
+            document.body.appendChild(projectThumbnail);
+        }
+
+        gsap.set(projectThumbnail, { scale: 0, xPercent: -50, yPercent: -50, autoAlpha: 0 });
+
+        const xTo = gsap.quickTo(projectThumbnail, 'x', { duration: 0.4, ease: 'power3.out' });
+        const yTo = gsap.quickTo(projectThumbnail, 'y', { duration: 0.4, ease: 'power3.out' });
+
+        const handleMouseMove = (e: MouseEvent) => {
+            xTo(e.clientX);
+            yTo(e.clientY);
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+
+        projectsContainer.addEventListener('mouseleave', () => {
+            gsap.to(projectThumbnail, { scale: 0, autoAlpha: 0, duration: 0.3, ease: 'power2.out', overwrite: 'auto' });
+        });
+
+        projects.forEach((project, index) => {
+            project.addEventListener('mouseenter', () => {
+                gsap.to(projectThumbnail, { scale: 1, autoAlpha: 1, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
+                gsap.to(thumbnails, { yPercent: -100 * index, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
+            });
+        });
+
+        const cleanup = () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            if (projectThumbnail && projectThumbnail.parentNode === document.body) {
+                document.body.removeChild(projectThumbnail);
+            }
+            document.removeEventListener('astro:before-swap', cleanup);
+        };
+        document.addEventListener('astro:before-swap', cleanup, { once: true });
+    }
+
+    document.addEventListener("astro:page-load", initHoverReveal);
+    if (document.readyState !== 'loading') initHoverReveal();
+</script>

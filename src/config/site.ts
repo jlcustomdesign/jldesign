@@ -56,6 +56,9 @@ export const SITE = {
   /** Google Tag Manager Container ID — replace with your real GTM-XXXXXXX */
   gtmId: "GTM-XXXXXXX",
 
+  /** Bing Webmaster Tools Verification Code (optional, used for meta tag) */
+  bingVerification: "", // ← Replace with your actual Bing Webmaster code (e.g., "ABCD1234EFGH5678")
+
   /**
    * Target keywords (used in meta tags and internal linking).
    * Covers brand, service, product, material, and location variations.

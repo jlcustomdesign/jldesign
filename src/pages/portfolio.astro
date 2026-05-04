@@ -3,26 +3,27 @@ import Layout from "../layouts/Layout.astro";
 import PortfolioHero from "../components/PortfolioHero.astro";
 import PortfolioCMSGrid from "../components/PortfolioCMSGrid.astro";
 import Footer from "../components/Footer.astro";
+import { PORTFOLIO_PAGE, BREADCRUMBS } from "../config/content";
 ---
 
 <Layout
-  title="Portofoliu Proiecte | JL Mobila - Mobilă la Comandă Brașov"
-  description="Explorează portofoliul JL Mobila de mobilier la comandă și design interior. Descoperă proiectele noastre rezidențiale și comerciale premium realizate în Brașov și împrejurimi."
+  title={PORTFOLIO_PAGE.title}
+  description={PORTFOLIO_PAGE.description}
   breadcrumbs={[
-    { name: "Acasă", url: "/" },
-    { name: "Portofoliu", url: "/portfolio" },
+    { name: BREADCRUMBS.home, url: "/" },
+    { name: BREADCRUMBS.portfolio, url: "/portfolio" },
   ]}
 >
   <main>
     <!-- Semantic keywords for AI engines (GEO) -->
     <div class="sr-only">
-      <p>
-        Portofoliu JL Mobila — proiecte de mobilier la comandă realizate în
-        Brașov, Buzău, Sibiu și Sfântu Gheorghe. Bucătării custom, dressinguri,
-        biblioteci, birouri, mobilier living, mobilier comercial. Fotografii
-        reale din proiecte finalizate cu materiale premium: lemn masiv, MDF
-        vopsit, PAL melaminat Egger, furnir natural.
-      </p>
+      {
+        Array.isArray(PORTFOLIO_PAGE.seoFabric) ? (
+          PORTFOLIO_PAGE.seoFabric.map((paragraph) => <p>{paragraph}</p>)
+        ) : (
+          <p>{PORTFOLIO_PAGE.seoFabric}</p>
+        )
+      }
     </div>
     <PortfolioHero />
     <PortfolioCMSGrid />

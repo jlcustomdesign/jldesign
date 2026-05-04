@@ -1,326 +1,364 @@
 ---
-import BubbleButton from "./ui/BubbleButton.astro";
-
-const heroImage = "/Images/optimized/Proiecte-JL-Custom-Design-02.webp";
+// PortfolioHero.astro
 ---
 
-<section
-  class="relative min-h-screen bg-secondary flex items-center justify-center p-4 pt-24 md:p-8 md:pt-32 overflow-hidden"
-  id="portfolio-hero-section"
-  data-theme="dark"
->
-  <!-- DESKTOP BENTO GRID (Hidden on Mobile) -->
-  <div class="container mx-auto h-full w-full max-w-[1800px] hidden md:block">
-    <div
-      class="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 grid-rows-1 lg:grid-rows-2 gap-4 md:gap-6 h-[85vh] lg:h-[80vh]"
-    >
-      <!-- Card 1: Main Hero (Large, Left) -->
-      <div
-        class="portfolio-card hero-card-main col-span-1 md:col-span-12 lg:col-span-8 row-span-1 lg:row-span-2 relative rounded-[2.5rem] overflow-hidden group opacity-0 translate-y-8"
-      >
-        <!-- Background Image -->
-        <img
-          src={heroImage}
-          alt="Selected Works"
-          class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out"
-        />
-        <!-- Overlay -->
-        <div
-          class="absolute inset-0 bg-black/20 transition-colors duration-500"
-        >
-        </div>
-
-        <!-- Title Marquee (Replaces Static Text) -->
-        <div
-          class="absolute bottom-6 left-0 right-0 w-[110%] -ml-[5%] overflow-visible pointer-events-auto"
-        >
-          <div
-            class="custom-marquee desktop-marquee marquee-flat bg-transparent text-white"
-            style="--char-count: 25"
-          >
-            <div class="custom-marquee-inner">
-              <p>LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
-              <p aria-hidden="true">LUCRĂRI SELECTATE</p>
+<section class="osmo-header is--loading relative min-h-[100svh] w-full overflow-hidden bg-white" id="portfolio-hero-section">
+  <div class="osmo-loader">
+    <div class="osmo__h1 font-serif text-black opacity-0 loader-text-container">
+      <div class="osmo__h1-start">
+        <span class="osmo__letter">P</span>
+        <span class="osmo__letter">O</span>
+        <span class="osmo__letter">R</span>
+        <span class="osmo__letter">T</span>
+        <span class="osmo__letter">O</span>
+      </div>
+      <div class="osmo-loader__box">
+        <div class="osmo-loader__box-inner">
+          <div class="osmo__growing-image">
+            <div class="osmo__growing-image-wrap">
+              <img class="osmo__cover-image-extra is--1" src="/Images/optimized/Proiecte-JL-Custom-Design-43.webp" loading="lazy" alt="Proiect Mobila Comanda 1">
+              <img class="osmo__cover-image-extra is--2" src="/Images/optimized/Proiecte-JL-Custom-Design-44.webp" loading="lazy" alt="Proiect Mobila Comanda 2">
+              <img class="osmo__cover-image-extra is--3" src="/Images/optimized/Proiecte-JL-Custom-Design-45.webp" loading="lazy" alt="Proiect Mobila Comanda 3">
+              <img class="osmo__cover-image" src="/Images/optimized/Proiecte-JL-Custom-Design-46.webp" loading="lazy" alt="Proiect Mobila Comanda 4">
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Card 2: Description (Top Right) -->
-      <div
-        class="portfolio-card hero-card-desc col-span-1 md:col-span-6 lg:col-span-4 row-span-1 relative rounded-[2.5rem] overflow-hidden bg-[#1a1a1a] border border-white/5 flex flex-col justify-center p-8 md:p-10 opacity-0 translate-y-8 group hover:border-white/10 transition-colors"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50"
-        >
-        </div>
-
-        <div class="overflow-hidden">
-          <h2
-            class="reveal-text relative z-10 font-serif text-2xl md:text-3xl text-white mb-4 block translate-y-full"
-          >
-            Viziune &
-          </h2>
-        </div>
-        <div class="overflow-hidden">
-          <h2
-            class="reveal-text relative z-10 font-serif text-2xl md:text-3xl text-white mb-4 block translate-y-full"
-          >
-            Măiestrie
-          </h2>
-        </div>
-
-        <div class="overflow-hidden">
-          <p
-            class="reveal-text relative z-10 text-white/70 text-base md:text-lg leading-relaxed block translate-y-full"
-          >
-            O colecție de mobilier și spații interioare, create să ridice
-            cotidianul prin eleganță discretă și finisaje premium.
-          </p>
-        </div>
-
-        <!-- Decoration -->
-        <div class="absolute top-4 right-4 text-white/10">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"
-            ><path d="M12 2L2 19H22L12 2ZM12 5.8L18.5 17H5.5L12 5.8Z"
-            ></path></svg
-          >
-        </div>
+      <div class="osmo__h1-end">
+        <span class="osmo__letter">F</span>
+        <span class="osmo__letter">O</span>
+        <span class="osmo__letter">L</span>
+        <span class="osmo__letter">I</span>
+        <span class="osmo__letter">U</span>
       </div>
-
-      <!-- Card 3: CTA (Bottom Right) -->
-      <a
-        href="/contact"
-        class="portfolio-card hero-card-cta col-span-1 md:col-span-6 lg:col-span-4 row-span-1 relative rounded-[2.5rem] overflow-hidden bg-accent group cursor-pointer flex flex-col justify-between p-8 md:p-10 opacity-0 translate-y-8"
-      >
-        <!-- Background Hover Effect -->
-        <div
-          class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"
-        >
-        </div>
-
-        <div class="relative z-10">
-          <div class="overflow-hidden mb-4">
-            <span
-              class="reveal-text inline-block px-4 py-1.5 rounded-full border border-black/20 text-xs font-bold uppercase tracking-wider text-black translate-y-full"
-            >
-              Contact
-            </span>
-          </div>
-
-          <div class="overflow-hidden">
-            <h3
-              class="reveal-text font-serif text-3xl md:text-4xl text-black leading-tight translate-y-full"
-            >
-              Începe un
-            </h3>
-          </div>
-
-          <div class="overflow-hidden">
-            <h3
-              class="reveal-text font-serif text-3xl md:text-4xl text-black leading-tight translate-y-full"
-            >
-              Proiect
-            </h3>
-          </div>
-        </div>
-
-        <div class="relative z-10 self-end">
-          <div
-            class="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              class="transform -rotate-45 group-hover:rotate-0 transition-transform duration-300"
-            >
-              <path
-                d="M5 12H19M19 12L12 5M19 12L12 19"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-            </svg>
-          </div>
-        </div>
-      </a>
     </div>
   </div>
-
-  <!-- MOBILE FULL-SCREEN MARQUEE HERO (Hidden on Desktop) -->
-  <div
-    class="mobile-hero-container block md:hidden absolute inset-0 w-full h-[100svh] overflow-hidden"
-  >
-    <!-- Full Screen Background Image -->
-    <img
-      src={heroImage}
-      alt="Selected Works"
-      class="absolute inset-0 w-full h-full object-cover rounded-t-3xl"
-    />
-    <!-- Darkening Overlay to ensure text readability -->
-    <div class="absolute inset-0 bg-black/40"></div>
-
-    <!-- Custom SCSS-Style Marquee Stack -->
-    <div
-      class="absolute bottom-4 left-0 w-full flex flex-col justify-end overflow-visible pb-4 md:pb-8 pointer-events-auto"
-    >
-      <div class="custom-marquees z-20">
-        <!-- Band 1: Title (Part 1 - Top, Left Scrolling) -->
-        <div
-          class="custom-marquee mobile-marquee marquee-flat bg-transparent text-white"
-          style="--char-count: 20"
-        >
-          <div class="custom-marquee-inner">
-            <p>LUCRĂRI</p>
-            <p aria-hidden="true">LUCRĂRI</p>
-            <p aria-hidden="true">LUCRĂRI</p>
-            <p aria-hidden="true">LUCRĂRI</p>
-            <p aria-hidden="true">LUCRĂRI</p>
-            <p aria-hidden="true">LUCRĂRI</p>
-            <p aria-hidden="true">LUCRĂRI</p>
-            <p aria-hidden="true">LUCRĂRI</p>
-          </div>
-        </div>
-
-        <!-- Band 2: Title (Part 2 - Bottom, Right Scrolling) -->
-        <div
-          class="custom-marquee mobile-marquee marquee-flat bg-transparent text-white"
-          style="--char-count: 24"
-        >
-          <div class="custom-marquee-inner">
-            <p>SELECTATE</p>
-            <p aria-hidden="true">SELECTATE</p>
-            <p aria-hidden="true">SELECTATE</p>
-            <p aria-hidden="true">SELECTATE</p>
-            <p aria-hidden="true">SELECTATE</p>
-            <p aria-hidden="true">SELECTATE</p>
-            <p aria-hidden="true">SELECTATE</p>
-            <p aria-hidden="true">SELECTATE</p>
-          </div>
-        </div>
-
-        <!-- Band 4: Static CTA Button -->
-        <div
-          class="mobile-cta-wrapper z-30 block mx-auto w-[calc(100%-4rem)] max-w-[340px] mt-8 mb-4"
-        >
-          <a
-            href="/contact"
-            class="mobile-cta-btn block w-full bg-[#FFC800] hover:bg-[#e6b400] active:scale-95 transition-all duration-300 rounded-2xl py-4 px-6 shadow-xl"
-          >
-            <div class="flex items-center justify-between w-full h-full">
-              <span
-                class="font-sans font-semibold text-black text-xl lg:text-3xl"
-                >Începe un Proiect</span
-              >
-              <svg
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#000"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 19L19 5M19 5v14M19 5H5"></path>
-              </svg>
-            </div>
-          </a>
-        </div>
+  
+  <div class="osmo-header__content pointer-events-none">
+    <div class="osmo-header__bottom pointer-events-auto">
+      <div class="osmo__h1 font-serif final-title opacity-0">
+        <span class="osmo__letter-white">P</span>
+        <span class="osmo__letter-white">O</span>
+        <span class="osmo__letter-white">R</span>
+        <span class="osmo__letter-white">T</span>
+        <span class="osmo__letter-white">O</span>
+        <span class="osmo__letter-white">F</span>
+        <span class="osmo__letter-white">O</span>
+        <span class="osmo__letter-white">L</span>
+        <span class="osmo__letter-white">I</span>
+        <span class="osmo__letter-white">U</span>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .custom-marquees {
-    display: flex;
-    flex-direction: column;
-    gap: 3vw;
-    width: 110%;
-    margin-left: -5%;
-    overflow: visible;
-  }
+/* CSS adapted from Osmo */
+.osmo-header {
+  color: #1a1a1a;
+}
 
-  .custom-marquee,
-  .custom-marquee.marquee-flat {
-    --marquee-color: #ffc800; /* Vibrant Gold/Yellow */
-    --marquee-bg: var(--marquee-color);
-    --marquee-text: #000000; /* Black text */
-    --anim-duration: calc(0.8s * var(--char-count, 20));
+.osmo-loader {
+  color: #201d1d;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 10; /* Lower than content and navbar */
+}
 
-    overflow: hidden;
-    background: var(--marquee-bg);
-    color: var(--marquee-text);
-    padding: 0.2rem 0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    border: 2px solid transparent; /* Prevents jumping when even styles apply borders */
-  }
+.osmo__h1 {
+  white-space: nowrap;
+  justify-content: center;
+  font-size: 10vw; /* Responsive font size */
+  font-weight: 500;
+  line-height: .75;
+  display: flex;
+  position: relative;
+  text-transform: uppercase;
+}
 
-  .custom-marquee:nth-child(even) {
-    --marquee-bg: transparent;
-    --marquee-text: #ffffff;
-    border-top: none;
-    border-bottom: none;
-  }
+.osmo__h1-start {
+  justify-content: flex-end;
+  display: flex;
+  overflow: hidden;
+  width: 50vw; /* Forces perfect centering of the middle box */
+}
 
-  /* Override for flat scrolling layout */
-  .custom-marquee.marquee-flat {
-    background: transparent !important;
-    color: #ffffff !important;
-    transform: none !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
+.osmo__h1-end {
+  justify-content: flex-start;
+  display: flex;
+  overflow: hidden;
+  width: 50vw; /* Forces perfect centering of the middle box */
+}
 
-  .custom-marquee-inner {
-    width: max-content;
-    display: flex;
-    text-transform: uppercase;
-    animation: customMarquee var(--anim-duration) infinite linear;
-  }
+.osmo__letter {
+  display: block;
+  position: relative;
+  color: #1a1a1a; 
+}
 
-  .custom-marquee:nth-child(even) .custom-marquee-inner {
-    animation-direction: reverse;
-  }
+.osmo-loader__box {
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 0;
+  display: flex;
+  position: relative;
+}
 
-  .custom-marquee p {
-    font-family: ui-sans-serif, system-ui, sans-serif;
-    font-weight: 900;
-    font-size: clamp(2.5rem, 12vw, 6rem);
-    line-height: 1.1;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-    padding-right: 0.5em; /* spacing before the star */
-  }
+.osmo-loader__box-inner {
+  justify-content: center;
+  align-items: center;
+  min-width: 1em;
+  height: 95%;
+  display: flex;
+  position: relative;
+}
 
-  .custom-marquee p::after {
-    content: "•";
-    font-size: 0.7em;
-    transform: translateY(-0.05em); /* visual centering */
-  }
+.osmo__growing-image {
+  justify-content: center;
+  align-items: center;
+  width: 0%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  overflow: hidden;
+}
 
-  @keyframes customMarquee {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(calc(-100% / 6));
-    } /* 6 elements total */
+.osmo__growing-image-wrap {
+  width: 100vw;
+  min-width: 100vw; /* Ensure no margin on sides */
+  height: 100vh; /* Full viewport height to prevent crop shifting */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Keeps image locked in center during mask expansion */
+}
+
+.osmo__cover-image, .osmo__cover-image-extra {
+  pointer-events: none;
+  object-fit: cover;
+  -webkit-user-select: none;
+  user-select: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.osmo__cover-image-extra.is--1 { z-index: 3; }
+.osmo__cover-image-extra.is--2 { z-index: 2; }
+.osmo__cover-image-extra.is--3 { z-index: 1; }
+
+.osmo-header__content {
+  flex-flow: column;
+  justify-content: flex-end;
+  align-items: center; /* Centered on mobile */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  padding: 1.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .osmo-header__content {
+    align-items: flex-start; /* Left-aligned on desktop */
+    padding: 2.5rem;
   }
+}
+
+.osmo-header__bottom {
+  justify-content: center; /* Centered on mobile */
+  align-items: flex-end;
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+@media screen and (min-width: 768px) {
+  .osmo-header__bottom {
+    justify-content: flex-start; /* Left-aligned on desktop */
+  }
+}
+
+.final-title {
+  font-size: clamp(3.5rem, 11vw, 12rem) !important;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.osmo__letter-white {
+  display: block;
+  position: relative;
+  color: white;
+}
+
+@media screen and (max-width: 991px) {
+  .osmo__h1 {
+    font-size: 12vw; /* Reduced to prevent side-clipping */
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .osmo__h1 {
+    font-size: 12vw; /* Consistent mobile size */
+  }
+}
 </style>
 
 <script>
-  import { initPortfolioHeroAnimations } from "../scripts/portfolio-hero-animation";
+  import { gsap } from "gsap";
 
-  // Initialize animations
-  initPortfolioHeroAnimations();
+  function initOsmoLoadingAnimation() {
+    const container = document.querySelector(".osmo-header");
+    if (!container) return;
+
+    const loadingLetter = container.querySelectorAll(".osmo__letter");
+    const box = container.querySelectorAll(".osmo-loader__box");
+    const growingImage = container.querySelectorAll(".osmo__growing-image");
+    const headingStart = container.querySelectorAll(".osmo__h1-start");
+    const headingEnd = container.querySelectorAll(".osmo__h1-end");
+    const coverImageExtra = container.querySelectorAll(".osmo__cover-image-extra");
+    const headerLetter = container.querySelectorAll(".osmo__letter-white");
+    const finalTitleContainer = container.querySelector(".final-title");
+    const loaderTextContainer = container.querySelector(".loader-text-container");
+    const navbar = document.querySelector("#navbar-container");
+    
+    // Check if animation already ran
+    if (container.classList.contains('anim-done')) return;
+    
+    /* GSAP Timeline */
+    const tl = gsap.timeline({
+      defaults: {
+        ease: "expo.inOut",
+      },
+      onStart: () => {
+        document.body.style.overflow = 'hidden'; // Lock scroll during intro
+      },
+      onComplete: () => {
+        document.body.style.overflow = ''; // Unlock scroll
+        container.classList.add('anim-done');
+        
+        // Hide the loader text so it doesn't stay visible behind
+        gsap.set(loadingLetter, { opacity: 0 });
+      }
+    });
+    
+    /* Start of Timeline */
+    if (loadingLetter.length) {
+      tl.set(loaderTextContainer, { opacity: 1 });
+      tl.fromTo(loadingLetter, { yPercent: 100 }, {
+        yPercent: 0,
+        stagger: 0.025,
+        duration: 1.25
+      });
+    }
+    
+    if (box.length) {
+      tl.fromTo(box, {
+        width: "0em",
+      },{
+        width: "1em",
+        duration: 1.25
+      }, "< 1.25");
+    }
+
+    if (growingImage.length) {
+      tl.fromTo(growingImage, {
+        width: "0%",
+      },{
+        width: "100%",
+        duration: 1.25
+      }, "<");
+    }
+    
+    if (headingStart.length) {
+      tl.fromTo(headingStart, {
+        x: "0em",
+      },{
+        x: "-0.05em",
+        duration: 1.25
+      }, "<");
+    }
+    
+    if (headingEnd.length) {
+      tl.fromTo(headingEnd, {
+        x: "0em",
+      },{
+        x: "0.05em",
+        duration: 1.25
+      }, "<");
+    }
+
+    if (coverImageExtra.length) {
+      tl.fromTo(coverImageExtra, {
+        opacity: 1,
+      },{
+        opacity: 0,
+        duration: 0.05,
+        ease: "none",
+        stagger: 0.5
+      }, "-=0.05");
+    }
+      
+    if (growingImage.length) {
+      tl.to(growingImage, {
+        width: "100vw",
+        height: "100dvh",
+        duration: 2
+      }, "< 1.25");
+    }
+    
+    if (box.length) {
+      tl.to(box, {
+        width: "110vw",
+        duration: 2
+      }, "<");
+    }
+    
+    if (headerLetter.length) {
+      tl.set(finalTitleContainer, { opacity: 1 }, "<");
+      tl.fromTo(headerLetter, { yPercent: 100 }, {
+        yPercent: 0,
+        duration: 1.25,
+        ease: "expo.out",
+        stagger: 0.025
+      }, "< 1.2");
+    }
+    
+    if (navbar) {
+      gsap.set(navbar, { css: { transition: "none" } });
+      
+      tl.to(navbar, { opacity: 1, duration: 0.05 }, "< 0.5");
+      
+      tl.to(navbar, {
+        scale: 1,
+        duration: 1.0,
+        ease: "back.out(1.7)",
+        force3D: true,
+        onComplete: () => {
+          gsap.set(navbar, { clearProps: "transition" });
+        }
+      }, "<");
+    }
+  }
+
+  // Use Astro page load and DOMContentLoaded to ensure it runs
+  document.addEventListener("astro:page-load", initOsmoLoadingAnimation);
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    setTimeout(initOsmoLoadingAnimation, 50);
+  } else {
+    document.addEventListener("DOMContentLoaded", initOsmoLoadingAnimation);
+  }
 </script>

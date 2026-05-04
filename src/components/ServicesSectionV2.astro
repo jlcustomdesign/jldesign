@@ -1,37 +1,7 @@
 ---
+import { SERVICES_SECTION } from "../config/content";
 
-const services = [
-  {
-    id: "kitchen",
-    title: "Bucătării Custom",
-    desc: "Inima casei tale, regândită. Funcționalitate desăvârșită îmbrăcată în materiale nobile.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-01.webp",
-  },
-  {
-    id: "dressing",
-    title: "Dressing & Wardrobes",
-    desc: "Mai mult decât depozitare. Un sanctuar al stilului tău. Iluminare ambientală și finisaje de catifea.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-11.webp",
-  },
-  {
-    id: "living",
-    title: "Living & Library",
-    desc: "Povestea casei, scrisă în lemn masiv. Biblioteci impunătoare și piese care dau tonul conversației.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-14.webp",
-  },
-  {
-    id: "office",
-    title: "Office & Comercial",
-    desc: "Productivitate și stil. Spații de lucru ergonomice care impresionează clienții din prima clipă.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-24.webp",
-  },
-  {
-    id: "bathroom",
-    title: "Baie & Wellness",
-    desc: "Refugiul tău personal. Mobilier rezistent la umiditate, integrat perfect cu piatra și ceramica.",
-    img: "/Images/optimized/Proiecte-JL-Custom-Design-18.webp",
-  },
-];
+const services = SERVICES_SECTION.cards;
 ---
 
 <section
@@ -39,19 +9,19 @@ const services = [
   class="py-24 md:py-32 bg-secondary overflow-hidden"
   data-theme="light"
 >
-  <div class="w-full px-4 pt-32 md:pt-48">
-    <div class="container mx-auto px-4 md:px-0 mb-12 md:mb-16">
+  <div class="w-full pt-32 md:pt-48">
+    <div class="container mx-auto px-6 md:px-8 mb-12 md:mb-16">
       <div class="flex flex-col md:flex-row justify-between items-center gap-12">
         <!-- Left: Title -->
         <h2 class="services-title flex-shrink-0 font-serif text-4xl md:text-5xl lg:text-7xl text-primary leading-tight whitespace-nowrap">
-          Serviciile Noastre
+          {SERVICES_SECTION.title}
         </h2>
         
         <!-- Right: Buttons (Desktop) -->
         <div class="hidden md:flex gap-3 flex-shrink-0">
           <button
             class="services-prev-btn services-nav-btn relative z-10 w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors duration-300 group"
-            aria-label="Previous"
+            aria-label={SERVICES_SECTION.navPrevAria}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6 group-hover:-translate-x-0.5 transition-transform">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -59,7 +29,7 @@ const services = [
           </button>
           <button
             class="services-next-btn services-nav-btn relative z-10 w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors duration-300 group"
-            aria-label="Next"
+            aria-label={SERVICES_SECTION.navNextAria}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-0.5 transition-transform">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -75,12 +45,15 @@ const services = [
     <!-- Carousel Track -->
     <div
       id="services-carousel"
-      class="flex gap-4 md:gap-6 px-4 md:px-8 overflow-x-auto snap-x snap-mandatory scroll-smooth hide-scrollbar pb-12 pt-4 -mt-4"
+      class="flex gap-6 md:gap-8 px-4 overflow-x-auto snap-x snap-mandatory scroll-smooth hide-scrollbar pb-12 pt-4 -mt-4 scroll-pl-6 md:scroll-pl-24"
     >
+      <!-- Initial Spacer to create the 'un-glued' effect -->
+      <div class="w-2 md:w-[calc(50vw-640px+2rem)] xl:w-[calc(50vw-768px+2rem)] shrink-0 h-1"></div>
+
       {
         services.map((service, i) => (
           <div
-            class="service-card w-[85vw] md:w-[45vw] lg:w-[27%] h-[500px] rounded-2xl relative group flex-shrink-0 perspective-[1000px] bg-transparent shadow-none snap-center md:snap-start"
+            class="service-card w-[85vw] md:w-[45vw] lg:w-[27%] h-[500px] rounded-2xl relative group flex-shrink-0 perspective-[1000px] bg-transparent shadow-none snap-start"
             data-index={i}
           >
             <!-- Inner Card (Flippable) -->
@@ -110,7 +83,7 @@ const services = [
                     <!-- Flip Trigger Button -->
                     <button
                       class="service-flip-btn bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-accent hover:text-white transition-colors duration-300 pointer-events-auto cursor-pointer"
-                      aria-label="Flip Card"
+                      aria-label={SERVICES_SECTION.flipCardAria}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +109,7 @@ const services = [
                  <!-- Close/Flip Back Button -->
                  <button 
                     class="service-flip-back-btn absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors pointer-events-auto cursor-pointer"
-                    aria-label="Flip Back"
+                    aria-label={SERVICES_SECTION.flipBackAria}
                  >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -152,7 +125,7 @@ const services = [
                     href={`/services/${service.id}`}
                     class="inline-block px-8 py-4 bg-white text-primary font-bold rounded-full hover:bg-accent hover:text-white transition-colors duration-300 uppercase tracking-wider text-sm pointer-events-auto"
                  >
-                   Vezi Proiect
+                   {SERVICES_SECTION.viewProjectLabel}
                  </a>
               </div>
             </div>
@@ -165,7 +138,7 @@ const services = [
     <div class="flex md:hidden justify-center gap-4 mt-8 px-4">
           <button
             class="services-prev-btn services-nav-btn relative z-10 w-12 h-12 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors duration-300 group"
-            aria-label="Previous"
+            aria-label={SERVICES_SECTION.navPrevAria}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 group-hover:-translate-x-0.5 transition-transform">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -173,7 +146,7 @@ const services = [
           </button>
           <button
             class="services-next-btn services-nav-btn relative z-10 w-12 h-12 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors duration-300 group"
-            aria-label="Next"
+            aria-label={SERVICES_SECTION.navNextAria}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 group-hover:translate-x-0.5 transition-transform">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />

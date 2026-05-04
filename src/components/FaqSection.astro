@@ -1,70 +1,7 @@
 ---
-const faqs = [
-  {
-    q: "Cât durează execuția unei comenzi?",
-    a: "În funcție de complexitatea proiectului, termenul de livrare variază între 4 și 8 săptămâni de la semnarea contractului și stabilirea detaliilor tehnice finale.",
-  },
-  {
-    q: "Oferiți garanție pentru mobilier?",
-    a: "Da, oferim o garanție comercială de 24 de luni pentru mobilier și garanția producătorului pentru feronerie (care poate ajunge până la 20 de ani la branduri precum Blum).",
-  },
-  {
-    q: "Realizați și proiectare 3D?",
-    a: "Absolut. Fiecare proiect începe cu o etapă de consultanță și proiectare 3D, astfel încât să puteți vizualiza exact cum va arăta spațiul dumneavoastră final.",
-  },
-  {
-    q: "Ce tipuri de materiale folosiți?",
-    a: "Lucrăm cu o gamă variată de materiale premium: MDF vopsit sau înfoliat, PAL melaminat Egger/Kronospan, furnir natural, lemn masiv, sticlă, metal și compozit.",
-  },
-  {
-    q: "Este necesară o programare pentru vizita în showroom?",
-    a: "Pentru a ne asigura că un designer vă poate acorda întreaga atenție, recomandăm programarea unei vizite în prealabil, telefonic sau prin email.",
-  },
-  {
-    q: "Vă ocupați și de integrarea electrocasnicelor?",
-    a: "Desigur. Mobilierul este proiectat milimetric pentru a încorpora perfect electrocasnicele dumneavoastră, indiferent de marcă sau dimensiuni.",
-  },
-  {
-    q: "Care sunt condițiile de plată?",
-    a: "Standardul nostru este un avans de 50% la semnarea contractului pentru a demara producția, iar restul de 50% se achită înainte de livrare și montaj.",
-  },
-  {
-    q: "Livrați mobilier și în afara Brașovului?",
-    a: "Da, livrăm și montăm în toată zona: Buzău, Sibiu, Sfântu Gheorghe, Făgăraș, Săcele, Codlea, Râșnov și împrejurimi. De asemenea, realizăm proiecte la nivel național cu un cost suplimentar de transport.",
-  },
-  {
-    q: "Cât costă mobila la comandă în Brașov?",
-    a: "Prețul variază în funcție de materiale, dimensiuni și complexitate. O bucătărie completă din MDF vopsit pornește de la aproximativ 8.000 lei, iar un dressing din PAL melaminat de la 4.000 lei. Oferim deviz detaliat gratuit după măsurători.",
-  },
-  {
-    q: "Ce stiluri de mobilier realizați?",
-    a: "Realizăm mobilier în orice stil: modern minimalist cu linii drepte și sisteme push-to-open, clasic cu profile și mânere elegante, industrial cu metal și lemn, sau scandinav cu tonuri calde și forme organice.",
-  },
-  {
-    q: "Realizați bucătării din MDF vopsit?",
-    a: "Da, bucătăriile din MDF vopsit sunt printre cele mai solicitate produse ale noastre. Oferim finisaje mate, lucioase sau texturate, cu posibilitate de vopsire în orice cod RAL pentru a se potrivi perfect designului dumneavoastră.",
-  },
-  {
-    q: "Lucrați cu lemn masiv sau PAL?",
-    a: "Lucrăm cu ambele, în funcție de proiect. Lemnul masiv (stejar, fag, frasin) oferă durabilitate și textură naturală, iar PAL melaminat Egger/Kronospan oferă un raport calitate-preț excelent cu o varietate largă de decoruri.",
-  },
-  {
-    q: "Cum se desfășoară procesul de comandă?",
-    a: "Procesul constă în 4 etape: (1) Consultanță — discutăm nevoile și luăm măsurători la fața locului; (2) Proiectare 3D — vedeți randări fotorealistice; (3) Producție — utilaje CNC și finisaje manuale; (4) Montaj — echipa noastră instalează totul la locație.",
-  },
-  {
-    q: "Ce feronerie folosiți pentru mobilier?",
-    a: "Folosim feronerie premium de la branduri precum Blum, Hettich și Hafele. Aceasta include balamale cu amortizare soft-close, sertare cu glisiere tandem, sisteme de ridicare Aventos și organizatoare interne de înaltă calitate.",
-  },
-  {
-    q: "Aveți showroom în Brașov?",
-    a: "Da, avem un spațiu de prezentare în Brașov unde puteți vedea și atinge materialele, testa sistemele de feronerie și discuta direct cu designerii noștri. Recomandăm programarea unei vizite pentru o experiență completă.",
-  },
-  {
-    q: "Realizați mobilier comercial și pentru birouri?",
-    a: "Da, realizăm mobilier comercial la comandă: recepții, birouri executive, soluții open-space, rafturi comerciale și amenajări HoReCa. Avem experiență cu proiecte comerciale în Brașov, Sibiu și Buzău.",
-  },
-];
+import { FAQ } from "../config/content";
+
+const faqs = FAQ.items;
 
 const faqSchema = JSON.stringify({
   "@context": "https://schema.org",
@@ -88,9 +25,9 @@ const faqSchema = JSON.stringify({
     >
       <!-- Left: Sidebar (Will be animated manually) -->
       <div class="lg:w-1/3 z-10 relative" id="faq-sidebar-v2">
-        <h2 class="font-serif text-4xl md:text-5xl text-primary mb-6">
-          Întrebări Frecvente
-        </h2>
+          <h2 class="font-serif text-5xl md:text-6xl text-primary mb-8" id="faq-title">
+            {FAQ.title}
+          </h2>
       </div>
 
       <!-- Right: Accordion -->

@@ -19,6 +19,8 @@ interface Props {
   canonicalURL?: string | URL;
   type?: "website" | "article";
   breadcrumbs?: BreadcrumbItem[];
+  hideNavbar?: boolean;
+  hideContact?: boolean;
 }
 
 const {
@@ -28,6 +30,8 @@ const {
   canonicalURL = new URL(Astro.url.pathname, SITE.url),
   type = "website",
   breadcrumbs,
+  hideNavbar = false,
+  hideContact = false,
 } = Astro.props;
 
 // --- Structured Data Schemas ---
@@ -128,6 +132,11 @@ const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
     <meta name="geo.placename" content={SITE.address.city} />
     <meta name="geo.position" content={`${SITE.geo.latitude};${SITE.geo.longitude}`} />
     <meta name="ICBM" content={`${SITE.geo.latitude}, ${SITE.geo.longitude}`} />
+    
+    {/* Bing Webmaster Verification */}
+    {SITE.bingVerification && (
+      <meta name="msvalidate.01" content={SITE.bingVerification} />
+    )}
 
     {/* Google Tag Manager — head script */}
     {hasGTM && (
@@ -191,9 +200,9 @@ const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
         <iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`} height="0" width="0" style="display:none;visibility:hidden"></iframe>
       </noscript>
     )}
-    <!--  Navbar must be outside smooth-wrapper to be fixed/sticky correctly -->
-    <Navbar />
-    <MobileMenu />
+    {/* Navbar must be outside smooth-wrapper to be fixed/sticky correctly */}
+    {!hideNavbar && <Navbar />}
+    {!hideNavbar && <MobileMenu />}
     <CustomCursor />
 
     <!-- ScrollSmoother Structure -->
@@ -222,8 +231,8 @@ const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
       init();
       document.addEventListener("astro:page-load", init);
     </script>
-    <ContactModal />
-    <ContactFAB />
+    {!hideContact && <ContactModal />}
+    {!hideContact && <ContactFAB />}
   </body>
 </html>
 

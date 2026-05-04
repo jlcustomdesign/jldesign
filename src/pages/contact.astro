@@ -1,11 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { CONTACT_PAGE } from "../config/content";
 ---
 
-<Layout title="Contact | JL Mobila">
+<Layout title={CONTACT_PAGE.title} description={CONTACT_PAGE.description}>
   <main class="pt-32 px-4 md:px-8 max-w-7xl mx-auto" data-theme="light">
     <h1 class="text-4xl md:text-6xl font-serif text-primary mb-6">
-      Get in Touch
+      {CONTACT_PAGE.heading}
     </h1>
   </main>
 </Layout>

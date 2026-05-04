@@ -5,6 +5,13 @@ import { ScrollSmoother } from "../../gsap-public/esm/ScrollSmoother.js";
 
 export function initSmoothScroll() {
   if (typeof window === 'undefined') return;
+  
+  // Bypass ScrollSmoother for print mode to allow standard multi-page PDF generation
+  if (window.location.search.includes('print=true')) {
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.refresh();
+    return;
+  }
 
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 

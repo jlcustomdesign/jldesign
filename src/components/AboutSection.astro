@@ -1,77 +1,58 @@
 ---
+// src/components/AboutSection.astro
 import BubbleButton from "./ui/BubbleButton.astro";
+import { ABOUT_SECTION } from "../config/content";
 ---
 
 <section
-  class="relative bg-[#F4F1EA] py-16 md:py-24 overflow-hidden z-20"
+  class="relative bg-secondary py-24 md:py-32 overflow-hidden z-20"
   id="about-section"
   data-theme="light"
 >
   <div class="container mx-auto px-4 md:px-8 relative z-10">
-    <div
-      class="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12 items-start"
-    >
-      <!-- Left Column -->
-      <div class="contents lg:flex lg:flex-col lg:gap-8 lg:h-full">
-        <!-- Headline Card -->
-        <div
-          class="about-fade-card bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card w-full"
-        >
-          <h2
-            class="about-fade-text font-serif text-4xl lg:text-6xl text-primary leading-none"
-          >
-            Peste 15 ani de <br />
-            <span class="text-accent">excelență</span> în <br />
-            arta lemnului.
-          </h2>
-        </div>
-
-        <!-- CTA Card -->
-        <div
-          class="about-fade-card bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col justify-center flex-grow order-last lg:order-none w-full"
-        >
-          <p class="about-fade-text text-lg text-primary/80 mb-8 max-w-sm">
-            Ești gata să transformi ideile în realitate? Haide să discutăm
-            despre proiectul tău.
-          </p>
-          <div class="about-fade-text">
-            <BubbleButton href="/about" variant="dark" class="!px-10 !py-4">
-              Descoperă Povestea
-            </BubbleButton>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column -->
-      <div
-        class="about-fade-card bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-xl about-card flex flex-col gap-8 h-full w-full"
-      >
-        <!-- Text Block -->
-        <div>
-          <p
-            class="about-fade-text text-lg md:text-xl text-primary/80 leading-normal"
-          >
-            Fiecare piesă de mobilier pe care o creăm este rezultatul unei
-            pasiuni pentru perfecțiune și al unui respect profund pentru
-            tradiția meșteșugului, combinat cu tehnologii moderne de producție.
-          </p>
-          <p
-            class="about-fade-text text-lg md:text-xl text-primary/80 leading-relaxed mt-6"
-          >
-            Nu producem doar mobilă, ci conturăm spațiul în care viața ta se
-            desfășoară. De la concept la montaj, detaliul face diferența.
-          </p>
-        </div>
-
-        <!-- Image -->
-        <div
-          class="about-fade-card relative w-full aspect-[4/3] overflow-hidden rounded-[2.5rem] about-image-wrapper"
-        >
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      
+      <!-- Left Column: Image Reveal & Decorative Elements -->
+      <div class="lg:col-span-6 relative order-2 lg:order-1">
+        <div class="about-image-main relative rounded-[2.5rem] overflow-hidden aspect-[4/5] shadow-2xl z-10">
           <img
             src="/Images/optimized/Proiecte-JL-Custom-Design-07.webp"
-            alt="Detaliu meșteșug — finisaj lemn masiv JL Mobila"
-            class="absolute inset-0 w-full h-full object-cover object-center about-image"
+            alt={ABOUT_SECTION.imageAlt}
+            class="absolute inset-0 w-full h-full object-cover about-parallax-img scale-110"
           />
+          <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
+        </div>
+        
+        <!-- Floating Accent Element -->
+        <div class="absolute -bottom-8 -right-8 w-48 h-48 bg-accent rounded-3xl -rotate-12 -z-10 opacity-20 blur-2xl about-accent"></div>
+        <div class="absolute -top-12 -left-12 w-64 h-64 border border-primary/10 rounded-full -z-10 about-circle"></div>
+      </div>
+
+      <!-- Right Column: Text Content -->
+      <div class="lg:col-span-6 space-y-10 order-1 lg:order-2">
+        <div class="space-y-6">
+          <span class="block text-accent uppercase tracking-[0.3em] text-sm font-bold about-label">
+            Povestea Noastră
+          </span>
+          <h2
+            class="font-serif text-4xl md:text-6xl lg:text-7xl text-primary leading-[1.1] about-heading"
+            set:html={ABOUT_SECTION.headline}
+          />
+        </div>
+
+        <div class="space-y-8 max-w-xl">
+          <p class="text-xl md:text-2xl text-primary/80 leading-relaxed about-text">
+            {ABOUT_SECTION.paragraph1}
+          </p>
+          <p class="text-lg text-primary/60 leading-relaxed about-text">
+            {ABOUT_SECTION.paragraph2}
+          </p>
+        </div>
+
+        <div class="pt-6 about-cta">
+          <BubbleButton href="/about" variant="dark">
+            {ABOUT_SECTION.ctaButton}
+          </BubbleButton>
         </div>
       </div>
     </div>
@@ -84,84 +65,69 @@ import BubbleButton from "./ui/BubbleButton.astro";
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Centralized Initialization wrapper
-  function initAboutSection() {
+  function initAboutSectionRedesign() {
     const section = document.querySelector("#about-section");
     if (!section) return;
 
-    // Make sure we kill old triggers first to prevent duplicates on navigation
-    ScrollTrigger.getAll().forEach((t) => {
-      if (
-        (t.vars.trigger === ".about-image-wrapper" ||
-          t.vars.trigger === section) &&
-        t.vars.scrub
-      ) {
-        t.kill();
-      }
-    });
+    const ctx = gsap.context(() => {
+      // 1. Text Reveals
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+        }
+      });
 
-    // 1. Explicit GSAP Animations instead of buggy data-reveal
-    const cards = gsap.utils.toArray(".about-fade-card");
-    const texts = gsap.utils.toArray(".about-fade-text");
+      tl.from(".about-label", { opacity: 0, x: -20, duration: 0.8, ease: "power2.out" })
+        .from(".about-heading", { opacity: 0, y: 40, duration: 1, ease: "expo.out" }, "-=0.4")
+        .from(".about-text", { opacity: 0, y: 20, duration: 0.8, stagger: 0.2, ease: "power2.out" }, "-=0.6")
+        .from(".about-cta", { opacity: 0, scale: 0.9, duration: 0.6, ease: "back.out(1.7)" }, "-=0.4");
 
-    cards.forEach((card: any, i) => {
-      gsap.fromTo(
-        card,
-        { y: 50, opacity: 0 },
-        {
-          scrollTrigger: {
-            trigger: card,
-            start: "top 65%", // Trigger later when it's more visibly in viewport
-            toggleActions: "play none none reverse",
-          },
-          y: 0,
-          opacity: 1,
-          duration: 1.2,
-          ease: "expo.out",
-          delay: (i % 3) * 0.15, // Stagger effect
+      // 2. Image Reveal
+      gsap.from(".about-image-main", {
+        scrollTrigger: {
+          trigger: ".about-image-main",
+          start: "top 85%",
         },
-      );
-    });
+        clipPath: "inset(100% 0 0 0)",
+        duration: 1.5,
+        ease: "expo.inOut"
+      });
 
-    texts.forEach((text: any) => {
-      gsap.fromTo(
-        text,
-        { y: 30, opacity: 0 },
-        {
-          scrollTrigger: {
-            trigger: text,
-            start: "top 70%", // Start immediately after card triggers
-            toggleActions: "play none none reverse",
-          },
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-        },
-      );
-    });
+      // 3. Parallax & Floating
+      gsap.to(".about-parallax-img", {
+        y: "10%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".about-image-main",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      });
 
-    // 2. Parallax Effect
-    gsap.to(".about-image", {
-      y: "-15%",
-      ease: "none",
-      force3D: true, // Force GPU acceleration
-      scrollTrigger: {
-        trigger: ".about-image-wrapper",
-        start: "top 95%", // Start slightly earlier on mobile
-        end: "bottom top",
-        scrub: true,
-      },
-    });
+      gsap.to(".about-accent", {
+        rotate: 12,
+        duration: 20,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".about-circle", {
+        scale: 1.1,
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+    }, section);
   }
 
-  // Run on first load
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initAboutSection);
-  } else {
-    initAboutSection();
+  document.addEventListener("astro:page-load", initAboutSectionRedesign);
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    initAboutSectionRedesign();
   }
-
-  // Run on subsequent page navigations
-  document.addEventListener("astro:page-load", initAboutSection);
 </script>
+

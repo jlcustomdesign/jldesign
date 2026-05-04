@@ -2,6 +2,8 @@
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { SITE, absoluteUrl } from "../../config/site";
+import { BLOG_PAGE, BREADCRUMBS } from "../../config/content";
+import { preferWebp } from "../../utils/prefer-webp";
 
 // In server mode, we get the slug from the URL params
 const { slug } = Astro.params;
@@ -14,14 +16,9 @@ if (!post) {
 }
 
 const { Content } = await post.render();
+const coverImage = preferWebp(post.data.coverImage) || SITE.defaultOgImage;
 
-const categoryLabels: Record<string, string> = {
-  inspiratie: "Inspirație & Design",
-  ghid: "Ghid Practic",
-  materiale: "Materiale & Tehnologii",
-  proiecte: "Proiecte Finalizate",
-  noutati: "Noutăți",
-};
+const categoryLabels = BLOG_PAGE.categoryLabels;
 
 // Article JSON-LD schema for Google rich snippets
 const articleSchema = JSON.stringify({
@@ -29,9 +26,7 @@ const articleSchema = JSON.stringify({
   "@type": "Article",
   headline: post.data.title,
   description: post.data.description,
-  image: post.data.coverImage
-    ? absoluteUrl(post.data.coverImage)
-    : absoluteUrl(SITE.defaultOgImage),
+  image: absoluteUrl(coverImage),
   author: {
     "@type": "Organization",
     name: post.data.author || SITE.name,
@@ -67,11 +62,11 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
 <Layout
   title={`${post.data.title} | Blog ${SITE.name}`}
   description={post.data.description}
-  image={post.data.coverImage || SITE.defaultOgImage}
+  image={coverImage}
   type="article"
   breadcrumbs={[
-    { name: "Acasă", url: "/" },
-    { name: "Blog", url: "/blog" },
+    { name: BREADCRUMBS.home, url: "/" },
+    { name: BREADCRUMBS.blog, url: "/blog" },
     { name: post.data.title, url: `/blog/${post.slug}` },
   ]}
 >
@@ -87,7 +82,7 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
             href="/blog"
             class="text-xs font-bold uppercase tracking-widest text-accent hover:text-primary transition-colors"
           >
-            ← Blog
+            {BLOG_PAGE.backLink}
           </a>
           <span class="text-primary/20">|</span>
           <span
@@ -111,7 +106,7 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
         </p>
         <div class="flex items-center gap-4 text-sm text-primary/50">
           <span
-            >De <strong class="text-primary/70">{post.data.author}</strong
+            >{BLOG_PAGE.authorPrefix} <strong class="text-primary/70">{post.data.author}</strong
             ></span
           >
           <span>•</span>
@@ -121,10 +116,10 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
 
       <!-- Cover Image -->
       {
-        post.data.coverImage && (
+        coverImage && (
           <figure class="mb-12">
             <img
-              src={post.data.coverImage}
+              src={coverImage}
               alt={post.data.coverImageAlt}
               class="w-full rounded-2xl shadow-lg"
               loading="eager"
@@ -155,7 +150,7 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
           href="/blog"
           class="inline-flex items-center gap-2 text-accent font-medium hover:text-primary transition-colors"
         >
-          ← Înapoi la Blog
+          {BLOG_PAGE.backToList}
         </a>
       </div>
     </article>

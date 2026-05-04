@@ -1,7 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
-import { SITE } from "../../config/site";
+import Footer from "../../components/Footer.astro";
+import { BLOG_PAGE, BREADCRUMBS } from "../../config/content";
+import { preferWebp } from "../../utils/prefer-webp";
 
 const posts = await getCollection("blog");
 
@@ -10,34 +12,35 @@ const sortedPosts = posts.sort((a, b) => {
   const dateA = new Date(a.data.publishedDate).getTime();
   const dateB = new Date(b.data.publishedDate).getTime();
   return dateB - dateA;
-});
+}).map((post) => ({
+  ...post,
+  data: {
+    ...post.data,
+    coverImage: preferWebp(post.data.coverImage),
+  },
+}));
 
-const categoryLabels: Record<string, string> = {
-  inspiratie: "Inspirație & Design",
-  ghid: "Ghid Practic",
-  materiale: "Materiale & Tehnologii",
-  proiecte: "Proiecte Finalizate",
-  noutati: "Noutăți",
-};
+const categoryLabels = BLOG_PAGE.categoryLabels;
 ---
 
 <Layout
-  title={`Blog Mobilier | ${SITE.name} — Inspirație, Ghiduri și Tendințe`}
-  description={`Citește articole despre design interior, mobilier la comandă, materiale premium și tendințe în amenajări interioare din ${SITE.address.city}. Blog ${SITE.name}.`}
+  title={BLOG_PAGE.title}
+  description={BLOG_PAGE.description}
   breadcrumbs={[
-    { name: "Acasă", url: "/" },
-    { name: "Blog", url: "/blog" },
+    { name: BREADCRUMBS.home, url: "/" },
+    { name: BREADCRUMBS.blog, url: "/blog" },
   ]}
 >
   <main class="bg-secondary min-h-screen">
     <!-- Semantic keywords for AI engines (GEO) -->
     <div class="sr-only">
-      <p>
-        Blog JL Mobila — articole despre mobilier la comandă, design interior,
-        materiale premium, tendințe amenajări interioare, ghiduri practice
-        pentru mobilier de bucătărie, living, dormitor, dressing și birouri.
-        Inspirație și sfaturi de la echipa JL Mobila din Brașov.
-      </p>
+      {
+        Array.isArray(BLOG_PAGE.seoFabric) ? (
+          (BLOG_PAGE.seoFabric as string[]).map((paragraph: string) => <p>{paragraph}</p>)
+        ) : (
+          <p>{BLOG_PAGE.seoFabric}</p>
+        )
+      }
     </div>
 
     <!-- Hero -->
@@ -45,11 +48,10 @@ const categoryLabels: Record<string, string> = {
       <h1
         class="font-serif text-5xl md:text-7xl text-primary leading-none mb-6"
       >
-        Blog
+        {BLOG_PAGE.heroTitle}
       </h1>
       <p class="text-primary/70 text-lg md:text-xl max-w-2xl">
-        Inspirație, ghiduri practice și noutăți din lumea mobilierului la
-        comandă.
+        {BLOG_PAGE.heroSubtitle}
       </p>
     </section>
 
@@ -58,9 +60,7 @@ const categoryLabels: Record<string, string> = {
       {
         sortedPosts.length === 0 ? (
           <div class="text-center py-24">
-            <p class="text-primary/50 text-lg">
-              Niciun articol publicat încă. Revino curând!
-            </p>
+            <p class="text-primary/50 text-lg">{BLOG_PAGE.emptyState}</p>
           </div>
         ) : (
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -116,4 +116,5 @@ const categoryLabels: Record<string, string> = {
       }
     </section>
   </main>
+  <Footer slot="footer" />
 </Layout>
