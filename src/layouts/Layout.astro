@@ -125,7 +125,8 @@ const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=15" />
+    <link rel="icon" type="image/png" href="/favicon.png?v=15" />
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="index, follow" />
     <meta name="geo.region" content="RO-BV" />
@@ -184,7 +185,7 @@ const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
       type="font/ttf"
       crossorigin
     />
-    <link rel="preload" as="image" href="/Images/optimized/hero-image.webp" />
+    <link rel="preload" as="image" href="/Poze JL Custom Design - Site/LP/Hero/Desktop.webp" />
     <script is:inline>
       // Prevent scroll restoration (glitch prevention)
       if (history.scrollRestoration) {
@@ -218,12 +219,22 @@ const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
 
     <script>
       import { initSmoothScroll } from "../scripts/smooth-scroll";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
 
       // Optimization: Stagger initialization to avoid blocking Main Thread on load
       const init = () => {
         requestAnimationFrame(() => {
           setTimeout(() => {
             initSmoothScroll();
+            
+            // Fail-safe: Heartbeat refresh to handle any late-loading assets
+            // that might "trap" the scroll height
+            let refreshCount = 0;
+            const heartbeat = setInterval(() => {
+              ScrollTrigger.refresh();
+              refreshCount++;
+              if (refreshCount > 5) clearInterval(heartbeat);
+            }, 500);
           }, 100);
         });
       };

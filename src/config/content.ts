@@ -21,7 +21,7 @@ export const NAV = {
     { name: "Despre", href: "/about" },
     { name: "Servicii", href: "/services" },
     { name: "Portofoliu", href: "/portfolio" },
-    { name: "Contact", href: "/contact" },
+    { name: "Blog", href: "/blog" },
   ],
   ctaLabel: "CONTACT",
   openMenuAria: "Deschide meniu",
@@ -85,49 +85,49 @@ export const SERVICES_SECTION = {
       id: "bucatarii",
       title: "Bucătării",
       desc: "Bucătării realizate la comandă, proiectate în funcție de spațiul disponibil și de modul de utilizare. Configurația mobilierului ține cont de poziționarea electrocasnicelor, zonele de lucru și accesul la spațiile de depozitare.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-01.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Bucatarii.webp",
     },
     {
       id: "dressing",
       title: "Dressing",
       desc: "Sisteme de depozitare adaptate spațiului disponibil. Compartimentarea este stabilită în funcție de tipurile de obiecte depozitate: haine, încălțăminte, accesorii sau bagaje.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-11.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Dressing.webp",
     },
     {
       id: "dormitor",
       title: "Dormitor",
       desc: "Mobilier pentru dormitor realizat la comandă: paturi, noptiere, comode sau dulapuri. Dimensiunile și compartimentarea sunt adaptate spațiului și modului de utilizare.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-25.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Dormitor.webp",
     },
     {
       id: "living",
       title: "Living / Library",
       desc: "Mobilier pentru zona de living sau bibliotecă, configurat pentru integrarea echipamentelor media, rafturilor și spațiilor de depozitare. Dimensiunile și compartimentarea sunt adaptate spațiului camerei.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-14.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Living.webp",
     },
     {
       id: "baie",
       title: "Mobilier pentru Baie",
       desc: "Corpuri de mobilier proiectate pentru spații cu umiditate ridicată, cu materiale și sisteme de prindere adecvate. Configurația ține cont de poziția instalațiilor sanitare și de spațiul disponibil.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-18.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Baie.webp",
     },
     {
       id: "hol",
       title: "Hol",
       desc: "Mobilier pentru zona de intrare: dulapuri, pantofare, băncuțe sau panouri cuier. Configurația este adaptată spațiului disponibil și necesarului de depozitare.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-06.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Hol.webp",
     },
     {
       id: "office",
       title: "Office",
       desc: "Mobilier pentru birouri, spații de lucru sau zone de recepție. Proiectele sunt orientate către organizarea documentelor, integrarea echipamentelor și utilizarea eficientă a spațiului.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-24.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Birou director.webp",
     },
     {
       id: "horeca",
       title: "HoReCa",
       desc: "Mobilier pentru pensiuni, hoteluri, cafenele sau restaurante. Soluțiile sunt adaptate utilizării frecvente și configurate în funcție de tipul spațiului: camere de cazare, zone de servire sau recepție.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-30.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Horeca.webp",
     },
   ],
   navPrevAria: "Previous",
@@ -144,14 +144,14 @@ export const PORTFOLIO_SECTION = {
   title: "Portofoliu selectiv → Poze",
   /** These are example/placeholder projects for the home page grid */
   projects: [
-    { name: "Apartament Băneasa", material: "Nuc American", image: "/Images/optimized/Proiecte-JL-Custom-Design-03.webp" },
-    { name: "Villa Pipera", material: "Stejar Masiv", image: "/Images/optimized/Proiecte-JL-Custom-Design-05.webp" },
-    { name: "Penthouse Herăstrău", material: "MDF Vopsit & Marmură", image: "/Images/optimized/Proiecte-JL-Custom-Design-08.webp" },
-    { name: "Loft Timpuri Noi", material: "Metal & Lemn Recuperat", image: "/Images/optimized/Proiecte-JL-Custom-Design-10.webp" },
-    { name: "Brașov Residence", material: "Furnir Eucalipt", image: "/Images/optimized/Proiecte-JL-Custom-Design-25.webp" },
-    { name: "Office Space Unirii", material: "Sticlă & Oțel", image: "/Images/optimized/Proiecte-JL-Custom-Design-24.webp" },
-    { name: "Duplex Primăverii", material: "Marmură Carrara", image: "/Images/optimized/Proiecte-JL-Custom-Design-27.webp" },
-    { name: "Showroom Victoriei", material: "Compozit & Velvet", image: "/Images/optimized/Proiecte-JL-Custom-Design-30.webp" },
+    { name: "Apartament Băneasa", material: "Nuc American", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
+    { name: "Villa Pipera", material: "Stejar Masiv", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 2.webp" },
+    { name: "Penthouse Herăstrău", material: "MDF Vopsit & Marmură", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
+    { name: "Loft Timpuri Noi", material: "Metal & Lemn Recuperat", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 4.webp" },
+    { name: "Brașov Residence", material: "Furnir Eucalipt", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 5.webp" },
+    { name: "Office Space Unirii", material: "Sticlă & Oțel", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 6.webp" },
+    { name: "Duplex Primăverii", material: "Marmură Carrara", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 7.webp" },
+    { name: "Showroom Victoriei", material: "Compozit & Velvet", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 8.webp" },
   ],
 };
 
@@ -166,25 +166,25 @@ export const PROCESS = {
       step: "01",
       title: "Consultanță și măsurători",
       desc: "Fiecare proiect începe cu o întâlnire unde ascultăm cu atenție dorințele și nevoile tale, identificând cerințele și realizând măsurătorile necesare.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-06.webp",
+      img: "/Poze JL Custom Design - Site/LP/Proces/masuratori.webp",
     },
     {
       step: "02",
       title: "Proiectare tehnică și randări",
       desc: "Creăm designul proiectului și modelarea 3D, oferind o viziune clară și randări fotorealiste ale rezultatului final înainte de execuție.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-09.webp",
+      img: "/Poze JL Custom Design - Site/LP/Proces/desen tehnic.webp",
     },
     {
       step: "03",
       title: "Producție",
       desc: "Materialele sunt pregătite cu precizie în atelierul nostru, respectând cele mai înalte standarde de calitate și atenție la detalii.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-04.webp",
+      img: "/Poze JL Custom Design - Site/LP/Proces/Decupare.webp",
     },
     {
       step: "04",
       title: "Livrare și montaj",
       desc: "Finalizăm proiectul cu o instalare profesionistă, garantând satisfacția deplină și transformând spațiul tău într-o operă de artă.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-02.webp",
+      img: "/Poze JL Custom Design - Site/LP/Proces/Montaj.webp",
     },
   ],
 };
@@ -351,7 +351,7 @@ export const SERVICES_PAGE = {
       desc: "Realizăm mobilier la comandă din PAL, MDF, lemn masiv și alte materiale complementare, adaptat perfect spațiului și nevoilor fiecărui client.",
       backDesc:
         "Creăm mobilier pentru locuințe, birouri, spații comerciale sau HoReCa, fiecare proiect fiind gândit astfel încât să îmbine funcționalitatea cu estetica.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-03.webp",
+      img: "/Poze JL Custom Design - Site/Services/Mobilier Personalizat.webp",
     },
     {
       id: "proiectare-3d",
@@ -359,7 +359,7 @@ export const SERVICES_PAGE = {
       desc: "Fiecare piesă de mobilier este proiectată în programe de modelare 3D.",
       backDesc:
         "Acest proces ne permite să analizăm detaliile tehnice înainte de execuție și oferă clientului o imagine clară asupra modului în care va fi construit mobilierul.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-09.webp",
+      img: "/Poze JL Custom Design - Site/Services/Proiectare.webp",
     },
     {
       id: "randari-virtuale",
@@ -367,7 +367,7 @@ export const SERVICES_PAGE = {
       desc: "Prin randări fotorealiste, clientul poate vedea încă din faza de proiect cum va arăta spațiul final.",
       backDesc:
         "Aceste vizualizări prezintă atât aspectul arhitectural al mobilierului, cât și combinațiile cromatice, materialele și atmosfera generală a încăperii.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-27.webp",
+      img: "/Poze JL Custom Design - Site/Services/Randare 3d.webp",
     },
     {
       id: "consultanta-tehnica",
@@ -375,7 +375,7 @@ export const SERVICES_PAGE = {
       desc: "Un proiect reușit începe cu o înțelegere corectă a modului în care va fi folosit spațiul.",
       backDesc:
         "Discutăm cu fiecare client pentru a identifica nevoile reale și pentru a crea soluții practice – de la organizarea bucătăriei și poziționarea electrocasnicelor, până la optimizarea fluxului de lucru.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-06.webp",
+      img: "/Poze JL Custom Design - Site/Services/Consultare.webp",
     },
     {
       id: "design-concept",
@@ -383,7 +383,7 @@ export const SERVICES_PAGE = {
       desc: "Venim cu propuneri de design care îmbină formele, materialele și culorile.",
       backDesc:
         "Scopul nostru este să creăm mobilier care nu doar completează spațiul, ci contribuie la personalitatea și atmosfera întregului interior.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-05.webp",
+      img: "/Poze JL Custom Design - Site/Services/Design & Concept.webp",
     },
   ],
 
@@ -395,7 +395,7 @@ export const SERVICES_PAGE = {
       desc: "Bucătării realizate la comandă, proiectate în funcție de spațiul disponibil și de modul de utilizare.",
       backDesc:
         "Configurația mobilierului ține cont de poziționarea electrocasnicelor, zonele de lucru și accesul la spațiile de depozitare. Oferim soluții complete de design și execuție.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-01.webp",
+      img: "/Poze JL Custom Design - Site/Services/Bucatarii.webp",
     },
     {
       id: "dressing",
@@ -403,7 +403,7 @@ export const SERVICES_PAGE = {
       desc: "Sisteme de depozitare adaptate spațiului disponibil și nevoilor tale.",
       backDesc:
         "Compartimentarea este stabilită în funcție de tipurile de obiecte depozitate: haine, încălțăminte, accesorii sau bagaje. Organizare eficientă pentru un stil de viață ordonat.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-11.webp",
+      img: "/Poze JL Custom Design - Site/Services/Dressing.webp",
     },
     {
       id: "dormitor",
@@ -411,7 +411,7 @@ export const SERVICES_PAGE = {
       desc: "Mobilier pentru dormitor realizat la comandă: paturi, noptiere, comode sau dulapuri.",
       backDesc:
         "Dimensiunile și compartimentarea sunt adaptate spațiului și modului de utilizare, asigurând un ambient relaxant și funcțional.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-25.webp",
+      img: "/Poze JL Custom Design - Site/Services/Dormitor.webp",
     },
     {
       id: "living",
@@ -419,7 +419,7 @@ export const SERVICES_PAGE = {
       desc: "Mobilier pentru zona de living sau bibliotecă, configurat pentru integrarea echipamentelor media.",
       backDesc:
         "Sisteme de rafturi și spații de depozitare proiectate milimetric. Dimensiunile și compartimentarea sunt adaptate spațiului camerei.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-14.webp",
+      img: "/Poze JL Custom Design - Site/Services/Living.webp",
     },
     {
       id: "bathroom",
@@ -427,7 +427,7 @@ export const SERVICES_PAGE = {
       desc: "Corpuri de mobilier proiectate pentru spații cu umiditate ridicată.",
       backDesc:
         "Utilizăm materiale și sisteme de prindere adecvate. Configurația ține cont de poziția instalațiilor sanitare și de spațiul disponibil.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-18.webp",
+      img: "/Poze JL Custom Design - Site/Services/Baie.webp",
     },
     {
       id: "hol",
@@ -435,7 +435,7 @@ export const SERVICES_PAGE = {
       desc: "Mobilier pentru zona de intrare: dulapuri, pantofare, băncuțe sau panouri cuier.",
       backDesc:
         "Configurația este adaptată spațiului disponibil și necesarului de depozitare, oferind o primă impresie excelentă.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-06.webp",
+      img: "/Poze JL Custom Design - Site/Services/Hol.webp",
     },
     {
       id: "office",
@@ -443,7 +443,7 @@ export const SERVICES_PAGE = {
       desc: "Mobilier pentru birouri, spații de lucru sau zone de recepție.",
       backDesc:
         "Proiectele sunt orientate către organizarea documentelor, integrarea echipamentelor și utilizarea eficientă a spațiului de lucru.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-24.webp",
+      img: "/Poze JL Custom Design - Site/Services/Birou director.webp",
     },
     {
       id: "horeca",
@@ -451,7 +451,7 @@ export const SERVICES_PAGE = {
       desc: "Mobilier pentru pensiuni, hoteluri, cafenele sau restaurante.",
       backDesc:
         "Soluțiile sunt adaptate utilizării frecvente și configurate în funcție de tipul spațiului: camere de cazare, zone de servire sau recepție.",
-      img: "/Images/optimized/Proiecte-JL-Custom-Design-30.webp",
+      img: "/Poze JL Custom Design - Site/Services/Horeca.webp",
     },
   ],
 

@@ -20,7 +20,7 @@ const sortedPosts = posts.sort((a, b) => {
   },
 }));
 
-const categoryLabels = BLOG_PAGE.categoryLabels;
+const categoryLabels = BLOG_PAGE.categoryLabels as Record<string, string>;
 ---
 
 <Layout

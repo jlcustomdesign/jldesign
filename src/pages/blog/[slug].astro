@@ -18,7 +18,7 @@ if (!post) {
 const { Content } = await post.render();
 const coverImage = preferWebp(post.data.coverImage) || SITE.defaultOgImage;
 
-const categoryLabels = BLOG_PAGE.categoryLabels;
+const categoryLabels = BLOG_PAGE.categoryLabels as Record<string, string>;
 
 // Article JSON-LD schema for Google rich snippets
 const articleSchema = JSON.stringify({

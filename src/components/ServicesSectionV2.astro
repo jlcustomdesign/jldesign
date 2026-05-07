@@ -53,7 +53,7 @@ const services = SERVICES_SECTION.cards;
       {
         services.map((service, i) => (
           <div
-            class="service-card w-[85vw] md:w-[45vw] lg:w-[27%] h-[500px] rounded-2xl relative group flex-shrink-0 perspective-[1000px] bg-transparent shadow-none snap-start"
+            class="service-card w-[85vw] md:w-[45vw] lg:w-[27%] aspect-[3/4] h-auto rounded-2xl relative group flex-shrink-0 perspective-[1000px] bg-transparent shadow-none snap-start"
             data-index={i}
           >
             <!-- Inner Card (Flippable) -->
@@ -354,12 +354,39 @@ const services = SERVICES_SECTION.cards;
         });
     });
 
-    // Note: Touch swipe support is now handled flawlessly by CSS scroll-snap intrinsically.
+    // --- REFRESH ON IMAGE LOAD ---
+    // This prevents "blocking" glitches when images load after ScrollSmoother has initialized
+    const carouselImages = carousel.querySelectorAll('img');
+    let loadedCount = 0;
+    carouselImages.forEach(img => {
+      if (img.complete) {
+        loadedCount++;
+      } else {
+        img.addEventListener('load', () => {
+          loadedCount++;
+          if (loadedCount === carouselImages.length) {
+            ScrollTrigger.refresh();
+          }
+        }, { once: true });
+      }
+    });
+    
+    if (loadedCount === carouselImages.length) {
+      ScrollTrigger.refresh();
+    }
   }
 
   // Run on load and Astro transitions
-  if (document.readyState !== "loading") initServicesCarousel();
-  else document.addEventListener("DOMContentLoaded", initServicesCarousel);
+  // Use a singleton approach to prevent double-init
+  let isInit = false;
+  const runInit = () => {
+    if (isInit) return;
+    isInit = true;
+    initServicesCarousel();
+  };
 
-  document.addEventListener("astro:page-load", initServicesCarousel);
+  if (document.readyState !== "loading") runInit();
+  else document.addEventListener("DOMContentLoaded", runInit);
+
+  document.addEventListener("astro:page-load", runInit);
 </script>

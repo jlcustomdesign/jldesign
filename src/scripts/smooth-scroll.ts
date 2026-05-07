@@ -31,9 +31,10 @@ export function initSmoothScroll() {
   const smoother = ScrollSmoother.create({
     wrapper: "#smooth-wrapper",
     content: "#smooth-content",
-    smooth: 1.5, // Reduced from 2 for better performance
+    smooth: 2.0, // Increased for a more luxurious feel (was 1.5)
     effects: true, 
     smoothTouch: false, // Disabled for performance
+    normalizeScroll: true, // Force consistent scroll physics across devices
   });
 
   /* @ts-ignore */

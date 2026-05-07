@@ -35,9 +35,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none;
 }
 
-/* Root background transparent so Safari bar has nothing to tint */
+/* Root background matches brand cream for perfect section blending */
 html, body {
-  background-color: transparent;
+  background-color: var(--color-secondary);
   margin: 0;
   padding: 0;
 }
