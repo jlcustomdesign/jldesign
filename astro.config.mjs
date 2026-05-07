@@ -10,7 +10,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://jl-design.vercel.app',
+  site: 'https://jlmobila.ro', // Updated to custom domain
   output: 'server',
   adapter: vercel(),
   integrations: [
