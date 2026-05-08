@@ -19,8 +19,8 @@ const PUBLIC_DIR = join(__dirname, '..', 'public');
 
 // --- Config ---
 const NON_WEBP_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.bmp', '.tiff']);
-const QUALITY = 75;            // WebP quality (slightly more aggressive for perf)
-const MAX_DIMENSION = 1600;    // Max width OR height — covers 2× retina at ~800px display
+const QUALITY = 85;            // High fidelity
+const MAX_DIMENSION = 2560;    // 2K/QHD support for hero sections
 
 const RESIZE_EXISTING = process.argv.includes('--resize-existing');
 
