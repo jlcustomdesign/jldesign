@@ -147,8 +147,8 @@ const services = [
     // if (window.innerWidth < 1024) return; // Removed to enable mobile scroll
 
     const wrapper = document.querySelector("#services-fullscreen-wrapper");
-    const bgs = gsap.utils.toArray(".service-bg") as HTMLElement[];
-    const contents = gsap.utils.toArray(".service-content") as HTMLElement[];
+    const bgs = gsap.utils.toArray(".service-bg", wrapper) as HTMLElement[];
+    const contents = gsap.utils.toArray(".service-content", wrapper) as HTMLElement[];
     const skipBtn = document.querySelector("#skip-btn") as HTMLElement;
     const skipArrow = document.querySelector("#skip-arrow") as HTMLElement;
 
@@ -356,8 +356,8 @@ const services = [
         const st = ScrollTrigger.getById("services-pin");
         if (st) {
           gsap.to(window, {
-            scrollTo: st.end + 100,
-            duration: 0.5,
+            scrollTo: st.end + 1,
+            duration: 0.1,
             overwrite: true,
           });
         }
@@ -385,25 +385,15 @@ const services = [
 
     intentObserver = Observer.create({
       target: wrapper,
-      type: "wheel,touch,pointer",
-      tolerance: isMobile ? 50 : 10, // Higher tolerance for mobile touch
+      type: "wheel,touch", // Removed 'pointer' to avoid conflict with clicks
+      tolerance: isMobile ? 40 : 5, // Lowered tolerance for more sensitive desktop scrolling
       onUp: () => {
-        // Desktop: scroll wheel up = previous slide
-        // Mobile: swipe up = next slide (inverted)
-        if (isMobile) {
-          goNext();
-        } else {
-          goPrev();
-        }
+        if (isMobile) goNext();
+        else goPrev();
       },
       onDown: () => {
-        // Desktop: scroll wheel down = next slide
-        // Mobile: swipe down = previous slide (inverted)
-        if (isMobile) {
-          goPrev();
-        } else {
-          goNext();
-        }
+        if (isMobile) goPrev();
+        else goNext();
       },
       preventDefault: true,
     });
