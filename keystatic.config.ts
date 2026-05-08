@@ -63,23 +63,12 @@ export default config({
         name: fields.slug({ 
           name: { 
             label: 'Nume Proiect',
-            description: 'Numele proiectului care va apărea pe site'
+            description: 'Numele care va apărea pe site'
           } 
-        }),
-        material: fields.text({ 
-          label: 'Material',
-          description: 'Ex: Lemn masiv de stejar, PAL melaminat, etc.',
-          validation: { isRequired: false }
-        }),
-        image: fields.image({
-          label: 'Imagine Proiect',
-          description: 'Fotografia principală a proiectului',
-          directory: 'public/assets/portfolio',
-          publicPath: '/assets/portfolio/',
         }),
         category: fields.select({
             label: 'Categorie',
-            description: 'Categoria din care face parte proiectul',
+            description: 'Alege camera sau tipul de spațiu',
             options: [
                 { label: 'Living', value: 'Living' },
                 { label: 'Dormitor', value: 'Dormitor' },
@@ -92,9 +81,21 @@ export default config({
             ],
             defaultValue: 'Altele',
         }),
+        image: fields.image({
+          label: 'Imagine Principală',
+          description: 'Fotografia premium a proiectului',
+          directory: 'public/assets/portfolio',
+          publicPath: '/assets/portfolio/',
+          validation: { isRequired: true },
+        }),
+        material: fields.text({ 
+          label: 'Materiale folosite',
+          description: 'Ex: MDF Vopsit, Stejar Masiv, etc.',
+          validation: { isRequired: false }
+        }),
         content: fields.markdoc({
-          label: 'Descriere',
-          description: 'Detalii despre proiect (opțional)',
+          label: 'Descriere Proiect',
+          description: 'Povestea din spatele designului (opțional)',
         }),
       },
     }),
@@ -109,50 +110,64 @@ export default config({
         title: fields.slug({
           name: {
             label: 'Titlu Articol',
-            description: 'Titlul care va apărea pe site și în motoarele de căutare',
+            description: 'Un titlu atractiv pentru cititori',
           },
         }),
-        description: fields.text({
-          label: 'Descriere SEO',
-          description: 'Meta description (150-160 caractere) — apare în rezultatele Google',
-          multiline: true,
-          validation: { isRequired: true },
+        info: fields.object({
+          publishedDate: fields.date({
+            label: 'Data Publicării',
+            validation: { isRequired: true },
+          }),
+          category: fields.select({
+            label: 'Categorie',
+            options: [
+              { label: 'Inspirație & Design', value: 'inspiratie' },
+              { label: 'Ghid Practic', value: 'ghid' },
+              { label: 'Materiale & Tehnologii', value: 'materiale' },
+              { label: 'Proiecte Finalizate', value: 'proiecte' },
+              { label: 'Noutăți', value: 'noutati' },
+            ],
+            defaultValue: 'inspiratie',
+          }),
+          author: fields.text({
+            label: 'Autor',
+            defaultValue: 'JL Mobila',
+          }),
+        }, {
+          label: 'Informații Articol',
+          description: 'Detalii administrative',
         }),
-        coverImage: fields.image({
-          label: 'Imagine de Copertă',
-          description: 'Imaginea principală a articolului (recomandată: 1200x630px)',
-          directory: 'public/assets/blog',
-          publicPath: '/assets/blog/',
-          validation: { isRequired: true },
+        seo: fields.object({
+          description: fields.text({
+            label: 'Descriere SEO (Meta)',
+            description: 'Descrierea care apare în Google (max 160 caractere)',
+            multiline: true,
+            validation: { isRequired: true },
+          }),
+        }, {
+          label: 'SEO',
+          description: 'Optimizare pentru motoarele de căutare',
         }),
-        coverImageAlt: fields.text({
-          label: 'Text Alternativ Imagine (Alt)',
-          description: 'Descriere pentru Google Images — ex: "Bucătărie modernă MDF vopsit mat alb"',
-          validation: { isRequired: true },
-        }),
-        category: fields.select({
-          label: 'Categorie',
-          options: [
-            { label: 'Inspirație & Design', value: 'inspiratie' },
-            { label: 'Ghid Practic', value: 'ghid' },
-            { label: 'Materiale & Tehnologii', value: 'materiale' },
-            { label: 'Proiecte Finalizate', value: 'proiecte' },
-            { label: 'Noutăți', value: 'noutati' },
-          ],
-          defaultValue: 'inspiratie',
-        }),
-        author: fields.text({
-          label: 'Autor',
-          defaultValue: 'JL Mobila',
-        }),
-        publishedDate: fields.date({
-          label: 'Data Publicării',
-          description: 'Data publicării articolului',
-          validation: { isRequired: true },
+        media: fields.object({
+          coverImage: fields.image({
+            label: 'Imagine de Copertă',
+            description: 'Imaginea care va apărea în previzualizare',
+            directory: 'public/assets/blog',
+            publicPath: '/assets/blog/',
+            validation: { isRequired: true },
+          }),
+          coverImageAlt: fields.text({
+            label: 'Text Alternativ (SEO)',
+            description: 'Descrie ce apare în imagine pentru Google',
+            validation: { isRequired: true },
+          }),
+        }, {
+          label: 'Media',
+          description: 'Elemente vizuale',
         }),
         content: fields.markdoc({
           label: 'Conținut Articol',
-          description: 'Conținutul complet al articolului',
+          description: 'Scrie aici povestea articolului tău',
         }),
       },
     }),
