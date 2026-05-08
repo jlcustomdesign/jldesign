@@ -23,10 +23,15 @@ export const MOBILE_RESOLUTION  = { width: 1020, height: 882 } as const;
 function getScalers(w: number, h: number) {
   const isDesktop = w > WIDTH_TARGET;
   const ref = isDesktop ? DESKTOP_RESOLUTION : MOBILE_RESOLUTION;
+  
+  // For ultra-wide/short screens (like Windows with taskbars), we want to cap the height scaling
+  // so the elements don't get vertically squashed too aggressively.
+  const hScale = Math.max(h, isDesktop ? 680 : 600);
+  
   return {
     isDesktop,
     rw: (val: number) => (val / ref.width) * w,
-    rh: (val: number) => (val / ref.height) * h,
+    rh: (val: number) => (val / ref.height) * hScale,
   };
 }
 

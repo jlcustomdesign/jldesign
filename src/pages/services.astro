@@ -17,7 +17,7 @@ import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
 >
   <div
     id="services-hero-section"
-    class="relative w-full h-[100svh] lg:h-screen overflow-hidden bg-secondary"
+    class="relative w-full h-[100svh] lg:h-screen min-h-[680px] overflow-hidden bg-secondary"
   >
     <!-- Answer-first summary + semantic keywords for AI engines (AEO/GEO) -->
     <div class="sr-only">
@@ -33,32 +33,32 @@ import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
         <div class="hidden md:block" aria-hidden="true">
           <!-- Text for Cutout 1: SERVICIILE -->
           <div
-            class="absolute left-[4%] top-[16%] -translate-y-1/2 overflow-hidden"
+            class="absolute left-[4%] top-[17vh] -translate-y-1/2 overflow-hidden"
           >
             <div
-              class="font-serif text-[clamp(2.5rem,5.5vw,7rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
+              class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
             >
               {SERVICES_PAGE.heroDesktopLines[0]}
             </div>
           </div>
-
+ 
           <!-- Text for Cutout 2: PE CARE NOI -->
           <div
-            class="absolute left-[4%] top-[36%] -translate-y-1/2 overflow-hidden"
+            class="absolute left-[4%] top-[37vh] -translate-y-1/2 overflow-hidden"
           >
             <div
-              class="font-serif text-[clamp(2.5rem,5.5vw,7rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
+              class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
             >
               {SERVICES_PAGE.heroDesktopLines[1]}
             </div>
           </div>
-
+ 
           <!-- Text for Cutout 3: LE OFERIM -->
           <div
-            class="absolute left-[4%] top-[56%] -translate-y-1/2 overflow-hidden"
+            class="absolute left-[4%] top-[57vh] -translate-y-1/2 overflow-hidden"
           >
             <div
-              class="font-serif text-[clamp(2.5rem,5.5vw,7rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
+              class="font-serif text-[clamp(3.5rem,7vw,8rem)] leading-none text-primary uppercase whitespace-nowrap pl-4 desktop-headline-text opacity-0"
             >
               {SERVICES_PAGE.heroDesktopLines[2]}
             </div>
@@ -66,7 +66,7 @@ import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
         </div>
       </div>
     </div>
-
+ 
     <!-- SVG Background Container -->
     <div
       class="absolute inset-0 w-full h-full flex justify-center items-center pointer-events-none"
@@ -85,7 +85,7 @@ import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
             <path id="servicesHeroPath" d=""></path>
           </clipPath>
         </defs>
-
+ 
         <image
           href="/Poze JL Custom Design - Site/Services/Hero.webp"
           x="0"
@@ -97,7 +97,7 @@ import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
         />
       </svg>
     </div>
-
+ 
     <!-- Overlay: Right Text (Hidden on Mobile) -->
     <!-- MOBILE TEXT (Moved here for Z-Index/Visibility) -->
     <div
@@ -113,7 +113,7 @@ import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
           ))
         }
       </div>
-
+ 
       <!-- Bottom Content Group -->
       <div class="flex flex-col items-start gap-8">
         <p
@@ -131,10 +131,10 @@ import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
         </div>
       </div>
     </div>
-
+ 
     <!-- Overlay: Bottom-Right Content Card (Hidden on Mobile) -->
     <div
-      class="hidden md:block absolute bottom-[12%] 2xl:bottom-[15%] right-[4%] xl:right-[10%] 2xl:right-[15%] w-96 2xl:w-[32rem] bg-white rounded-3xl p-8 2xl:p-10 shadow-2xl z-20 pointer-events-auto opacity-0 hero-overlay-element"
+      class="hidden md:block absolute bottom-[10vh] 2xl:bottom-[15vh] right-[4%] xl:right-[10%] 2xl:right-[15%] w-96 2xl:w-[32rem] bg-white rounded-3xl p-8 2xl:p-10 shadow-2xl z-20 pointer-events-auto opacity-0 hero-overlay-element"
     >
       <h3
         class="text-primary font-serif text-lg md:text-xl 2xl:text-3xl font-normal leading-relaxed mb-8"

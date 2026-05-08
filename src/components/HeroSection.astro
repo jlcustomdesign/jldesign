@@ -79,7 +79,7 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
 
     <!-- CTA Buttons (Centered low on mobile, Higher on tablet, Cutout on large desktop) -->
     <div
-      class="absolute bottom-[40px] left-1/2 -translate-x-1/2 z-20 w-fit md:bottom-[144px] md:translate-y-1/2 xl:bottom-[72px] xl:left-[38.3%] xl:translate-y-1/2"
+      class="absolute bottom-[5vh] left-1/2 -translate-x-1/2 z-20 w-fit md:bottom-[15.7vh] md:translate-y-1/2 xl:bottom-[7.8vh] xl:left-[38.3%] xl:translate-y-1/2"
     >
       <div class="hero-cta flex flex-col xl:flex-row gap-4">
         <BubbleButton
@@ -100,15 +100,12 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
       </div>
     </div>
 
-    <!-- Quality Badge / Corner Text (Bottom Right Void) -->
-    <!-- REMOVED as per request -->
-
     <!-- Top Left Copy (Cutout) -->
     <div
-      class="absolute top-[8%] left-[8%] -translate-x-1/2 -translate-y-1/2 z-20 hidden xl:block whitespace-nowrap"
+      class="absolute top-[7.8vh] left-[12.43%] -translate-x-1/2 -translate-y-1/2 z-20 hidden xl:block whitespace-nowrap"
     >
       <span
-        class="text-[clamp(1rem,1.5vw,2.25rem)] font-serif font-black tracking-widest uppercase text-[#1A1A1A] opacity-0 invisible hero-top-left"
+        class="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-serif font-black tracking-widest uppercase text-[#1A1A1A] opacity-0 invisible hero-top-left"
       >
         {HERO.topLeftBrand}
       </span>
@@ -116,19 +113,19 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
 
     <!-- Top Right Button (Cutout) -->
     <div
-      class="absolute top-[8%] right-[8%] translate-x-1/2 -translate-y-1/2 z-20 hidden xl:block"
+      class="absolute top-[7.8vh] right-[12.43%] translate-x-1/2 -translate-y-1/2 z-20 hidden xl:block"
     >
       <a
         href="/contact"
-        class="group flex items-center gap-2 xl:gap-3 opacity-0 invisible hero-top-right"
+        class="group flex items-center gap-3 xl:gap-4 opacity-0 invisible hero-top-right"
       >
         <div
-          class="bg-transparent text-black border border-black px-4 py-2 xl:px-6 xl:py-3 rounded-full text-[10px] xl:text-xs font-extrabold uppercase tracking-wider transition-all duration-300 group-hover:bg-black group-hover:text-white group-hover:scale-105 shadow-none hover:shadow-xl"
+          class="bg-transparent text-black border border-black px-6 py-3 xl:px-8 xl:py-4 rounded-full text-xs xl:text-sm font-extrabold uppercase tracking-wider transition-all duration-300 group-hover:bg-black group-hover:text-white group-hover:scale-105 shadow-none hover:shadow-xl"
         >
           {HERO.topRightCta}
         </div>
         <div
-          class="w-10 h-10 xl:w-12 xl:h-12 bg-transparent text-black border border-black rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-black group-hover:text-white shadow-none hover:shadow-xl"
+          class="w-12 h-12 xl:w-14 xl:h-14 bg-transparent text-black border border-black rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-black group-hover:text-white shadow-none hover:shadow-xl"
         >
           <svg
             width="18"
