@@ -132,13 +132,10 @@
 }
 
 .osmo__growing-image-wrap {
-  width: 100vw;
-  min-width: 100vw; /* Ensure no margin on sides */
-  height: 100vh; /* Full viewport height to prevent crop shifting */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Keeps image locked in center during mask expansion */
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .osmo__cover-image, .osmo__cover-image-extra {
@@ -276,12 +273,16 @@
     }
 
     if (growingImage.length) {
-      tl.fromTo(growingImage, {
-        width: "0%",
+      gsap.set(growingImage, { width: "100%" }); // Keep image filled in box
+    }
+
+    if (box.length) {
+      tl.fromTo(box, {
+        width: "0em",
       },{
-        width: "100%",
+        width: "1em",
         duration: 1.25
-      }, "<");
+      }, "< 1.25");
     }
     
     if (headingStart.length) {
@@ -313,19 +314,12 @@
       }, "-=0.05");
     }
       
-    if (growingImage.length) {
-      tl.to(growingImage, {
+    if (box.length) {
+      tl.to(box, {
         width: "100vw",
         height: "100dvh",
         duration: 2
       }, "< 1.25");
-    }
-    
-    if (box.length) {
-      tl.to(box, {
-        width: "110vw",
-        duration: 2
-      }, "<");
     }
     
     if (headerLetter.length) {
