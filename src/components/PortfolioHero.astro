@@ -129,16 +129,13 @@
   display: flex;
   position: absolute;
   overflow: hidden;
+  border-radius: 1rem; /* Rounded corners for the growing box */
 }
 
 .osmo__growing-image-wrap {
-  width: 100vw;
-  min-width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .osmo__cover-image, .osmo__cover-image-extra {
@@ -283,15 +280,6 @@
         duration: 1.25
       }, "<");
     }
-
-    if (box.length) {
-      tl.fromTo(box, {
-        width: "0em",
-      },{
-        width: "1em",
-        duration: 1.25
-      }, "< 1.25");
-    }
     
     if (headingStart.length) {
       tl.fromTo(headingStart, {
@@ -325,14 +313,15 @@
     if (growingImage.length) {
       tl.to(growingImage, {
         width: "100vw",
-        height: "100dvh",
+        height: "100vh",
+        borderRadius: "0rem", // Flatten corners as it fills screen
         duration: 2
       }, "< 1.25");
     }
     
     if (box.length) {
       tl.to(box, {
-        width: "110vw",
+        width: "100vw",
         duration: 2
       }, "<");
     }
