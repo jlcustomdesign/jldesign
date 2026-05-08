@@ -190,8 +190,9 @@ const services = SERVICES_SECTION.cards;
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { Draggable } from "gsap/Draggable";
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, Draggable);
 
   function initServicesCarousel() {
     const section = document.querySelector("#services-section");
@@ -267,6 +268,29 @@ const services = SERVICES_SECTION.cards;
         }
       });
       */
+
+    // --- DRAGGABLE LOGIC ---
+    Draggable.create(carousel, {
+      type: "scrollLeft",
+      edgeResistance: 0.65,
+      // On desktop, we want a grab cursor
+      cursor: "grab",
+      activeCursor: "grabbing",
+      onDragStart: function() {
+        // Disable snap and smooth scroll during drag to prevent jitter
+        carousel.style.scrollSnapType = "none";
+        carousel.classList.remove("scroll-smooth");
+      },
+      onDragEnd: function() {
+        // Re-enable snap and smooth scroll
+        carousel.style.scrollSnapType = "x mandatory";
+        carousel.classList.add("scroll-smooth");
+        
+        // Final button update
+        updateButtons();
+      },
+      onScroll: updateButtons
+    });
 
     }, section);
 
