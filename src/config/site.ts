@@ -53,8 +53,8 @@ export const SITE = {
     // "https://wa.me/40700000000",
   ],
 
-  /** Google Tag Manager Container ID — replace with your real GTM-XXXXXXX */
-  gtmId: "GTM-XXXXXXX",
+  /** Google Analytics ID (GA4) — e.g., G-XXXXXXXXXX */
+  gaId: "G-37EMRHJ958",
 
   /** Bing Webmaster Tools Verification Code (optional, used for meta tag) */
   bingVerification: "", // ← Replace with your actual Bing Webmaster code (e.g., "ABCD1234EFGH5678")

@@ -115,9 +115,6 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
   })),
 }) : null;
 
-// GTM
-const GTM_ID = SITE.gtmId;
-const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
 ---
 
 <!doctype html>
@@ -138,16 +135,14 @@ const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
       <meta name="msvalidate.01" content={SITE.bingVerification} />
     )}
 
-    {/* Google Tag Manager — head script */}
-    {hasGTM && (
-      <script is:inline define:vars={{ GTM_ID }}>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer',GTM_ID);
-      </script>
-    )}
+    {/* Google Analytics (gtag.js) */}
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.gaId}`}></script>
+    <script is:inline define:vars={{ GA_ID: SITE.gaId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', GA_ID);
+    </script>
 
     <!-- Primary Meta Tags -->
     <title>{title}</title>
@@ -194,12 +189,6 @@ const hasGTM = GTM_ID && GTM_ID !== "GTM-XXXXXXX";
     </script>
   </head>
   <body class="text-primary font-sans antialiased overflow-x-hidden">
-    {/* Google Tag Manager — noscript fallback */}
-    {hasGTM && (
-      <noscript>
-        <iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`} height="0" width="0" style="display:none;visibility:hidden"></iframe>
-      </noscript>
-    )}
     {/* Navbar must be outside smooth-wrapper to be fixed/sticky correctly */}
     {!hideNavbar && <Navbar />}
     {!hideNavbar && <MobileMenu />}
