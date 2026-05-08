@@ -1,3 +1,4 @@
+---
 import { getCollection } from 'astro:content';
 import { PORTFOLIO_PAGE } from '../config/content';
 import { preferWebp } from '../utils/prefer-webp';
@@ -49,6 +50,7 @@ allProjects.forEach(project => {
 
 // Filter out empty categories for display
 const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].length > 0);
+---
 
 <section class="bg-secondary relative w-full py-20 px-4 md:px-8" id="portfolio-cms-section">
   <div class="container mx-auto">
