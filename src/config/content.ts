@@ -144,7 +144,7 @@ export const PORTFOLIO_SECTION = {
   title: "Portofoliu selectiv → Poze",
   /** These are example/placeholder projects for the home page grid */
   projects: [
-    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/Portofoliu/1.webp" },
+    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp" },
     { name: "Baie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 2.webp" },
     { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/Portofoliu/3.webp" },
     { name: "Hol", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 4.webp" },
