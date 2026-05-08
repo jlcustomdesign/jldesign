@@ -16,9 +16,16 @@ const allProjects = await Promise.all(portfolioEntries.map(async (entry) => {
   try {
     // Construct absolute path to the image in public folder
     const absolutePath = path.join(process.cwd(), 'public', imagePath);
-    const metadata = await sharp(absolutePath).metadata();
-    if (metadata.width && metadata.height) {
-      isLandscape = metadata.width > metadata.height;
+    
+    // Check if file exists before trying to read metadata
+    const fs = await import('node:fs/promises');
+    const fileExists = await fs.access(absolutePath).then(() => true).catch(() => false);
+    
+    if (fileExists) {
+      const metadata = await sharp(absolutePath).metadata();
+      if (metadata.width && metadata.height) {
+        isLandscape = metadata.width > metadata.height;
+      }
     }
   } catch (e) {
     console.error(`Could not read metadata for ${imagePath}:`, e);
