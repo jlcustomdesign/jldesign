@@ -6,7 +6,13 @@ import sharp from 'sharp';
 import path from 'path';
 
 // Fetch items from Keystatic CMS
-const portfolioEntries = await getCollection('portfolio');
+const [portfolioEntries, categoryEntries] = await Promise.all([
+  getCollection('portfolio'),
+  getCollection('categories'),
+]);
+
+// Map categories for easy lookup
+const categoryMap = Object.fromEntries(categoryEntries.map(cat => [cat.slug, cat.data.name]));
 
 // Process projects with aspect ratio detection
 const allProjects = await Promise.all(portfolioEntries.map(async (entry) => {
@@ -15,13 +21,9 @@ const allProjects = await Promise.all(portfolioEntries.map(async (entry) => {
 
   try {
     if (imagePath) {
-      // Construct absolute path to the image in public folder
       const absolutePath = path.join(process.cwd(), 'public', imagePath);
-      
-      // Check if file exists before trying to read metadata
       const fs = await import('node:fs/promises');
       const fileExists = await fs.access(absolutePath).then(() => true).catch(() => false);
-      
       if (fileExists) {
         const metadata = await sharp(absolutePath).metadata();
         if (metadata.width && metadata.height) {
@@ -37,28 +39,39 @@ const allProjects = await Promise.all(portfolioEntries.map(async (entry) => {
     ...entry.data,
     image: imagePath,
     isLandscape,
+    categoryName: categoryMap[entry.data.category] || entry.data.category || 'Altele',
   };
 }));
 
-// Define Category Order
-const CATEGORY_ORDER = ['Living', 'Dormitor', 'Bucătărie', 'Baie', 'Office', 'Commercial', 'Hol', 'Altele'];
+// Define Category Order (by slugs)
+const CATEGORY_ORDER = ['living', 'dormitor', 'bucatarii', 'bai', 'birou', 'horeca', 'hol'];
 
 // Group Projects
 type Project = typeof allProjects[0];
 const groupedProjects: Record<string, Project[]> = {};
 
-// Initialize groups
-CATEGORY_ORDER.forEach(cat => groupedProjects[cat] = []);
+// Initialize groups from available categories
+categoryEntries.forEach(cat => groupedProjects[cat.slug] = []);
+if (!groupedProjects['Altele']) groupedProjects['Altele'] = [];
 
 // Distribute
 allProjects.forEach(project => {
-    let cat = project.category || 'Altele';
-    if (!groupedProjects[cat]) cat = 'Altele';
-    groupedProjects[cat].push(project);
+    let catSlug = project.category || 'Altele';
+    if (!groupedProjects[catSlug]) groupedProjects[catSlug] = []; // Support new dynamic categories
+    groupedProjects[catSlug].push(project);
 });
 
-// Filter out empty categories for display
-const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].length > 0);
+// Sort categories: defined order first, then others alphabetically
+const activeCategories = Object.keys(groupedProjects)
+    .filter(slug => groupedProjects[slug].length > 0)
+    .sort((a, b) => {
+        const indexA = CATEGORY_ORDER.indexOf(a);
+        const indexB = CATEGORY_ORDER.indexOf(b);
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        return a.localeCompare(b);
+    });
 ---
 
 <section class="bg-secondary relative w-full py-20 px-4 md:px-8" id="portfolio-cms-section">
@@ -74,13 +87,14 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
         {activeCategories.map((category) => {
             const items = groupedProjects[category];
             const hasMore = items.length > 3;
+            const categoryName = categoryMap[category] || category;
             
             return (
                 <div class="category-section" data-category={category}>
                      <div class="flex items-center gap-4 mb-12">
                         <div class="h-[2px] w-8 bg-accent"></div>
                         <h2 class="text-3xl md:text-4xl font-serif text-primary capitalize">
-                            {category}
+                            {categoryName}
                         </h2>
                      </div>
 
@@ -111,12 +125,11 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
                                 <!-- Info Below Image -->
                                 <div class="mt-6 flex justify-between items-end opacity-80 group-hover:opacity-100 transition-opacity duration-500">
                                     <div>
-                                        <h3 class="font-serif text-2xl text-primary leading-tight">
-                                            {item.name}
-                                        </h3>
-                                        <p class="text-sm text-accent uppercase tracking-widest mt-2 font-medium">
-                                            {item.material}
-                                        </p>
+                                        {item.name && (
+                                          <h3 class="font-serif text-2xl text-primary leading-tight">
+                                              {item.name}
+                                          </h3>
+                                        )}
                                     </div>
                                     
                                     <!-- Arrow Icon (Fixed) -->

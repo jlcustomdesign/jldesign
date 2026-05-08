@@ -48,11 +48,25 @@ export default config({
       }
     },
     navigation: {
-      'Conținut': ['portfolio', 'blog'],
+      'Conținut': ['portfolio', 'categories', 'blog'],
     },
   },
 
   collections: {
+    categories: collection({
+      label: 'Categorii',
+      slugField: 'name',
+      path: 'src/content/categories/*',
+      schema: {
+        name: fields.slug({ 
+          name: { 
+            label: 'Nume Categorie',
+            description: 'Ex: Bucătărie, Dormitor, Living'
+          } 
+        }),
+      },
+    }),
+
     portfolio: collection({
       label: 'Portofoliu',
       slugField: 'name',
@@ -62,24 +76,15 @@ export default config({
       schema: {
         name: fields.slug({ 
           name: { 
-            label: 'Nume Proiect',
+            label: 'Titlu Proiect (Opțional)',
             description: 'Numele care va apărea pe site'
           } 
         }),
-        category: fields.select({
+        category: fields.relationship({
             label: 'Categorie',
-            description: 'Alege camera sau tipul de spațiu',
-            options: [
-                { label: 'Living', value: 'Living' },
-                { label: 'Dormitor', value: 'Dormitor' },
-                { label: 'Bucătărie', value: 'Bucătărie' },
-                { label: 'Baie', value: 'Baie' },
-                { label: 'Office', value: 'Office' },
-                { label: 'Commercial', value: 'Commercial' },
-                { label: 'Hol', value: 'Hol' },
-                { label: 'Altele', value: 'Altele' },
-            ],
-            defaultValue: 'Altele',
+            collection: 'categories',
+            description: 'Alege categoria (adaugă una nouă în secțiunea Categorii dacă lipsește)',
+            validation: { isRequired: true }
         }),
         image: fields.image({
           label: 'Imagine Principală',
@@ -87,11 +92,6 @@ export default config({
           directory: 'public/assets/portfolio',
           publicPath: '/assets/portfolio/',
           validation: { isRequired: true },
-        }),
-        material: fields.text({ 
-          label: 'Materiale folosite',
-          description: 'Ex: MDF Vopsit, Stejar Masiv, etc.',
-          validation: { isRequired: false }
         }),
         content: fields.markdoc({
           label: 'Descriere Proiect',
