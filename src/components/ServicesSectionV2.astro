@@ -45,8 +45,7 @@ const services = SERVICES_SECTION.cards;
     <!-- Carousel Track -->
     <div
       id="services-carousel"
-      class="flex flex-row flex-nowrap gap-6 md:gap-8 px-4 overflow-x-auto snap-x snap-mandatory scroll-smooth hide-scrollbar pb-12 pt-4 -mt-4 scroll-pl-6 md:scroll-pl-24 cursor-grab active:cursor-grabbing select-none"
-      style="display: flex; flex-direction: row; flex-wrap: nowrap; overflow-x: auto;"
+      class="flex gap-6 md:gap-8 px-4 overflow-x-auto snap-x snap-mandatory scroll-smooth hide-scrollbar pb-12 pt-4 -mt-4 scroll-pl-6 md:scroll-pl-24"
     >
       <!-- Initial Spacer to create the 'un-glued' effect -->
       <div class="w-2 md:w-[calc(50vw-640px+2rem)] xl:w-[calc(50vw-768px+2rem)] shrink-0 h-1"></div>
@@ -186,10 +185,20 @@ const services = SERVICES_SECTION.cards;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  /* Draggable Cursor */
+  #services-carousel {
+    cursor: grab;
+  }
+  #services-carousel:active, #services-carousel.is-dragging {
+    cursor: grabbing;
+  }
 </style>
 
 <script>
-  import { gsap, ScrollTrigger, Draggable } from "gsap/all";
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { Draggable } from "gsap/Draggable";
 
   gsap.registerPlugin(ScrollTrigger, Draggable);
 
@@ -310,31 +319,11 @@ const services = SERVICES_SECTION.cards;
       return card.offsetWidth + gap;
     };
 
-    // --- DRAGGABLE SUPPORT ---
-    Draggable.create(carousel, {
-      type: "scrollLeft",
-      edgeResistance: 0.9,
-      dragClickables: false,
-      onDragStart: function() {
-        carousel.style.scrollSnapType = 'none';
-        carousel.classList.remove('scroll-smooth');
-      },
-      onDragEnd: function() {
-        // Re-enable snapping after a small delay
-        setTimeout(() => {
-            carousel.style.scrollSnapType = 'x mandatory';
-            carousel.classList.add('scroll-smooth');
-        }, 10);
-      }
-    });
-
     const moveNext = () => {
-      carousel.style.scrollSnapType = 'x mandatory'; // Ensure snap is active for button move
       carousel.scrollBy({ left: getStepSize(), behavior: 'smooth' });
     };
 
     const movePrev = () => {
-      carousel.style.scrollSnapType = 'x mandatory'; // Ensure snap is active for button move
       carousel.scrollBy({ left: -getStepSize(), behavior: 'smooth' });
     };
 
@@ -359,6 +348,23 @@ const services = SERVICES_SECTION.cards;
     carousel.addEventListener('scroll', updateButtons, { passive: true });
     // Initialize immediately to disable prev button on load
     updateButtons();
+
+    // --- DRAGGABLE (Mouse Drag to Scroll) ---
+    Draggable.create(carousel, {
+      type: "scrollLeft",
+      edgeResistance: 0.8,
+      dragClickables: false, // Don't block clicks on buttons/links
+      onDragStart: function() {
+        carousel.style.scrollSnapType = 'none'; // Disable snapping while dragging for smoothness
+        carousel.classList.add('is-dragging');
+      },
+      onDragEnd: function() {
+        carousel.style.scrollSnapType = 'x mandatory'; // Re-enable snapping
+        carousel.classList.remove('is-dragging');
+        // Small delay to ensure snap happens after drag
+        setTimeout(updateButtons, 100);
+      }
+    });
 
     prevBtns.forEach(btn => {
         btn.addEventListener("click", (e) => {
