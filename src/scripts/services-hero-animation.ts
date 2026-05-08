@@ -52,7 +52,8 @@ function generatePath(
   c1BottomR?: number
 ): string {
   const isDesktop = w > WIDTH_TARGET;
-  const ref = isDesktop ? DESKTOP_RESOLUTION : MOBILE_RESOLUTION;
+  // Use Services-specific reference resolution (1920x1080)
+  const ref = { width: 1920, height: 1080 };
   const rw = (val: number) => (val / ref.width) * w;
   const hScale = Math.max(h, isDesktop ? 680 : 600);
   const rh = (val: number) => (val / ref.height) * hScale;
