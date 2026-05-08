@@ -132,10 +132,13 @@
 }
 
 .osmo__growing-image-wrap {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
+  width: 100vw;
+  min-width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .osmo__cover-image, .osmo__cover-image-extra {
@@ -273,7 +276,12 @@
     }
 
     if (growingImage.length) {
-      gsap.set(growingImage, { width: "100%" }); // Keep image filled in box
+      tl.fromTo(growingImage, {
+        width: "0%",
+      },{
+        width: "100%",
+        duration: 1.25
+      }, "<");
     }
 
     if (box.length) {
@@ -314,12 +322,19 @@
       }, "-=0.05");
     }
       
-    if (box.length) {
-      tl.to(box, {
+    if (growingImage.length) {
+      tl.to(growingImage, {
         width: "100vw",
         height: "100dvh",
         duration: 2
       }, "< 1.25");
+    }
+    
+    if (box.length) {
+      tl.to(box, {
+        width: "110vw",
+        duration: 2
+      }, "<");
     }
     
     if (headerLetter.length) {
