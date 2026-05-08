@@ -58,11 +58,11 @@ function generatePath(
   const hScale = Math.max(h, isDesktop ? 680 : 600);
   const rh = (val: number) => (val / ref.height) * hScale;
 
-  const cardLeft = rw(76.5);
-  const cardRight = rw(1843.5);
-  const cardTop = rh(60);
-  const cardBottom = rh(1020);
-  const outerRadius = rw(48);
+  const cardLeft = rw(100); // Increased from 76.5
+  const cardRight = rw(1820); // Decreased from 1843.5
+  const cardTop = rh(100); // Increased from 60
+  const cardBottom = rh(980); // Decreased from 1020
+  const outerRadius = rw(54); // Slightly more rounded for the smaller card
 
   const r = outerRadius;
   const k = r * K_FACTOR;
@@ -80,12 +80,12 @@ function generatePath(
   const c2x_abs = rw(c2X);
   const c3x_abs = rw(c3X);
   
-  const c1Top_abs = rh(60);
-  const c1Bottom_abs = rh(281.5);
-  const c2Top_abs = rh(281.5);
-  const c2Bottom_abs = rh(503);
-  const c3Top_abs = rh(503);
-  const c3Bottom_abs = rh(724.5);
+  const c1Top_abs = rh(100);
+  const c1Bottom_abs = rh(321.5);
+  const c2Top_abs = rh(321.5);
+  const c2Bottom_abs = rh(543);
+  const c3Top_abs = rh(543);
+  const c3Bottom_abs = rh(764.5);
   const c2R_abs = rw(c2R);
   const c3R_abs = rw(c3R);
 
@@ -186,13 +186,13 @@ function runServicesHeroAnimation(section: Element) {
     finalPath = cross(w, h);
   } else {
      // Card Left Offset (fixed relative to ref resolution)
-     const cardLeft_design = 76.5;
+     const cardLeft_design = 100;
      const collapsedR = 0.1; 
      const collapsedX = cardLeft_design + 0.1;
 
      startPath = generatePath(
        w, h,
-       cardLeft_design, 48, // cardLeft, outerRadius
+       cardLeft_design, 54, // cardLeft, outerRadius
        collapsedX, collapsedR,
        collapsedX, collapsedR,
        0.1 
