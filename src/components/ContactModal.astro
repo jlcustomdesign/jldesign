@@ -184,13 +184,14 @@ const services = CONTACT_MODAL.serviceOptions;
 </div>
 
 <script>
-  import { gsap } from "gsap";
+    import { gsap } from "gsap";
+    import { trackEvent } from "../scripts/analytics";
 
-  declare global {
-    interface Window {
-      toggleContactModal: (show?: boolean) => void;
+    declare global {
+      interface Window {
+        toggleContactModal: (show?: boolean) => void;
+      }
     }
-  }
 
   function initContactModal() {
     const modal = document.getElementById("contact-modal");
@@ -287,6 +288,14 @@ const services = CONTACT_MODAL.serviceOptions;
     // Handle Form Submit
     submitBtn?.addEventListener("click", (e) => {
       e.preventDefault();
+      
+      // Track the form submission
+      const formData = new FormData(form);
+      const selectedServices = formData.getAll('services');
+      trackEvent('form_submission', {
+        services: selectedServices.join(', ')
+      });
+
       const successMessage =
         form?.dataset.successMessage ||
         "Mesaj trimis.";
