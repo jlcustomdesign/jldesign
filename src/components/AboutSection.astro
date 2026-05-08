@@ -18,7 +18,7 @@ import { ABOUT_SECTION } from "../config/content";
           <img
             src="/Poze JL Custom Design - Site/About/Image 1.webp"
             alt={ABOUT_SECTION.imageAlt}
-            class="absolute inset-0 w-full h-full object-cover about-parallax-img scale-110"
+            class="absolute inset-0 w-full h-full object-cover object-top about-parallax-img scale-110"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
         </div>
@@ -95,8 +95,9 @@ import { ABOUT_SECTION } from "../config/content";
       });
 
       // 3. Parallax & Floating
+      const isMobile = window.innerWidth < 768;
       gsap.to(".about-parallax-img", {
-        y: "10%",
+        y: isMobile ? "5%" : "10%",
         ease: "none",
         scrollTrigger: {
           trigger: ".about-image-main",
