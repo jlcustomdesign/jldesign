@@ -41,8 +41,7 @@ portfolio.forEach((item, i) => {
                     src={item.image}
                     alt={item.name}
                     loading="lazy"
-                    class="w-full h-[110%] object-cover absolute top-0 left-0 portfolio-img will-change-transform"
-                    style="transform: translate3d(0, -5%, 0);" 
+                    class="w-full h-full object-cover portfolio-img transition-transform duration-500"
                   />
                   
                   <!-- Overlay: Visible on Hover (Glassmorphism) -->
@@ -112,6 +111,7 @@ portfolio.forEach((item, i) => {
     });
 
     // Image Parallax (Subtle internal movement) - Always minimal
+    /*
     const images = document.querySelectorAll(".portfolio-img");
     images.forEach((img) => {
             gsap.to(img, {
@@ -126,6 +126,7 @@ portfolio.forEach((item, i) => {
                 }
             });
     });
+    */
 
     return () => mm.revert();
   }
