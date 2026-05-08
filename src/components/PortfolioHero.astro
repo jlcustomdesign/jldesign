@@ -235,8 +235,8 @@
     const loaderTextContainer = container.querySelector(".loader-text-container");
     const navbar = document.querySelector("#navbar-container");
     
-    // Check if animation already ran
-    if (container.classList.contains('anim-done')) return;
+    // ALWAYS reset the animation state on new page load
+    container.classList.remove('anim-done');
     
     /* GSAP Timeline */
     const tl = gsap.timeline({
@@ -245,6 +245,7 @@
       },
       onStart: () => {
         document.body.style.overflow = 'hidden'; // Lock scroll during intro
+        console.log("Portfolio Hero Animation Started");
       },
       onComplete: () => {
         document.body.style.overflow = ''; // Unlock scroll
