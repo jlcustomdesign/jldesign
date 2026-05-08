@@ -45,7 +45,7 @@ const services = SERVICES_SECTION.cards;
     <!-- Carousel Track -->
     <div
       id="services-carousel"
-      class="flex gap-6 md:gap-8 px-4 overflow-x-auto snap-x snap-mandatory scroll-smooth hide-scrollbar pb-12 pt-4 -mt-4 scroll-pl-6 md:scroll-pl-24"
+      class="flex gap-6 md:gap-8 px-4 overflow-x-auto snap-x snap-mandatory scroll-smooth hide-scrollbar pb-12 pt-4 -mt-4 scroll-pl-6 md:scroll-pl-24 cursor-grab active:cursor-grabbing select-none"
     >
       <!-- Initial Spacer to create the 'un-glued' effect -->
       <div class="w-2 md:w-[calc(50vw-640px+2rem)] xl:w-[calc(50vw-768px+2rem)] shrink-0 h-1"></div>
@@ -269,29 +269,6 @@ const services = SERVICES_SECTION.cards;
       });
       */
 
-    // --- DRAGGABLE LOGIC ---
-    Draggable.create(carousel, {
-      type: "scrollLeft",
-      edgeResistance: 0.65,
-      // On desktop, we want a grab cursor
-      cursor: "grab",
-      activeCursor: "grabbing",
-      onDragStart: function() {
-        // Disable snap and smooth scroll during drag to prevent jitter
-        carousel.style.scrollSnapType = "none";
-        carousel.classList.remove("scroll-smooth");
-      },
-      onDragEnd: function() {
-        // Re-enable snap and smooth scroll
-        carousel.style.scrollSnapType = "x mandatory";
-        carousel.classList.add("scroll-smooth");
-        
-        // Final button update
-        updateButtons();
-      },
-      onScroll: updateButtons
-    });
-
     }, section);
 
     // --- FLIP LOGIC ---
@@ -334,11 +311,31 @@ const services = SERVICES_SECTION.cards;
       return card.offsetWidth + gap;
     };
 
+    // --- DRAGGABLE SUPPORT ---
+    Draggable.create(carousel, {
+      type: "scrollLeft",
+      edgeResistance: 0.9,
+      dragClickables: false,
+      onDragStart: function() {
+        carousel.style.scrollSnapType = 'none';
+        carousel.classList.remove('scroll-smooth');
+      },
+      onDragEnd: function() {
+        // Re-enable snapping after a small delay
+        setTimeout(() => {
+            carousel.style.scrollSnapType = 'x mandatory';
+            carousel.classList.add('scroll-smooth');
+        }, 10);
+      }
+    });
+
     const moveNext = () => {
+      carousel.style.scrollSnapType = 'x mandatory'; // Ensure snap is active for button move
       carousel.scrollBy({ left: getStepSize(), behavior: 'smooth' });
     };
 
     const movePrev = () => {
+      carousel.style.scrollSnapType = 'x mandatory'; // Ensure snap is active for button move
       carousel.scrollBy({ left: -getStepSize(), behavior: 'smooth' });
     };
 
