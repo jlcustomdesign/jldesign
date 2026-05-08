@@ -46,22 +46,58 @@ const allProjects = await Promise.all(portfolioEntries.map(async (entry) => {
 // Define Category Order (by slugs)
 const CATEGORY_ORDER = ['living', 'dormitor', 'bucatarii', 'bai', 'birou', 'horeca', 'hol'];
 
-// Group Projects
-type Project = typeof allProjects[0];
+// Group Projects & Smart Packing
+type Project = (typeof allProjects[0]) & { isHiddenInitially?: boolean };
 const groupedProjects: Record<string, Project[]> = {};
 
-// Initialize groups from available categories
+// Initialize groups
 categoryEntries.forEach(cat => groupedProjects[cat.slug] = []);
 if (!groupedProjects['Altele']) groupedProjects['Altele'] = [];
 
 // Distribute
 allProjects.forEach(project => {
     let catSlug = project.category || 'Altele';
-    if (!groupedProjects[catSlug]) groupedProjects[catSlug] = []; // Support new dynamic categories
+    if (!groupedProjects[catSlug]) groupedProjects[catSlug] = []; 
     groupedProjects[catSlug].push(project);
 });
 
-// Sort categories: defined order first, then others alphabetically
+// Reorder and Calculate Visibility
+Object.keys(groupedProjects).forEach(cat => {
+    const items = groupedProjects[cat];
+    const landscapes = items.filter(i => i.isLandscape);
+    const portraits = items.filter(i => !i.isLandscape);
+    const packed: Project[] = [];
+
+    while (landscapes.length > 0 || portraits.length > 0) {
+        if (landscapes.length > 0 && portraits.length > 0) {
+            packed.push(landscapes.shift()!);
+            packed.push(portraits.shift()!);
+        } else if (portraits.length >= 3) {
+            packed.push(portraits.shift()!);
+            packed.push(portraits.shift()!);
+            packed.push(portraits.shift()!);
+        } else if (landscapes.length > 0) {
+            packed.push(landscapes.shift()!);
+        } else {
+            while (portraits.length > 0) packed.push(portraits.shift()!);
+        }
+    }
+
+    // Mark items to be hidden initially (anything beyond the first row or first 3 columns)
+    let totalCols = 0;
+    packed.forEach((item, idx) => {
+        const cols = item.isLandscape ? 2 : 1;
+        // Show first row only (3 cols) OR first 2 items if they make exactly 3 cols
+        if (totalCols >= 3) {
+            item.isHiddenInitially = true;
+        }
+        totalCols += cols;
+    });
+
+    groupedProjects[cat] = packed;
+});
+
+// Sort categories
 const activeCategories = Object.keys(groupedProjects)
     .filter(slug => groupedProjects[slug].length > 0)
     .sort((a, b) => {
@@ -101,7 +137,7 @@ const activeCategories = Object.keys(groupedProjects)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full grid-flow-dense" id={`grid-${category}`}>
                         {items.map((item, index) => (
                             <div 
-                                class={`group relative w-full cursor-pointer project-card ${item.isLandscape ? 'md:col-span-2' : ''} ${index >= 3 ? 'hidden' : ''}`} 
+                                class={`group relative w-full cursor-pointer project-card ${item.isLandscape ? 'md:col-span-2' : ''} ${item.isHiddenInitially ? 'hidden' : ''}`} 
                                 data-index={index}
                             >
                                 <!-- Image Wrapper -->
