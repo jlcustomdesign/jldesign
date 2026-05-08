@@ -13,29 +13,29 @@ let servicesAnimInitialized = false;
 const vbWidth = 1920;
 const vbHeight = 1080;
 
-// Card geometry
+// Card geometry - Pulled in from 60/1020 to 140/940 to prevent Windows clipping
 const cardLeft = 76.5;
 const cardRight = 1843.5;
-const cardTop = 60;
-const cardBottom = 1020;
+const cardTop = 140;
+const cardBottom = 940;
 const outerRadius = 48;
 
 // Cutout dimensions
 const fullCutoutRadius = 55.4;
 
-// Cutout 1 (Top)
-const c1Top = 60;
-const c1Bottom = 281.5;
+// Cutout 1 (Top) - Shifted down by 80px
+const c1Top = 140;
+const c1Bottom = 361.5;
 const c1FinalX = 777;
 
-// Cutout 2 (Middle)
-const c2Top = 281.5;
-const c2Bottom = 503;
+// Cutout 2 (Middle) - Shifted down by 80px
+const c2Top = 361.5;
+const c2Bottom = 583;
 const c2FinalX = 984;
 
-// Cutout 3 (Bottom)
-const c3Top = 503;
-const c3Bottom = 724.5;
+// Cutout 3 (Bottom) - Shifted down by 80px
+const c3Top = 583;
+const c3Bottom = 804.5;
 const c3FinalX = 840;
 
 // Bezier Constant
