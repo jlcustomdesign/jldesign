@@ -185,22 +185,13 @@ const services = SERVICES_SECTION.cards;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-
-  /* Draggable Cursor */
-  #services-carousel {
-    cursor: grab;
-  }
-  #services-carousel:active, #services-carousel.is-dragging {
-    cursor: grabbing;
-  }
 </style>
 
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
-  import { Draggable } from "gsap/Draggable";
 
-  gsap.registerPlugin(ScrollTrigger, Draggable);
+  gsap.registerPlugin(ScrollTrigger);
 
   function initServicesCarousel() {
     const section = document.querySelector("#services-section");
@@ -348,23 +339,6 @@ const services = SERVICES_SECTION.cards;
     carousel.addEventListener('scroll', updateButtons, { passive: true });
     // Initialize immediately to disable prev button on load
     updateButtons();
-
-    // --- DRAGGABLE (Mouse Drag to Scroll) ---
-    Draggable.create(carousel, {
-      type: "scrollLeft",
-      edgeResistance: 0.8,
-      dragClickables: false, // Don't block clicks on buttons/links
-      onDragStart: function() {
-        carousel.style.scrollSnapType = 'none'; // Disable snapping while dragging for smoothness
-        carousel.classList.add('is-dragging');
-      },
-      onDragEnd: function() {
-        carousel.style.scrollSnapType = 'x mandatory'; // Re-enable snapping
-        carousel.classList.remove('is-dragging');
-        // Small delay to ensure snap happens after drag
-        setTimeout(updateButtons, 100);
-      }
-    });
 
     prevBtns.forEach(btn => {
         btn.addEventListener("click", (e) => {

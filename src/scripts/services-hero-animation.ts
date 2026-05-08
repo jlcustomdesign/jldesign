@@ -214,8 +214,9 @@ function runServicesHeroAnimation(section: Element) {
   const tl = gsap.timeline({ defaults: { ease: "power2.inOut" } });
 
   // PHASE 1: Zoom to normal with Bounce
-  // Scale down slightly on mobile (0.94) so the rounded corners aren't clipped by the physical phone screen curves
-  tl.to(containerSvg, { scale: isMobile ? 0.94 : 1, duration: 1.5, ease: "elastic.out(1, 0.75)" });
+  // Scale down slightly so the rounded corners aren't clipped by the physical screen curves
+  // Desktop scaled to 0.95 to give the 'Quiet Luxury' framed effect and reduce overwhelming size
+  tl.to(containerSvg, { scale: isMobile ? 0.94 : 0.95, duration: 1.5, ease: "elastic.out(1, 0.75)" });
 
   // PHASE 2: Simultaneous Reveal (Quicker: 0.8s)
   tl.to(pathEl, {

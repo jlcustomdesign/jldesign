@@ -26,7 +26,7 @@ export const initAutoTracking = () => {
     if (btn.getAttribute('href')?.startsWith('tel:')) {
       trackEvent('phone_click', {
         number: btn.getAttribute('href'),
-        text: btn.innerText.trim()
+        text: (btn as HTMLElement).innerText.trim()
       });
     }
 
@@ -34,14 +34,14 @@ export const initAutoTracking = () => {
     if (btn.getAttribute('href')?.startsWith('mailto:')) {
       trackEvent('email_click', {
         email: btn.getAttribute('href'),
-        text: btn.innerText.trim()
+        text: (btn as HTMLElement).innerText.trim()
       });
     }
 
     // Track Primary CTAs
-    if (btn.classList.contains('cta-primary') || btn.innerText.toUpperCase().includes('CONTACT')) {
+    if (btn.classList.contains('cta-primary') || (btn as HTMLElement).innerText.toUpperCase().includes('CONTACT')) {
       trackEvent('cta_click', {
-        label: btn.innerText.trim(),
+        label: (btn as HTMLElement).innerText.trim(),
         url: btn.getAttribute('href') || 'modal'
       });
     }
@@ -49,7 +49,7 @@ export const initAutoTracking = () => {
     // Track Portfolio Clicks
     if (btn.closest('.project-card')) {
         const card = btn.closest('.project-card');
-        const projectName = card?.querySelector('h3')?.innerText || 'Untitled';
+        const projectName = (card?.querySelector('h3') as HTMLElement)?.innerText || 'Untitled';
         trackEvent('portfolio_view', {
             project: projectName
         });

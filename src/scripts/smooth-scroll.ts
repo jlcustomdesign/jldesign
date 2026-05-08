@@ -34,7 +34,7 @@ export function initSmoothScroll() {
     smooth: 2.0, // Increased for a more luxurious feel (was 1.5)
     effects: true, 
     smoothTouch: false, // Disabled for performance
-    normalizeScroll: true, // Force consistent scroll physics across devices
+    normalizeScroll: false, // DISABLED: This was eating desktop mousedown events
   });
 
   /* @ts-ignore */

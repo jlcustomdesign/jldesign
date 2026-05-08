@@ -1,5 +1,6 @@
 ---
 import BubbleButton from "./ui/BubbleButton.astro";
+import { SERVICES_SECTION } from "../config/content";
 
 const services = [
   {
@@ -36,404 +37,124 @@ const services = [
 ---
 
 <section
-  id="services-fullscreen-wrapper"
-  class="relative h-screen bg-secondary overflow-hidden text-primary"
-  data-theme="light"
+  id="services-section"
+  class="relative w-full bg-secondary py-20 overflow-hidden"
 >
-  <!-- BACKGROUNDS LAYER (Wrapped in Card) -->
-  <div
-    class="absolute inset-0 w-full h-full z-0 flex items-center justify-center"
-  >
-    <div
-      class="w-[90%] h-[90%] rounded-3xl overflow-hidden relative bg-secondary"
-    >
-      {
-        services.map((service, i) => (
-          <div
-            class="service-bg absolute inset-0 w-full h-full will-change-transform z-10"
-            data-index={i}
-          >
-            <div class="w-full h-full relative">
-              {[0, 1, 2, 3, 4].map((k) => (
-                <div
-                  class="service-slice absolute top-0 bottom-0 h-full overflow-hidden bg-secondary rounded-3xl"
-                  style={`left: ${k * 20}%; width: 20%;`}
-                >
-                  <img
-                    src={service.img}
-                    alt={service.title}
-                    loading="lazy"
-                    class="absolute top-0 bottom-0 h-full max-w-none object-cover"
-                    style={`left: -${k * 100}%; width: 500%;`}
-                  />
-                  <div class="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))
-      }
-    </div>
+  <div class="container mx-auto px-4 mb-12">
+    <h2 class="font-serif text-4xl md:text-6xl text-primary mb-4">{SERVICES_SECTION.title}</h2>
   </div>
 
-  <!-- CONTENT LAYER -->
-  <div
-    class="relative z-10 w-full h-full flex items-center justify-center pointer-events-none"
+  <!-- Native Horizontal Scroll Container -->
+  <div 
+    class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-6 px-4 md:px-[10%] pb-12 cursor-grab active:cursor-grabbing"
+    id="services-scroll-container"
   >
-    <!-- HEADER REMOVED -->
-
-    <!-- SLIDES LOOP -->
     {
       services.map((service, i) => (
-        <div
-          class="service-content absolute w-full max-w-4xl px-8 md:px-20 text-center flex flex-col items-center opacity-0 translate-y-10"
-          data-index={i}
-        >
-          <div class="font-sans text-xs md:text-sm text-accent tracking-[0.3em] uppercase mb-6">
-            {(i + 1).toString().padStart(2, "0")} — Servicii
-          </div>
-          <h2 class="font-serif font-bold text-5xl md:text-8xl mb-8 leading-tight text-white">
-            {service.title}
-          </h2>
-          <p class="font-sans text-lg md:text-2xl text-secondary/90 leading-relaxed max-w-2xl mb-12 font-light">
-            {service.desc}
-          </p>
-          <div class="pointer-events-auto">
-            <BubbleButton
-              href={`/services/${service.id}`}
-              variant="primary"
-              class="px-8 py-4"
-            >
-              Explorează
-            </BubbleButton>
+        <div class="flex-shrink-0 w-[85vw] md:w-[600px] snap-center group">
+          <div class="relative aspect-[16/10] md:aspect-[16/9] rounded-[2.5rem] overflow-hidden shadow-2xl bg-gray-900">
+            <img
+              src={service.img}
+              alt={service.title}
+              loading="lazy"
+              draggable="false"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            
+            <div class="absolute bottom-0 left-0 w-full p-8 md:p-12">
+               <div class="font-sans text-xs text-accent tracking-[0.3em] uppercase mb-3 opacity-80">
+                {(i + 1).toString().padStart(2, "0")} — Servicii
+              </div>
+              <h3 class="font-serif text-3xl md:text-5xl text-white mb-4">
+                {service.title}
+              </h3>
+              <p class="text-white/70 text-base md:text-lg max-w-md mb-8 line-clamp-2">
+                {service.desc}
+              </p>
+              <div class="pointer-events-auto">
+                <BubbleButton
+                  href={`/services/${service.id}`}
+                  variant="primary"
+                  class="px-8 py-3 text-sm"
+                >
+                  Explorează
+                </BubbleButton>
+              </div>
+            </div>
           </div>
         </div>
       ))
     }
+    <!-- Extra spacing at end for snap-center to work nicely -->
+    <div class="flex-shrink-0 w-[1px] h-full"></div>
   </div>
-  <!-- SKIP BUTTON: Single rotating button deeper inside card -->
-  <button
-    id="skip-btn"
-    class="absolute bottom-20 right-[10%] translate-x-1/2 z-50 bg-black/20 backdrop-blur-md border border-white/20 text-white rounded-full p-4 hover:bg-black/40 transition-all duration-300 cursor-pointer shadow-xl pointer-events-auto"
-    aria-label="Skip Navigation"
-  >
-    <svg
-      id="skip-arrow"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke-width="2"
-      stroke="currentColor"
-      class="w-6 h-6"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
-    </svg>
-  </button>
 </section>
 
-<script>
-  import { gsap, ScrollTrigger, Observer, ScrollToPlugin } from "gsap/all";
-
-  gsap.registerPlugin(ScrollTrigger, Observer, ScrollToPlugin);
-
-  initFullscreenScroll();
-  document.addEventListener("astro:page-load", initFullscreenScroll);
-
-  function initFullscreenScroll() {
-    // if (window.innerWidth < 1024) return; // Removed to enable mobile scroll
-
-    const wrapper = document.querySelector("#services-fullscreen-wrapper");
-    const bgs = gsap.utils.toArray(".service-bg", wrapper) as HTMLElement[];
-    const contents = gsap.utils.toArray(".service-content", wrapper) as HTMLElement[];
-    const skipBtn = document.querySelector("#skip-btn") as HTMLElement;
-    const skipArrow = document.querySelector("#skip-arrow") as HTMLElement;
-
-    if (!wrapper) return;
-
-    const totalSlides = bgs.length;
-    let currentIndex = 0;
-    let isAnimating = false;
-
-    // --- BUTTON LOGIC ---
-    if (skipBtn) {
-      skipBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        // If we are at the end, go to start
-        if (currentIndex === totalSlides - 1) {
-          gotoSlide(0, -1);
-
-          // Explicit Scroll Reset
-          const st = ScrollTrigger.getById("services-pin");
-          if (st) {
-            gsap.to(window, {
-              scrollTo: st.start,
-              duration: 1.2,
-              ease: "power2.out",
-            });
-          }
-        } else {
-          // Go to end
-          gotoSlide(totalSlides - 1, 1);
-        }
-      });
-    }
-
-    function updateSkipButtonState(index: number) {
-      if (!skipBtn || !skipArrow) return;
-
-      // If last slide: Rotate 180 (Point Up)
-      // Else: Rotate 0 (Point Down)
-      const isEnd = index === totalSlides - 1;
-
-      gsap.to(skipArrow, {
-        rotation: isEnd ? 180 : 0,
-        duration: 0.5,
-        ease: "back.out(1.7)",
-      });
-    }
-
-    // INITIAL STATE
-    // Prepare all BGs
-    // Hide all slices initially (yPercent: 100)
-    const allSlices = gsap.utils.toArray(".service-slice") as HTMLElement[];
-    gsap.set(allSlices, { yPercent: 100 });
-
-    // BGs container visibility
-    gsap.set(bgs, { autoAlpha: 1, zIndex: 1 });
-    gsap.set(contents, { autoAlpha: 0, y: 50 });
-
-    // Initial Button State
-    updateSkipButtonState(0);
-
-    // ANIMATION FUNCTION
-    function gotoSlide(index: number, direction: number, isIntro = false) {
-      if (isAnimating && !isIntro) return;
-      isAnimating = true;
-
-      // Current indices (if intro, current is same)
-      const prevIndex = isIntro ? index : currentIndex;
-
-      const prevBg = bgs[prevIndex];
-      const nextBg = bgs[index];
-      const prevContent = contents[prevIndex];
-      const nextContent = contents[index];
-
-      // Slices
-      const nextSlices = nextBg.querySelectorAll(".service-slice");
-      const prevSlices = prevBg.querySelectorAll(".service-slice");
-
-      // Update Buttons
-      updateSkipButtonState(index);
-
-      // Sync Scrollbar
-      const st = ScrollTrigger.getById("services-pin");
-      if (st && !isIntro) {
-        // Calculate scroll position based on slide index
-        const progress = index / (totalSlides - 1);
-        const scrollPos = st.start + (st.end - st.start) * progress;
-
-        // Force scroll to that position
-        gsap.to(window, {
-          scrollTo: scrollPos,
-          duration: 1.2, // Match animation duration
-          ease: "power2.out",
-          overwrite: true, // Ensure we override any fighting scroll
-        });
-      }
-
-      if (!isIntro) {
-        // Layers
-        gsap.set(prevBg, { zIndex: 1 });
-        gsap.set(nextBg, { zIndex: 2 });
-      } else {
-        gsap.set(nextBg, { zIndex: 2 });
-      }
-
-      const tl = gsap.timeline({
-        onComplete: () => {
-          isAnimating = false;
-          currentIndex = index;
-          if (!isIntro) {
-            // Reset previous slices for future use (send to bottom)
-            gsap.set(prevSlices, { yPercent: 100 });
-            // Also restore opacity of prevBg container just in case it was faded
-            gsap.set(prevBg, { autoAlpha: 1 });
-          }
-        },
-      });
-
-      // 1. BG - "Slices Rise"
-      // Ensure next slices start at bottom
-      tl.set(nextSlices, { yPercent: 100 }, 0);
-
-      tl.to(
-        nextSlices,
-        {
-          yPercent: 0,
-          duration: 1.2,
-          stagger: 0.1,
-          ease: "power4.out",
-        },
-        0,
-      );
-
-      // Previous slide exit
-      if (!isIntro) {
-        // Fade out prevBg behind nextBg to reveal white gaps between fingers
-        // We fade out the CONTAINER so all its slices disappear together
-        tl.to(prevBg, { autoAlpha: 0, duration: 0.4 }, 0);
-        tl.set(nextBg, { autoAlpha: 1 }, 0);
-      } else {
-        tl.set(nextBg, { autoAlpha: 1 }, 0);
-      }
-
-      // 2. Content
-      if (!isIntro) {
-        tl.to(
-          prevContent,
-          {
-            y: direction > 0 ? -50 : 50,
-            autoAlpha: 0,
-            duration: 0.4,
-            ease: "power2.in",
-            overwrite: true,
-          },
-          0,
-        );
-      }
-
-      tl.fromTo(
-        nextContent,
-        { y: 50, autoAlpha: 0 },
-        {
-          y: 0,
-          autoAlpha: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          overwrite: true,
-        },
-        0.6,
-      );
-    }
-
-    // Intro Trigger
-    ScrollTrigger.create({
-      trigger: wrapper,
-      start: "top 60%", // Trigger when section is in view
-      once: true,
-      onEnter: () => gotoSlide(0, 1, true),
-    });
-
-    // OBSERVER LOGIC
-    // Hybrid Approach: Pin for distance, use Observer to hijack navigation.
-
-    // Detect if mobile/touch device
-    const isMobile = window.innerWidth < 1024 || "ontouchstart" in window;
-
-    // Reference to observer (declared here, defined later)
-    let intentObserver: Observer;
-
-    // Helper functions for slide navigation
-    const goNext = () => {
-      if (isAnimating) return;
-      if (currentIndex < totalSlides - 1) {
-        gotoSlide(currentIndex + 1, 1);
-
-        // If this was the second-to-last slide, prepare for immediate exit
-        if (currentIndex + 1 === totalSlides - 1) {
-          // Next swipe will exit - no action needed here
-        }
-      } else {
-        // Already on last slide - exit section immediately
-        intentObserver.disable();
-        (wrapper as HTMLElement).style.touchAction = "auto";
-        const st = ScrollTrigger.getById("services-pin");
-        if (st) {
-          gsap.to(window, {
-            scrollTo: st.end + 1,
-            duration: 0.1,
-            overwrite: true,
-          });
-        }
-      }
-    };
-
-    const goPrev = () => {
-      if (isAnimating) return;
-      if (currentIndex > 0) {
-        gotoSlide(currentIndex - 1, -1);
-      } else {
-        // Already on first slide - exit section immediately
-        intentObserver.disable();
-        (wrapper as HTMLElement).style.touchAction = "auto";
-        const st = ScrollTrigger.getById("services-pin");
-        if (st) {
-          gsap.to(window, {
-            scrollTo: st.start - 100,
-            duration: 0.5,
-            overwrite: true,
-          });
-        }
-      }
-    };
-
-    intentObserver = Observer.create({
-      target: wrapper,
-      type: "wheel,touch", // Removed 'pointer' to avoid conflict with clicks
-      tolerance: isMobile ? 40 : 5, // Lowered tolerance for more sensitive desktop scrolling
-      onUp: () => {
-        if (isMobile) goNext();
-        else goPrev();
-      },
-      onDown: () => {
-        if (isMobile) goPrev();
-        else goNext();
-      },
-      preventDefault: true,
-    });
-
-    // Kill scroll momentum helper
-    const killMomentum = () => {
-      if (isMobile) {
-        // Force stop any scroll momentum by setting scroll position
-        window.scrollTo(window.scrollX, window.scrollY);
-        // Also kill any GSAP scrolls
-        gsap.killTweensOf(window);
-      }
-    };
-
-    // We only enable this observer when the section is PINNED/ACTIVE
-    ScrollTrigger.create({
-      id: "services-pin",
-      trigger: wrapper,
-      start: "top top",
-      end: "+=5000",
-      pin: true,
-      onEnter: () => {
-        killMomentum();
-        (wrapper as HTMLElement).style.touchAction = "none";
-        intentObserver.enable();
-      },
-      onEnterBack: () => {
-        killMomentum();
-        (wrapper as HTMLElement).style.touchAction = "none";
-        intentObserver.enable();
-      },
-      onLeave: () => {
-        (wrapper as HTMLElement).style.touchAction = "auto";
-        intentObserver.disable();
-      },
-      onLeaveBack: () => {
-        (wrapper as HTMLElement).style.touchAction = "auto";
-        intentObserver.disable();
-      },
-    });
-
-    intentObserver.disable();
+<style>
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
   }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch; /* Smooth momentum scroll on iOS */
+    touch-action: pan-x; /* Prioritize horizontal swiping over vertical page scroll */
+    user-select: none; /* Prevent text selection during drag */
+  }
+</style>
+
+<script>
+  let isInitialized = false;
+
+  function initNativeScroll() {
+    const slider = document.getElementById('services-scroll-container') as HTMLElement;
+    if (!slider || isInitialized) return;
+    isInitialized = true;
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    slider.addEventListener('mousedown', (e: MouseEvent) => {
+      // Don't intercept clicks on buttons or links
+      const target = e.target as HTMLElement;
+      if (target.closest('a') || target.closest('button')) return;
+
+      isDown = true;
+      slider.style.cursor = 'grabbing';
+      slider.style.scrollSnapType = 'none';
+      slider.style.scrollBehavior = 'auto'; // CRITICAL: prevents browser scroll-queueing bugs
+      
+      startX = e.pageX;
+      scrollLeft = slider.scrollLeft;
+    });
+
+    const stopDragging = () => {
+      if (!isDown) return;
+      isDown = false;
+      slider.style.cursor = 'grab';
+      slider.style.scrollSnapType = 'x mandatory';
+    };
+
+    window.addEventListener('mouseup', stopDragging);
+    
+    // Also stop dragging if mouse leaves the whole browser window
+    document.documentElement.addEventListener('mouseleave', stopDragging);
+
+    window.addEventListener('mousemove', (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault(); // Stop text selection
+      const x = e.pageX;
+      const walk = (x - startX) * 1.5; // Smooth 1.5x multiplier
+      slider.scrollLeft = scrollLeft - walk;
+    });
+  }
+
+  // Initialize
+  initNativeScroll();
+  document.addEventListener('astro:page-load', () => {
+    isInitialized = false;
+    initNativeScroll();
+  });
 </script>
