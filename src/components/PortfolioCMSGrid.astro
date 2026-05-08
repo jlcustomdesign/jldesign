@@ -1,13 +1,33 @@
----
 import { getCollection } from 'astro:content';
 import { PORTFOLIO_PAGE } from '../config/content';
 import { preferWebp } from '../utils/prefer-webp';
+import sharp from 'sharp';
+import path from 'path';
 
 // Fetch items from Keystatic CMS
 const portfolioEntries = await getCollection('portfolio');
-const allProjects = portfolioEntries.map((entry) => ({
-  ...entry.data,
-  image: preferWebp(entry.data.image),
+
+// Process projects with aspect ratio detection
+const allProjects = await Promise.all(portfolioEntries.map(async (entry) => {
+  const imagePath = preferWebp(entry.data.image);
+  let isLandscape = false;
+
+  try {
+    // Construct absolute path to the image in public folder
+    const absolutePath = path.join(process.cwd(), 'public', imagePath);
+    const metadata = await sharp(absolutePath).metadata();
+    if (metadata.width && metadata.height) {
+      isLandscape = metadata.width > metadata.height;
+    }
+  } catch (e) {
+    console.error(`Could not read metadata for ${imagePath}:`, e);
+  }
+
+  return {
+    ...entry.data,
+    image: imagePath,
+    isLandscape,
+  };
 }));
 
 // Define Category Order
@@ -29,7 +49,6 @@ allProjects.forEach(project => {
 
 // Filter out empty categories for display
 const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].length > 0);
----
 
 <section class="bg-secondary relative w-full py-20 px-4 md:px-8" id="portfolio-cms-section">
   <div class="container mx-auto">
@@ -54,14 +73,14 @@ const activeCategories = CATEGORY_ORDER.filter(cat => groupedProjects[cat].lengt
                         </h2>
                      </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full" id={`grid-${category}`}>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full grid-flow-dense" id={`grid-${category}`}>
                         {items.map((item, index) => (
                             <div 
-                                class={`group relative w-full cursor-pointer project-card ${index >= 3 ? 'hidden' : ''}`} 
+                                class={`group relative w-full cursor-pointer project-card ${item.isLandscape ? 'md:col-span-2' : ''} ${index >= 3 ? 'hidden' : ''}`} 
                                 data-index={index}
                             >
                                 <!-- Image Wrapper -->
-                                <div class="relative w-full overflow-hidden rounded-[2rem] bg-gray-900 aspect-[3/4] md:aspect-[4/5]">
+                                <div class={`relative w-full overflow-hidden rounded-[2rem] bg-gray-900 ${item.isLandscape ? 'aspect-[16/10] md:aspect-[16/9]' : 'aspect-[3/4] md:aspect-[4/5]'}`}>
                                     {item.image ? (
                                       <img
                                         src={item.image}
