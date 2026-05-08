@@ -144,14 +144,14 @@ export const PORTFOLIO_SECTION = {
   title: "Portofoliu selectiv → Poze",
   /** These are example/placeholder projects for the home page grid */
   projects: [
-    { name: "Apartament Băneasa", material: "Nuc American", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
-    { name: "Villa Pipera", material: "Stejar Masiv", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 2.webp" },
-    { name: "Penthouse Herăstrău", material: "MDF Vopsit & Marmură", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
-    { name: "Loft Timpuri Noi", material: "Metal & Lemn Recuperat", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 4.webp" },
-    { name: "Brașov Residence", material: "Furnir Eucalipt", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 5.webp" },
-    { name: "Office Space Unirii", material: "Sticlă & Oțel", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 6.webp" },
-    { name: "Duplex Primăverii", material: "Marmură Carrara", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 7.webp" },
-    { name: "Showroom Victoriei", material: "Compozit & Velvet", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 8.webp" },
+    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
+    { name: "Baie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 2.webp" },
+    { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
+    { name: "Hol", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 4.webp" },
+    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 5.webp" },
+    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 6.webp" },
+    { name: "Birou", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 7.webp" },
+    { name: "Showroom", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 8.webp" },
   ],
 };
 
