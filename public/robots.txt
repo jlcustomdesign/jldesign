@@ -30,7 +30,7 @@ Allow: /Fonts/
 Allow: /Images/
 
 # Sitemap location
-Sitemap: https://jl-design.vercel.app/sitemap-index.xml
+Sitemap: https://mobilapersonalizatabrasov.ro/sitemap.xml
 
 # Crawl-delay (optional, helps prevent server overload)
 Crawl-delay: 1

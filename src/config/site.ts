@@ -10,7 +10,7 @@ export const SITE = {
   name: "JL Mobila",
   legalName: "JL Mobila S.R.L.",
   tagline: "Mobilier la comandă din lemn masiv",
-  url: "https://jl-design.vercel.app",
+  url: "https://mobilapersonalizatabrasov.ro",
 
   /** Contact */
   phone: "+40700000000",         // ← Replace with real phone
@@ -75,9 +75,9 @@ export const SITE = {
     // Material
     "lemn masiv", "MDF vopsit", "PAL melaminat", "furnir natural",
     "Egger", "Kronospan", "feronerie Blum", "Hettich", "Hafele",
-    // Location
-    "mobilă Brașov", "mobilier Brașov", "mobilier Buzău", "mobilier Sibiu",
-    "mobilier Sfântu Gheorghe", "mobilier Făgăraș",
+    // Location (prioritize exact search term)
+    "mobila personalizata brasov", "mobilă personalizată Brașov", "mobilă Brașov", "mobilier Brașov",
+    "mobilier Buzău", "mobilier Sibiu", "mobilier Sfântu Gheorghe", "mobilier Făgăraș",
   ],
 
   /** Images */

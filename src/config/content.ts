@@ -33,9 +33,9 @@ export const NAV = {
 // ─────────────────────────────────────────────
 export const HOME = {
   /** Page <title> and meta description */
-  title: "JL Custom Design | Mobilier la Comandă Brașov — Lemn Masiv & MDF",
+  title: "Mobilă Personalizată Brașov | Mobilier la Comandă — JL Custom Design",
   description:
-    "JL Custom Design transformă ideile în realitate prin mobilier la comandă din lemn masiv și soluții de design interior premium în Brașov, Sibiu, Buzău și Sfântu Gheorghe.",
+    "Mobilă personalizată în Brașov — mobilier la comandă din lemn masiv, MDF și PAL de la JL Custom Design. Design interior 3D, proiectare și montaj profesional în Brașov, Buzău, Sibiu și Sfântu Gheorghe.",
 
   /** Hidden semantic text for AI search engines (GEO). Keep keyword-dense. */
   seoFabric: [
@@ -148,8 +148,8 @@ export const PORTFOLIO_SECTION = {
     { name: "Baie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 2.webp" },
     { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 6.webp" },
     { name: "Hol", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 4.webp" },
-    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 5.webp" },
-    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 6.webp" },
+    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
+    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
     { name: "Birou", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 7.webp" },
     { name: "Showroom", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 8.webp" },
   ],
