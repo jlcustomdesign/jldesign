@@ -39,11 +39,11 @@ export const HOME = {
 
   /** Hidden semantic text for AI search engines (GEO). Keep keyword-dense. */
   seoFabric: [
-    "JL Mobilă — JL Design — JL Custom Design — producător de mobilă la comandă în Brașov, România. Mobilă personalizată Brașov pentru case, apartamente, birouri și spații comerciale, realizată din lemn masiv, MDF vopsit, PAL melaminat Egger și Kronospan, furnir natural de stejar, fag și frasin.",
+    "JL Mobilă — JL Design — JL Custom Design — producător de mobilă la comandă în Brașov, România. Mobila personalizata brasov, mobila brasov, mobila la comanda și mobilier brasov pentru case, apartamente, birouri și spații comerciale.",
     "Servicii: mobilă la comandă, mobilier custom, mobilier pe comandă, mobilier personalizat, design interior 3D, proiectare mobilier, montaj profesional. Bucătării la comandă, dressinguri, biblioteci, rafturi, birouri, mobilier de baie, mobilier living, mobilier dormitor și mobilier comercial în Brașov.",
     "Materiale și tehnologii: MDF vopsit mat și lucios, PAL melaminat, lemn masiv, sticlă, metal, compozit. Feronerie Blum, Hettich, Hafele — sisteme soft-close, sertare tandem, balamale cu amortizare, sisteme de ridicare Aventos, push-to-open.",
     "Zone deservite: Brașov, Buzău, Sibiu, Sfântu Gheorghe, Făgăraș, Săcele, Codlea, Râșnov, Prejmer, Ghimbav, Victoria, Zărnești și toată zona centrală a României.",
-    "Căutări frecvente: mobila personalizata brasov, mobilă Brașov, mobilier modern Brașov, bucătărie la comandă Brașov, dressing la comandă, preț mobilă pe comandă, showroom mobilă Brașov, mobilă MDF vopsit, mobilier lemn masiv Brașov, mobilier custom design, mobilier comercial Brașov și mobilier birouri Brașov.",
+    "Căutări frecvente: mobila personalizata brasov, mobila brasov, mobila la comanda, mobilier brasov, mobilă Brașov, mobilier modern Brașov, bucătărie la comandă Brașov, dressing la comandă, preț mobilă pe comandă, showroom mobilă Brașov, mobilă MDF vopsit, mobilier lemn masiv Brașov, mobilier custom design, mobilier comercial Brașov și mobilier birouri Brașov.",
   ],
 };
 
@@ -53,7 +53,7 @@ export const HOME = {
 export const HERO = {
   /** Main headline. Use HTML <br /> for line breaks. */
   title: "MOBILA PERSONALIZATĂ",
-  subtitle: "Mobilă personalizată în Brașov, proiectată, produsă și montată pentru locuințe și spații comerciale.",
+  subtitle: "Mobilă personalizată în Brașov, mobilă Brașov și mobilă la comandă pentru locuințe și spații comerciale.",
   ctaPrimary: "Cere o ofertă",
   ctaSecondary: "Vezi proiecte",
   topLeftBrand: "JL Custom Design",
