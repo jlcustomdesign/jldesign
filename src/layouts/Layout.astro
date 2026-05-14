@@ -34,6 +34,8 @@ const {
   hideContact = false,
 } = Astro.props;
 
+const faviconHref = `${SITE.logo}?v=16`;
+
 // --- Structured Data Schemas ---
 
 // 1. Organization with Wikidata entity disambiguation
@@ -122,7 +124,8 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href={`${SITE.logo}?v=2`} />
+    <link rel="icon" type="image/svg+xml" href={faviconHref} />
+    <link rel="shortcut icon" href={faviconHref} />
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="index, follow" />
     <meta name="geo.region" content="RO-BV" />
