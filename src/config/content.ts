@@ -100,6 +100,12 @@ export const SERVICES_SECTION = {
       img: "/Poze JL Custom Design - Site/LP/Servicii /Dormitor.webp",
     },
     {
+      id: "dressing",
+      title: "Dressing",
+      desc: "Dressinguri și spații de depozitare proiectate la comandă, cu compartimentare adaptată volumului de haine, accesoriilor și obiectelor personale. Configurația urmărește folosirea eficientă a spațiului disponibil.",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Dressing.webp",
+    },
+    {
       id: "hol",
       title: "Hol",
       desc: "Mobilier pentru zona de intrare: dulapuri, pantofare, băncuțe sau panouri cuier. Configurația este adaptată spațiului disponibil și necesarului de depozitare.",
