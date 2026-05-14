@@ -85,7 +85,7 @@ export const SITE = {
 
   /** Images */
   defaultOgImage: "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp",
-  logo: "/Favicon%20crem.svg?v=3",
+  logo: "/Favicon%20crem.svg",
 } as const;
 
 /** Helper: full absolute URL */
