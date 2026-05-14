@@ -781,6 +781,7 @@ export const CONTACT_MODAL = {
   emailPlaceholder: "Email",
   phonePlaceholder: "Telefon (Opțional)",
   projectPlaceholder: "Detalii despre proiect...",
+  callButtonHref: "tel:+40700000000",
   callButton: "Sună Direct",
   sendButton: "Trimite",
   successMessage: "Mesajul a fost trimis! Vă vom contacta în curând.",
