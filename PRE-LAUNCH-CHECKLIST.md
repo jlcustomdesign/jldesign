@@ -40,7 +40,7 @@ Everything that needs to happen **before** the site goes live.
 ### Google
 
 - [ ] **Google Search Console:** Add & verify the final domain
-- [ ] Submit the sitemap URL (`https://yourdomain.com/sitemap-index.xml`)
+- [ ] Submit the sitemap URL (`https://mobilapersonalizatabrasov.ro/sitemap-index.xml`)
 - [ ] Request indexing of the homepage
 
 ### Bing
