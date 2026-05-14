@@ -13,8 +13,8 @@ export const SITE = {
   url: "https://mobilapersonalizatabrasov.ro",
 
   /** Contact */
-  phone: "+40700000000",         // ← Replace with real phone
-  email: "contact@jlmobila.ro",  // ← Replace with real email
+  phone: "+40773504248",
+  email: "customdesignjl@gmail.com",
 
   /** Primary Location */
   address: {

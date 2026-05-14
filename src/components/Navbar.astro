@@ -1,8 +1,14 @@
 ---
 import BubbleButton from "./ui/BubbleButton.astro";
-import { NAV } from "../config/content";
+import * as content from "../config/content";
 
-const links = NAV.links;
+const nav = content.NAV;
+const links = nav?.links ?? [];
+
+type NavLink = {
+  name: string;
+  href: string;
+};
 ---
 
 <nav
@@ -26,7 +32,7 @@ const links = NAV.links;
           href="/"
           class="nav-text font-serif text-xl font-bold tracking-tight whitespace-nowrap block text-center"
         >
-          {NAV.logo}
+          {nav.logo}
         </a>
       </div>
     </div>
@@ -36,7 +42,7 @@ const links = NAV.links;
       class="hidden md:flex gap-6 items-center absolute left-1/2 -translate-x-1/2"
     >
       {
-        links.map((link) => (
+        links.map((link: NavLink) => (
           <li>
             <a
               href={link.href}
@@ -59,7 +65,7 @@ const links = NAV.links;
         href="/contact"
         class="hidden md:inline-flex whitespace-nowrap !px-6 !py-2.5"
       >
-        {NAV.ctaLabel}
+        {nav.ctaLabel}
       </BubbleButton>
     </div>
 
@@ -67,7 +73,7 @@ const links = NAV.links;
     <button
       id="open-mobile-menu"
       class="nav-text md:hidden transition-colors duration-300 ml-auto"
-      aria-label={NAV.openMenuAria}
+      aria-label={nav.openMenuAria}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

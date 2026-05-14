@@ -122,7 +122,9 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=15" />
+    <link rel="icon" type="image/svg+xml" href={SITE.logo} />
+    <link rel="shortcut icon" href={SITE.logo} />
+    <link rel="apple-touch-icon" href={SITE.logo} />
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="index, follow" />
     <meta name="geo.region" content="RO-BV" />

@@ -44,7 +44,7 @@ const allProjects = await Promise.all(portfolioEntries.map(async (entry) => {
 }));
 
 // Define Category Order (by slugs)
-const CATEGORY_ORDER = ['living', 'dormitor', 'bucatarii', 'bai', 'birou', 'horeca', 'hol'];
+const CATEGORY_ORDER = ['bucatarii', 'living', 'dormitor', 'hol', 'birou', 'horeca', 'bai'];
 
 // Group Projects & Smart Packing
 type Project = (typeof allProjects[0]) & { isHiddenInitially?: boolean };
@@ -159,14 +159,7 @@ const activeCategories = Object.keys(groupedProjects)
                                 </div>
 
                                 <!-- Info Below Image -->
-                                <div class="mt-6 flex justify-between items-end opacity-80 group-hover:opacity-100 transition-opacity duration-500">
-                                    <div>
-                                        {item.name && (
-                                          <h3 class="font-serif text-2xl text-primary leading-tight">
-                                              {item.name}
-                                          </h3>
-                                        )}
-                                    </div>
+                                <div class="mt-6 flex justify-end items-end opacity-80 group-hover:opacity-100 transition-opacity duration-500">
                                     
                                     <!-- Arrow Icon (Fixed) -->
                                     <div class="w-10 h-10 flex-shrink-0 rounded-full border border-white/20 flex items-center justify-center transform -rotate-45 group-hover:rotate-0 transition-transform duration-500 text-primary">
