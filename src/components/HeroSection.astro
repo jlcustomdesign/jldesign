@@ -3,6 +3,7 @@ import BubbleButton from "./ui/BubbleButton.astro";
 import { HERO } from "../config/content";
 
 const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
+const heroImageMobile = "/Poze JL Custom Design - Site/LP/Hero/Mobile.webp";
 ---
 
 <section
@@ -35,17 +36,20 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
         </defs>
       </svg>
 
-      <img
-        id="hero-image"
-        src={heroImage}
-        alt=""
-        aria-hidden="true"
-        class="absolute inset-0 w-full h-full object-cover"
-        style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);"
-        loading="eager"
-        fetchpriority="high"
-        decoding="async"
-      />
+      <picture class="absolute inset-0 block w-full h-full">
+        <source media="(max-width: 767px)" srcset={heroImageMobile} />
+        <img
+          id="hero-image"
+          src={heroImage}
+          alt=""
+          aria-hidden="true"
+          class="absolute inset-0 w-full h-full object-cover"
+          style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
 
       <div
         class="absolute inset-0 bg-black/10"

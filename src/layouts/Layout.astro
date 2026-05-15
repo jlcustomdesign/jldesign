@@ -180,7 +180,8 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
       type="font/ttf"
       crossorigin
     />
-    <link rel="preload" as="image" href="/Poze JL Custom Design - Site/LP/Hero/Desktop.webp" />
+    <link rel="preload" as="image" href="/Poze JL Custom Design - Site/LP/Hero/Mobile.webp" media="(max-width: 767px)" />
+    <link rel="preload" as="image" href="/Poze JL Custom Design - Site/LP/Hero/Desktop.webp" media="(min-width: 768px)" />
     <script is:inline>
       // Prevent scroll restoration (glitch prevention)
       if (history.scrollRestoration) {
