@@ -219,14 +219,8 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
             initSmoothScroll();
             initAutoTracking();
             
-            // Fail-safe: Heartbeat refresh to handle any late-loading assets
-            // that might "trap" the scroll height
-            let refreshCount = 0;
-            const heartbeat = setInterval(() => {
-              ScrollTrigger.refresh();
-              refreshCount++;
-              if (refreshCount > 5) clearInterval(heartbeat);
-            }, 500);
+            // Single refresh to ensure layout measurements are correct
+            ScrollTrigger.refresh();
           }, 100);
         });
       };

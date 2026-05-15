@@ -14,15 +14,17 @@ let heroAnimInitialized = false;
 let heroExitInitialized = false;
 
 export function initHeroAnimations() {
-  if (document.readyState === "complete") {
+  if (document.readyState === "complete" || document.readyState === "interactive") {
     requestAnimationFrame(() => {
         safeInitHeroAnim();
         safeInitHeroExitAnimation();
     });
   } else {
-    window.addEventListener("load", () => {
-        safeInitHeroAnim();
-        safeInitHeroExitAnimation();
+    document.addEventListener("DOMContentLoaded", () => {
+        requestAnimationFrame(() => {
+          safeInitHeroAnim();
+          safeInitHeroExitAnimation();
+        });
     });
   }
 
