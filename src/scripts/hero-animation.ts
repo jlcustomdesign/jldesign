@@ -86,15 +86,7 @@ function runHeroEnterAnimation(section: Element) {
   const ctx = gsap.context(() => {
     const masterTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    // Subtle drop for the hero content wrapper to provide an initial motion
-    try {
-      const contentWrapper = document.querySelector('#hero-content-wrapper');
-      if (contentWrapper) {
-        masterTl.fromTo(contentWrapper, { y: -24 }, { y: 0, duration: 0.6, ease: 'power2.out' });
-      }
-    } catch (e) {
-      // ignore
-    }
+    // Keep the initial hero position stable; only scale the visual stack.
 
     // --- 1. SVG & Background Setup ---
     try {
@@ -121,7 +113,7 @@ function runHeroEnterAnimation(section: Element) {
       }
 
       // Sequence: first shrink the whole visual stack slightly, then morph the SVG path.
-      // This keeps the image and SVG moving together without a hide/reveal flicker.
+      // This keeps the image and SVG moving together without a hide/reveal flicker or drop.
       if (heroVisualLayer) {
         masterTl.to(heroVisualLayer, { scale: 0.96, duration: 0.6, ease: 'power2.out' });
       }
