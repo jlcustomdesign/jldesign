@@ -221,8 +221,9 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
           initSmoothScroll();
           initAutoTracking();
           
-          // Single refresh to ensure layout measurements are correct
-          ScrollTrigger.refresh();
+          // Avoid triggering a forced refresh immediately after load to prevent
+          // a visible reflow/refresh of the hero. Individual components should
+          // refresh themselves if necessary.
         });
       };
 

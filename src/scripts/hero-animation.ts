@@ -159,8 +159,8 @@ function runHeroEnterAnimation(section: Element) {
 
       // Sequence: first image shrink slightly, then morph the SVG path to the cutout
       // so the hero appears full-screen initially and then transitions.
-      if (heroImage) {
-        masterTl.to(heroImage, { scale: 0.96, duration: 0.6, ease: 'power2.out' });
+      if (heroImage && svg) {
+        masterTl.to([heroImage, svg], { scale: 0.96, duration: 0.6, ease: 'power2.out', transformOrigin: 'center center' });
       }
 
       // SVG Animation (morph/cutout) — run after the image shrink
