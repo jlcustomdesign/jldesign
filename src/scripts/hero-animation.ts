@@ -13,43 +13,6 @@ const widthTarget = WIDTH_TARGET;
 let heroAnimInitialized = false;
 let heroExitInitialized = false;
 
-function waitForLCP(timeout = 700) {
-  return new Promise<void>((resolve) => {
-    if (typeof window === "undefined" || !(window as any).PerformanceObserver) {
-      setTimeout(resolve, 250);
-      return;
-    }
-
-    let resolved = false;
-    const to = setTimeout(() => {
-      if (!resolved) {
-        resolved = true;
-        obs.disconnect();
-        resolve();
-      }
-    }, timeout);
-
-    const obs = new (window as any).PerformanceObserver((list: any) => {
-      const entries = list.getEntries();
-      if (entries && entries.length) {
-        if (!resolved) {
-          resolved = true;
-          clearTimeout(to);
-          obs.disconnect();
-          resolve();
-        }
-      }
-    });
-
-    try {
-      obs.observe({ type: "largest-contentful-paint", buffered: true });
-    } catch (e) {
-      clearTimeout(to);
-      resolve();
-    }
-  });
-}
-
 export function initHeroAnimations() {
   if (document.readyState === "complete" || document.readyState === "interactive") {
     requestAnimationFrame(() => {
@@ -79,8 +42,7 @@ function safeInitHeroAnim() {
   const section = document.querySelector("#hero-section");
   if (!section || (section as HTMLElement).dataset.heroAnimInit) return;
   heroAnimInitialized = true;
-  // Delay enter animation until after LCP is recorded (or timeout)
-  waitForLCP(700).then(() => runHeroEnterAnimation(section));
+  requestAnimationFrame(() => runHeroEnterAnimation(section));
 }
 
 function safeInitHeroExitAnimation() {
@@ -128,7 +90,7 @@ function runHeroEnterAnimation(section: Element) {
     try {
       const contentWrapper = document.querySelector('#hero-content-wrapper');
       if (contentWrapper) {
-        masterTl.fromTo(contentWrapper, { y: -24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power2.out' });
+        masterTl.fromTo(contentWrapper, { y: -24 }, { y: 0, duration: 0.6, ease: 'power2.out' });
       }
     } catch (e) {
       // ignore
@@ -152,15 +114,16 @@ function runHeroEnterAnimation(section: Element) {
       // Initial State (Rectangle)
       path.setAttribute("d", rectangle(width, height));
 
-      // Prepare the hero image for a subtle post-LCP zoom (do not change initial painted bounds)
-      if (heroImage) {
-        gsap.set(heroImage, { transformOrigin: "center center" });
+      const heroVisualLayer = document.querySelector("#hero-visual-layer");
+
+      if (heroVisualLayer) {
+        gsap.set(heroVisualLayer, { transformOrigin: "center center" });
       }
 
-      // Sequence: first image shrink slightly, then morph the SVG path to the cutout
-      // so the hero appears full-screen initially and then transitions.
-      if (heroImage && svg) {
-        masterTl.to([heroImage, svg], { scale: 0.96, duration: 0.6, ease: 'power2.out', transformOrigin: 'center center' });
+      // Sequence: first shrink the whole visual stack slightly, then morph the SVG path.
+      // This keeps the image and SVG moving together without a hide/reveal flicker.
+      if (heroVisualLayer) {
+        masterTl.to(heroVisualLayer, { scale: 0.96, duration: 0.6, ease: 'power2.out' });
       }
 
       // SVG Animation (morph/cutout) — run after the image shrink
@@ -352,7 +315,7 @@ function runSvgAnim(path: Element, width: number, height: number) {
 
   // Small post-morph pop to sell the effect (scale up then settle)
   if (window.innerWidth > 1024) {
-    tl.to("#hero-image", {
+    tl.to("#hero-visual-layer", {
       scale: 1.03,
       duration: 0.45,
       ease: "power2.out",

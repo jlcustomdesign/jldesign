@@ -19,7 +19,7 @@ const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.
     style="transform-origin: center center;"
   >
     <!-- SVG-defined clip path, kept as the visual system for the hero reveal -->
-    <div class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none" style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);">
+    <div id="hero-visual-layer" class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none" style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip); transform-origin: center center;">
       <svg
         id="mySVG"
         xmlns="http://www.w3.org/2000/svg"
