@@ -15,24 +15,7 @@ let heroExitInitialized = false;
 
 export function initHeroAnimations() {
   if (typeof window !== "undefined" && window.innerWidth < 1024) {
-    const svg = document.querySelector("#mySVG");
-
-    if (svg) {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
-      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-
-      let path = svg.querySelector("#heroPath");
-      if (!path) {
-        path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.id = "heroPath";
-        svg.appendChild(path);
-      }
-
-      path.setAttribute("d", rectangle(width, height));
-      gsap.set(svg, { opacity: 1 });
-    }
+    return;
   }
 
   if (document.readyState === "complete") {
