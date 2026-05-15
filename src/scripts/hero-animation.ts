@@ -150,10 +150,9 @@ function runHeroEnterAnimation(section: Element) {
     );
 
     // Main Text Reveal (Title & Subtitle)
-    // We already split the title on server side, so we just animate .hero-word
-    masterTl.fromTo(
+    // We already split the title on server side, and initial state is in CSS.
+    masterTl.to(
       ".hero-word",
-      { y: 50, autoAlpha: 0 },
       { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.05, ease: "power3.out" },
       "svgComplete"
     );
@@ -192,12 +191,12 @@ function runHeroEnterAnimation(section: Element) {
 function runSvgAnim(path: Element, width: number, height: number) {
   const tl = gsap.timeline();
 
-  tl.from("#mySVG", {
-    scale: width > widthTarget ? 1.5 : 1.15,
+  // Use .to because the START scale is now defined in CSS (.initial-hero-state)
+  tl.to("#mySVG", {
+    scale: 1,
     duration: 1,
     ease: "power4.out",
   }).to(path, {
-    scale: 1,
     duration: width > widthTarget ? 1.8 : 0.6,
     morphSVG: cross(width, height),
     ease: width > widthTarget ? "elastic.out(1, 0.9)" : "back.out(1.7)",
