@@ -17,17 +17,15 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
     class="absolute inset-0 flex items-center"
     style="transform-origin: center center;"
   >
-    <!-- Background SVG Container -->
-    <div
-      class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none"
-    >
+    <!-- SVG-defined clip path, kept as the visual system for the hero reveal -->
+    <div class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none">
       <svg
         id="mySVG"
         xmlns="http://www.w3.org/2000/svg"
         width="100%"
         height="100%"
         preserveAspectRatio="none"
-        class="w-full h-full md:opacity-0"
+        class="absolute inset-0 w-full h-full opacity-0"
         style="transform-origin: center center;"
       >
         <defs>
@@ -35,23 +33,24 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
             <path id="heroPath" fill="white"></path>
           </clipPath>
         </defs>
-        <!-- Image masked by the path -->
-        <image
-          href={heroImage}
-          width="100%"
-          height="100%"
-          preserveAspectRatio="xMidYMid slice"
-          clip-path="url(#heroClip)"
-          image-rendering="optimizeQuality"
-        />
-        <!-- Overlay for text contrast -->
-        <rect
-          width="100%"
-          height="100%"
-          fill="black"
-          opacity="0.1"
-          clip-path="url(#heroClip)"></rect>
       </svg>
+
+      <img
+        id="hero-image"
+        src={heroImage}
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 w-full h-full object-cover"
+        style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+
+      <div
+        class="absolute inset-0 bg-black/10"
+        style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);"
+      ></div>
     </div>
 
     <!-- Content Container -->

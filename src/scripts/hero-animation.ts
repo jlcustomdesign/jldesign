@@ -53,6 +53,7 @@ function safeInitHeroExitAnimation() {
 
 function runHeroEnterAnimation(section: Element) {
   const svg = document.querySelector("#mySVG");
+  const heroImage = document.querySelector("#hero-image");
   if (!section || !svg) return;
   const isMobile = window.innerWidth < 1024;
 
@@ -101,7 +102,11 @@ function runHeroEnterAnimation(section: Element) {
       // Initial State (Rectangle)
       path.setAttribute("d", rectangle(width, height));
 
-      // Fade in SVG (mobile starts visible for faster first paint)
+      // Fade in the visible hero image while keeping the SVG path active underneath
+      if (heroImage) {
+        gsap.set(heroImage, { scale: 1.06, transformOrigin: "center center" });
+      }
+
       if (isMobile) {
         gsap.set(svg, { opacity: 1 });
       } else {
@@ -275,7 +280,7 @@ function runSvgAnim(path: Element, width: number, height: number) {
   const plugins = (gsap as any).plugins || {};
   const hasMorphSvg = Boolean(plugins.morphSVG || plugins.MorphSVGPlugin);
 
-  tl.from("#mySVG", {
+  tl.from("#hero-image", {
     scale: 1.5,
     duration: 1,
     ease: "power4.out",
