@@ -212,20 +212,25 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
       import { initAutoTracking } from "../scripts/analytics";
       import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-      // Optimization: Stagger initialization to avoid blocking Main Thread on load
+      // Optimization: Defer initialization to avoid blocking Main Thread and delaying TTI/LCP
       const init = () => {
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            initSmoothScroll();
-            initAutoTracking();
-            
-            // Single refresh to ensure layout measurements are correct
-            ScrollTrigger.refresh();
-          }, 100);
+        // Use requestIdleCallback if available, fallback to setTimeout
+        const deferFn = window.requestIdleCallback || ((cb) => setTimeout(cb, 200));
+        
+        deferFn(() => {
+          initSmoothScroll();
+          initAutoTracking();
+          
+          // Single refresh to ensure layout measurements are correct
+          ScrollTrigger.refresh();
         });
       };
 
-      init();
+      if (document.readyState === 'complete') {
+        init();
+      } else {
+        window.addEventListener('load', init);
+      }
       document.addEventListener("astro:page-load", init);
     </script>
     {!hideContact && <ContactModal />}

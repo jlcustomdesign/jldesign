@@ -282,11 +282,14 @@ function runSvgAnim(path: Element, width: number, height: number) {
   const plugins = (gsap as any).plugins || {};
   const hasMorphSvg = Boolean(plugins.morphSVG || plugins.MorphSVGPlugin);
 
-  tl.from("#hero-image", {
-    scale: 1.5,
-    duration: 1,
-    ease: "power4.out",
-  });
+  // Only scale on desktop to avoid LCP invalidation on mobile (LCP element shifted outside viewport)
+  if (window.innerWidth > 1024) {
+    tl.from("#hero-image", {
+      scale: 1.5,
+      duration: 1,
+      ease: "power4.out",
+    });
+  }
 
   if (hasMorphSvg) {
     tl.to(path, {

@@ -36,7 +36,7 @@ const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.
         </defs>
       </svg>
 
-      <picture class="absolute inset-0 block w-full h-full" style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);">
+      <picture class="absolute inset-0 block w-full h-full">
         <source media="(max-width: 767px)" srcset={heroImageMobile} />
         <img
           id="hero-image"
@@ -44,6 +44,7 @@ const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.
           alt=""
           aria-hidden="true"
           class="absolute inset-0 w-full h-full object-cover"
+          style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);"
           loading="eager"
           fetchpriority="high"
           decoding="async"
