@@ -19,7 +19,7 @@ const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.
     style="transform-origin: center center;"
   >
     <!-- SVG-defined clip path, kept as the visual system for the hero reveal -->
-    <div class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none">
+    <div class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none" style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);">
       <svg
         id="mySVG"
         xmlns="http://www.w3.org/2000/svg"
@@ -43,18 +43,13 @@ const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.
           src={heroImage}
           alt=""
           aria-hidden="true"
-          class="absolute inset-0 w-full h-full object-cover"
-          style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);"
+          class="absolute inset-0 w-full h-full object-cover will-change-transform"
           loading="eager"
           fetchpriority="high"
           decoding="async"
         />
       </picture>
-
-      <div
-        class="absolute inset-0 bg-black/10"
-        style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip);"
-      ></div>
+      <div class="absolute inset-0 bg-black/10"></div>
     </div>
 
     <!-- Content Container -->

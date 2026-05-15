@@ -13,6 +13,43 @@ const widthTarget = WIDTH_TARGET;
 let heroAnimInitialized = false;
 let heroExitInitialized = false;
 
+function waitForLCP(timeout = 700) {
+  return new Promise<void>((resolve) => {
+    if (typeof window === "undefined" || !(window as any).PerformanceObserver) {
+      setTimeout(resolve, 250);
+      return;
+    }
+
+    let resolved = false;
+    const to = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        obs.disconnect();
+        resolve();
+      }
+    }, timeout);
+
+    const obs = new (window as any).PerformanceObserver((list: any) => {
+      const entries = list.getEntries();
+      if (entries && entries.length) {
+        if (!resolved) {
+          resolved = true;
+          clearTimeout(to);
+          obs.disconnect();
+          resolve();
+        }
+      }
+    });
+
+    try {
+      obs.observe({ type: "largest-contentful-paint", buffered: true });
+    } catch (e) {
+      clearTimeout(to);
+      resolve();
+    }
+  });
+}
+
 export function initHeroAnimations() {
   if (document.readyState === "complete" || document.readyState === "interactive") {
     requestAnimationFrame(() => {
@@ -42,7 +79,8 @@ function safeInitHeroAnim() {
   const section = document.querySelector("#hero-section");
   if (!section || (section as HTMLElement).dataset.heroAnimInit) return;
   heroAnimInitialized = true;
-  runHeroEnterAnimation(section);
+  // Delay enter animation until after LCP is recorded (or timeout)
+  waitForLCP(700).then(() => runHeroEnterAnimation(section));
 }
 
 function safeInitHeroExitAnimation() {
@@ -86,6 +124,16 @@ function runHeroEnterAnimation(section: Element) {
   const ctx = gsap.context(() => {
     const masterTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
+    // Subtle drop for the hero content wrapper to provide an initial motion
+    try {
+      const contentWrapper = document.querySelector('#hero-content-wrapper');
+      if (contentWrapper) {
+        masterTl.fromTo(contentWrapper, { y: -24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power2.out' });
+      }
+    } catch (e) {
+      // ignore
+    }
+
     // --- 1. SVG & Background Setup ---
     try {
       const width = window.innerWidth;
@@ -104,9 +152,9 @@ function runHeroEnterAnimation(section: Element) {
       // Initial State (Rectangle)
       path.setAttribute("d", rectangle(width, height));
 
-      // Fade in the visible hero image while keeping the SVG path active underneath
+      // Prepare the hero image for a subtle post-LCP zoom (do not change initial painted bounds)
       if (heroImage) {
-        gsap.set(heroImage, { scale: 1.06, transformOrigin: "center center" });
+        gsap.set(heroImage, { transformOrigin: "center center" });
       }
 
       if (isMobile) {
@@ -115,8 +163,8 @@ function runHeroEnterAnimation(section: Element) {
         gsap.to(svg, { opacity: 1, duration: 0.3 });
       }
 
-      // SVG Animation
-      masterTl.add(runSvgAnim(path, width, height));
+      // SVG Animation (morph/cutout) — sequence after the drop animation
+      masterTl.add(runSvgAnim(path, width, height), ">=0.15");
       masterTl.addLabel("svgComplete"); // Mark end of SVG anim
 
       // Resize Listener
