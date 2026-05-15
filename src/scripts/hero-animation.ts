@@ -52,9 +52,9 @@ function safeInitHeroExitAnimation() {
 }
 
 function runHeroEnterAnimation(section: Element) {
-  const visualLayer = document.querySelector("#hero-visual-layer");
+  const svg = document.querySelector("#mySVG");
   const path = document.querySelector("#heroPath") as SVGPathElement;
-  if (!section || !visualLayer || !path) return;
+  if (!section || !svg || !path) return;
 
   // Mark as initialized
   (section as HTMLElement).dataset.heroAnimInit = "true";
@@ -88,6 +88,8 @@ function runHeroEnterAnimation(section: Element) {
       const width = window.innerWidth;
       const height = window.innerHeight;
 
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
       // Initial State (Rectangle)
       path.setAttribute("d", rectangle(width, height));
 
@@ -111,6 +113,7 @@ function runHeroEnterAnimation(section: Element) {
 
         if (rafId) cancelAnimationFrame(rafId);
         rafId = requestAnimationFrame(() => {
+          svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
           path.setAttribute("d", cross(w, h));
         });
       };
@@ -244,9 +247,8 @@ function runHeroEnterAnimation(section: Element) {
 
 function runSvgAnim(path: Element, width: number, height: number) {
   const tl = gsap.timeline();
-  const visualLayer = document.querySelector("#hero-visual-layer");
 
-  tl.from(visualLayer, {
+  tl.from("#mySVG", {
     scale: width > widthTarget ? 1.5 : 1.15,
     duration: 1,
     ease: "power4.out",
