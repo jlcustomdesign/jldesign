@@ -137,11 +137,9 @@ function generatePath(
 }
 
 export function initServicesHeroAnimations() {
-  if (document.readyState === "complete" || document.readyState === "interactive") {
+  if (document.readyState === "complete") {
     requestAnimationFrame(safeInitServicesAnim);
   } else {
-    document.addEventListener("DOMContentLoaded", safeInitServicesAnim);
-    // Fallback if DOMContentLoaded already fired
     window.addEventListener("load", safeInitServicesAnim);
   }
 
@@ -210,23 +208,19 @@ function runServicesHeroAnimation(section: Element) {
   }
 
   pathEl.setAttribute("d", startPath);
-  gsap.set(containerSvg, { opacity: 1, scale: isMobile ? 1 : 1.3 });
+  gsap.set(containerSvg, { opacity: 1, scale: 1.3 });
 
   const tl = gsap.timeline({ defaults: { ease: "power2.inOut" } });
 
-  // PHASE 1: Zoom to normal with Bounce (Disabled/Minimized on Mobile)
-  if (isMobile) {
-    tl.to(containerSvg, { scale: 1, duration: 0.1 }); // Fast settle
-  } else {
-    tl.to(containerSvg, { scale: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" });
-  }
+  // PHASE 1: Zoom to normal with Bounce
+  tl.to(containerSvg, { scale: isMobile ? 0.94 : 1, duration: 1.5, ease: "elastic.out(1, 0.75)" });
 
   // PHASE 2: Simultaneous Reveal
   tl.to(pathEl, {
     morphSVG: { shape: finalPath, shapeIndex: 0 },
     duration: 1.2,
     ease: "back.out(1.2)"
-  }, isMobile ? "-=0.0" : "-=0.5");
+  }, "-=0.5");
 
   // DESKTOP TITLE TEXT REVEAL
   const desktopTitles = section.querySelectorAll(".desktop-headline-text");

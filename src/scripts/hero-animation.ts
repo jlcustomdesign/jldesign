@@ -14,17 +14,15 @@ let heroAnimInitialized = false;
 let heroExitInitialized = false;
 
 export function initHeroAnimations() {
-  if (document.readyState === "complete" || document.readyState === "interactive") {
+  if (document.readyState === "complete") {
     requestAnimationFrame(() => {
         safeInitHeroAnim();
         safeInitHeroExitAnimation();
     });
   } else {
-    document.addEventListener("DOMContentLoaded", () => {
-        requestAnimationFrame(() => {
-          safeInitHeroAnim();
-          safeInitHeroExitAnimation();
-        });
+    window.addEventListener("load", () => {
+        safeInitHeroAnim();
+        safeInitHeroExitAnimation();
     });
   }
 
@@ -42,7 +40,7 @@ function safeInitHeroAnim() {
   const section = document.querySelector("#hero-section");
   if (!section || (section as HTMLElement).dataset.heroAnimInit) return;
   heroAnimInitialized = true;
-  requestAnimationFrame(() => runHeroEnterAnimation(section));
+  runHeroEnterAnimation(section);
 }
 
 function safeInitHeroExitAnimation() {
@@ -55,9 +53,7 @@ function safeInitHeroExitAnimation() {
 
 function runHeroEnterAnimation(section: Element) {
   const svg = document.querySelector("#mySVG");
-  const heroImage = document.querySelector("#hero-image");
   if (!section || !svg) return;
-  const isMobile = window.innerWidth < 1024;
 
   // Mark as initialized
   (section as HTMLElement).dataset.heroAnimInit = "true";
@@ -86,8 +82,6 @@ function runHeroEnterAnimation(section: Element) {
   const ctx = gsap.context(() => {
     const masterTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    // Keep the initial hero position stable; only scale the visual stack.
-
     // --- 1. SVG & Background Setup ---
     try {
       const width = window.innerWidth;
@@ -106,9 +100,17 @@ function runHeroEnterAnimation(section: Element) {
       // Initial State (Rectangle)
       path.setAttribute("d", rectangle(width, height));
 
-      // SVG Animation (morph/cutout)
-      masterTl.add(runSvgAnim(path, width, height));
-      masterTl.addLabel("svgComplete"); // Mark end of SVG anim
+      // Fade in SVG
+      gsap.to(svg, { opacity: 1, duration: 0.3 });
+
+      // SVG Animation
+      if (gsap.plugins.morphSVG) {
+        masterTl.add(runSvgAnim(path, width, height));
+        masterTl.addLabel("svgComplete"); // Mark end of SVG anim
+      } else {
+        console.warn("GSAP MorphSVGPlugin not loaded. Skipping morph.");
+        masterTl.addLabel("svgComplete"); // Fallback mark
+      }
 
       // Resize Listener
       let lastWidth = window.innerWidth;
@@ -177,64 +179,50 @@ function runHeroEnterAnimation(section: Element) {
         "svgComplete+=0.1"
     );
 
-     // Main Text Reveal (Title & Subtitle)
-     const textElements = section.querySelectorAll(".hero-text-element");
-
-     if (isMobile) {
-      textElements.forEach((el) => {
-        gsap.set(el, { opacity: 1, visibility: "visible" });
-      });
-
-      masterTl.fromTo(
-        textElements,
-        { y: 24, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.08, ease: "power2.out" },
-        "svgComplete+=0.05"
-      );
-     } else {
-      textElements.forEach((el) => {
-        const parent = document.createElement("div");
-        // move all children to arbitrary parent
-        while (el.firstChild) {
-          parent.appendChild(el.firstChild);
-        }
-        
-        const processNode = (node: ChildNode) => {
-          if (node.nodeType === Node.TEXT_NODE) {
+    // Main Text Reveal (Title & Subtitle) - Word by Word
+    const textElements = section.querySelectorAll(".hero-text-element");
+    textElements.forEach((el) => {
+      const parent = document.createElement("div");
+      // move all children to arbitrary parent
+      while (el.firstChild) {
+         parent.appendChild(el.firstChild);
+      }
+      
+      const processNode = (node: ChildNode) => {
+         if (node.nodeType === Node.TEXT_NODE) {
             const text = node.textContent || "";
             const words = text.split(/\s+/);
             words.forEach(word => {
-              if(!word) return;
-              const span = document.createElement("span");
-              span.className = "hero-word inline-block will-change-transform";
-              span.textContent = word;
-              el.appendChild(span);
-              el.appendChild(document.createTextNode(" "));
+               if(!word) return;
+               const span = document.createElement("span");
+               span.className = "hero-word inline-block will-change-transform";
+               span.textContent = word;
+               el.appendChild(span);
+               el.appendChild(document.createTextNode(" "));
             });
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
+         } else if (node.nodeType === Node.ELEMENT_NODE) {
             const element = node as Element;
             if (element.tagName.toLowerCase() === "br") {
-              el.appendChild(document.createElement("br"));
+               el.appendChild(document.createElement("br"));
             } else {
-              el.appendChild(element.cloneNode(true));
+               el.appendChild(element.cloneNode(true));
             }
-          }
-        };
-        
-        Array.from(parent.childNodes).forEach(processNode);
+         }
+      };
+      
+      Array.from(parent.childNodes).forEach(processNode);
 
-        // Remove the hardcoded utility classes that hide the parent
-        el.classList.remove("opacity-0", "invisible");
-        gsap.set(el, { opacity: 1, visibility: "visible" });
-      });
+      // Remove the hardcoded utility classes that hide the parent
+      el.classList.remove("opacity-0", "invisible");
+      gsap.set(el, { opacity: 1, visibility: "visible" });
+    });
 
-      masterTl.fromTo(
-        ".hero-word",
-        { y: 50, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.05, ease: "power3.out" },
-        "svgComplete"
-      );
-     }
+    masterTl.fromTo(
+      ".hero-word",
+      { y: 50, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.05, ease: "power3.out" },
+      "svgComplete"
+    );
 
     // Enable interaction on Title ONLY after animation completes (approx 1.8s delay + 1.5s anim)
     masterTl.call(() => {
@@ -269,36 +257,16 @@ function runHeroEnterAnimation(section: Element) {
 
 function runSvgAnim(path: Element, width: number, height: number) {
   const tl = gsap.timeline();
-
-  const plugins = (gsap as any).plugins || {};
-  const hasMorphSvg = Boolean(plugins.morphSVG || plugins.MorphSVGPlugin);
-
-  // Re-introduced scale from commit 879b01e for Desktop only
-  if (width > widthTarget) {
-    tl.from("#mySVG", {
-      scale: 1.5,
-      duration: 1,
-      ease: "power4.out",
-    });
-  }
-
-  if (hasMorphSvg) {
-    tl.to(path, {
-      scale: 1,
-      duration: width > widthTarget ? 1.8 : 0.8,
-      morphSVG: cross(width, height),
-      ease: width > widthTarget ? "elastic.out(1, 0.9)" : "back.out(1.7)", // Reverted desktop ease
-    }, width > widthTarget ? "<" : undefined);
-  } else {
-    // Lightweight fallback: avoid dead morph work when MorphSVG plugin is unavailable.
-    tl.to(path, {
-      scale: 1,
-      duration: 0.45,
-      ease: "power2.out",
-      attr: { d: cross(width, height) },
-    });
-  }
-
+  tl.from("#mySVG", {
+    scale: 1.5,
+    duration: 1,
+    ease: "power4.out",
+  }).to(path, {
+    scale: 1,
+    duration: width > widthTarget ? 1.8 : 0.6,
+    morphSVG: cross(width, height),
+    ease: width > widthTarget ? "elastic.out(1, 0.9)" : "back.out(1.7)",
+  });
   return tl;
 }
 

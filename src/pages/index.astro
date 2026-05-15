@@ -30,18 +30,7 @@ import { HOME } from "../config/content";
 
 <script>
   import { initThemeTransition } from "../scripts/theme-transition";
-  
-  const init = () => {
-    // Optimization: Defer theme tracking to allow Hero/FCP to stabilize
-    const deferFn = window.requestIdleCallback || ((cb) => setTimeout(cb, 500));
-    deferFn(() => initThemeTransition());
-  };
-
-  document.addEventListener("astro:page-load", init);
-  // Also run on first load
-  if (document.readyState === 'complete') {
-    init();
-  } else {
-    window.addEventListener('load', init);
-  }
+  document.addEventListener("astro:page-load", initThemeTransition);
+  // Run immediately mostly for dev HMR or initial load if event misses
+  initThemeTransition();
 </script>

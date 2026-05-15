@@ -185,11 +185,7 @@ export const initTextAnimations = (scope: Document | HTMLElement = document): ((
         }
 
 		// Set initial opacity to 0 directly if it's not already set
-        // Optimization: Do NOT hide synchronously if already in viewport (FCP/LCP protection)
-        const rect = htmlElement.getBoundingClientRect();
-        const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
-        
-		if (htmlElement.style.opacity !== '0' && !isInViewport) {
+		if (htmlElement.style.opacity !== '0') {
 			htmlElement.style.opacity = '0';
 		}
 
@@ -201,7 +197,8 @@ export const initTextAnimations = (scope: Document | HTMLElement = document): ((
 
         // Fallback: If element is already significantly in the viewport on load,
         // trigger the animation manually to prevent it from getting stuck at opacity 0
-        if (isInViewport) {
+        const rect = htmlElement.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
             // Mock an intersection entry for elements already in view
             handleIntersection([{
                 isIntersecting: true,

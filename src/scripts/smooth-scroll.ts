@@ -20,8 +20,8 @@ export function initSmoothScroll() {
   const isMobile = window.innerWidth < 1024 || 'ontouchstart' in window;
   
   if (isMobile) {
-    // Just register ScrollTrigger without smooth scrolling.
-    // Defer refresh to allow page to paint first.
+    // Just register ScrollTrigger without smooth scrolling
+    ScrollTrigger.refresh();
     return;
   }
 

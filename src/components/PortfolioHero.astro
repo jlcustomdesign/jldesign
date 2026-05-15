@@ -231,7 +231,6 @@
     const finalTitleContainer = container.querySelector(".final-title");
     const loaderTextContainer = container.querySelector(".loader-text-container");
     const navbar = document.querySelector("#navbar-container");
-    const isDesktop = window.innerWidth >= 1024;
     
     // ALWAYS reset the animation state on new page load
     container.classList.remove('anim-done');
@@ -313,16 +312,16 @@
       
     if (growingImage.length) {
       tl.to(growingImage, {
-        width: isDesktop ? "100vw" : "100%", // Don't force 100vw on mobile
-        height: isDesktop ? "100vh" : "100%",
-        borderRadius: isDesktop ? "0rem" : "1rem", 
+        width: "100vw",
+        height: "100vh",
+        borderRadius: "0rem", // Flatten corners as it fills screen
         duration: 2
       }, "< 1.25");
     }
     
     if (box.length) {
       tl.to(box, {
-        width: isDesktop ? "100vw" : "100%",
+        width: "100vw",
         duration: 2
       }, "<");
     }

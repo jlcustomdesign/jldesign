@@ -180,8 +180,7 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
       type="font/ttf"
       crossorigin
     />
-    <link rel="preload" as="image" href="/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.webp" media="(max-width: 767px)" />
-    <link rel="preload" as="image" href="/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Desktop.webp" media="(min-width: 768px)" />
+    <link rel="preload" as="image" href="/Poze JL Custom Design - Site/LP/Hero/Desktop.webp" />
     <script is:inline>
       // Prevent scroll restoration (glitch prevention)
       if (history.scrollRestoration) {
@@ -210,24 +209,28 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
     <script>
       import { initSmoothScroll } from "../scripts/smooth-scroll";
       import { initAutoTracking } from "../scripts/analytics";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+      // Optimization: Stagger initialization to avoid blocking Main Thread on load
       const init = () => {
-        // Optimization: Defer to requestIdleCallback if available to avoid blocking FCP
-        const deferFn = window.requestIdleCallback || ((cb) => setTimeout(cb, 300));
-        
-        deferFn(() => {
-          initSmoothScroll();
-          initAutoTracking();
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            initSmoothScroll();
+            initAutoTracking();
+            
+            // Fail-safe: Heartbeat refresh to handle any late-loading assets
+            // that might "trap" the scroll height
+            let refreshCount = 0;
+            const heartbeat = setInterval(() => {
+              ScrollTrigger.refresh();
+              refreshCount++;
+              if (refreshCount > 5) clearInterval(heartbeat);
+            }, 500);
+          }, 100);
         });
       };
 
-      // Hook into both Astro and standard page load
-      if (document.readyState === 'complete') {
-        init();
-      } else {
-        window.addEventListener('load', init, { once: true });
-      }
-      
+      init();
       document.addEventListener("astro:page-load", init);
     </script>
     {!hideContact && <ContactModal />}
