@@ -209,17 +209,18 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
     <script>
       import { initSmoothScroll } from "../scripts/smooth-scroll";
       import { initAutoTracking } from "../scripts/analytics";
-      import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-      // Optimization: Stagger initialization to avoid blocking Main Thread on load
       const init = () => {
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            initSmoothScroll();
-            initAutoTracking();
-            
-            // Fail-safe: Heartbeat refresh to handle any late-loading assets
-            // that might "trap" the scroll height
+        // Optimization: Defer to requestIdleCallback if available to avoid blocking FCP
+        const deferFn = window.requestIdleCallback || ((cb) => setTimeout(cb, 300));
+        
+        deferFn(() => {
+          initSmoothScroll();
+          initAutoTracking();
+          
+          // Fail-safe: Heartbeat refresh to handle any late-loading assets
+          // that might "trap" the scroll height
+          import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
             let refreshCount = 0;
             const heartbeat = setInterval(() => {
               ScrollTrigger.refresh();

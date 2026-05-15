@@ -52,8 +52,9 @@ function safeInitHeroExitAnimation() {
 }
 
 function runHeroEnterAnimation(section: Element) {
-  const svg = document.querySelector("#mySVG");
-  if (!section || !svg) return;
+  const visualLayer = document.querySelector("#hero-visual-layer");
+  const path = document.querySelector("#heroPath") as SVGPathElement;
+  if (!section || !visualLayer || !path) return;
 
   // Mark as initialized
   (section as HTMLElement).dataset.heroAnimInit = "true";
@@ -87,21 +88,8 @@ function runHeroEnterAnimation(section: Element) {
       const width = window.innerWidth;
       const height = window.innerHeight;
 
-      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-
-      // Select Path (now inside clipPath)
-      let path = svg.querySelector("#heroPath");
-      if (!path) {
-        path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.id = "heroPath";
-        svg.appendChild(path);
-      }
-
       // Initial State (Rectangle)
       path.setAttribute("d", rectangle(width, height));
-
-      // Fade in SVG
-      gsap.to(svg, { opacity: 1, duration: 0.3 });
 
       // SVG Animation
       if (gsap.plugins.morphSVG) {
@@ -123,7 +111,6 @@ function runHeroEnterAnimation(section: Element) {
 
         if (rafId) cancelAnimationFrame(rafId);
         rafId = requestAnimationFrame(() => {
-          svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
           path.setAttribute("d", cross(w, h));
         });
       };
@@ -257,7 +244,9 @@ function runHeroEnterAnimation(section: Element) {
 
 function runSvgAnim(path: Element, width: number, height: number) {
   const tl = gsap.timeline();
-  tl.from("#mySVG", {
+  const visualLayer = document.querySelector("#hero-visual-layer");
+
+  tl.from(visualLayer, {
     scale: width > widthTarget ? 1.5 : 1.15,
     duration: 1,
     ease: "power4.out",
@@ -266,7 +255,8 @@ function runSvgAnim(path: Element, width: number, height: number) {
     duration: width > widthTarget ? 1.8 : 0.6,
     morphSVG: cross(width, height),
     ease: width > widthTarget ? "elastic.out(1, 0.9)" : "back.out(1.7)",
-  });
+  }, "<");
+  
   return tl;
 }
 
