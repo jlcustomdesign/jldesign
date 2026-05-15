@@ -208,12 +208,12 @@ function runServicesHeroAnimation(section: Element) {
   }
 
   pathEl.setAttribute("d", startPath);
-  gsap.set(containerSvg, { opacity: 1, scale: 1.3 });
+  gsap.set(containerSvg, { opacity: 1, scale: isMobile ? 1.1 : 1.3 });
 
   const tl = gsap.timeline({ defaults: { ease: "power2.inOut" } });
 
   // PHASE 1: Zoom to normal with Bounce
-  tl.to(containerSvg, { scale: isMobile ? 0.94 : 1, duration: 1.5, ease: "elastic.out(1, 0.75)" });
+  tl.to(containerSvg, { scale: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" });
 
   // PHASE 2: Simultaneous Reveal
   tl.to(pathEl, {

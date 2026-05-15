@@ -48,3 +48,11 @@ body {
   min-height: 100vh;
   min-height: -webkit-fill-available; /* Fill safe area on iOS */
 }
+
+/* GPU Acceleration for heavy GSAP/SVG animations */
+.gpu-accelerated {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}

@@ -258,7 +258,7 @@ function runHeroEnterAnimation(section: Element) {
 function runSvgAnim(path: Element, width: number, height: number) {
   const tl = gsap.timeline();
   tl.from("#mySVG", {
-    scale: 1.5,
+    scale: width > widthTarget ? 1.5 : 1.15,
     duration: 1,
     ease: "power4.out",
   }).to(path, {
