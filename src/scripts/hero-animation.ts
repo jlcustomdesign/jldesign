@@ -114,7 +114,7 @@ function runHeroEnterAnimation(section: Element) {
 
       // Sequence: first shrink the whole visual stack slightly, then morph the SVG path.
       // This keeps the image and SVG moving together without a hide/reveal flicker or drop.
-      if (heroVisualLayer) {
+      if (heroVisualLayer && !isMobile) {
         masterTl.to(heroVisualLayer, { scale: 0.96, duration: 0.6, ease: 'power2.out' });
       }
 
@@ -285,8 +285,14 @@ function runSvgAnim(path: Element, width: number, height: number) {
   const plugins = (gsap as any).plugins || {};
   const hasMorphSvg = Boolean(plugins.morphSVG || plugins.MorphSVGPlugin);
 
-  // Do not perform an initial image settle here — master timeline controls
-  // the shrink-to-cutout sequencing so the hero appears full-screen first.
+  // Re-introduced scale from commit 879b01e for Desktop only
+  if (width > widthTarget) {
+    tl.from("#mySVG", {
+      scale: 1.5,
+      duration: 1,
+      ease: "power4.out",
+    });
+  }
 
   if (hasMorphSvg) {
     tl.to(path, {
@@ -294,7 +300,7 @@ function runSvgAnim(path: Element, width: number, height: number) {
       duration: width > widthTarget ? 1.8 : 0.8,
       morphSVG: cross(width, height),
       ease: width > widthTarget ? "elastic.out(1, 0.85)" : "back.out(1.7)",
-    });
+    }, width > widthTarget ? "<" : undefined); // Sync with scale on desktop
   } else {
     // Lightweight fallback: avoid dead morph work when MorphSVG plugin is unavailable.
     tl.to(path, {

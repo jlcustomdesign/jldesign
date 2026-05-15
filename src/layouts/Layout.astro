@@ -210,28 +210,24 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
     <script>
       import { initSmoothScroll } from "../scripts/smooth-scroll";
       import { initAutoTracking } from "../scripts/analytics";
-      import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-      // Optimization: Defer initialization to avoid blocking Main Thread and delaying TTI/LCP
       const init = () => {
-        // Use requestIdleCallback if available, fallback to setTimeout
-        const deferFn = window.requestIdleCallback || ((cb) => setTimeout(cb, 200));
+        // Optimization: Defer to requestIdleCallback if available to avoid blocking FCP
+        const deferFn = window.requestIdleCallback || ((cb) => setTimeout(cb, 300));
         
         deferFn(() => {
           initSmoothScroll();
           initAutoTracking();
-          
-          // Avoid triggering a forced refresh immediately after load to prevent
-          // a visible reflow/refresh of the hero. Individual components should
-          // refresh themselves if necessary.
         });
       };
 
+      // Hook into both Astro and standard page load
       if (document.readyState === 'complete') {
         init();
       } else {
-        window.addEventListener('load', init);
+        window.addEventListener('load', init, { once: true });
       }
+      
       document.addEventListener("astro:page-load", init);
     </script>
     {!hideContact && <ContactModal />}
