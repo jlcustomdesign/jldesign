@@ -332,29 +332,43 @@ function runSvgAnim(path: Element, width: number, height: number) {
 
   // Only scale on desktop to avoid LCP invalidation on mobile (LCP element shifted outside viewport)
   if (window.innerWidth > 1024) {
-    tl.from("#hero-image", {
-      scale: 1.5,
-      duration: 1,
-      ease: "power4.out",
-    });
+    // Gentle settle (1.06 -> 1) so we keep LCP-safe initial paint
+    tl.fromTo(
+      "#hero-image",
+      { scale: 1.06 },
+      { scale: 1, duration: 1.0, ease: "power4.out" }
+    );
   }
 
   if (hasMorphSvg) {
     tl.to(path, {
       scale: 1,
-      duration: width > widthTarget ? 1.8 : 0.6,
+      duration: width > widthTarget ? 1.8 : 0.8,
       morphSVG: cross(width, height),
-      ease: width > widthTarget ? "elastic.out(1, 0.9)" : "back.out(1.7)",
+      ease: width > widthTarget ? "elastic.out(1, 0.85)" : "back.out(1.7)",
     });
   } else {
     // Lightweight fallback: avoid dead morph work when MorphSVG plugin is unavailable.
     tl.to(path, {
       scale: 1,
-      duration: 0.3,
+      duration: 0.45,
       ease: "power2.out",
       attr: { d: cross(width, height) },
     });
   }
+
+  // Small post-morph pop to sell the effect (scale up then settle)
+  if (window.innerWidth > 1024) {
+    tl.to("#hero-image", {
+      scale: 1.03,
+      duration: 0.45,
+      ease: "power2.out",
+      yoyo: true,
+      repeat: 1,
+    });
+  }
+
+  return tl;
 
   return tl;
 }
