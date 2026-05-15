@@ -2,8 +2,7 @@
 import BubbleButton from "./ui/BubbleButton.astro";
 import { HERO } from "../config/content";
 
-const heroImage = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Desktop.webp";
-const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.webp";
+const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
 ---
 
 <section
@@ -18,38 +17,41 @@ const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.
     class="absolute inset-0 flex items-center"
     style="transform-origin: center center;"
   >
-    <!-- SVG-defined clip path, kept as the visual system for the hero reveal -->
-    <div id="hero-visual-layer" class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none" style="clip-path: url(#heroClip); -webkit-clip-path: url(#heroClip); transform-origin: center center;">
+    <!-- Background SVG Container -->
+    <div
+      class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none"
+    >
       <svg
         id="mySVG"
         xmlns="http://www.w3.org/2000/svg"
         width="100%"
         height="100%"
         preserveAspectRatio="none"
-        class="absolute inset-0 w-full h-full"
+        class="w-full h-full opacity-0"
         style="transform-origin: center center;"
       >
         <defs>
           <clipPath id="heroClip">
-            <path id="heroPath" fill="white" d="M 0 0 H 4000 V 4000 H 0 Z"></path>
+            <path id="heroPath" fill="white"></path>
           </clipPath>
         </defs>
-      </svg>
-
-      <picture class="absolute inset-0 block w-full h-full">
-        <source media="(max-width: 767px)" srcset={heroImageMobile} />
-        <img
-          id="hero-image"
-          src={heroImage}
-          alt=""
-          aria-hidden="true"
-          class="absolute inset-0 w-full h-full object-cover will-change-transform"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
+        <!-- Image masked by the path -->
+        <image
+          href={heroImage}
+          width="100%"
+          height="100%"
+          preserveAspectRatio="xMidYMid slice"
+          clip-path="url(#heroClip)"
+          image-rendering="optimizeQuality"
         />
-      </picture>
-      <div class="absolute inset-0 bg-black/10"></div>
+        <!-- Overlay for text contrast -->
+        <rect
+          width="100%"
+          height="100%"
+          fill="black"
+          opacity="0.1"
+          clip-path="url(#heroClip)"></rect>
+      </svg>
     </div>
 
     <!-- Content Container -->
@@ -61,14 +63,14 @@ const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.
         <!-- Main Title -->
         <h1
           id="hero-title"
-          class="font-serif font-normal text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl leading-tight text-white mb-6 relative z-10 title-hover w-fit pointer-events-none md:opacity-0 md:invisible hero-text-element"
+          class="font-serif font-normal text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl leading-tight text-white mb-6 relative z-10 title-hover w-fit pointer-events-none opacity-0 invisible hero-text-element"
           data-cursor-scale="5.0"
         >
           <Fragment set:html={HERO.title} />
         </h1>
 
         <h2
-          class="hero-subtitle font-sans font-normal text-lg md:text-xl text-white/80 max-w-2xl lg:max-w-4xl mb-10 md:opacity-0 md:invisible hero-text-element"
+          class="hero-subtitle font-sans font-normal text-lg md:text-xl text-white/80 max-w-2xl lg:max-w-4xl mb-10 opacity-0 invisible hero-text-element"
         >
           {HERO.subtitle}
         </h2>
@@ -83,7 +85,7 @@ const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.
         <BubbleButton
           href="/contact"
           variant="hero-dark"
-          class="hero-btn w-full xl:w-auto text-center md:invisible md:opacity-0 md:translate-y-4"
+          class="hero-btn w-full xl:w-auto text-center invisible opacity-0 translate-y-4"
         >
           {HERO.ctaPrimary}
         </BubbleButton>
@@ -91,7 +93,7 @@ const heroImageMobile = "/Poze%20JL%20Custom%20Design%20-%20Site/LP/Hero/Mobile.
           href="/portfolio"
           id="glass-btn"
           variant="hero-glass"
-          class="hero-btn w-full xl:w-auto text-center md:invisible md:opacity-0 md:translate-y-4"
+          class="hero-btn w-full xl:w-auto text-center invisible opacity-0 translate-y-4"
         >
           {HERO.ctaSecondary}
         </BubbleButton>
