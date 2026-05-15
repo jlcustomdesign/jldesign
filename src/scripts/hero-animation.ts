@@ -14,6 +14,14 @@ let heroAnimInitialized = false;
 let heroExitInitialized = false;
 
 export function initHeroAnimations() {
+  if (typeof window !== "undefined" && window.innerWidth < 1024) {
+    const section = document.querySelector("#hero-section");
+    if (section) {
+      section.setAttribute("data-hero-mobile-static", "true");
+    }
+    return;
+  }
+
   if (document.readyState === "complete") {
     requestAnimationFrame(() => {
         safeInitHeroAnim();

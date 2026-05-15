@@ -151,6 +151,22 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
   </div><!-- End hero-content-wrapper -->
 </section>
 
+  <style>
+    @media (max-width: 1023px) {
+      #hero-section #mySVG {
+        opacity: 1 !important;
+      }
+
+      #hero-section #hero-title,
+      #hero-section .hero-subtitle,
+      #hero-section .hero-btn {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+      }
+    }
+  </style>
+
 <script>
   import { initHeroAnimations } from "../scripts/hero-animation";
   import { initTextAnimations } from "../utils/RevealAnimationHandler";
