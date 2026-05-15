@@ -125,13 +125,8 @@ function runHeroEnterAnimation(section: Element) {
       gsap.to(svg, { opacity: 1, duration: 0.3 });
 
       // SVG Animation
-      if (gsap.plugins.morphSVG) {
-        masterTl.add(runSvgAnim(path, width, height));
-        masterTl.addLabel("svgComplete"); // Mark end of SVG anim
-      } else {
-        console.warn("GSAP MorphSVGPlugin not loaded. Skipping morph.");
-        masterTl.addLabel("svgComplete"); // Fallback mark
-      }
+      masterTl.add(runSvgAnim(path, width, height));
+      masterTl.addLabel("svgComplete"); // Mark end of SVG anim
 
       // Resize Listener
       let lastWidth = window.innerWidth;
