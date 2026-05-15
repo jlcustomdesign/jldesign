@@ -273,16 +273,33 @@ function runHeroEnterAnimation(section: Element) {
 
 function runSvgAnim(path: Element, width: number, height: number) {
   const tl = gsap.timeline();
+
+  const plugins = (gsap as any).plugins || {};
+  const hasMorphSvg = Boolean(plugins.morphSVG || plugins.MorphSVGPlugin);
+
   tl.from("#mySVG", {
     scale: 1.5,
     duration: 1,
     ease: "power4.out",
-  }).to(path, {
-    scale: 1,
-    duration: width > widthTarget ? 1.8 : 0.6,
-    morphSVG: cross(width, height),
-    ease: width > widthTarget ? "elastic.out(1, 0.9)" : "back.out(1.7)",
   });
+
+  if (hasMorphSvg) {
+    tl.to(path, {
+      scale: 1,
+      duration: width > widthTarget ? 1.8 : 0.6,
+      morphSVG: cross(width, height),
+      ease: width > widthTarget ? "elastic.out(1, 0.9)" : "back.out(1.7)",
+    });
+  } else {
+    // Lightweight fallback: avoid dead morph work when MorphSVG plugin is unavailable.
+    tl.to(path, {
+      scale: 1,
+      duration: 0.3,
+      ease: "power2.out",
+      attr: { d: cross(width, height) },
+    });
+  }
+
   return tl;
 }
 
