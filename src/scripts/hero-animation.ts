@@ -106,20 +106,8 @@ function runHeroEnterAnimation(section: Element) {
       // Initial State (Rectangle)
       path.setAttribute("d", rectangle(width, height));
 
-      const heroVisualLayer = document.querySelector("#hero-visual-layer");
-
-      if (heroVisualLayer) {
-        gsap.set(heroVisualLayer, { transformOrigin: "center center" });
-      }
-
-      // Sequence: first shrink the whole visual stack slightly, then morph the SVG path.
-      // This keeps the image and SVG moving together without a hide/reveal flicker or drop.
-      if (heroVisualLayer && !isMobile) {
-        masterTl.to(heroVisualLayer, { scale: 0.96, duration: 0.6, ease: 'power2.out' });
-      }
-
-      // SVG Animation (morph/cutout) — run after the image shrink
-      masterTl.add(runSvgAnim(path, width, height), ">=0.05");
+      // SVG Animation (morph/cutout)
+      masterTl.add(runSvgAnim(path, width, height));
       masterTl.addLabel("svgComplete"); // Mark end of SVG anim
 
       // Resize Listener
@@ -299,8 +287,8 @@ function runSvgAnim(path: Element, width: number, height: number) {
       scale: 1,
       duration: width > widthTarget ? 1.8 : 0.8,
       morphSVG: cross(width, height),
-      ease: width > widthTarget ? "elastic.out(1, 0.85)" : "back.out(1.7)",
-    }, width > widthTarget ? "<" : undefined); // Sync with scale on desktop
+      ease: width > widthTarget ? "elastic.out(1, 0.9)" : "back.out(1.7)", // Reverted desktop ease
+    }, width > widthTarget ? "<" : undefined);
   } else {
     // Lightweight fallback: avoid dead morph work when MorphSVG plugin is unavailable.
     tl.to(path, {
@@ -308,17 +296,6 @@ function runSvgAnim(path: Element, width: number, height: number) {
       duration: 0.45,
       ease: "power2.out",
       attr: { d: cross(width, height) },
-    });
-  }
-
-  // Small post-morph pop to sell the effect (scale up then settle)
-  if (window.innerWidth > 1024) {
-    tl.to("#hero-visual-layer", {
-      scale: 1.03,
-      duration: 0.45,
-      ease: "power2.out",
-      yoyo: true,
-      repeat: 1,
     });
   }
 
