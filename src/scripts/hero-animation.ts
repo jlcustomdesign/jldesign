@@ -14,10 +14,6 @@ let heroAnimInitialized = false;
 let heroExitInitialized = false;
 
 export function initHeroAnimations() {
-  if (typeof window !== "undefined" && window.innerWidth < 1024) {
-    return;
-  }
-
   if (document.readyState === "complete") {
     requestAnimationFrame(() => {
         safeInitHeroAnim();
@@ -58,6 +54,7 @@ function safeInitHeroExitAnimation() {
 function runHeroEnterAnimation(section: Element) {
   const svg = document.querySelector("#mySVG");
   if (!section || !svg) return;
+  const isMobile = window.innerWidth < 1024;
 
   // Mark as initialized
   (section as HTMLElement).dataset.heroAnimInit = "true";
@@ -104,8 +101,12 @@ function runHeroEnterAnimation(section: Element) {
       // Initial State (Rectangle)
       path.setAttribute("d", rectangle(width, height));
 
-      // Fade in SVG
-      gsap.to(svg, { opacity: 1, duration: 0.3 });
+      // Fade in SVG (mobile starts visible for faster first paint)
+      if (isMobile) {
+        gsap.set(svg, { opacity: 1 });
+      } else {
+        gsap.to(svg, { opacity: 1, duration: 0.3 });
+      }
 
       // SVG Animation
       masterTl.add(runSvgAnim(path, width, height));
@@ -178,50 +179,64 @@ function runHeroEnterAnimation(section: Element) {
         "svgComplete+=0.1"
     );
 
-    // Main Text Reveal (Title & Subtitle) - Word by Word
-    const textElements = section.querySelectorAll(".hero-text-element");
-    textElements.forEach((el) => {
-      const parent = document.createElement("div");
-      // move all children to arbitrary parent
-      while (el.firstChild) {
-         parent.appendChild(el.firstChild);
-      }
-      
-      const processNode = (node: ChildNode) => {
-         if (node.nodeType === Node.TEXT_NODE) {
+     // Main Text Reveal (Title & Subtitle)
+     const textElements = section.querySelectorAll(".hero-text-element");
+
+     if (isMobile) {
+      textElements.forEach((el) => {
+        gsap.set(el, { opacity: 1, visibility: "visible" });
+      });
+
+      masterTl.fromTo(
+        textElements,
+        { y: 24, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.6, stagger: 0.08, ease: "power2.out" },
+        "svgComplete+=0.05"
+      );
+     } else {
+      textElements.forEach((el) => {
+        const parent = document.createElement("div");
+        // move all children to arbitrary parent
+        while (el.firstChild) {
+          parent.appendChild(el.firstChild);
+        }
+        
+        const processNode = (node: ChildNode) => {
+          if (node.nodeType === Node.TEXT_NODE) {
             const text = node.textContent || "";
             const words = text.split(/\s+/);
             words.forEach(word => {
-               if(!word) return;
-               const span = document.createElement("span");
-               span.className = "hero-word inline-block will-change-transform";
-               span.textContent = word;
-               el.appendChild(span);
-               el.appendChild(document.createTextNode(" "));
+              if(!word) return;
+              const span = document.createElement("span");
+              span.className = "hero-word inline-block will-change-transform";
+              span.textContent = word;
+              el.appendChild(span);
+              el.appendChild(document.createTextNode(" "));
             });
-         } else if (node.nodeType === Node.ELEMENT_NODE) {
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
             const element = node as Element;
             if (element.tagName.toLowerCase() === "br") {
-               el.appendChild(document.createElement("br"));
+              el.appendChild(document.createElement("br"));
             } else {
-               el.appendChild(element.cloneNode(true));
+              el.appendChild(element.cloneNode(true));
             }
-         }
-      };
-      
-      Array.from(parent.childNodes).forEach(processNode);
+          }
+        };
+        
+        Array.from(parent.childNodes).forEach(processNode);
 
-      // Remove the hardcoded utility classes that hide the parent
-      el.classList.remove("opacity-0", "invisible");
-      gsap.set(el, { opacity: 1, visibility: "visible" });
-    });
+        // Remove the hardcoded utility classes that hide the parent
+        el.classList.remove("opacity-0", "invisible");
+        gsap.set(el, { opacity: 1, visibility: "visible" });
+      });
 
-    masterTl.fromTo(
-      ".hero-word",
-      { y: 50, autoAlpha: 0 },
-      { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.05, ease: "power3.out" },
-      "svgComplete"
-    );
+      masterTl.fromTo(
+        ".hero-word",
+        { y: 50, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.05, ease: "power3.out" },
+        "svgComplete"
+      );
+     }
 
     // Enable interaction on Title ONLY after animation completes (approx 1.8s delay + 1.5s anim)
     masterTl.call(() => {

@@ -19,7 +19,7 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
   >
     <!-- Background SVG Container -->
     <div
-      class="absolute inset-0 z-0 overflow-hidden hidden md:flex justify-center items-center pointer-events-none"
+      class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none"
     >
       <svg
         id="mySVG"
@@ -27,7 +27,7 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
         width="100%"
         height="100%"
         preserveAspectRatio="none"
-        class="w-full h-full opacity-0"
+        class="w-full h-full md:opacity-0"
         style="transform-origin: center center;"
       >
         <defs>
@@ -53,18 +53,6 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
           clip-path="url(#heroClip)"></rect>
       </svg>
     </div>
-
-    <!-- Mobile LCP image: a regular img element so Lighthouse can detect it reliably -->
-    <img
-      src={heroImage}
-      alt=""
-      aria-hidden="true"
-      class="absolute inset-0 w-full h-full object-cover md:hidden"
-      loading="eager"
-      fetchpriority="high"
-      decoding="async"
-    />
-    <div class="absolute inset-0 bg-black/10 md:hidden"></div>
 
     <!-- Content Container -->
     <div
