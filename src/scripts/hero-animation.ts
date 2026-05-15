@@ -59,26 +59,6 @@ function runHeroEnterAnimation(section: Element) {
   // Mark as initialized
   (section as HTMLElement).dataset.heroAnimInit = "true";
 
-  // Custom split specifically for this known title structure
-  const splitHeroCardTitle = () => {
-    const titleEl = section.querySelector(".hero-card-title");
-    if (titleEl) {
-      const html = `
-            <span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">Calitate</span></span>
-            <span class="inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">Fără</span></span>
-            <br />
-            <span class="text-accent inline-block overflow-hidden"><span class="inline-block translate-y-full opacity-0 will-change-transform">Compromis</span></span>
-           `;
-      titleEl.innerHTML = html;
-    }
-  };
-
-  splitHeroCardTitle();
-
-  // Ensure parent is visible immediately after split, children are hidden
-  const titleEl = section.querySelector(".hero-card-title");
-  if (titleEl) gsap.set(titleEl, { opacity: 1 });
-
   // Use Context for easy cleanup
   const ctx = gsap.context(() => {
     const masterTl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -169,44 +149,8 @@ function runHeroEnterAnimation(section: Element) {
         "svgComplete+=0.1"
     );
 
-    // Main Text Reveal (Title & Subtitle) - Word by Word
-    const textElements = section.querySelectorAll(".hero-text-element");
-    textElements.forEach((el) => {
-      const parent = document.createElement("div");
-      // move all children to arbitrary parent
-      while (el.firstChild) {
-         parent.appendChild(el.firstChild);
-      }
-      
-      const processNode = (node: ChildNode) => {
-         if (node.nodeType === Node.TEXT_NODE) {
-            const text = node.textContent || "";
-            const words = text.split(/\s+/);
-            words.forEach(word => {
-               if(!word) return;
-               const span = document.createElement("span");
-               span.className = "hero-word inline-block will-change-transform";
-               span.textContent = word;
-               el.appendChild(span);
-               el.appendChild(document.createTextNode(" "));
-            });
-         } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const element = node as Element;
-            if (element.tagName.toLowerCase() === "br") {
-               el.appendChild(document.createElement("br"));
-            } else {
-               el.appendChild(element.cloneNode(true));
-            }
-         }
-      };
-      
-      Array.from(parent.childNodes).forEach(processNode);
-
-      // Remove the hardcoded utility classes that hide the parent
-      el.classList.remove("opacity-0", "invisible");
-      gsap.set(el, { opacity: 1, visibility: "visible" });
-    });
-
+    // Main Text Reveal (Title & Subtitle)
+    // We already split the title on server side, so we just animate .hero-word
     masterTl.fromTo(
       ".hero-word",
       { y: 50, autoAlpha: 0 },

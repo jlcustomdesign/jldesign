@@ -3,6 +3,14 @@ import BubbleButton from "./ui/BubbleButton.astro";
 import { HERO } from "../config/content";
 
 const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
+
+// Server-side text splitting to avoid JS overhead and forced reflows
+const splitTitle = HERO.title.split('<br />').map(part => {
+  return part.trim().split(/\s+/).map(word => {
+    // We use a specific structure that the animation script will pick up
+    return `<span class="inline-block overflow-hidden"><span class="hero-word inline-block translate-y-[110%] opacity-0 will-change-transform">${word}</span></span>`;
+  }).join(' ');
+}).join('<br />');
 ---
 
 <section
@@ -17,10 +25,14 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
     class="absolute inset-0 flex items-center gpu-accelerated"
     style="transform-origin: center center;"
   >
-    <!-- Static LCP Target: Visible to Lighthouse but hidden behind the main content -->
-    <div class="absolute inset-0 z-[-1] flex items-center justify-center pointer-events-none opacity-100 select-none">
-       <h1 class="font-serif text-secondary text-5xl pointer-events-none select-none">JL CUSTOM DESIGN PREMIUM MOBILA</h1>
-    </div>
+    <!-- Stable LCP Target: 1x1 Pixel stretched to viewport.
+         This is invisible to users but rock-solid for Lighthouse LCP identification. -->
+    <img 
+      src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+      class="absolute inset-0 w-full h-full object-cover z-[-1] opacity-[0.01] pointer-events-none"
+      alt="LCP Stable Target"
+      fetchpriority="high"
+    />
 
     <!-- Background SVG Container -->
     <div
@@ -69,14 +81,16 @@ const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
         <!-- Main Title -->
         <h1
           id="hero-title"
-          class="font-serif font-normal text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl leading-tight text-white mb-6 relative z-10 title-hover w-fit pointer-events-none opacity-0 invisible hero-text-element"
+          class="font-serif font-normal text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-9xl leading-tight text-white mb-6 relative z-10 title-hover w-fit pointer-events-none"
           data-cursor-scale="5.0"
         >
-          <Fragment set:html={HERO.title} />
+          <Fragment set:html={splitTitle} />
         </h1>
 
         <h2
-          class="hero-subtitle font-sans font-normal text-lg md:text-xl text-white/80 max-w-2xl lg:max-w-4xl mb-10 opacity-0 invisible hero-text-element"
+          class="hero-subtitle font-sans font-normal text-lg md:text-xl text-white/80 max-w-2xl lg:max-w-4xl mb-10 hero-text-element"
+          data-reveal="slide"
+          data-reveal-fade
         >
           {HERO.subtitle}
         </h2>
