@@ -157,14 +157,14 @@ function runHeroEnterAnimation(section: Element) {
         gsap.set(heroImage, { transformOrigin: "center center" });
       }
 
-      if (isMobile) {
-        gsap.set(svg, { opacity: 1 });
-      } else {
-        gsap.to(svg, { opacity: 1, duration: 0.3 });
+      // Sequence: first image shrink slightly, then morph the SVG path to the cutout
+      // so the hero appears full-screen initially and then transitions.
+      if (heroImage) {
+        masterTl.to(heroImage, { scale: 0.96, duration: 0.6, ease: 'power2.out' });
       }
 
-      // SVG Animation (morph/cutout) — sequence after the drop animation
-      masterTl.add(runSvgAnim(path, width, height), ">=0.15");
+      // SVG Animation (morph/cutout) — run after the image shrink
+      masterTl.add(runSvgAnim(path, width, height), ">=0.05");
       masterTl.addLabel("svgComplete"); // Mark end of SVG anim
 
       // Resize Listener
@@ -330,15 +330,8 @@ function runSvgAnim(path: Element, width: number, height: number) {
   const plugins = (gsap as any).plugins || {};
   const hasMorphSvg = Boolean(plugins.morphSVG || plugins.MorphSVGPlugin);
 
-  // Only scale on desktop to avoid LCP invalidation on mobile (LCP element shifted outside viewport)
-  if (window.innerWidth > 1024) {
-    // Gentle settle (1.06 -> 1) so we keep LCP-safe initial paint
-    tl.fromTo(
-      "#hero-image",
-      { scale: 1.06 },
-      { scale: 1, duration: 1.0, ease: "power4.out" }
-    );
-  }
+  // Do not perform an initial image settle here — master timeline controls
+  // the shrink-to-cutout sequencing so the hero appears full-screen first.
 
   if (hasMorphSvg) {
     tl.to(path, {
@@ -367,8 +360,6 @@ function runSvgAnim(path: Element, width: number, height: number) {
       repeat: 1,
     });
   }
-
-  return tl;
 
   return tl;
 }
