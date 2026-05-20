@@ -13,8 +13,9 @@ export const SITE = {
   url: "https://mobilapersonalizatabrasov.ro",
 
   /** Contact */
-  phone: "+40700000000",         // ← Replace with real phone
-  email: "contact@jlmobila.ro",  // ← Replace with real email
+  phone: "+40773504248",
+  email: "customdesignjl@gmail.com",
+  formspreeId: "xvonzpge",       // ← Replace with your Formspree Form ID (e.g. "xvonzpge") to receive submissions
 
   /** Primary Location */
   address: {
@@ -50,7 +51,7 @@ export const SITE = {
   sameAs: [
     // "https://www.facebook.com/jlmobila",
     // "https://www.instagram.com/jlmobila",
-    // "https://wa.me/40700000000",
+    // "https://wa.me/40773504248",
   ],
 
   /** Google Analytics ID (GA4) — e.g., G-XXXXXXXXXX */

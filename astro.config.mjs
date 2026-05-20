@@ -12,6 +12,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://mobilapersonalizatabrasov.ro/', // Updated to custom domain
   output: 'server',
+  trailingSlash: 'ignore',
   adapter: vercel(),
   integrations: [
     react(),

@@ -97,7 +97,7 @@ export const SERVICES_SECTION = {
       id: "dormitor",
       title: "Dormitor",
       desc: "Mobilier pentru dormitor realizat la comandă: paturi, noptiere, comode sau dulapuri. Dimensiunile și compartimentarea sunt adaptate spațiului și modului de utilizare.",
-      img: "/Poze JL Custom Design - Site/LP/Servicii /Dormitor.webp",
+      img: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 5.webp",
     },
     {
       id: "living",
@@ -148,10 +148,10 @@ export const PORTFOLIO_SECTION = {
     { name: "Baie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 2.webp" },
     { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 6.webp" },
     { name: "Hol", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 4.webp" },
-    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
-    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
-    { name: "Birou", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 7.webp" },
-    { name: "Showroom", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 8.webp" },
+    { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
+    { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
+    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 7.webp" },
+    { name: "Living", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 8.webp" },
   ],
 };
 
