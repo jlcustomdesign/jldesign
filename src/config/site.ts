@@ -50,7 +50,7 @@ export const SITE = {
   sameAs: [
     // "https://www.facebook.com/jlmobila",
     // "https://www.instagram.com/jlmobila",
-    // "https://wa.me/40700000000",
+    // "https://wa.me/40773504248",
   ],
 
   /** Google Analytics ID (GA4) — e.g., G-XXXXXXXXXX */
