@@ -35,15 +35,15 @@ export const HOME = {
   /** Page <title> and meta description */
   title: "Mobilă Personalizată Brașov | Mobilier la Comandă — JL Custom Design",
   description:
-    "JL Custom Design realizează mobilă personalizată în Brașov: mobilier la comandă din lemn masiv, MDF și PAL pentru bucătării, dressinguri, living, dormitoare și spații comerciale. Oferim proiectare 3D, producție și montaj profesional în Brașov, Buzău, Sibiu și Sfântu Gheorghe.",
+    "Mobilă personalizată în Brașov — mobilier la comandă din lemn masiv, MDF și PAL de la JL Custom Design. Design interior 3D, proiectare și montaj profesional în Brașov, Buzău, Sibiu și Sfântu Gheorghe.",
 
   /** Hidden semantic text for AI search engines (GEO). Keep keyword-dense. */
   seoFabric: [
-    "JL Mobilă — JL Design — JL Custom Design — producător de mobilă la comandă în Brașov, România. Mobila personalizata brasov, mobila brasov, mobila la comanda și mobilier brasov pentru case, apartamente, birouri și spații comerciale.",
-    "Servicii: mobilă la comandă, mobilier custom, mobilier pe comandă, mobilier personalizat, design interior 3D, proiectare mobilier, montaj profesional. Bucătării la comandă, dressinguri, biblioteci, rafturi, birouri, mobilier de baie, mobilier living, mobilier dormitor și mobilier comercial în Brașov.",
+    "JL Mobilă — JL Design — JL Custom Design — producător de mobilă la comandă în Brașov, România. Mobilier personalizat din lemn masiv, MDF vopsit, PAL melaminat Egger și Kronospan, furnir natural de stejar, fag și frasin.",
+    "Servicii: mobilă la comandă, mobilier custom, mobilier pe comandă, mobilier personalizat, design interior 3D, proiectare mobilier, montaj profesional. Bucătării la comandă, dressinguri, biblioteci, rafturi, birouri, mobilier de baie, mobilier living, mobilier dormitor, mobilier comercial.",
     "Materiale și tehnologii: MDF vopsit mat și lucios, PAL melaminat, lemn masiv, sticlă, metal, compozit. Feronerie Blum, Hettich, Hafele — sisteme soft-close, sertare tandem, balamale cu amortizare, sisteme de ridicare Aventos, push-to-open.",
     "Zone deservite: Brașov, Buzău, Sibiu, Sfântu Gheorghe, Făgăraș, Săcele, Codlea, Râșnov, Prejmer, Ghimbav, Victoria, Zărnești și toată zona centrală a României.",
-    "Căutări frecvente: mobila personalizata brasov, mobila brasov, mobila la comanda, mobilier brasov, mobilă Brașov, mobilier modern Brașov, bucătărie la comandă Brașov, dressing la comandă, preț mobilă pe comandă, showroom mobilă Brașov, mobilă MDF vopsit, mobilier lemn masiv Brașov, mobilier custom design, mobilier comercial Brașov și mobilier birouri Brașov.",
+    "Căutări frecvente: mobilă Brașov, mobilier modern Brașov, bucătărie la comandă Brașov, dressing la comandă, preț mobilă pe comandă, showroom mobilă Brașov, mobilă MDF vopsit, mobilier lemn masiv Brașov, mobilier custom design, mobilier comercial Brașov, mobilier birouri Brașov.",
   ],
 };
 
@@ -53,7 +53,7 @@ export const HOME = {
 export const HERO = {
   /** Main headline. Use HTML <br /> for line breaks. */
   title: "MOBILA PERSONALIZATĂ",
-  subtitle: "Mobilă personalizată în Brașov, mobilă Brașov și mobilă la comandă pentru locuințe și spații comerciale.",
+  subtitle: "De la idee la realitate.",
   ctaPrimary: "Cere o ofertă",
   ctaSecondary: "Vezi proiecte",
   topLeftBrand: "JL Custom Design",
@@ -67,11 +67,11 @@ export const ABOUT_SECTION = {
   /** Headline card — supports HTML <br /> and <span> */
   headline: 'JL Custom Design — Mobilier personalizat',
   paragraph1:
-    "JL Custom Design realizează mobilă personalizată în Brașov, cu proiectare 3D, atenție la detalii și soluții adaptate spațiului și stilului fiecărui client.",
+    "Suntem o echipă formată din două persoane pasionate de mobilier personalizat și design de interior, unite de o colaborare și o prietenie de peste 20 de ani.",
   paragraph2:
-    "Oferim consultanță, design personalizat, producție și montaj pentru bucătării, dressinguri, dormitoare, living, baie, hol și mobilier comercial.",
+    "Misiunea noastră este de a transforma ideile tale în realitate, oferind servicii complete: consultanță, design personalizat, producție și montaj.",
   ctaText: "Povestea Noastră",
-  ctaButton: "CONTACT",
+  ctaButton: "VEZI MAI MULT",
   imageAlt: "Detaliu meșteșug — finisaj lemn masiv JL Mobila",
 };
 
@@ -88,10 +88,10 @@ export const SERVICES_SECTION = {
       img: "/Poze JL Custom Design - Site/LP/Servicii /Bucatarii.webp",
     },
     {
-      id: "dressing",
-      title: "Dressing",
-      desc: "Sisteme de depozitare adaptate spațiului disponibil. Compartimentarea este stabilită în funcție de tipurile de obiecte depozitate: haine, încălțăminte, accesorii sau bagaje.",
-      img: "/Poze JL Custom Design - Site/LP/Servicii /Dressing.webp",
+      id: "living",
+      title: "Living / Library",
+      desc: "Mobilier pentru zona de living sau bibliotecă, configurat pentru integrarea echipamentelor media, rafturilor și spațiilor de depozitare. Dimensiunile și compartimentarea sunt adaptate spațiului camerei.",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Living.webp",
     },
     {
       id: "dormitor",
@@ -100,16 +100,10 @@ export const SERVICES_SECTION = {
       img: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 5.webp",
     },
     {
-      id: "living",
-      title: "Living / Library",
-      desc: "Mobilier pentru zona de living sau bibliotecă, configurat pentru integrarea echipamentelor media, rafturilor și spațiilor de depozitare. Dimensiunile și compartimentarea sunt adaptate spațiului camerei.",
-      img: "/Poze JL Custom Design - Site/LP/Servicii /Living.webp",
-    },
-    {
-      id: "baie",
-      title: "Mobilier pentru Baie",
-      desc: "Corpuri de mobilier proiectate pentru spații cu umiditate ridicată, cu materiale și sisteme de prindere adecvate. Configurația ține cont de poziția instalațiilor sanitare și de spațiul disponibil.",
-      img: "/Poze JL Custom Design - Site/LP/Servicii /Baie.webp",
+      id: "dressing",
+      title: "Dressing",
+      desc: "Dressinguri și spații de depozitare proiectate la comandă, cu compartimentare adaptată volumului de haine, accesoriilor și obiectelor personale. Configurația urmărește folosirea eficientă a spațiului disponibil.",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Dressing.webp",
     },
     {
       id: "hol",
@@ -129,6 +123,12 @@ export const SERVICES_SECTION = {
       desc: "Mobilier pentru pensiuni, hoteluri, cafenele sau restaurante. Soluțiile sunt adaptate utilizării frecvente și configurate în funcție de tipul spațiului: camere de cazare, zone de servire sau recepție.",
       img: "/Poze JL Custom Design - Site/LP/Servicii /Horeca.webp",
     },
+    {
+      id: "baie",
+      title: "Mobilier pentru Baie",
+      desc: "Corpuri de mobilier proiectate pentru spații cu umiditate ridicată, cu materiale și sisteme de prindere adecvate. Configurația ține cont de poziția instalațiilor sanitare și de spațiul disponibil.",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Baie.webp",
+    },
   ],
   navPrevAria: "Previous",
   navNextAria: "Next",
@@ -146,7 +146,7 @@ export const PORTFOLIO_SECTION = {
   projects: [
     { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 5.webp" },
     { name: "Baie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 2.webp" },
-    { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 6.webp" },
+    { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 6.webp" },
     { name: "Hol", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 4.webp" },
     { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
     { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
@@ -241,10 +241,6 @@ export const FAQ = {
       a: "Lucrăm cu o gamă variată de materiale premium: MDF vopsit sau înfoliat, PAL melaminat Egger/Kronospan, furnir natural, lemn masiv, sticlă, metal și compozit.",
     },
     {
-      q: "Este necesară o programare pentru vizita în showroom?",
-      a: "Pentru a ne asigura că un designer vă poate acorda întreaga atenție, recomandăm programarea unei vizite în prealabil, telefonic sau prin email.",
-    },
-    {
       q: "Vă ocupați și de integrarea electrocasnicelor?",
       a: "Desigur. Mobilierul este proiectat milimetric pentru a încorpora perfect electrocasnicele dumneavoastră, indiferent de marcă sau dimensiuni.",
     },
@@ -258,7 +254,7 @@ export const FAQ = {
     },
     {
       q: "Cât costă mobila la comandă în Brașov?",
-      a: "Prețul variază în funcție de materiale, dimensiuni și complexitate. O bucătărie completă din MDF vopsit pornește de la aproximativ 8.000 lei, iar un dressing din PAL melaminat de la 4.000 lei. Oferim deviz detaliat gratuit după măsurători.",
+      a: "Fiecare proiect este unic, iar costul unei bucătării la comandă diferă în funcție de dimensiuni, materiale și nivelul de personalizare. Prețul poate varia în funcție de alegerea fronturilor din MDF vopsit, MDF frezat, PAL melaminat, feronerie și soluțiile de organizare integrate. La JL Custom Design, fiecare proiect de mobilier la comandă este realizat în funcție de spațiu și nevoile clientului, motiv pentru care la noi, mobilierul nu este calculat „la metru liniar”, ci ofertat individual și personalizat.",
     },
     {
       q: "Ce stiluri de mobilier realizați?",
@@ -281,12 +277,24 @@ export const FAQ = {
       a: "Folosim feronerie premium de la branduri precum Blum, Hettich și Hafele. Aceasta include balamale cu amortizare soft-close, sertare cu glisiere tandem, sisteme de ridicare Aventos și organizatoare interne de înaltă calitate.",
     },
     {
-      q: "Aveți showroom în Brașov?",
-      a: "Da, avem un spațiu de prezentare în Brașov unde puteți vedea și atinge materialele, testa sistemele de feronerie și discuta direct cu designerii noștri. Recomandăm programarea unei vizite pentru o experiență completă.",
-    },
-    {
       q: "Realizați mobilier comercial și pentru birouri?",
       a: "Da, realizăm mobilier comercial la comandă: recepții, birouri executive, soluții open-space, rafturi comerciale și amenajări HoReCa. Avem experiență cu proiecte comerciale în Brașov, Sibiu și Buzău.",
+    },
+    {
+      q: "Oferiți măsurători și consultanță?",
+      a: "Da, oferim consultanță, măsurători și propuneri personalizate pentru fiecare proiect de mobilier la comandă.",
+    },
+    {
+      q: "Realizați mobilier modern pentru apartamente mici?",
+      a: "Da, proiectăm mobilier personalizat pentru apartamente și spații compacte, optimizând fiecare zonă pentru funcționalitate și depozitare eficientă.",
+    },
+    {
+      q: "Oferiți montaj pentru mobilierul la comandă?",
+      a: "Da, ne ocupăm de întregul proces, de la proiectare și producție până la montajul final al mobilierului.",
+    },
+    {
+      q: "Cum începe un proiect de mobilier personalizat?",
+      a: "Proiectul începe cu o discuție despre spațiu, stilul dorit și necesitățile clientului, urmată de măsurători și propunerea unei soluții personalizate.",
     },
   ],
 };
@@ -308,10 +316,10 @@ export const FOOTER = {
   ],
   contactTitle: "Contact",
   contactLocation: "Brașov, România",
-  contactPhone: "+40 700 000 000",
-  contactPhoneHref: "tel:+40700000000",
-  contactEmail: "contact@jlmobila.ro",
-  contactEmailHref: "mailto:contact@jlmobila.ro",
+  contactPhone: "+40 773 504 248",
+  contactPhoneHref: "tel:+40773504248",
+  contactEmail: "customdesignjl@gmail.com",
+  contactEmailHref: "mailto:customdesignjl@gmail.com",
   copyright: "JL Mobila. Toate drepturile rezervate.",
   designCredit: "Designed and made by",
   designCreditLink: "achieve.ro",
@@ -334,8 +342,8 @@ export const SERVICES_PAGE = {
   ],
 
   heroH1: "Servicii mobilier la comandă Brașov: Design, Producție, Montaj —",
-  heroDesktopLines: ["SERVICIILE", "PE CARE NOI", "LE OFERIM"],
-  heroMobileLines: ["Serviciile", "pe care noi", "le oferim"],
+  heroDesktopLines: ["SERVICIILE", "NOASTRE", "JL CUSTOM DESIGN"],
+  heroMobileLines: ["Serviciile", "noastre", "JL Custom Design"],
   heroSubtitle:
     "Transformă-ți casa cu design interior elegant, funcțional și atemporal, adaptat stilului tău unic.",
   heroCta: "Programează o Consultanță →",
@@ -398,22 +406,6 @@ export const SERVICES_PAGE = {
       img: "/Poze JL Custom Design - Site/Services/Bucatarii.webp",
     },
     {
-      id: "dressing",
-      title: "Dressing",
-      desc: "Sisteme de depozitare adaptate spațiului disponibil și nevoilor tale.",
-      backDesc:
-        "Compartimentarea este stabilită în funcție de tipurile de obiecte depozitate: haine, încălțăminte, accesorii sau bagaje. Organizare eficientă pentru un stil de viață ordonat.",
-      img: "/Poze JL Custom Design - Site/Services/Dressing.webp",
-    },
-    {
-      id: "dormitor",
-      title: "Dormitor",
-      desc: "Mobilier pentru dormitor realizat la comandă: paturi, noptiere, comode sau dulapuri.",
-      backDesc:
-        "Dimensiunile și compartimentarea sunt adaptate spațiului și modului de utilizare, asigurând un ambient relaxant și funcțional.",
-      img: "/Poze JL Custom Design - Site/Services/Dormitor.webp",
-    },
-    {
       id: "living",
       title: "Living / Library",
       desc: "Mobilier pentru zona de living sau bibliotecă, configurat pentru integrarea echipamentelor media.",
@@ -422,12 +414,12 @@ export const SERVICES_PAGE = {
       img: "/Poze JL Custom Design - Site/Services/Living.webp",
     },
     {
-      id: "bathroom",
-      title: "Mobilier pentru Baie",
-      desc: "Corpuri de mobilier proiectate pentru spații cu umiditate ridicată.",
+      id: "dormitor",
+      title: "Dormitor",
+      desc: "Mobilier pentru dormitor realizat la comandă: paturi, noptiere, comode sau dulapuri.",
       backDesc:
-        "Utilizăm materiale și sisteme de prindere adecvate. Configurația ține cont de poziția instalațiilor sanitare și de spațiul disponibil.",
-      img: "/Poze JL Custom Design - Site/Services/Baie.webp",
+        "Dimensiunile și compartimentarea sunt adaptate spațiului și modului de utilizare, asigurând un ambient relaxant și funcțional.",
+      img: "/Poze JL Custom Design - Site/Services/Dormitor.webp",
     },
     {
       id: "hol",
@@ -453,6 +445,14 @@ export const SERVICES_PAGE = {
         "Soluțiile sunt adaptate utilizării frecvente și configurate în funcție de tipul spațiului: camere de cazare, zone de servire sau recepție.",
       img: "/Poze JL Custom Design - Site/Services/Horeca.webp",
     },
+    {
+      id: "bathroom",
+      title: "Mobilier pentru Baie",
+      desc: "Corpuri de mobilier proiectate pentru spații cu umiditate ridicată.",
+      backDesc:
+        "Utilizăm materiale și sisteme de prindere adecvate. Configurația ține cont de poziția instalațiilor sanitare și de spațiul disponibil.",
+      img: "/Poze JL Custom Design - Site/Services/Baie.webp",
+    },
   ],
 
   /** Flip card back common items */
@@ -477,11 +477,11 @@ export const SERVICES_PAGE = {
 export const ABOUT_PAGE = {
   title: "Despre Noi | JL Custom Design - Mobilier Personalizat și Interior",
   description:
-    "Descoperă povestea JL Custom Design. O echipă cu peste 15 ani de experiență, absolvenți ai Facultății de Industria Lemnului, dedicați transformării ideilor în mobilier de artă.",
+    "Descoperă povestea JL Custom Design. O echipă formată din doi profesioniști cu peste 21 de ani de colaborare, dedicați transformării ideilor în mobilier personalizat și design interior.",
 
   seoFabric: [
-    "JL Custom Design s-a născut din pasiunea comună a doi prieteni de peste 20 de ani, amândoi absolvenți ai Facultății de Industria Lemnului din Brașov. Cu o experiență valoroasă de peste 15 ani în proiecte de mobilier personalizat și design interior, oferim soluții complete de la consultanță la montaj.",
-    "Atelierul nostru este dedicat calității, inovației și atenției la detalii. Misiunea noastră este de a transforma viziunea fiecărui client în realitate, creând mobilier care nu doar ocupă un spațiu, ci îi oferă personalitate și atmosfera dorită.",
+    "JL Custom Design s-a născut din pasiunea comună a doi prieteni cu o colaborare de peste 20 de ani. Din 2005 lucrăm împreună la proiecte de mobilier personalizat și design interior în Brașov, cu soluții complete de la consultanță la montaj.",
+    "Atelierul nostru este dedicat calității, inovației și atenției la detalii. Misiunea noastră este de a transforma viziunea fiecărui client în realitate, creând mobilier care îi oferă funcționalitate, personalitate și durabilitate.",
   ],
 
   heroTitle: "DESPRE NOI",
@@ -491,7 +491,7 @@ export const ABOUT_PAGE = {
   /** Philosophy / Bento grid */
   philosophyLabel: "Filozofia Noastră",
   philosophyQuote: "Transformăm viziunea ta în realitate prin expertiză tehnică și pasiune pentru detalii.",
-  stat1Value: "15+",
+  stat1Value: "21+",
   stat1Label: "Ani de Experiență",
   stat2Value: "20+",
   stat2Label: "Ani de Prietenie",
@@ -500,10 +500,10 @@ export const ABOUT_PAGE = {
   stat4Value: "100%",
   stat4Label: "Proiecte Custom",
   manifesto:
-    "Povestea noastră a început acum 20 de ani. Amândoi am ales să urmăm cursurile Facultății de Industria Lemnului din Brașov, locul unde am pus bazele cunoștințelor tehnice care astăzi ne permit să abordăm orice provocare în designul de mobilier.",
+    "Povestea noastră a început acum 21 de ani, în 2005, când am pornit împreună drumul spre mobilier personalizat și design interior. Experiența acumulată de atunci ne permite să abordăm fiecare proiect cu rigoare tehnică și atenție la detalii.",
   collaborationTitle: "O Echipă, O Viziune",
   collaborationText:
-    "După 15 ani de proiecte diverse, de la reamenajări rezidențiale la spații comerciale complexe, am fondat JL Custom Design pentru a oferi clienților noștri nu doar mobilier, ci o experiență completă bazată pe încredere, inovație și excelență tehnică.",
+    "De-a lungul anilor am lucrat la proiecte diverse, de la reamenajări rezidențiale la spații comerciale complexe, iar JL Custom Design a devenit cadrul în care oferim clienților nu doar mobilier, ci o experiență completă bazată pe încredere, inovație și excelență tehnică.",
 
   /** Values section */
   valuesTitle: "Valorile Noastre",
@@ -781,7 +781,7 @@ export const CONTACT_MODAL = {
   emailPlaceholder: "Email",
   phonePlaceholder: "Telefon (Opțional)",
   projectPlaceholder: "Detalii despre proiect...",
-  callButtonHref: "tel:+40700000000",
+  callButtonHref: "tel:+40773504248",
   callButton: "Sună Direct",
   sendButton: "Trimite",
   successMessage: "Mesajul a fost trimis! Vă vom contacta în curând.",

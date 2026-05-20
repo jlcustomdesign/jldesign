@@ -77,16 +77,16 @@ export const SITE = {
     "lemn masiv", "MDF vopsit", "PAL melaminat", "furnir natural",
     "Egger", "Kronospan", "feronerie Blum", "Hettich", "Hafele",
     // Location (prioritize exact search term)
-    "mobila personalizata brasov", "mobila brasov", "mobila la comanda", "mobilier brasov",
-    "mobilă personalizată Brașov", "mobilă Brașov", "mobilier la comandă Brașov", "mobilier personalizat Brașov",
-    "mobilă la comandă Brașov", "mobilier custom Brașov", "mobilapersonalizatabrasov.ro",
-    "mobilapersonalizatabrasov", "mobilă pe comandă Brașov", "mobilier Buzău", "mobilier Sibiu",
-    "mobilier Sfântu Gheorghe", "mobilier Făgăraș",
+    "mobilapersonalizatabrasov.ro", "mobilapersonalizatabrasov", "mobila personalizata brasov",
+    "mobilă personalizată Brașov", "mobilă la comandă Brașov", "mobilier personalizat Brașov",
+    "mobilă Brașov", "mobilier Brașov", "mobilier la comandă Brașov", "mobilier custom Brașov",
+    "mobilă pe comandă Brașov", "mobilier Buzău", "mobilier Sibiu", "mobilier Sfântu Gheorghe",
+    "mobilier Făgăraș",
   ],
 
   /** Images */
   defaultOgImage: "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp",
-  logo: "/Favicon%20crem.svg",
+  logo: "/favicon.svg",
 } as const;
 
 /** Helper: full absolute URL */
