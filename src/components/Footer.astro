@@ -90,7 +90,20 @@ import { FOOTER } from "../config/content";
                 {FOOTER.contactTitle}
               </h3>
               <ul class="space-y-2 text-white/70 text-sm">
-                <li>{FOOTER.contactLocation}</li>
+                <li>
+                  <a
+                    href="https://maps.google.com/?q=Brasov,+Romania"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-white transition-colors inline-flex items-center gap-1.5"
+                  >
+                    <svg class="w-4 h-4 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    {FOOTER.contactLocation}
+                  </a>
+                </li>
                 <li>
                   <a
                     href={FOOTER.contactPhoneHref}

@@ -97,7 +97,7 @@ export const SERVICES_SECTION = {
       id: "dormitor",
       title: "Dormitor",
       desc: "Mobilier pentru dormitor realizat la comandă: paturi, noptiere, comode sau dulapuri. Dimensiunile și compartimentarea sunt adaptate spațiului și modului de utilizare.",
-      img: "/Poze JL Custom Design - Site/LP/Servicii /Dormitor.webp",
+      img: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 5.webp",
     },
     {
       id: "dressing",
@@ -151,7 +151,7 @@ export const PORTFOLIO_SECTION = {
     { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
     { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
     { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 7.webp" },
-    { name: "Showroom", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 8.webp" },
+    { name: "Living", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 8.webp" },
   ],
 };
 

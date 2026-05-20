@@ -187,7 +187,7 @@ type NavLink = {
       // Actually, user said: "on the rest of the website, like the other pages, use the exact same mode as the fully extended navbar"
       // And "in the mobile mode remove the effect, keep it desktop only"
 
-      const shouldBeExpanded = !hero || !isDesktop;
+      const shouldBeExpanded = true; // Always expanded on all pages to show logo immediately
 
       if (shouldBeExpanded) {
         // Desktop Secondary Pages: Compact "Pill" Layout (Centered)
@@ -274,8 +274,8 @@ type NavLink = {
         navContainer.classList.remove("nav-light");
       }
 
-      // Initialize scroll-reveal for nav elements
-      initScrollRevealNav(hero);
+      // Bypassed scroll-reveal to keep logo visible at all times
+      // initScrollRevealNav(hero);
     } else {
       // Scenario B: No Hero (Subpages) -> Default to Light Theme (Black Text)
       navContainer.classList.add("nav-light");
