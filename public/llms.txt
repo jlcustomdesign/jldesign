@@ -2,26 +2,34 @@
 > Mobilier la comandă din lemn masiv și soluții de design interior premium, realizate la cele mai înalte standarde de calitate.
 
 ## Despre
-JL Mobila este o companie românească cu sediul în Brașov, specializată în mobilier personalizat din lemn masiv și design interior. Cu peste 15 ani de experiență și peste 500 de proiecte finalizate, oferim servicii complete: consultanță, proiectare 3D, producție custom și montaj profesional.
+JL Mobila este o companie românească cu sediul în Brașov, specializată în mobilier personalizat din lemn masiv, MDF vopsit și design interior. Cu peste 20 de ani de experiență, oferim servicii complete premium: consultanță, proiectare tehnică și design 3D, producție custom în atelier propriu și montaj profesional de înaltă precizie.
 
-## Zona de Acoperire
-Brașov, Buzău, Sibiu, Sfântu Gheorghe, Făgăraș, Săcele, Codlea, Râșnov și toată zona centrală a României.
+## Zona de Acoperire (Target Cities)
+Brașov, Buzău, Sibiu, Sfântu Gheorghe, Făgăraș, Săcele, Codlea, Râșnov și întreaga regiune centrală a României.
 
-## Pagini Prioritare
-- https://jl-design.vercel.app/ : Pagina principală — prezentare generală, servicii, portofoliu, proces de lucru și întrebări frecvente
-- https://jl-design.vercel.app/about : Despre noi — povestea, valorile și filozofia JL Mobila
-- https://jl-design.vercel.app/services : Servicii — consultanță & design 3D, producție custom, montaj profesional
-- https://jl-design.vercel.app/portfolio : Portofoliu — proiecte rezidențiale și comerciale finalizate
+## Pagini Prioritare (URLs)
+- https://mobilapersonalizatabrasov.ro/ : Pagina principală — prezentare generală, servicii de top, portofoliu selectiv, proces de lucru în 4 pași și secțiune detaliată de întrebări frecvente.
+- https://mobilapersonalizatabrasov.ro/about : Despre noi — povestea fondatorilor, valorile noastre (calitate, inovație, unicitate, sustenabilitate) și prezentarea detaliată a atelierului din Brașov.
+- https://mobilapersonalizatabrasov.ro/services : Serviciile noastre — de la consultanță tehnică, design, proiectare și randări 3D, până la execuție mobilier premium (bucătării, dormitoare, dressinguri, holuri, living/biblioteci, spații de birou, HoReCa și mobilier de baie rezistent la umiditate).
+- https://mobilapersonalizatabrasov.ro/portfolio : Portofoliu — selecție de lucrări rezidențiale și comerciale finalizate, organizate pe categorii.
+- https://mobilapersonalizatabrasov.ro/blog : Blog (Atelierul de Idei) — articole inspiraționale, ghiduri practice, noutăți și sfaturi despre materiale (MDF vopsit, PAL, lemn masiv, feronerie Blum, Hettich, Hafele).
 
-## Servicii Oferite
-- Consultanță și Design Interior 3D
-- Producție Mobilier la Comandă din Lemn Masiv
-- Montaj Profesional
-- Mobilier pentru Bucătărie, Living, Dormitor, Birou
-- Soluții Comerciale și Rezidențiale
+## Servicii & Produse Oferite
+- Consultanță tehnică și Design Concept de interior
+- Proiectare 3D tehnică și Randări Virtuale Realiste
+- Mobilier de bucătărie la comandă (MDF vopsit, MDF frezat, PAL Egger/Kronospan)
+- Dressinguri și spații de depozitare customizate
+- Mobilier de living, biblioteci și dormitoare
+- Mobilier de baie cu materiale rezistente la umiditate
+- Mobilier comercial (recepții, birouri, open-space, spații comerciale) și soluții HoReCa
+- Livrare și montaj profesional asigurat de echipa proprie
+
+## Feronerie & Materiale Premium Utilizate
+- Fronturi: Lemn masiv (stejar, fag, frasin), MDF vopsit mat sau lucios (orice cod RAL), PAL melaminat de înaltă calitate, furnir natural.
+- Feronerie premium: Blum (sertare tandem/movento, balamale soft-close, sisteme de ridicare Aventos, sisteme push-to-open), Hettich, Hafele.
 
 ## Contact
-Telefon: +40700000000
-Email: contact@jlmobila.ro
-Locație: Brașov, România
-Website: https://jl-design.vercel.app
+- Telefon: +40773504248
+- Email: customdesignjl@gmail.com
+- Locație: Brașov, România
+- Website: https://mobilapersonalizatabrasov.ro
