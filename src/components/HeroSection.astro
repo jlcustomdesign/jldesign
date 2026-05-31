@@ -88,9 +88,7 @@ const splitTitle = HERO.title.split('<br />').map(part => {
         </h1>
 
         <h2
-          class="hero-subtitle font-sans font-normal text-lg md:text-xl text-white/80 max-w-2xl lg:max-w-4xl mb-10 hero-text-element"
-          data-reveal="slide"
-          data-reveal-fade
+          class="hero-subtitle font-sans font-normal text-lg md:text-xl text-white/80 max-w-2xl lg:max-w-4xl mb-10 hero-text-element opacity-0 translate-y-4"
         >
           {HERO.subtitle}
         </h2>
@@ -192,12 +190,7 @@ const splitTitle = HERO.title.split('<br />').map(part => {
 
 <script>
   import { initHeroAnimations } from "../scripts/hero-animation";
-  import { initTextAnimations } from "../utils/RevealAnimationHandler";
 
   // Initialize animations
   initHeroAnimations();
-
-  // Initialize text reveal (Scoped to this section to prevent affecting other components)
-  const section = document.querySelector("#hero-section");
-  if (section) initTextAnimations(section as HTMLElement);
 </script>

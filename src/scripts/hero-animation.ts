@@ -157,6 +157,18 @@ function runHeroEnterAnimation(section: Element) {
       "svgComplete"
     );
 
+    masterTl.fromTo(
+      ".hero-subtitle",
+      { y: 24, autoAlpha: 0 },
+      {
+        y: 0,
+        autoAlpha: 1,
+        duration: 0.85,
+        ease: "power3.out",
+      },
+      "svgComplete+=0.15"
+    );
+
     // Enable interaction on Title ONLY after animation completes (approx 1.8s delay + 1.5s anim)
     masterTl.call(() => {
         const title = document.querySelector("#hero-title");
