@@ -154,6 +154,11 @@ type NavLink = {
 
     if (!navContainer) return;
 
+    if ((navContainer as HTMLElement).dataset.scrollResizeBound === "true") {
+      return;
+    }
+    (navContainer as HTMLElement).dataset.scrollResizeBound = "true";
+
     window.addEventListener(
       "scroll",
       () => {
@@ -300,7 +305,10 @@ type NavLink = {
     const activeThemeClass = isLightTheme ? "nav-light" : "nav-dark";
     const inactiveThemeClass = isLightTheme ? "nav-dark" : "nav-light";
 
+    ScrollTrigger.getById("navbar-hero-theme")?.kill();
+
     ScrollTrigger.create({
+      id: "navbar-hero-theme",
       trigger: hero,
       start: "top top", // When hero starts
       end: "bottom top+=80", // When hero bottom passes top (plus buffer for nav height)
@@ -338,14 +346,26 @@ type NavLink = {
 
     if (!navLogoWrapper || !navContact || !navWrapper) return;
 
+    ScrollTrigger.getById("navbar-reveal")?.kill();
+
+    let revealTl: gsap.core.Timeline | null = null;
+
+    const cancelRevealTweens = () => {
+      revealTl?.kill();
+      revealTl = null;
+      gsap.killTweensOf([navLogoWrapper, navContact, navWrapper, navLogo]);
+    };
+
     // ScrollTrigger to reveal/hide nav elements based on hero position
     ScrollTrigger.create({
+      id: "navbar-reveal",
       trigger: hero,
       start: "top top",
       end: "bottom top+=80",
       onLeave: () => {
         // Scrolled past Hero -> Expand navbar FIRST, then reveal elements
-        const tl = gsap.timeline({ overwrite: "auto" });
+        cancelRevealTweens();
+        revealTl = gsap.timeline({ overwrite: "auto" });
 
         // Step 1: Expand navbar width FULLY
         // Hint browser
@@ -354,14 +374,14 @@ type NavLink = {
           willChange: "width, opacity, transform",
         });
 
-        tl.to(navWrapper, {
+        revealTl.to(navWrapper, {
           maxWidth: "56rem", 
           duration: 0.8, // Slower (was 0.35)
           ease: "power3.inOut",
         });
 
         // Step 2: Animate WIDTH of wrappers symmetrically to 140px
-        tl.to(
+        revealTl.to(
           [navLogoWrapper, navContact],
           {
             width: "120px",
@@ -372,7 +392,7 @@ type NavLink = {
         );
 
         // Step 3: Animate SCALE & OPACITY with bounce
-        tl.to(
+        revealTl.to(
           [navLogoWrapper, navContact],
           {
             opacity: 1,
@@ -385,36 +405,26 @@ type NavLink = {
       },
       onEnterBack: () => {
         // Scrolled back into Hero -> Hide elements then shrink navbar
-        const tl = gsap.timeline();
+        cancelRevealTweens();
 
-        // Step 1: Shrink both elements AT THE SAME TIME
-        tl.to([navLogoWrapper, navContact], {
+        gsap.set([navLogoWrapper, navContact], {
           opacity: 0,
           scale: 0,
-          duration: 0.3,
-          ease: "power2.inOut",
+          width: 0,
+          willChange: "auto",
         });
 
-        // Step 2: Shrink widths to 0
-        tl.to(
-          [navLogoWrapper, navContact],
-          {
-            width: 0,
-            duration: 0.3,
-            ease: "power2.inOut",
-          },
-          "<+=0.1",
-        );
+        revealTl = gsap.timeline({ overwrite: "auto" });
 
-        // Step 3: Shrink navbar
-        tl.to(
+        // Step 1: Shrink both elements AT THE SAME TIME
+        revealTl.to(
           navWrapper,
           {
             maxWidth: "30rem",
             duration: 0.35,
             ease: "power2.inOut",
           },
-          "-=0.15",
+          0,
         );
       },
     });

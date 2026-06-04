@@ -70,6 +70,7 @@ const localBusinessSchema = JSON.stringify({
   "url": SITE.url,
   "telephone": SITE.phone,
   "email": SITE.email,
+  "description": `Atelier de mobilier la comandă și mobilă personalizată din lemn masiv, MDF și PAL în ${targetCitiesString(8)}. Proiectare 3D și montaj profesional.`,
   "priceRange": "$$$",
   "address": {
     "@type": "PostalAddress",
@@ -205,6 +206,8 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
         <slot name="footer" />
       </div>
     </div>
+
+    <slot name="outside" />
 
     <script>
       import { initSmoothScroll } from "../scripts/smooth-scroll";

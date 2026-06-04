@@ -110,7 +110,7 @@ const activeCategories = Object.keys(groupedProjects)
     });
 ---
 
-<section class="bg-secondary relative w-full py-20 px-4 md:px-8" id="portfolio-cms-section">
+<section class="bg-secondary relative w-full pt-12 pb-20 md:pt-16 md:pb-24 px-4 md:px-8" id="portfolio-cms-section">
   <div class="container mx-auto">
     
     {activeCategories.length === 0 ? (
@@ -137,34 +137,36 @@ const activeCategories = Object.keys(groupedProjects)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full grid-flow-dense" id={`grid-${category}`}>
                         {items.map((item, index) => (
                             <div 
-                                class={`group relative w-full cursor-pointer project-card ${item.isLandscape ? 'md:col-span-2' : ''} ${item.isHiddenInitially ? 'hidden' : ''}`} 
+                                class={`group relative w-full project-card ${item.isLandscape ? 'md:col-span-2' : ''} ${item.isHiddenInitially ? 'hidden' : ''}`} 
                                 data-index={index}
                             >
-                                <!-- Image Wrapper -->
-                                <div class={`relative w-full overflow-hidden rounded-[2rem] bg-gray-900 ${item.isLandscape ? 'aspect-[16/10] md:aspect-[1.7/1]' : 'aspect-[3/4] md:aspect-[4/5]'}`}>
-                                    {item.image ? (
-                                      <img
-                                        src={item.image}
-                                        alt={item.name}
-                                        decoding="async"
-                                        loading="lazy" 
-                                        class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                                      />
-                                    ) : (
-                                      <div class="w-full h-full bg-gray-800 flex items-center justify-center">
-                                        <span class="text-white/30 text-sm uppercase tracking-widest">{PORTFOLIO_PAGE.emptyImage}</span>
+                                <div
+                                  class="project-image-trigger block w-full text-left cursor-zoom-in focus:outline-none"
+                                  role="button"
+                                  tabindex="0"
+                                  aria-label={`${item.name} - deschide imaginea la dimensiune mare`}
+                                >
+                                  <div class={`relative w-full overflow-hidden rounded-[2rem] bg-gray-900 ${item.isLandscape ? 'aspect-[16/10] md:aspect-[1.7/1]' : 'aspect-[3/4] md:aspect-[4/5]'}`}>
+                                      {item.image ? (
+                                        <img
+                                          src={item.image}
+                                          alt={item.name}
+                                          decoding="async"
+                                          loading="lazy" 
+                                          class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                        />
+                                      ) : (
+                                        <div class="w-full h-full bg-gray-800 flex items-center justify-center">
+                                          <span class="text-white/30 text-sm uppercase tracking-widest">{PORTFOLIO_PAGE.emptyImage}</span>
+                                        </div>
+                                      )}
+                                      <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
+                                      <div class="absolute inset-0 flex items-end justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                        <div class="rounded-full bg-black/55 backdrop-blur-md px-4 py-2 text-white text-xs uppercase tracking-[0.2em]">
+                                          Click pentru zoom
+                                        </div>
                                       </div>
-                                    )}
-                                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
-                                </div>
-
-                                <!-- Info Below Image -->
-                                <div class="mt-6 flex justify-end items-end opacity-80 group-hover:opacity-100 transition-opacity duration-500">
-                                    
-                                    <!-- Arrow Icon (Fixed) -->
-                                    <div class="w-10 h-10 flex-shrink-0 rounded-full border border-white/20 flex items-center justify-center transform -rotate-45 group-hover:rotate-0 transition-transform duration-500 text-primary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                                    </div>
+                                  </div>
                                 </div>
                             </div>
                         ))}
@@ -193,13 +195,6 @@ const activeCategories = Object.keys(groupedProjects)
     )}
   </div>
 
-  <!-- Lightbox (Simplified) -->
-  <div id="portfolio-lightbox" class="fixed inset-0 z-[9999] bg-black/95 opacity-0 pointer-events-none flex items-center justify-center p-4 transition-opacity duration-300">
-    <button id="lightbox-close" class="absolute top-6 right-6 z-50 p-2 text-white/50 hover:text-white bg-black/20 rounded-full" aria-label={PORTFOLIO_PAGE.closeGallery}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    </button>
-    <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl scale-95 transition-transform duration-300" />
-  </div>
 </section>
 
 <!-- Module script for GSAP animations and lightbox only -->
@@ -221,21 +216,43 @@ const activeCategories = Object.keys(groupedProjects)
      const closeBtn = document.getElementById('lightbox-close');
      
      if(section && lightbox && lightboxImg) {
+       if ((section as HTMLElement).dataset.lightboxInit === "true") return;
+       (section as HTMLElement).dataset.lightboxInit = "true";
+
          section.addEventListener('click', (e) => {
              const target = e.target as HTMLElement;
-             const card = target.closest('.project-card');
-             if(card) {
-                const img = card.querySelector('img');
-                if(img) {
-                    lightboxImg.src = img.src;
-                     lightboxImg.alt = img.alt || PORTFOLIO_PAGE.defaultProjectAlt;
-                    lightbox.classList.remove('opacity-0', 'pointer-events-none');
-                    lightboxImg.classList.remove('scale-95');
-                    lightboxImg.classList.add('scale-100');
-                    document.body.style.overflow = 'hidden';
-                }
+         const trigger = target.closest('.project-image-trigger');
+         if(trigger) {
+          const img = trigger.querySelector('img');
+          if(img) {
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt || PORTFOLIO_PAGE.defaultProjectAlt;
+            lightbox.classList.remove('opacity-0', 'pointer-events-none');
+            lightboxImg.classList.remove('scale-95');
+            lightboxImg.classList.add('scale-100');
+            document.body.style.overflow = 'hidden';
+          }
              }
          });
+
+           section.addEventListener('keydown', (e) => {
+             const keyEvent = e as KeyboardEvent;
+             const target = e.target as HTMLElement;
+             const trigger = target.closest('.project-image-trigger') as HTMLElement | null;
+             if (!trigger) return;
+             if (keyEvent.key !== 'Enter' && keyEvent.key !== ' ') return;
+             e.preventDefault();
+
+             const img = trigger.querySelector('img');
+             if (img) {
+               lightboxImg.src = img.src;
+               lightboxImg.alt = img.alt || PORTFOLIO_PAGE.defaultProjectAlt;
+               lightbox.classList.remove('opacity-0', 'pointer-events-none');
+               lightboxImg.classList.remove('scale-95');
+               lightboxImg.classList.add('scale-100');
+               document.body.style.overflow = 'hidden';
+             }
+           });
          
          const close = () => {
              lightbox.classList.add('opacity-0', 'pointer-events-none');
@@ -251,6 +268,8 @@ const activeCategories = Object.keys(groupedProjects)
   }
 
   document.addEventListener("astro:page-load", initPortfolioAnimations);
+  if (document.readyState !== "loading") initPortfolioAnimations();
+  else document.addEventListener("DOMContentLoaded", initPortfolioAnimations);
 </script>
 
 <!-- Inline script for View More / View Less - runs directly in browser, no bundling -->

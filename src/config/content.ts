@@ -33,9 +33,9 @@ export const NAV = {
 // ─────────────────────────────────────────────
 export const HOME = {
   /** Page <title> and meta description */
-  title: "Mobilă Personalizată Brașov | Mobilier la Comandă — JL Custom Design",
+  title: "Mobilă Personalizată Brașov | Mobila Brasov | JL Custom Design",
   description:
-    "Mobilă personalizată în Brașov — mobilier la comandă din lemn masiv, MDF și PAL de la JL Custom Design. Design interior 3D, proiectare și montaj profesional în Brașov, Buzău, Sibiu și Sfântu Gheorghe.",
+    "Căutați mobilă în Brașov? JL Custom Design realizează mobilier la comandă și personalizat din lemn masiv, MDF și PAL. Servicii complete de proiectare 3D și montaj în Brașov.",
 
   /** Hidden semantic text for AI search engines (GEO). Keep keyword-dense. */
   seoFabric: [
@@ -65,7 +65,7 @@ export const HERO = {
 // ─────────────────────────────────────────────
 export const ABOUT_SECTION = {
   /** Headline card — supports HTML <br /> and <span> */
-  headline: 'JL Custom Design — Mobilier personalizat',
+  headline: 'JL Custom Design — Mobilă la Comandă & Mobilier Personalizat în Brașov',
   paragraph1:
     "Suntem o echipă formată din două persoane pasionate de mobilier personalizat și design de interior, unite de o colaborare și o prietenie de peste 20 de ani.",
   paragraph2:
@@ -85,7 +85,7 @@ export const SERVICES_SECTION = {
       id: "bucatarii",
       title: "Bucătării",
       desc: "Bucătării realizate la comandă, proiectate în funcție de spațiul disponibil și de modul de utilizare. Configurația mobilierului ține cont de poziționarea electrocasnicelor, zonele de lucru și accesul la spațiile de depozitare.",
-      img: "/Poze JL Custom Design - Site/LP/Servicii /Bucatarii.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Bucătarii.webp",
     },
     {
       id: "living",
@@ -148,8 +148,8 @@ export const PORTFOLIO_SECTION = {
     { name: "Baie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 2.webp" },
     { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 6.webp" },
     { name: "Hol", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 4.webp" },
-    { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
-    { name: "Bucatarie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
+    { name: "Bucătărie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 1.webp" },
+    { name: "Bucătărie", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 3.webp" },
     { name: "Dormitor", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 7.webp" },
     { name: "Living", material: "JL Custom Design", image: "/Poze JL Custom Design - Site/LP/Portfolio/Portfolio 8.webp" },
   ],
@@ -342,8 +342,8 @@ export const SERVICES_PAGE = {
   ],
 
   heroH1: "Servicii mobilier la comandă Brașov: Design, Producție, Montaj —",
-  heroDesktopLines: ["SERVICIILE", "NOASTRE", "JL CUSTOM DESIGN"],
-  heroMobileLines: ["Serviciile", "noastre", "JL Custom Design"],
+  heroDesktopLines: ["Serviciile", "pe care noi", "le oferim"],
+  heroMobileLines: ["Serviciile", "pe care noi", "le oferim"],
   heroSubtitle:
     "Transformă-ți casa cu design interior elegant, funcțional și atemporal, adaptat stilului tău unic.",
   heroCta: "Programează o Consultanță →",
