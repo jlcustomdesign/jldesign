@@ -332,9 +332,9 @@ export const FOOTER = {
 // SERVICES PAGE
 // ─────────────────────────────────────────────
 export const SERVICES_PAGE = {
-  title: "Servicii Mobilier la Comandă | JL Mobila - Design, Producție și Montaj",
+  title: "Mobilier la Comandă Brașov | Servicii Mobilă Personalizată — JL Mobila",
   description:
-    "Descoperă serviciile complete JL Mobila: Consultanță & Design 3D, Producție Custom cu materiale premium și Montaj Profesional. Fiecare proiect de mobilier la comandă este unic.",
+    "Servicii premium de mobilier la comandă și mobilă personalizată în Brașov. Consultanță, proiectare tehnică 3D, producție și montaj profesional de la JL Mobila.",
 
   seoFabric: [
     "JL Mobila oferă servicii complete de mobilier la comandă în Brașov, Buzău, Sibiu și Sfântu Gheorghe: Consultanță & Design 3D, Producție Custom din lemn masiv cu materiale premium, și Montaj Profesional. Fiecare proiect include măsurători la fața locului, randări fotorealistice, și o garanție de 24 de luni.",
