@@ -85,7 +85,7 @@ export const SERVICES_SECTION = {
       id: "bucatarii",
       title: "Bucătării",
       desc: "Bucătării realizate la comandă, proiectate în funcție de spațiul disponibil și de modul de utilizare. Configurația mobilierului ține cont de poziționarea electrocasnicelor, zonele de lucru și accesul la spațiile de depozitare.",
-      img: "/Poze JL Custom Design - Site/LP/Servicii /Bucătarii.webp",
+      img: "/Poze JL Custom Design - Site/LP/Servicii /Bucatarii.webp",
     },
     {
       id: "living",
