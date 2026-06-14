@@ -172,13 +172,13 @@ export const PROCESS = {
       step: "02",
       title: "Proiectare tehnică și randări",
       desc: "Creăm designul proiectului și modelarea 3D, oferind o viziune clară și randări fotorealiste ale rezultatului final înainte de execuție.",
-      img: "/Poze JL Custom Design - Site/LP/Proces/desen tehnic.webp",
+      img: "/Poze JL Custom Design - Site/LP/Proces/@Proiectare 3D.png",
     },
     {
       step: "03",
       title: "Producție",
       desc: "Materialele sunt pregătite cu precizie în atelierul nostru, respectând cele mai înalte standarde de calitate și atenție la detalii.",
-      img: "/Poze JL Custom Design - Site/LP/Proces/Decupare.webp",
+      img: "/Poze JL Custom Design - Site/LP/Proces/Productie.JPG",
     },
     {
       step: "04",
@@ -359,7 +359,7 @@ export const SERVICES_PAGE = {
       desc: "Realizăm mobilier la comandă din PAL, MDF, lemn masiv și alte materiale complementare, adaptat perfect spațiului și nevoilor fiecărui client.",
       backDesc:
         "Creăm mobilier pentru locuințe, birouri, spații comerciale sau HoReCa, fiecare proiect fiind gândit astfel încât să îmbine funcționalitatea cu estetica.",
-      img: "/Poze JL Custom Design - Site/Services/Mobilier Personalizat.webp",
+      img: "/Poze JL Custom Design - Site/Services/Productie.JPG",
     },
     {
       id: "proiectare-3d",
@@ -367,7 +367,7 @@ export const SERVICES_PAGE = {
       desc: "Fiecare piesă de mobilier este proiectată în programe de modelare 3D.",
       backDesc:
         "Acest proces ne permite să analizăm detaliile tehnice înainte de execuție și oferă clientului o imagine clară asupra modului în care va fi construit mobilierul.",
-      img: "/Poze JL Custom Design - Site/Services/Proiectare.webp",
+      img: "/Poze JL Custom Design - Site/Services/Proiectare 3D.png",
     },
     {
       id: "randari-virtuale",
@@ -375,7 +375,7 @@ export const SERVICES_PAGE = {
       desc: "Prin randări fotorealiste, clientul poate vedea încă din faza de proiect cum va arăta spațiul final.",
       backDesc:
         "Aceste vizualizări prezintă atât aspectul arhitectural al mobilierului, cât și combinațiile cromatice, materialele și atmosfera generală a încăperii.",
-      img: "/Poze JL Custom Design - Site/Services/Randare 3d.webp",
+      img: "/Poze JL Custom Design - Site/Services/Randare  2.png",
     },
     {
       id: "consultanta-tehnica",
