@@ -35,9 +35,13 @@ export async function GET(ctx: APIContext) {
         '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
       launchOpts = { executablePath: execPath, headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] };
     } else {
-      const chromium = (await import('@sparticuz/chromium')).default;
+      // Production (Vercel): download the full chromium pack (binary + shared
+      // libs) at runtime — avoids the function-size limit and the missing-libnss3
+      // problem of bundling the binary.
+      const chromium = (await import('@sparticuz/chromium-min')).default;
+      const PACK = 'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar';
       launchOpts = {
-        executablePath: await chromium.executablePath(),
+        executablePath: await chromium.executablePath(PACK),
         args: chromium.args,
         headless: true,
         defaultViewport: chromium.defaultViewport,

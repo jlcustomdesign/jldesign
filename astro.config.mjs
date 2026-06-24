@@ -12,7 +12,7 @@ export default defineConfig({
   site: 'https://mobilapersonalizatabrasov.ro/', // Updated to custom domain
   output: 'server',
   trailingSlash: 'ignore',
-  adapter: vercel(),
+  adapter: vercel({ maxDuration: 60 }),
   integrations: [
     react(),
     markdoc(),
@@ -27,7 +27,7 @@ export default defineConfig({
       noExternal: ["gsap"],
       // Keep the headless-Chrome packages external so they aren't bundled
       // (the Vercel adapter traces + includes them for the PDF route).
-      external: ["puppeteer-core", "@sparticuz/chromium"],
+      external: ["puppeteer-core", "@sparticuz/chromium-min"],
     },
     server: {
       watch: {
