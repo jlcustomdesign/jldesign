@@ -1,0 +1,126 @@
+{
+  "clientName": "Familia Dumitru",
+  "category": "Dormitor",
+  "date": "Iunie 2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": "test",
+  "coverImage": "/assets/portfolio/dormitor_dsc0120jpg.webp",
+  "pages": [
+    {
+      "id": "d",
+      "type": "description",
+      "heading": "Dormitor modern, proiectat pentru confort și organizare.",
+      "paragraph": "Proiect realizat integral la comandă, gândit pentru a îmbina estetica rafinată cu funcționalitatea de zi cu zi. Fiecare corp a fost dimensionat milimetric pentru spațiul disponibil.",
+      "image": "/assets/portfolio/dormitor_dsc0137jpg.webp",
+      "specs": [
+        {
+          "label": "FRONTURI",
+          "value": "MDF frezat vopsit / lăcuit mat"
+        },
+        {
+          "label": "CORPURI",
+          "value": "PAL Egger 18 mm, cant ABS"
+        },
+        {
+          "label": "BLAT",
+          "value": "Blat compact / piatră la alegere"
+        },
+        {
+          "label": "FERONERIE",
+          "value": "BLUM premium — soft close"
+        },
+        {
+          "label": "ILUMINARE",
+          "value": "Bandă LED integrată"
+        },
+        {
+          "label": "FINISAJE",
+          "value": "Profil gola, fără mânere"
+        }
+      ]
+    },
+    {
+      "id": "m",
+      "type": "materials",
+      "heading": "testez daca functioneaza",
+      "paragraph": "Decorurile și finisajele au fost alese pentru integrare armonioasă și rezistență în utilizarea zilnică.",
+      "image": "/assets/portfolio/dormitor_dsc0138.webp",
+      "swatches": [
+        {
+          "label": "FRONTURI",
+          "code": "MDF vopsit mat",
+          "image": "/assets/portfolio/dormitor_dsc0152.webp"
+        },
+        {
+          "label": "CORPURI",
+          "code": "Egger U702 ST9",
+          "image": "/assets/portfolio/dormitor_dsc0256jpg.webp"
+        },
+        {
+          "label": "BLAT",
+          "code": "Compact / piatră",
+          "image": "/assets/portfolio/dormitor_dsc0261jpg.webp"
+        }
+      ],
+      "finishes": [
+        {
+          "label": "SUPRAFAȚĂ",
+          "desc": "Textură mată"
+        },
+        {
+          "label": "REZISTENȚĂ",
+          "desc": "La zgârieturi"
+        },
+        {
+          "label": "ÎNTREȚINERE",
+          "desc": "Ușor de curățat"
+        },
+        {
+          "label": "MATERIALE SIGURE",
+          "desc": "Certificate"
+        }
+      ]
+    },
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "Accesorii selectate pentru confort și durabilitate.",
+      "paragraph": "Echiparea a fost configurată în funcție de obiceiurile de utilizare, pentru acces facil și organizare eficientă.",
+      "items": [
+        {
+          "image": "/assets/portfolio/dormitor_dsc0278.webp",
+          "title": "Sertare BLUM",
+          "description": "Extragere totală, soft-close."
+        },
+        {
+          "image": "/assets/portfolio/dormitor_dsc0285.webp",
+          "title": "Iluminare LED",
+          "description": "Lumină caldă integrată."
+        },
+        {
+          "image": "/assets/portfolio/dormitorcamera-fata.webp",
+          "title": "Organizare interioară",
+          "description": "Compartimentare la cerere."
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Funcționare silențioasă"
+        },
+        {
+          "label": "Acces facil"
+        },
+        {
+          "label": "Închidere soft-close"
+        },
+        {
+          "label": "Componente BLUM"
+        }
+      ]
+    }
+  ],
+  "slug": "familia-dumitru",
+  "coverLayout": "top",
+  "accent": "#caa96a"
+}

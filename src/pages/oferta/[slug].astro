@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import OfferDocument, { type Offer } from '../../components/offer/OfferDocument';
+import { IS_DEV } from '../../lib/admin/config';
+import '../../styles/offer.css';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+// Dev reads straight from disk (the watcher ignores src/content/offers so the
+// admin doesn't reload on save); prod uses the build-time bundled collection.
+let offer: Offer | null = null;
+if (IS_DEV) {
+  const fs = await import('node:fs/promises');
+  const path = await import('node:path');
+  const raw = await fs.readFile(path.join(process.cwd(), 'src/content/offers', `${slug}.json`), 'utf-8').catch(() => null);
+  offer = raw ? (JSON.parse(raw) as Offer) : null;
+} else {
+  const offers = await getCollection('offers');
+  const found = offers.find((o) => o.id === slug);
+  offer = found ? (found.data as unknown as Offer) : null;
+}
+
+if (!offer) {
+  return new Response('Ofertă inexistentă', { status: 404 });
+}
+
+const title = `Ofertă ${offer.clientName || ''} · JL Custom Design`.trim();
+---
+
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <style>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #1b1814; font-family: "Grift", ui-sans-serif, system-ui, sans-serif; }
+      .offer-stage { max-width: 1180px; margin: 0 auto; padding: 96px 16px 80px; }
+      .offer-bar {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+        display: flex; align-items: center; gap: 12px;
+        padding: 14px 22px; background: rgba(20,17,13,.86); backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255,255,255,.08);
+      }
+      .offer-bar .ob-brand { color: #c9a96a; font-weight: 700; letter-spacing: .12em; font-size: 14px; }
+      .offer-bar .ob-brand b { color: #fff; }
+      .offer-bar .sp { flex: 1; }
+      .ob-btn {
+        appearance: none; border: 1px solid rgba(255,255,255,.2); background: transparent; color: #fff;
+        padding: 9px 16px; border-radius: 9px; cursor: pointer; font-size: 13px; font-weight: 600;
+        font-family: inherit; display: inline-flex; align-items: center; gap: 7px; text-decoration: none;
+      }
+      .ob-btn:hover { border-color: rgba(255,255,255,.5); }
+      .ob-btn.primary { background: #c9a96a; border-color: #c9a96a; color: #1a1505; }
+      .ob-hint { color: rgba(255,255,255,.45); font-size: 12px; }
+      @media print { .offer-bar { display: none !important; } .offer-stage { padding: 0; max-width: none; } body { background: #fff; } }
+    </style>
+  </head>
+  <body>
+    <div class="offer-bar">
+      <span class="ob-brand">JL <b>Custom Design</b></span>
+      <span class="ob-hint">Prezentare proiect — {offer.clientName}</span>
+      <span class="sp"></span>
+      <button class="ob-btn" id="ob-copy" type="button">Copiază link</button>
+      <a class="ob-btn primary" id="ob-pdf" href={`/oferta/${slug}.pdf`}>⬇ Descarcă PDF</a>
+    </div>
+
+    <div class="offer-stage">
+      <OfferDocument offer={offer} />
+    </div>
+
+    <script is:inline>
+      // PDF link shows a brief "se generează" state while the server renders it.
+      document.getElementById('ob-pdf')?.addEventListener('click', (e) => {
+        const a = e.currentTarget;
+        const old = a.textContent;
+        a.textContent = '⏳ Se generează PDF…';
+        setTimeout(() => { a.textContent = old; }, 6000);
+      });
+      document.getElementById('ob-copy')?.addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          const old = btn.textContent;
+          btn.textContent = 'Link copiat ✓';
+          setTimeout(() => (btn.textContent = old), 1800);
+        } catch { window.prompt('Copiază link-ul ofertei:', window.location.href); }
+      });
+    </script>
+  </body>
+</html>

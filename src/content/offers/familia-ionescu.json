@@ -1,0 +1,144 @@
+{
+  "clientName": "Familia Ionescu",
+  "category": "Living",
+  "date": "Iunie 2026",
+  "style": "noir",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": "MOBILIER PERSONALIZA",
+  "coverImage": "/assets/portfolio/livingapartamant-modern.webp",
+  "pages": [
+    {
+      "id": "d",
+      "type": "description",
+      "heading": "Living premium, conceput pentru rafinament și confort.",
+      "paragraph": "Proiect realizat integral la comandă, gândit pentru a îmbina estetica rafinată cu funcționalitatea de zi cu zi. Fiecare corp a fost dimensionat milimetric pentru spațiul disponibil.",
+      "image": "/assets/portfolio/livingapartament-coresi.webp",
+      "specs": [
+        {
+          "label": "FRONTURI",
+          "value": "MDF frezat vopsit / lăcuit mat"
+        },
+        {
+          "label": "CORPURI",
+          "value": "PAL Egger 18 mm, cant ABS"
+        },
+        {
+          "label": "BLAT",
+          "value": "Blat compact / piatră la alegere"
+        },
+        {
+          "label": "FERONERIE",
+          "value": "BLUM premium — soft close"
+        },
+        {
+          "label": "ILUMINARE",
+          "value": "Bandă LED integrată"
+        },
+        {
+          "label": "FINISAJE",
+          "value": "Profil gola, fără mânere"
+        }
+      ]
+    },
+    {
+      "id": "g",
+      "type": "gallery",
+      "heading": "Galerie proiect.",
+      "paragraph": "Imagini din proiectul finalizat.",
+      "shots": [
+        {
+          "image": "/assets/portfolio/livingapartament-coresi.webp",
+          "caption": "Ansamblu"
+        },
+        {
+          "image": "/assets/portfolio/livingapartamant-modern.webp",
+          "caption": "Detaliu"
+        },
+        {
+          "image": "/assets/portfolio/livingapartamant-modern.webp",
+          "caption": "Zonă"
+        }
+      ]
+    },
+    {
+      "id": "m",
+      "type": "materials",
+      "heading": "Materiale atent selectate pentru estetică și durabilitate.",
+      "paragraph": "Decorurile și finisajele au fost alese pentru integrare armonioasă și rezistență în utilizarea zilnică.",
+      "image": "/assets/portfolio/livingapartamant-modern.webp",
+      "swatches": [
+        {
+          "label": "FRONTURI",
+          "code": "MDF vopsit mat",
+          "image": "/assets/portfolio/livingapartament-coresi.webp"
+        },
+        {
+          "label": "CORPURI",
+          "code": "Egger U702 ST9",
+          "image": "/assets/portfolio/livingapartamant-modern.webp"
+        },
+        {
+          "label": "BLAT",
+          "code": "Compact / piatră",
+          "image": "/assets/portfolio/livingapartament-coresi.webp"
+        }
+      ],
+      "finishes": [
+        {
+          "label": "SUPRAFAȚĂ",
+          "desc": "Textură mată"
+        },
+        {
+          "label": "REZISTENȚĂ",
+          "desc": "La zgârieturi"
+        },
+        {
+          "label": "ÎNTREȚINERE",
+          "desc": "Ușor de curățat"
+        },
+        {
+          "label": "MATERIALE SIGURE",
+          "desc": "Certificate"
+        }
+      ]
+    },
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "Accesorii selectate pentru confort și durabilitate.",
+      "paragraph": "Echiparea a fost configurată în funcție de obiceiurile de utilizare, pentru acces facil și organizare eficientă.",
+      "items": [
+        {
+          "image": "/assets/portfolio/livingapartamant-modern.webp",
+          "title": "Sertare BLUM",
+          "description": "Extragere totală, soft-close."
+        },
+        {
+          "image": "/assets/portfolio/livingapartament-coresi.webp",
+          "title": "Iluminare LED",
+          "description": "Lumină caldă integrată."
+        },
+        {
+          "image": "/assets/portfolio/livingapartamant-modern.webp",
+          "title": "Organizare interioară",
+          "description": "Compartimentare la cerere."
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Funcționare silențioasă"
+        },
+        {
+          "label": "Acces facil"
+        },
+        {
+          "label": "Închidere soft-close"
+        },
+        {
+          "label": "Componente BLUM"
+        }
+      ]
+    }
+  ],
+  "slug": "familia-ionescu"
+}

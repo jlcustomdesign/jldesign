@@ -3,7 +3,7 @@ import * as cookie from 'cookie';
 
 export const prerender = false;
 
-const keystaticRouteRegex = /^\/keystatic\/?/;
+const adminRouteRegex = /^\/(admin|keystatic)\b/;
 
 export async function GET({ request }: APIContext) {
   const reqUrl = new URL(request.url);
@@ -20,7 +20,7 @@ export async function GET({ request }: APIContext) {
   // Get the 'from' value from the state cookie
   const cookies = cookie.parse(request.headers.get('cookie') || '');
   const fromCookie = state ? cookies['ks-' + state] : undefined;
-  const from = typeof fromCookie === 'string' && keystaticRouteRegex.test(fromCookie) ? fromCookie : '';
+  const from = typeof fromCookie === 'string' && adminRouteRegex.test(fromCookie) ? fromCookie : '';
   
   // Exchange code for access token
   const tokenUrl = new URL('https://github.com/login/oauth/access_token');
@@ -60,8 +60,8 @@ export async function GET({ request }: APIContext) {
     path: '/'
   }) : '';
   
-  // Redirect to Keystatic
-  const redirectUrl = from ? `/keystatic${from.replace(/^\/keystatic/, '')}` : '/keystatic';
+  // Redirect back to wherever the sign-in started (defaults to the admin).
+  const redirectUrl = from || '/admin';
   
   const headers = new Headers();
   headers.set('Location', redirectUrl);

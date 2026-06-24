@@ -13,10 +13,9 @@ function bytesToHex(bytes: Uint8Array): string {
 export async function GET({ request }: APIContext) {
   const reqUrl = new URL(request.url);
   const rawFrom = reqUrl.searchParams.get('from');
-  
-  // ALWAYS default to /keystatic, never to /
-  // This ensures state is ALWAYS generated
-  const from = rawFrom || '/keystatic';
+
+  // Default to the custom admin. Only allow same-site admin paths as targets.
+  const from = rawFrom && /^\/(admin|keystatic)/.test(rawFrom) ? rawFrom : '/admin';
   
   const clientId = import.meta.env.KEYSTATIC_GITHUB_CLIENT_ID || process.env.KEYSTATIC_GITHUB_CLIENT_ID;
   

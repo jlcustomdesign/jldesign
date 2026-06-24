@@ -1,0 +1,124 @@
+{
+  "clientName": "Familia Popescu",
+  "category": "Bucătărie",
+  "date": "Iunie 2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": "MOBILIER PERSONALIZAT",
+  "coverImage": "/assets/portfolio/bucatarii_dsc0245.webp",
+  "pages": [
+    {
+      "id": "d",
+      "type": "description",
+      "heading": "Bucătărie personalizată pentru un spațiu elegant și organizat.",
+      "paragraph": "Proiect realizat integral la comandă, gândit pentru a îmbina estetica rafinată cu funcționalitatea de zi cu zi. Fiecare corp a fost dimensionat milimetric pentru spațiul disponibil.",
+      "image": "/assets/portfolio/bucatariibucatarie-apartament-eleven-brasov.webp",
+      "specs": [
+        {
+          "label": "FRONTURI",
+          "value": "MDF frezat vopsit / lăcuit mat"
+        },
+        {
+          "label": "CORPURI",
+          "value": "PAL Egger 18 mm, cant ABS"
+        },
+        {
+          "label": "BLAT",
+          "value": "Blat compact / piatră la alegere"
+        },
+        {
+          "label": "FERONERIE",
+          "value": "BLUM premium — soft close"
+        },
+        {
+          "label": "ILUMINARE",
+          "value": "Bandă LED integrată"
+        },
+        {
+          "label": "FINISAJE",
+          "value": "Profil gola, fără mânere"
+        }
+      ]
+    },
+    {
+      "id": "m",
+      "type": "materials",
+      "heading": "Materiale atent selectate pentru estetică și durabilitate.",
+      "paragraph": "Decorurile și finisajele au fost alese pentru integrare armonioasă și rezistență în utilizarea zilnică.",
+      "image": "/assets/portfolio/bucatariibucatarie-coresi2.webp",
+      "swatches": [
+        {
+          "label": "FRONTURI",
+          "code": "MDF vopsit mat",
+          "image": "/assets/portfolio/bucatariibucatarie-pensiune.webp"
+        },
+        {
+          "label": "CORPURI",
+          "code": "Egger U702 ST9",
+          "image": "/assets/portfolio/bucatarii_dsc0245.webp"
+        },
+        {
+          "label": "BLAT",
+          "code": "Compact / piatră",
+          "image": "/assets/portfolio/bucatariibucatarie-apartament-eleven-brasov.webp"
+        }
+      ],
+      "finishes": [
+        {
+          "label": "SUPRAFAȚĂ",
+          "desc": "Textură mată"
+        },
+        {
+          "label": "REZISTENȚĂ",
+          "desc": "La zgârieturi"
+        },
+        {
+          "label": "ÎNTREȚINERE",
+          "desc": "Ușor de curățat"
+        },
+        {
+          "label": "MATERIALE SIGURE",
+          "desc": "Certificate"
+        }
+      ]
+    },
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "Accesorii selectate pentru confort și durabilitate.",
+      "paragraph": "Echiparea a fost configurată în funcție de obiceiurile de utilizare, pentru acces facil și organizare eficientă.",
+      "items": [
+        {
+          "image": "/assets/portfolio/bucatariibucatarie-coresi2.webp",
+          "title": "Sertare BLUM",
+          "description": "Extragere totală, soft-close."
+        },
+        {
+          "image": "/assets/portfolio/bucatariibucatarie-pensiune.webp",
+          "title": "Iluminare LED",
+          "description": "Lumină caldă integrată."
+        },
+        {
+          "image": "/assets/portfolio/bucatarii_dsc0245.webp",
+          "title": "Organizare interioară",
+          "description": "Compartimentare la cerere."
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Funcționare silențioasă"
+        },
+        {
+          "label": "Acces facil"
+        },
+        {
+          "label": "Închidere soft-close"
+        },
+        {
+          "label": "Componente BLUM"
+        }
+      ]
+    }
+  ],
+  "slug": "familia-popescu"
+}

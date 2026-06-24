@@ -1,0 +1,221 @@
+/* offer.css — branded, minimalist offer/presentation document.
+   Shared by the public /oferta page and the admin live preview.
+   Sizes use container units (cqw) so the document scales to any width —
+   full size in print, miniature in the admin preview. */
+
+@font-face {
+  font-family: 'Grift';
+  src: url('/Fonts/grift-2025-04-02-02-51-35-utc/Variable-TT/Grift Variable-VF.ttf') format('truetype');
+  font-weight: 100 900; font-display: swap;
+}
+
+.offer-doc, .offer-doc * {
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+.offer-doc {
+  --gold: #b8975a; --gold-2: #c9a96a; --ink: #2c2722; --ink-soft: #6a6258;
+  --cream: #f6f3ec; --panel: #efeadf; --line: #e4ddcf;
+  --card: #ffffff; --cover-tint: linear-gradient(135deg, #efe7d6, #f7f3ea);
+  display: flex; flex-direction: column; gap: 22px; width: 100%;
+}
+
+.offer-page {
+  container-type: inline-size; position: relative; width: 100%; aspect-ratio: 297 / 210;
+  background: var(--cream); color: var(--ink); overflow: hidden;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+  font-family: "Grift", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---------------- COVER (editorial split, no dark veil) ---------------- */
+/* Panel (with the logo) sits on the left so the logo is always top-left.
+   lay-right = image on the right; lay-left = image on the left; lay-top = image on top. */
+.cover { display: flex; }
+.cover.lay-right { flex-direction: row-reverse; }
+.cover.lay-left { flex-direction: row; }
+.cover.lay-top { flex-direction: column; }
+
+.cover-media { flex: 1 1 55%; position: relative; overflow: hidden; }
+.cover.lay-top .cover-media { flex: 0 0 52%; }
+.cover-media img, .cover-media-empty { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-media-empty { background: var(--cover-tint); }
+
+.cover-panel { flex: 1 1 45%; display: flex; flex-direction: column; padding: 7cqw 6cqw; }
+.cover.lay-top .cover-panel { flex: 1 1 48%; padding: 4.5cqw 6cqw; }
+.cover-spacer { flex: 1 1 auto; }
+
+.cover-logo { display: flex; align-items: center; gap: 1.6cqw; }
+.cl-jl { font-weight: 800; font-size: 3cqw; letter-spacing: -.04em; color: var(--ink); border: 0.18cqw solid var(--gold); border-radius: 50%; width: 6cqw; height: 6cqw; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.cl-sub { font-size: 1.05cqw; letter-spacing: .34em; line-height: 1.35; color: var(--gold); font-weight: 600; }
+
+.cover-title { display: flex; flex-direction: column; line-height: 1; margin-bottom: 2.6cqw; }
+.ct-thin { font-weight: 300; font-size: 3.8cqw; letter-spacing: .01em; color: var(--gold); }
+.ct-bold { font-weight: 800; font-size: 3.8cqw; letter-spacing: 0; color: var(--ink); }
+
+.cover-client { margin-bottom: 2.4cqw; }
+.cc-name { font-size: 2.7cqw; font-weight: 600; font-style: italic; color: var(--ink); line-height: 1.05; }
+.cc-cat { font-size: 1.1cqw; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-top: 1cqw; }
+
+.cover-foot { display: flex; justify-content: space-between; gap: 2cqw; font-size: 1.05cqw; letter-spacing: .08em; color: var(--ink-soft); border-top: 1px solid var(--line); padding-top: 1.6cqw; }
+
+/* ---------------- SHEETS (head / main / foot — no overlap) ---------------- */
+.sheet { display: flex; flex-direction: column; padding: 5cqw 7cqw 3.6cqw; }
+.vbrand { position: absolute; top: 50%; right: 2.6cqw; transform: translateY(-50%); writing-mode: vertical-rl; text-orientation: mixed; font-size: 1.05cqw; letter-spacing: .5em; color: var(--gold); opacity: .8; }
+.sheet-head { flex: 0 0 auto; }
+.sheet-main { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.sheet-foot { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; margin-top: 2cqw; font-size: 1.05cqw; letter-spacing: .16em; color: var(--ink-soft); }
+.ft-mono { font-weight: 800; color: var(--gold); border: 1px solid var(--gold); border-radius: 50%; width: 2.6cqw; height: 2.6cqw; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1cqw; }
+
+.eyebrow { display: flex; align-items: center; gap: 1.2cqw; font-size: 1.2cqw; letter-spacing: .26em; color: var(--ink-soft); text-transform: uppercase; }
+.eyebrow .num { background: var(--ink); color: var(--cream); font-weight: 700; letter-spacing: 0; padding: .5cqw .9cqw; border-radius: .4cqw; font-size: 1.2cqw; }
+.s-heading { font-size: 3cqw; font-weight: 700; line-height: 1.1; margin: 1.8cqw 0 0; max-width: 80%; color: var(--ink); }
+.s-para { font-size: 1.45cqw; line-height: 1.55; color: var(--ink-soft); max-width: 92%; margin: 2.2cqw 0 0; }
+.s-para.wide { max-width: 72%; }
+
+.cols { display: grid; grid-template-columns: 1.12fr 1fr; gap: 4cqw; margin-top: 2.4cqw; align-items: start; }
+.cols.no-img { grid-template-columns: 1fr; }
+.col-right img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 1cqw; box-shadow: 0 1cqw 3cqw rgba(0,0,0,.12); display: block; }
+
+.block-label { font-size: 1.15cqw; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin: 2.4cqw 0 1.3cqw; display: flex; align-items: center; gap: .8cqw; }
+.block-label::before { content: ""; width: 2cqw; height: 1px; background: var(--gold); }
+
+.spec-list { display: grid; gap: .9cqw; }
+.spec { display: grid; grid-template-columns: 11cqw 1fr; gap: 1.4cqw; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: .9cqw; }
+.spec-label { font-size: 1.1cqw; font-weight: 700; letter-spacing: .12em; color: var(--ink); }
+.spec-value { font-size: 1.3cqw; color: var(--ink-soft); }
+
+.swatches { display: flex; gap: 1.6cqw; margin-top: .5cqw; }
+.swatch { flex: 1; }
+.swatch-img { width: 100%; aspect-ratio: 1.5/1; border-radius: .6cqw; background-size: cover; background-position: center; background-repeat: no-repeat; }
+.swatch-img.empty { background: var(--cream); border: 1px solid var(--line); }
+.swatch-label { font-size: 1.05cqw; font-weight: 700; letter-spacing: .1em; margin-top: .8cqw; }
+.swatch-code { font-size: 1.1cqw; color: var(--ink-soft); }
+
+.badges { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1cqw 2cqw; }
+.badge-pill { display: flex; align-items: center; gap: .9cqw; font-size: 1.2cqw; }
+.bp-dot { width: 1.4cqw; height: 1.4cqw; border-radius: 50%; border: 0.16cqw solid var(--gold); flex: 0 0 auto; position: relative; }
+.bp-dot::after { content: ""; position: absolute; inset: .4cqw; border-radius: 50%; background: var(--gold); }
+.bp-label { font-weight: 700; letter-spacing: .03em; }
+.bp-desc { font-size: 1.05cqw; color: var(--ink-soft); }
+
+.acc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; margin: 2.4cqw 0 1cqw; }
+.acc-card { background: var(--card); border: 1px solid var(--line); border-radius: .8cqw; overflow: hidden; display: flex; flex-direction: column; }
+.acc-card.no-img { border-top: 0.45cqw solid var(--gold); }
+.acc-img { width: 100%; aspect-ratio: 16/10; background-size: cover; background-position: center; background-repeat: no-repeat; }
+.acc-body { padding: 1cqw 1.2cqw 1.2cqw; }
+.acc-title { font-size: 1.3cqw; font-weight: 700; }
+.acc-desc { font-size: 1.1cqw; color: var(--ink-soft); margin-top: .3cqw; line-height: 1.4; }
+
+.sketch-row { display: flex; gap: 2cqw; margin: 2.2cqw 0 1cqw; }
+.sketch { flex: 1; margin: 0; }
+.sketch img, .sketch-empty { width: 100%; aspect-ratio: 4/3; border-radius: .7cqw; display: block; }
+.sketch img { object-fit: cover; }
+.sketch-empty { background: var(--cream); border: 1px dashed var(--line); }
+.sketch figcaption { font-size: 1.05cqw; color: var(--ink-soft); text-align: center; margin-top: .7cqw; letter-spacing: .08em; text-transform: uppercase; }
+.dims { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6cqw; }
+.dim-title { font-size: 1.1cqw; font-weight: 700; letter-spacing: .1em; color: var(--gold); margin-bottom: .6cqw; }
+.dim-line { font-size: 1.15cqw; color: var(--ink-soft); line-height: 1.5; }
+
+/* Gallery */
+.gallery-grid { display: grid; gap: 2cqw; margin-top: 2.4cqw; }
+.gallery-grid.g1 { grid-template-columns: 1fr; }
+.gallery-grid.g2 { grid-template-columns: repeat(2, 1fr); }
+.gallery-grid.g3 { grid-template-columns: repeat(3, 1fr); }
+.gallery-grid.g4 { grid-template-columns: repeat(2, 1fr); }
+.gal { margin: 0; }
+.gal-img { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; background-repeat: no-repeat; border-radius: .9cqw; }
+.gallery-grid.g1 .gal-img { aspect-ratio: 21/9; }
+.gal-img.empty { background: var(--cream); border: 1px dashed var(--line); }
+.gal figcaption { font-size: 1.05cqw; color: var(--ink-soft); text-align: center; margin-top: .7cqw; letter-spacing: .08em; text-transform: uppercase; }
+
+/* Text page */
+.text-wrap { display: flex; flex-direction: column; height: 100%; }
+.text-body { margin-top: 2.6cqw; max-width: 78%; }
+.text-body p { font-size: 1.7cqw; line-height: 1.6; color: var(--ink-soft); margin: 0 0 1.4cqw; }
+.text-image { margin-top: auto; padding-top: 2cqw; }
+.text-image img { width: 100%; aspect-ratio: 21/9; object-fit: cover; border-radius: 1cqw; display: block; }
+
+/* Click-to-edit affordances (admin preview only — public/PDF have no data-fid) */
+.offer-doc [data-fid] { cursor: pointer; transition: box-shadow .12s ease; }
+.offer-doc [data-fid]:hover { box-shadow: 0 0 0 2px var(--gold-2); border-radius: 4px; }
+.offer-doc [data-active="true"] { box-shadow: 0 0 0 3px var(--gold), 0 0 0 7px rgba(184,151,90,.28) !important; border-radius: 4px; }
+
+/* ====================== DESIGN STYLES ====================== */
+/* Each style re-defines the palette vars (so dark mode is a clean swap) plus a
+   few typography / composition tweaks. The DOM is identical across styles. */
+
+/* 1. EDITORIAL — base (light, warm, gold). No overrides needed. */
+
+/* 2. NOIR — dramatic dark. */
+.style-noir {
+  --ink: #f2ebde; --ink-soft: #b4ab99; --cream: #15120e; --panel: #221d16;
+  --line: #3a3127; --card: #221d16;
+  --gold: #caa96a; --gold-2: #dabd85;
+  --cover-tint: linear-gradient(135deg, #2b2218, #15120e);
+}
+.style-noir .offer-page { box-shadow: 0 18px 60px rgba(0,0,0,.5); }
+.style-noir .eyebrow .num { background: var(--gold); color: #15120e; }
+.style-noir .acc-card.no-img { border-top-color: var(--gold); }
+
+/* 3. BOLD — white, monochrome, oversized type, image-top. */
+.style-bold {
+  --ink: #141414; --ink-soft: #5c5c5c; --cream: #ffffff; --panel: #f2f2f0; --line: #e6e6e2; --card: #ffffff;
+  --gold: #141414; --gold-2: #141414;
+  --cover-tint: linear-gradient(135deg, #ededeb, #f8f8f6);
+}
+.style-bold .ct-thin, .style-bold .ct-bold { font-weight: 800; font-size: 4.6cqw; letter-spacing: -.02em; color: var(--ink); }
+.style-bold .cc-name { font-style: normal; font-weight: 800; }
+.style-bold .cc-cat { color: var(--ink-soft); }
+.style-bold .s-heading { font-size: 3.6cqw; font-weight: 800; letter-spacing: -.01em; max-width: 90%; }
+.style-bold .eyebrow { font-weight: 700; }
+.style-bold .eyebrow .num { background: var(--ink); color: #fff; }
+.style-bold .cl-jl { border-color: var(--ink); color: var(--ink); }
+.style-bold .cl-sub, .style-bold .ft-mono { color: var(--ink); }
+.style-bold .ft-mono { border-color: var(--ink); }
+.style-bold .vbrand { color: var(--ink-soft); opacity: .5; }
+
+/* 4. CLASSIC — ivory, serif, centred cover. */
+.style-classic {
+  --ink: #2f2a24; --ink-soft: #6f6453; --cream: #f8f4ec; --panel: #efe8d8; --line: #e4dac6; --card: #fffdf8;
+  --gold: #9c7c4f; --gold-2: #b89568;
+  --cover-tint: linear-gradient(135deg, #efe6d3, #f8f3e9);
+}
+.style-classic .s-heading, .style-classic .cc-name, .style-classic .ct-thin, .style-classic .ct-bold,
+.style-classic .acc-title, .style-classic .text-body p { font-family: Georgia, 'Times New Roman', serif; }
+.style-classic .cover-panel { align-items: center; text-align: center; }
+.style-classic .cover-logo { justify-content: center; }
+.style-classic .cover-title { align-items: center; }
+.style-classic .cover-foot { justify-content: center; gap: 3cqw; }
+.style-classic .s-heading { font-weight: 700; }
+.style-classic .eyebrow .num { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+
+/* 5. MINIMAL — white, thin, lots of whitespace, discreet. */
+.style-minimal {
+  --ink: #232323; --ink-soft: #8c8c8c; --cream: #ffffff; --panel: #f6f6f4; --line: #ededea; --card: #ffffff;
+  --gold: #8a8276; --gold-2: #a39a8b;
+  --cover-tint: linear-gradient(135deg, #f3f3f1, #fbfbfa);
+}
+.style-minimal .vbrand { display: none; }
+.style-minimal .eyebrow { font-size: 1cqw; letter-spacing: .32em; }
+.style-minimal .eyebrow .num { background: transparent; color: var(--gold); padding: 0; font-size: 1cqw; }
+.style-minimal .s-heading { font-weight: 600; font-size: 2.6cqw; }
+.style-minimal .ct-thin { font-weight: 300; font-size: 3.2cqw; color: var(--ink); }
+.style-minimal .ct-bold { font-weight: 600; font-size: 3.2cqw; }
+.style-minimal .cc-name { font-style: normal; font-weight: 500; }
+.style-minimal .block-label { color: var(--ink-soft); }
+.style-minimal .block-label::before { background: var(--ink-soft); }
+
+/* ---------------- PRINT ---------------- */
+@media print {
+  @page { size: A4 landscape; margin: 0; }
+  html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; width: auto !important; }
+  .offer-doc { display: block !important; gap: 0; width: 297mm; }
+  .offer-page {
+    width: 297mm; height: 210mm; aspect-ratio: auto;
+    box-shadow: none; break-inside: avoid; page-break-inside: avoid;
+    break-after: page; page-break-after: always;
+  }
+  .offer-page:last-child { break-after: auto; page-break-after: auto; }
+}

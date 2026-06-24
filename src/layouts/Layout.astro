@@ -34,6 +34,10 @@ const {
   hideContact = false,
 } = Astro.props;
 
+// CMS preview mode: when loaded in the admin "Conținut site" editor (?cms=1),
+// inject a small overlay that makes text/images click-to-edit + live-updatable.
+const cmsMode = Astro.url.searchParams.get("cms") === "1";
+
 // --- Structured Data Schemas ---
 
 // 1. Organization with Wikidata entity disambiguation
@@ -190,11 +194,13 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
       window.scrollTo(0, 0);
     </script>
   </head>
-  <body class="text-primary font-sans antialiased overflow-x-hidden">
+  <body class:list={["text-primary font-sans antialiased overflow-x-hidden", { "cms-preview": cmsMode }]}>
     {/* Navbar must be outside smooth-wrapper to be fixed/sticky correctly */}
     {!hideNavbar && <Navbar />}
     {!hideNavbar && <MobileMenu />}
-    <CustomCursor />
+    {/* Custom cursor everywhere except the admin live-preview, where the
+        system cursor is needed to click elements. */}
+    {!cmsMode && <CustomCursor />}
 
     <!-- ScrollSmoother Structure -->
     <div
@@ -239,6 +245,7 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
     </script>
     {!hideContact && <ContactModal />}
     {!hideContact && <ContactFAB />}
+    {cmsMode && <script is:inline src="/cms-overlay.js"></script>}
   </body>
 </html>
 
@@ -276,5 +283,14 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
     [role="button"] {
       cursor: none !important;
     }
+  }
+
+  /* In the admin live-preview (?cms=1) keep the system cursor visible. */
+  body.cms-preview,
+  body.cms-preview * {
+    cursor: auto !important;
+  }
+  body.cms-preview [data-cms] {
+    cursor: pointer !important;
   }
 </style>
