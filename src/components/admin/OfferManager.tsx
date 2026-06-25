@@ -204,7 +204,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
             {auto === 'saving' ? 'Se salvează…' : auto === 'saved' ? 'Salvat automat' : o.clientName.trim() ? 'Salvare automată activă' : 'Adaugă un nume pentru salvare'}
           </span>
           <div className="adm-spacer" />
-          {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}.pdf`}>PDF</a>}
+          {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}?pdf=1`} target="_blank" rel="noreferrer">⬇ PDF</a>}
           {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}`} target="_blank" rel="noreferrer" style={{ marginLeft: 8 }}>Deschide</a>}
           <button className="adm-btn ghost" onClick={cancel} disabled={busy} style={{ marginLeft: 8 }}>Închide</button>
           <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>{busy ? 'Se salvează…' : 'Salvează'}</button>
@@ -447,7 +447,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
                 <span className="meta">{e.data.date} · {countPages(e.data)} pagini</span>
               </div>
               <div className="actions">
-                <a className="adm-btn ghost sm" href={`/oferta/${e.slug}.pdf`}>PDF</a>
+                <a className="adm-btn ghost sm" href={`/oferta/${e.slug}?pdf=1`} target="_blank" rel="noreferrer">⬇ PDF</a>
                 <button className="adm-btn ghost sm" onClick={() => edit(e)}>Editează</button>
                 <button className="adm-btn danger sm" onClick={() => remove(e)}>Șterge</button>
               </div>

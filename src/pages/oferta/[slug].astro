@@ -109,7 +109,18 @@ const title = `Ofertă ${offer.clientName || ''} · JL Custom Design`.trim();
           (pdfBtn as HTMLButtonElement).disabled = false;
         }
       });
+
+      // Opened from the admin "⬇ PDF" button → download automatically once ready.
+      if (new URLSearchParams(location.search).get('pdf') === '1') {
+        window.addEventListener('load', async () => {
+          const imgs = Array.from(document.querySelectorAll('.offer-page img')) as HTMLImageElement[];
+          await Promise.all(imgs.map((i) => (i.complete ? Promise.resolve() : new Promise((r) => { i.onload = i.onerror = () => r(null); }))));
+          await new Promise((r) => setTimeout(r, 350));
+          pdfBtn?.click();
+        });
+      }
     </script>
+
 
     <script is:inline>
       document.getElementById('ob-copy')?.addEventListener('click', async (e) => {
