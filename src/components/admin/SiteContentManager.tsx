@@ -5,14 +5,23 @@ interface Props { notify: (msg: string, kind?: 'ok' | 'err') => void; }
 
 /* Sections grouped by the page they appear on. */
 const PAGES: { id: string; label: string; url: string; sections: string[] }[] = [
-  { id: 'acasa', label: 'Acasă', url: '/', sections: ['NAV', 'HOME', 'HERO', 'ABOUT_SECTION', 'SERVICES_SECTION', 'PORTFOLIO_SECTION', 'PROCESS', 'BLOG_PREVIEW', 'FAQ', 'FOOTER', 'CONTACT_MODAL', 'CONTACT_FAB', 'BREADCRUMBS'] },
+  { id: 'acasa', label: 'Acasă', url: '/', sections: ['NAV', 'HERO', 'ABOUT_SECTION', 'SERVICES_SECTION', 'PORTFOLIO_SECTION', 'PROCESS', 'BLOG_PREVIEW', 'FAQ', 'FOOTER', 'CONTACT_MODAL', 'CONTACT_FAB', 'BREADCRUMBS'] },
   { id: 'despre', label: 'Despre', url: '/about', sections: ['ABOUT_PAGE'] },
   { id: 'servicii', label: 'Servicii', url: '/services', sections: ['SERVICES_PAGE'] },
   { id: 'portofoliu', label: 'Portofoliu', url: '/portfolio', sections: ['PORTFOLIO_PAGE'] },
   { id: 'blog', label: 'Blog', url: '/blog', sections: ['BLOG_PAGE'] },
   { id: 'contact', label: 'Contact', url: '/contact', sections: ['CONTACT_PAGE'] },
   { id: 'brandbook', label: 'Brandbook', url: '/brandbook', sections: ['BRANDBOOK_PAGE'] },
+  { id: 'seo', label: 'SEO & Meta', url: '/', sections: [] },
 ];
+
+// SEO/meta fields live on their own page so the content pages stay clean.
+const SEO_SECTIONS = ['HOME', 'SERVICES_PAGE', 'ABOUT_PAGE', 'PORTFOLIO_PAGE', 'BLOG_PAGE', 'CONTACT_PAGE', 'BRANDBOOK_PAGE'];
+const SEO_FIELDS = new Set(['title', 'description', 'seoFabric']);
+const SEO_SECTION_LABEL: Record<string, string> = {
+  HOME: 'Pagina principală', SERVICES_PAGE: 'Pagina Servicii', ABOUT_PAGE: 'Pagina Despre',
+  PORTFOLIO_PAGE: 'Pagina Portofoliu', BLOG_PAGE: 'Pagina Blog', CONTACT_PAGE: 'Pagina Contact', BRANDBOOK_PAGE: 'Pagina Brandbook',
+};
 
 const SECTION_LABELS: Record<string, string> = {
   NAV: 'Navigație', HOME: 'SEO pagină', HERO: 'Hero', ABOUT_SECTION: 'Despre (secțiune)', SERVICES_SECTION: 'Servicii (secțiune)',
@@ -47,23 +56,33 @@ export default function SiteContentManager({ notify }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
   const syncing = useRef(false);
   const [scale, setScale] = useState(1);
+  const [ind, setInd] = useState({ left: 0, width: 0 });
   contentRef.current = content;
 
+  // Slide the active-tab highlight smoothly between page tabs.
+  useEffect(() => {
+    const measure = () => {
+      const el = tabsRef.current?.querySelector(`[data-page="${pageId}"]`) as HTMLElement | null;
+      if (el) setInd({ left: el.offsetLeft, width: el.offsetWidth });
+    };
+    const id = requestAnimationFrame(measure);
+    window.addEventListener('resize', measure);
+    return () => { cancelAnimationFrame(id); window.removeEventListener('resize', measure); };
+  }, [pageId, !!content]);
+
   // Preview rendered at a real device size, scaled to fit.
-  // Mobile: fixed phone size (stable height, just responsive width, centered).
-  // Desktop: 16:9 frame fit to both column width and remaining viewport height.
-  const base = device === 'mobile' ? { w: 390, h: 720 } : { w: 1440, h: 810 };
+  // Mobile: real phone aspect (9:19.5); Desktop: 16:9. Both scaled to fit the
+  // column width AND the remaining viewport height, so the whole frame is visible.
+  const base = device === 'mobile' ? { w: 390, h: 844 } : { w: 1440, h: 810 };
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
     const compute = () => {
       const availW = el.clientWidth;
-      if (device === 'mobile') {
-        const displayW = Math.min(360, availW); // cap the phone display width → stable height
-        setScale(displayW / base.w);
-      } else {
+      {
         const top = el.getBoundingClientRect().top;
         const availH = window.innerHeight - top - 20;
         setScale(Math.max(0.1, Math.min(availW / base.w, availH / base.h, 1)));
@@ -111,15 +130,22 @@ export default function SiteContentManager({ notify }: Props) {
     setClosed((prev) => { if (!prev.has(sec)) return prev; const n = new Set(prev); n.delete(sec); return n; });
     setActiveField(path);
     setMobileTab('form');
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const wrap = formRef.current?.querySelector(`[id="f-${path}"]`);
-      if (wrap) {
-        const c = formRef.current!; const r = wrap.getBoundingClientRect(); const cr = c.getBoundingClientRect();
-        c.scrollTo({ top: c.scrollTop + (r.top - cr.top) - cr.height / 2 + r.height / 2, behavior: 'smooth' });
-        const input = wrap.querySelector('input, textarea') as HTMLElement | null;
-        if (input) { syncing.current = true; input.focus({ preventScroll: true }); }
-      }
-    }));
+    // The section may need to expand + images may reflow; retry a few frames so
+    // the scroll lands accurately instead of "missing".
+    let tries = 0;
+    const go = () => {
+      const c = formRef.current;
+      const wrap = c?.querySelector(`[id="f-${path}"]`) as HTMLElement | null;
+      if (!c || !wrap) { if (tries++ < 8) return requestAnimationFrame(go); return; }
+      const r = wrap.getBoundingClientRect();
+      const cr = c.getBoundingClientRect();
+      c.scrollTo({ top: c.scrollTop + (r.top - cr.top) - cr.height / 2 + r.height / 2, behavior: 'smooth' });
+      const input = wrap.querySelector('input, textarea') as HTMLElement | null;
+      if (input) { syncing.current = true; input.focus({ preventScroll: true }); }
+      // settle once more after layout/scroll, in case content shifted
+      if (tries++ < 2) requestAnimationFrame(go);
+    };
+    requestAnimationFrame(() => requestAnimationFrame(go));
   };
   const onFormFocus = (e: React.FocusEvent | React.MouseEvent) => {
     const w = (e.target as HTMLElement).closest?.('[data-cms-path]');
@@ -197,7 +223,7 @@ export default function SiteContentManager({ notify }: Props) {
   if (!content) return <div className="adm-loading"><span className="adm-spin" /> Se încarcă conținutul…</div>;
 
   return (
-    <div>
+    <div className="adm-editor-fit">
       <div className="adm-editor-head" style={{ marginBottom: 12 }}>
         <h3 style={{ margin: 0 }}>Conținut site</h3>
         <div className="adm-spacer" />
@@ -206,30 +232,54 @@ export default function SiteContentManager({ notify }: Props) {
       </div>
 
       {/* Page tabs */}
-      <div className="adm-tabs" style={{ margin: '0 0 14px', display: 'inline-flex' }}>
+      <div className="adm-tabs" ref={tabsRef} style={{ margin: '0 0 14px', display: 'inline-flex' }}>
+        <span className="adm-tab-ind" style={{ transform: `translateX(${ind.left}px)`, width: ind.width }} />
         {PAGES.map((p) => (
-          <button key={p.id} className="adm-tab" aria-selected={pageId === p.id} onClick={() => { setPageId(p.id); setActiveField(null); }}>{p.label}</button>
+          <button key={p.id} data-page={p.id} className="adm-tab" aria-selected={pageId === p.id} onClick={() => { setPageId(p.id); setActiveField(null); }}>{p.label}</button>
         ))}
       </div>
 
+      {pageId === 'seo' ? (
+        <div className="ofb-form-col ofb-seo" ref={formRef} onFocusCapture={onFormFocus} onClickCapture={onFormFocus}>
+          <p className="ofb-preview-tip" style={{ margin: '0 0 14px' }}>Titluri și descrieri pentru Google + cuvinte cheie. Apar în rezultatele de căutare, nu pe pagină.</p>
+          {SEO_SECTIONS.filter((k) => k in content).map((key) => {
+            const fields = Object.entries(content[key]).filter(([k]) => SEO_FIELDS.has(k));
+            if (!fields.length) return null;
+            const isOpen = !closed.has('seo:' + key);
+            return (
+              <div className="pg-card" key={key}>
+                <div className="pg-card-head">
+                  <button type="button" className="pg-card-toggle" onClick={() => setClosed((prev) => { const k2 = 'seo:' + key; const n = new Set(prev); n.has(k2) ? n.delete(k2) : n.add(k2); return n; })}>
+                    <span className="pg-title">{SEO_SECTION_LABEL[key] || prettify(key)} <span className="chev">{isOpen ? '▾' : '▸'}</span></span>
+                  </button>
+                </div>
+                {isOpen && <div className="pg-card-body">{fields.map(([k, v]) => renderValue(v, [key, k], prettify(k)))}</div>}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+      <>
       <div className="ofb-mobile-switch" role="group">
-        <button aria-pressed={mobileTab === 'form'} onClick={() => setMobileTab('form')}>✏️ Editează</button>
-        <button aria-pressed={mobileTab === 'preview'} onClick={() => setMobileTab('preview')}>👁 Previzualizare</button>
+        <button aria-pressed={mobileTab === 'form'} onClick={() => setMobileTab('form')}>Editează</button>
+        <button aria-pressed={mobileTab === 'preview'} onClick={() => setMobileTab('preview')}>Previzualizare</button>
       </div>
 
       <div className={`ofb${mobileTab === 'preview' ? ' show-preview' : ''}`}>
-        <div className="ofb-form-col" ref={formRef} onFocusCapture={onFormFocus} onClickCapture={onFormFocus} style={{ maxHeight: 'calc(100vh - 190px)', overflow: 'auto', paddingRight: 6 }}>
-          <p className="ofb-preview-tip" style={{ margin: '0 0 10px' }}>💡 Apasă pe orice text sau imagine din previzualizare pentru a-l edita aici.</p>
+        <div className="ofb-form-col" ref={formRef} onFocusCapture={onFormFocus} onClickCapture={onFormFocus}>
+          <p className="ofb-preview-tip" style={{ margin: '0 0 10px' }}>Apasă pe orice text sau imagine din previzualizare pentru a-l edita aici.</p>
           {page.sections.filter((k) => k in content).map((key) => {
+            const entries = Object.entries(content[key]).filter(([k]) => !(SEO_SECTIONS.includes(key) && SEO_FIELDS.has(k)));
+            if (!entries.length) return null;
             const isOpen = !closed.has(key);
             return (
               <div className="pg-card" key={key}>
                 <div className="pg-card-head">
                   <button type="button" className="pg-card-toggle" onClick={() => setClosed((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; })}>
-                    <span className="pg-num">✎</span><span className="pg-title">{SECTION_LABELS[key] || prettify(key)} <span className="chev">{isOpen ? '▾' : '▸'}</span></span>
+                    <span className="pg-title">{SECTION_LABELS[key] || prettify(key)} <span className="chev">{isOpen ? '▾' : '▸'}</span></span>
                   </button>
                 </div>
-                {isOpen && <div className="pg-card-body">{Object.entries(content[key]).map(([k, v]) => renderValue(v, [key, k], prettify(k)))}</div>}
+                {isOpen && <div className="pg-card-body">{entries.map(([k, v]) => renderValue(v, [key, k], prettify(k)))}</div>}
               </div>
             );
           })}
@@ -237,10 +287,10 @@ export default function SiteContentManager({ notify }: Props) {
 
         <div className="ofb-preview-col">
           <div className="cms-toolbar">
-            <span className="ofb-preview-tip" style={{ margin: 0 }}>👁 {page.url}</span>
+            <span className="ofb-preview-tip" style={{ margin: 0 }}>{page.url}</span>
             <div className="seg" style={{ marginLeft: 'auto' }}>
-              <button className={`seg-btn${device === 'desktop' ? ' on' : ''}`} onClick={() => setDevice('desktop')}>🖥 Desktop</button>
-              <button className={`seg-btn${device === 'mobile' ? ' on' : ''}`} onClick={() => setDevice('mobile')}>📱 Mobil</button>
+              <button className={`seg-btn${device === 'desktop' ? ' on' : ''}`} onClick={() => setDevice('desktop')}>Desktop</button>
+              <button className={`seg-btn${device === 'mobile' ? ' on' : ''}`} onClick={() => setDevice('mobile')}>Mobil</button>
             </div>
           </div>
           <div className="cms-frame-wrap" ref={wrapRef}>
@@ -251,6 +301,8 @@ export default function SiteContentManager({ notify }: Props) {
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

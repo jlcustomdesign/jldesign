@@ -88,9 +88,9 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
 
   if (draft) {
     return (
-      <div className="adm-editor">
-        <div className="adm-editor-head">
-          <h3>{draft.slug ? 'Editează proiect' : 'Proiect nou'}</h3>
+      <div className="adm-editor-fit">
+        <div className="adm-editor-head" style={{ marginBottom: 14 }}>
+          <h3 style={{ margin: 0 }}>{draft.slug ? 'Editează proiect' : 'Proiect nou'}</h3>
           <div className="adm-spacer" />
           <button className="adm-btn ghost" onClick={() => setDraft(null)} disabled={busy}>Anulează</button>
           <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>
@@ -98,29 +98,48 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
           </button>
         </div>
 
-        <Field label="Titlu proiect" hint="numele afișat pe site">
-          <TextInput value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} placeholder="Ex: Bucătărie modernă Coresi" />
-        </Field>
+        <div className="ofb">
+          <div className="ofb-form-col">
+            <Field label="Titlu proiect" hint="numele afișat pe site">
+              <TextInput value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} placeholder="Ex: Bucătărie modernă Coresi" />
+            </Field>
 
-        <Field label="Categorie">
-          <div style={{ display: 'flex', gap: 8 }}>
-            <Select value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value })}>
-              {categories.length === 0 && <option value="">— nicio categorie —</option>}
-              {categories.map((c) => (
-                <option key={c.slug} value={c.slug}>{c.data.name || c.slug}</option>
-              ))}
-            </Select>
-            <button type="button" className="adm-btn ghost" onClick={addCategory}>＋ Categorie</button>
+            <Field label="Categorie">
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Select value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value })}>
+                  {categories.length === 0 && <option value="">— nicio categorie —</option>}
+                  {categories.map((c) => (
+                    <option key={c.slug} value={c.slug}>{c.data.name || c.slug}</option>
+                  ))}
+                </Select>
+                <button type="button" className="adm-btn ghost" onClick={addCategory}>+ Categorie</button>
+              </div>
+            </Field>
+
+            <Field label="Imagine principală" hint="fotografia proiectului (se convertește automat în WebP)">
+              <ImageInput value={draft.image} onChange={(v) => setDraft({ ...draft, image: v })} />
+            </Field>
+
+            <Field label="Descriere proiect" hint="opțional — povestea din spatele designului">
+              <MarkdownEditor value={draft.body} onChange={(v) => setDraft({ ...draft, body: v })} />
+            </Field>
           </div>
-        </Field>
 
-        <Field label="Imagine principală" hint="fotografia proiectului (se convertește automat în WebP)">
-          <ImageInput value={draft.image} onChange={(v) => setDraft({ ...draft, image: v })} />
-        </Field>
-
-        <Field label="Descriere proiect" hint="opțional — povestea din spatele designului">
-          <MarkdownEditor value={draft.body} onChange={(v) => setDraft({ ...draft, body: v })} />
-        </Field>
+          <div className="ofb-preview-col">
+            <div className="ofb-preview-tip">Previzualizare — așa apare proiectul</div>
+            <div className="pf-preview">
+              <div className="pf-card">
+                {draft.image
+                  ? <div className="pf-img" style={{ backgroundImage: `url(${draft.image})` }} />
+                  : <div className="pf-img empty">fără imagine</div>}
+                <div className="pf-meta">
+                  <span className="pf-cat">{catName(draft.category) || 'Categorie'}</span>
+                  <span className="pf-name">{draft.name || 'Titlu proiect'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

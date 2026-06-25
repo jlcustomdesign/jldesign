@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Entry } from './api';
 import { saveEntry, deleteEntry } from './api';
-import { TextInput, TextArea, ImageInput, SectionHead } from './ui';
+import { TextInput, TextArea, ImageInput, SectionHead, TagInput } from './ui';
 import OfferDocument, { normalizeOffer, uid, DEFAULT_LABEL, type Offer, type Section, type SectionType } from '../offer/OfferDocument';
 import { TEMPLATES } from './offerTemplates';
 import { STYLE_LIST, getStyle, ACCENT_PRESETS } from '../offer/offerStyles';
@@ -16,15 +16,14 @@ type EditOffer = Offer & { slug?: string };
 const fromEntry = (e: Entry): EditOffer => ({ ...normalizeOffer(e.data), slug: e.slug });
 const countPages = (o: any): number => 1 + (Array.isArray(o?.pages) ? o.pages.length : ['description', 'materials', 'accessories', 'sketches'].filter((k) => o?.[k]?.enabled).length);
 
-const PAGE_TYPES: { type: SectionType; icon: string; name: string }[] = [
-  { type: 'description', icon: '📋', name: 'Descriere & specificații' },
-  { type: 'materials', icon: '🎨', name: 'Materiale & finisaje' },
-  { type: 'accessories', icon: '🔧', name: 'Accesorii & echipare' },
-  { type: 'sketches', icon: '📐', name: 'Schițe & dimensiuni' },
-  { type: 'gallery', icon: '🖼️', name: 'Galerie foto' },
-  { type: 'text', icon: '📝', name: 'Text / mesaj' },
+const PAGE_TYPES: { type: SectionType; name: string }[] = [
+  { type: 'description', name: 'Descriere & specificații' },
+  { type: 'materials', name: 'Materiale & finisaje' },
+  { type: 'accessories', name: 'Accesorii & echipare' },
+  { type: 'sketches', name: 'Schițe & dimensiuni' },
+  { type: 'gallery', name: 'Galerie foto' },
+  { type: 'text', name: 'Text / mesaj' },
 ];
-const TYPE_ICON: Record<SectionType, string> = Object.fromEntries(PAGE_TYPES.map((p) => [p.type, p.icon])) as any;
 
 const blankSection = (type: SectionType): Section => {
   const base = { id: uid(type), type, heading: '', paragraph: '' };
@@ -162,7 +161,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
   /* ---- field wrappers (carry data-fid + id for sync) ---- */
   const sf = (fid: string, label: React.ReactNode, children: React.ReactNode) => (
     <div className="sf" data-fid={fid} id={`f-${fid}`} data-active={activeField === fid ? 'true' : undefined}>
-      <label>{label}<span className="sf-jump">↧ în previzualizare</span></label>
+      <label>{label}<span className="sf-jump">în previzualizare</span></label>
       {children}
     </div>
   );
@@ -184,7 +183,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
             <button key={t.id} className="tpl-card" onClick={() => useTemplate(i)}>
               <div className="tpl-card-doc"><OfferDocument offer={tplOffers[i]} coverOnly /></div>
               <div className="tpl-card-meta">
-                <span className="nm">{t.icon} {t.name}</span>
+                <span className="nm">{t.name}</span>
                 <span className="ds">{t.description}</span>
                 <span className="go">Folosește acest model →</span>
               </div>
@@ -198,40 +197,38 @@ export default function OfferManager({ items, notify, reload }: Props) {
   if (view === 'edit' && offer) {
     const o = offer;
     return (
-      <div>
+      <div className="adm-editor-fit">
         <div className="adm-editor-head" style={{ marginBottom: 14 }}>
           <h3 style={{ margin: 0 }}>{o.slug ? 'Editează oferta' : 'Ofertă nouă'}</h3>
           <span className={`auto-ind${auto === 'saved' ? ' ok' : ''}`}>
-            {auto === 'saving' ? '⟳ Se salvează…' : auto === 'saved' ? '✓ Salvat automat' : o.clientName.trim() ? 'Salvare automată activă' : 'Adaugă un nume pentru salvare'}
+            {auto === 'saving' ? 'Se salvează…' : auto === 'saved' ? 'Salvat automat' : o.clientName.trim() ? 'Salvare automată activă' : 'Adaugă un nume pentru salvare'}
           </span>
           <div className="adm-spacer" />
-          {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}.pdf`}>⬇ PDF</a>}
+          {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}.pdf`}>PDF</a>}
           {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}`} target="_blank" rel="noreferrer" style={{ marginLeft: 8 }}>Deschide</a>}
           <button className="adm-btn ghost" onClick={cancel} disabled={busy} style={{ marginLeft: 8 }}>Închide</button>
           <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>{busy ? 'Se salvează…' : 'Salvează'}</button>
         </div>
 
         <div className="ofb-mobile-switch" role="group">
-          <button aria-pressed={!showPreview} onClick={() => setShowPreview(false)}>✏️ Editează</button>
-          <button aria-pressed={showPreview} onClick={() => setShowPreview(true)}>👁 Previzualizare</button>
+          <button aria-pressed={!showPreview} onClick={() => setShowPreview(false)}>Editează</button>
+          <button aria-pressed={showPreview} onClick={() => setShowPreview(true)}>Previzualizare</button>
         </div>
 
         <div className={`ofb${showPreview ? ' show-preview' : ''}`}>
           {/* ---------------- FORM ---------------- */}
-          <div className="ofb-form-col" ref={formRef} onFocusCapture={onFormFocus} onClickCapture={onFormFocus} style={{ maxHeight: 'calc(100vh - 150px)', overflow: 'auto', paddingRight: 6 }}>
+          <div className="ofb-form-col" ref={formRef} onFocusCapture={onFormFocus} onClickCapture={onFormFocus}>
             {/* Cover */}
             <div className="pg-card">
               <div className="pg-card-head">
                 <button type="button" className="pg-card-toggle" onClick={() => toggleOpen('cover')}>
-                  <span className="pg-num">★</span><span className="pg-title">Copertă & client <span className="chev">{isOpen('cover') ? '▾' : '▸'}</span></span>
+                  <span className="pg-num pg-num-cover">00</span><span className="pg-title">Copertă & client <span className="chev">{isOpen('cover') ? '▾' : '▸'}</span></span>
                 </button>
               </div>
               {isOpen('cover') && (
                 <div className="pg-card-body">
-                  <div className="adm-row">
-                    {sf('cover:clientName', 'Nume client', <TextInput value={o.clientName} onChange={(e) => patch({ clientName: e.target.value })} placeholder="Familia Popescu" />)}
-                    {sf('cover:category', 'Tip proiect', <TextInput value={o.category} onChange={(e) => patch({ category: e.target.value })} placeholder="Bucătărie" />)}
-                  </div>
+                  {sf('cover:clientName', 'Nume client', <TextInput value={o.clientName} onChange={(e) => patch({ clientName: e.target.value })} placeholder="Familia Popescu" />)}
+                  {sf('cover:tags', 'Etichete (opțional, mai multe)', <TagInput tags={o.tags || []} onChange={(tags) => patch({ tags })} />)}
                   <div className="adm-row">
                     {sf('cover:date', 'Dată afișată', <TextInput value={o.date} onChange={(e) => patch({ date: e.target.value })} placeholder="Iunie 2026" />)}
                     {sf('cover:coverSubtitle', 'Text mare copertă', <TextInput value={o.coverSubtitle} onChange={(e) => patch({ coverSubtitle: e.target.value })} />)}
@@ -277,12 +274,12 @@ export default function OfferManager({ items, notify, reload }: Props) {
                 <div className="pg-card-head">
                   <button type="button" className="pg-card-toggle" onClick={() => toggleOpen(s.id)}>
                     <span className="pg-num">{idx + 1}</span>
-                    <span className="pg-title">{TYPE_ICON[s.type]} {s.label || DEFAULT_LABEL[s.type]} <span className="chev">{isOpen(s.id) ? '▾' : '▸'}</span></span>
+                    <span className="pg-title">{s.label || DEFAULT_LABEL[s.type]} <span className="chev">{isOpen(s.id) ? '▾' : '▸'}</span></span>
                   </button>
                   <div className="pg-tools">
                     <button className="pg-tool" title="Mută sus" disabled={idx === 0} onClick={() => movePage(idx, -1)}>↑</button>
                     <button className="pg-tool" title="Mută jos" disabled={idx === o.pages.length - 1} onClick={() => movePage(idx, 1)}>↓</button>
-                    <button className="pg-tool danger" title="Șterge pagina" onClick={() => delPage(idx)}>🗑</button>
+                    <button className="pg-tool danger" title="Șterge pagina" onClick={() => delPage(idx)}>✕</button>
                   </div>
                 </div>
                 {isOpen(s.id) && <div className="pg-card-body">{renderPageFields(s, idx)}</div>}
@@ -296,7 +293,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
               ) : (
                 <div className="addpage-grid">
                   {PAGE_TYPES.map((p) => (
-                    <button key={p.type} type="button" className="addpage-opt" onClick={() => addPage(p.type)}><span className="ic">{p.icon}</span>{p.name}</button>
+                    <button key={p.type} type="button" className="addpage-opt" onClick={() => addPage(p.type)}>{p.name}</button>
                   ))}
                   <button type="button" className="addpage-opt" style={{ gridColumn: '1 / -1', justifyContent: 'center', color: 'var(--muted)' }} onClick={() => setAddOpen(false)}>Anulează</button>
                 </div>
@@ -306,7 +303,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
 
           {/* ---------------- PREVIEW ---------------- */}
           <div className="ofb-preview-col">
-            <div className="ofb-preview-tip">👁 Previzualizare live — apasă pe orice element pentru a-l edita</div>
+            <div className="ofb-preview-tip">Previzualizare live — apasă pe orice element pentru a-l edita</div>
             <div className="ofb-preview" ref={previewRef}>
               <OfferDocument offer={o} editable activeField={activeField} onFieldClick={focusFromPreview} />
             </div>
@@ -445,7 +442,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
             <div className="adm-card" key={e.slug}>
               <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url(${e.data.coverImage})` } : undefined}>{!e.data.coverImage && 'fără copertă'}</div>
               <div className="body">
-                <span className="badge">{e.data.category || 'Proiect'}</span>
+                <span className="badge">{(Array.isArray(e.data.tags) && e.data.tags.length ? e.data.tags.join(' · ') : e.data.category) || 'Proiect'}</span>
                 <span className="title">{e.data.clientName || e.slug}</span>
                 <span className="meta">{e.data.date} · {countPages(e.data)} pagini</span>
               </div>

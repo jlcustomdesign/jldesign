@@ -22,8 +22,9 @@ const galleryPage = (heading: string, paragraph: string): Section =>
 const textPage = (heading: string, paragraph: string): Section =>
   ({ id: uid('text'), type: 'text', heading, paragraph, image: '' });
 
-const offer = (style: string, category: string, pages: Section[], opts: { accent?: string; coverLayout?: 'right' | 'left' | 'top' } = {}): Offer => ({
-  clientName: '', category, date: monthYear(), websiteUrl: WEB, coverImage: '', coverSubtitle: 'MOBILIER PERSONALIZAT',
+const offer = (style: string, _category: string, pages: Section[], opts: { accent?: string; coverLayout?: 'right' | 'left' | 'top' } = {}): Offer => ({
+  // No default room tag — the user adds tags as needed (e.g. whole-house projects).
+  clientName: '', tags: [], date: monthYear(), websiteUrl: WEB, coverImage: '', coverSubtitle: 'MOBILIER PERSONALIZAT',
   style, accent: opts.accent, coverLayout: opts.coverLayout, pages,
 });
 
@@ -32,11 +33,11 @@ const FINISHES_STD: Badge[] = [
   { label: 'ÎNTREȚINERE UȘOARĂ', desc: 'Ușor de curățat' }, { label: 'MATERIALE SIGURE', desc: 'Materiale certificate' },
 ];
 
-export interface Template { id: string; name: string; icon: string; description: string; make: () => Offer; }
+export interface Template { id: string; name: string; description: string; make: () => Offer; }
 
 export const TEMPLATES: Template[] = [
   {
-    id: 'editorial', name: 'Editorial', icon: '📜', description: 'Cald, crem, accent auriu — stilul clasic JL.',
+    id: 'editorial', name: 'Editorial', description: 'Cald, crem, accent auriu — stilul clasic JL.',
     make: () => offer('editorial', 'Bucătărie', [
       descPage('Bucătărie personalizată pentru un spațiu elegant și organizat.',
         'Bucătărie concepută cu atenție la detalii, folosind materiale și soluții constructive moderne. Accentul este pus pe calitatea execuției, funcționalitate și durabilitate.',
@@ -56,7 +57,7 @@ export const TEMPLATES: Template[] = [
     ]),
   },
   {
-    id: 'noir', name: 'Noir', icon: '🌑', description: 'Negru dramatic, accent auriu — premium.',
+    id: 'noir', name: 'Noir', description: 'Negru dramatic, accent auriu — premium.',
     make: () => offer('noir', 'Living', [
       descPage('Living premium, conceput pentru rafinament și confort.',
         'Un ansamblu sofisticat de mobilier pentru zona de zi, gândit pentru a crea un punct focal elegant, cu accente de iluminare și finisaje premium.',
@@ -75,7 +76,7 @@ export const TEMPLATES: Template[] = [
     ]),
   },
   {
-    id: 'bold', name: 'Bold', icon: '⬛', description: 'Tipografie mare, alb-negru, modern.',
+    id: 'bold', name: 'Bold', description: 'Tipografie mare, alb-negru, modern.',
     make: () => offer('bold', 'Dormitor', [
       descPage('Dormitor modern, proiectat pentru confort și organizare.',
         'Configurația include dulap, dressing și piese complementare, gândite pentru depozitare amplă și o utilizare zilnică plăcută.',
@@ -94,7 +95,7 @@ export const TEMPLATES: Template[] = [
     ]),
   },
   {
-    id: 'classic', name: 'Clasic', icon: '🏛️', description: 'Elegant, centrat, cu titluri serif.',
+    id: 'classic', name: 'Clasic', description: 'Elegant, centrat, cu titluri serif.',
     make: () => offer('classic', 'Spațiu comercial', [
       descPage('Mobilier comercial proiectat pentru durabilitate și imagine de brand.',
         'Soluție de mobilier pentru spații comerciale și de birou, gândită pentru rezistență la trafic intens și o imagine profesională.',
@@ -115,7 +116,7 @@ export const TEMPLATES: Template[] = [
     ]),
   },
   {
-    id: 'minimal', name: 'Minimal', icon: '⬜', description: 'Mult spațiu alb, linii fine, discret.',
+    id: 'minimal', name: 'Minimal', description: 'Mult spațiu alb, linii fine, discret.',
     make: () => offer('minimal', 'Baie', [
       descPage('Mobilier de baie rezistent la umiditate și ușor de întreținut.',
         'Corp pentru lavoar și piese complementare, realizate din materiale rezistente la umiditate, adaptate spațiului.',

@@ -23,7 +23,7 @@ export interface Section {
 }
 
 export interface Offer {
-  clientName: string; category: string; date: string; websiteUrl?: string;
+  clientName: string; category?: string; tags?: string[]; date: string; websiteUrl?: string;
   coverImage?: string; coverSubtitle?: string;
   style?: string; accent?: string; coverLayout?: 'right' | 'left' | 'top';
   pages: Section[];
@@ -47,7 +47,7 @@ export function normalizeOffer(raw: any): Offer {
   if (o.materials?.enabled) pages.push({ id: 's-materials', type: 'materials', heading: o.materials.heading || '', paragraph: o.materials.paragraph || '', image: o.materials.image || '', swatches: o.materials.swatches || [], finishes: o.materials.finishes || [] });
   if (o.accessories?.enabled) pages.push({ id: 's-accessories', type: 'accessories', heading: o.accessories.heading || '', paragraph: o.accessories.paragraph || '', items: o.accessories.items || [], benefits: o.accessories.benefits || [] });
   if (o.sketches?.enabled) pages.push({ id: 's-sketches', type: 'sketches', heading: o.sketches.heading || '', paragraph: o.sketches.paragraph || '', shots: o.sketches.sketches || [], dims: o.sketches.dims || [] });
-  return { clientName: o.clientName || '', category: o.category || '', date: o.date || '', websiteUrl: o.websiteUrl || '', coverImage: o.coverImage || '', coverSubtitle: o.coverSubtitle || 'MOBILIER PERSONALIZAT', style: o.style || 'editorial', accent: o.accent, coverLayout: o.coverLayout, pages };
+  return { clientName: o.clientName || '', category: o.category || '', tags: o.tags || [], date: o.date || '', websiteUrl: o.websiteUrl || '', coverImage: o.coverImage || '', coverSubtitle: o.coverSubtitle || 'MOBILIER PERSONALIZAT', style: o.style || 'editorial', accent: o.accent, coverLayout: o.coverLayout, pages };
 }
 
 interface DocProps {
@@ -70,6 +70,7 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
   const subtitle = offer.coverSubtitle || 'MOBILIER PERSONALIZAT';
   const words = subtitle.split(' ');
   const date = offer.date || '';
+  const coverTags = offer.tags && offer.tags.length ? offer.tags : (has(offer.category) ? [offer.category!] : []);
 
   const logo = (
     <div className="cover-logo">
@@ -91,7 +92,7 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
         </div>
         <div className="cover-client">
           <div className="cc-name" {...F('cover:clientName')}>{offer.clientName || 'Nume client'}</div>
-          {has(offer.category) && <div className="cc-cat" {...F('cover:category')}>{offer.category}</div>}
+          {coverTags.length > 0 && <div className="cc-cat" {...F('cover:tags')}>{coverTags.join(' · ')}</div>}
         </div>
         <div className="cover-foot">
           <span {...F('cover:websiteUrl')}>{offer.websiteUrl}</span>

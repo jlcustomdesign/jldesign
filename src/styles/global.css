@@ -26,13 +26,13 @@
   display: none;  /* Chrome, Safari, Opera */
 }
 
-/* Global Scrollbar Hide */
-html, body {
+/* Global Scrollbar Hide — everywhere (scrolling still works) */
+* {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
-html::-webkit-scrollbar, body::-webkit-scrollbar {
-  display: none;
+*::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
 }
 
 /* Root background matches brand cream for perfect section blending */
