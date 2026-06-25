@@ -98,17 +98,19 @@ export function ImageInput({
       onDrop={(e) => { e.preventDefault(); setDrag(false); pick(e.dataTransfer.files?.[0]); }}
     >
       <input ref={ref} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => pick(e.target.files?.[0])} />
-      {value ? (
-        <div className="preview" style={{ backgroundImage: `url(${value})`, ...(aspect ? { aspectRatio: aspect } : {}) }} />
-      ) : (
-        <div className="drop" onClick={() => ref.current?.click()}>
-          {busy ? 'Se procesează…' : 'Trage o imagine aici sau dă click pentru a încărca'}
-        </div>
-      )}
-      <div className="bar">
-        <button type="button" className="adm-btn ghost sm" onClick={() => ref.current?.click()} disabled={busy}>{value ? 'Schimbă' : 'Încarcă'}</button>
-        <button type="button" className="adm-btn ghost sm" onClick={openLib}>Bibliotecă</button>
-        {value && <button type="button" className="adm-btn danger sm" onClick={() => onChange('')}>Elimină</button>}
+      <button
+        type="button"
+        className="ai-thumb"
+        style={value ? { backgroundImage: `url(${value})`, ...(aspect ? { aspectRatio: aspect } : {}) } : undefined}
+        onClick={() => ref.current?.click()}
+        title={value ? 'Schimbă imaginea' : 'Încarcă imagine'}
+      >
+        {busy ? <span className="ai-spin" /> : !value && <span className="ai-plus">+</span>}
+      </button>
+      <div className="ai-acts">
+        <button type="button" onClick={() => ref.current?.click()} disabled={busy}>{value ? 'Schimbă' : 'Încarcă'}</button>
+        <button type="button" onClick={openLib}>Bibliotecă</button>
+        {value && <button type="button" className="rm" onClick={() => onChange('')}>Elimină</button>}
       </div>
 
       {lib !== null && (
