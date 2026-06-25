@@ -6,8 +6,11 @@ import { ScrollSmoother } from "../../gsap-public/esm/ScrollSmoother.js";
 export function initSmoothScroll() {
   if (typeof window === 'undefined') return;
   
-  // Bypass ScrollSmoother for print mode to allow standard multi-page PDF generation
-  if (window.location.search.includes('print=true')) {
+  // Bypass ScrollSmoother for print mode (PDF) and for the admin content editor
+  // preview (?cms=1) — both need NATIVE scrolling so scrollIntoView works and so
+  // the editor can jump the preview to a clicked field. Real visitors are
+  // unaffected; smooth scroll only runs without these flags.
+  if (window.location.search.includes('print=true') || window.location.search.includes('cms=1')) {
     gsap.registerPlugin(ScrollTrigger);
     ScrollTrigger.refresh();
     return;

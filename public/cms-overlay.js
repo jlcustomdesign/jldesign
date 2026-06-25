@@ -95,6 +95,31 @@
     return null;
   }
 
+  // Find the element for a content path on demand (focus/update from the form),
+  // so it works even if buildMap didn't pre-map it. Caches into `map`.
+  function locate(path) {
+    if (map[path] && document.contains(map[path])) return map[path];
+    var leaf = null;
+    for (var i = 0; i < leaves.length; i++) if (leaves[i].path === path) { leaf = leaves[i]; break; }
+    if (!leaf) return null;
+    var el = null;
+    if (leaf.isImg) {
+      var imgs = document.images;
+      for (var a = 0; a < imgs.length; a++) if (fileOf(imgs[a].getAttribute('src')) === leaf.base) { el = imgs[a]; break; }
+      if (!el) {
+        var all = document.body.querySelectorAll('*');
+        for (var b = 0; b < all.length; b++) { var bg = getComputedStyle(all[b]).backgroundImage || ''; var mm = bg.match(/url\(["']?([^"')]+)["']?\)/); if (mm && fileOf(mm[1]) === leaf.base) { el = all[b]; break; } }
+      }
+    } else if (leaf.norm) {
+      var els = document.body.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,a,li,button,figcaption,strong,em,small,label,td,th,blockquote,div');
+      var best = null;
+      for (var c = 0; c < els.length; c++) { var t = lc(els[c].textContent); if (!t || t.length > 400) continue; if (t === leaf.norm || (leaf.norm.length >= 5 && t.indexOf(leaf.norm) !== -1)) { if (!best || els[c].querySelectorAll('*').length < best.querySelectorAll('*').length) best = els[c]; } }
+      el = best;
+    }
+    if (el) map[path] = el;
+    return el;
+  }
+
   function send(type, payload) {
     var msg = { source: 'cms', type: type };
     if (payload) for (var k in payload) msg[k] = payload[k];
@@ -130,9 +155,9 @@
     var m = e.data || {};
     if (m.target !== 'cms') return;
     if (m.type === 'data') { buildMap(m.content); send('mapped', { count: Object.keys(map).length }); }
-    else if (m.type === 'focus') { flash(map[m.path]); }
+    else if (m.type === 'focus') { flash(locate(m.path)); }
     else if (m.type === 'update') {
-      var t = map[m.path]; if (!t) return;
+      var t = locate(m.path); if (!t) return;
       if (t.tagName === 'IMG') t.src = m.value;
       else if (/[<>]/.test(m.value)) t.innerHTML = m.value;
       else t.textContent = m.value;
