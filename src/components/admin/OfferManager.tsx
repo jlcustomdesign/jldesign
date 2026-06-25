@@ -66,9 +66,11 @@ export default function OfferManager({ items, notify, reload }: Props) {
 
   const formRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const pdfStageRef = useRef<HTMLDivElement>(null);
   const syncing = useRef(false);
   const offerRef = useRef<EditOffer | null>(null);
   const lastSaved = useRef<string>('');
+  const [pdfBusy, setPdfBusy] = useState(false);
   offerRef.current = offer;
 
   const tplOffers = useMemo(() => TEMPLATES.map((t) => t.make()), []);
@@ -146,6 +148,28 @@ export default function OfferManager({ items, notify, reload }: Props) {
     } catch (e) { notify((e as Error).message, 'err'); } finally { setBusy(false); }
   };
 
+  // Build the PDF in the browser from the CURRENT edits (a hidden full-size copy
+  // of the document) — instant, no save/redeploy needed, always up to date.
+  const downloadPdf = async () => {
+    const stage = pdfStageRef.current;
+    if (!stage || !offer) return;
+    setPdfBusy(true);
+    try {
+      const [{ jsPDF }, { toJpeg }] = await Promise.all([import('jspdf'), import('html-to-image')]);
+      const pages = Array.from(stage.querySelectorAll('.offer-page')) as HTMLElement[];
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
+      for (let i = 0; i < pages.length; i++) {
+        const el = pages[i];
+        const dataUrl = await toJpeg(el, { quality: 0.9, pixelRatio: 2, cacheBust: true, width: el.offsetWidth, height: el.offsetHeight, backgroundColor: '#ffffff' });
+        if (i > 0) pdf.addPage('a4', 'landscape');
+        pdf.addImage(dataUrl, 'JPEG', 0, 0, 297, 210);
+      }
+      const name = (offer.clientName || 'Oferta').trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '') || 'Oferta';
+      pdf.save(name + '.pdf');
+    } catch (e) { notify('Eroare la generarea PDF: ' + (e as Error).message, 'err'); }
+    finally { setPdfBusy(false); }
+  };
+
   // Autosave to the BROWSER on every change — instant, offline, no commits.
   useEffect(() => {
     if (view !== 'edit' || !offer) return;
@@ -221,7 +245,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
             {auto === 'saved' ? '✓ Salvat în browser' : dirty ? 'Nepublicat — apasă „Salvează" pentru a publica' : (o.slug ? '✓ Publicat pe site' : 'Ofertă nouă')}
           </span>
           <div className="adm-spacer" />
-          {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}?pdf=1`} target="_blank" rel="noreferrer">⬇ PDF</a>}
+          <button className="adm-btn ghost" onClick={downloadPdf} disabled={pdfBusy} title="Descarcă PDF cu modificările curente">{pdfBusy ? 'Se generează…' : '⬇ PDF'}</button>
           {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}`} target="_blank" rel="noreferrer" style={{ marginLeft: 8 }}>Deschide</a>}
           <button className="adm-btn ghost" onClick={cancel} disabled={busy} style={{ marginLeft: 8 }}>Închide</button>
           <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>{busy ? 'Se publică…' : (dirty ? 'Salvează' : 'Salvat')}</button>
@@ -325,6 +349,10 @@ export default function OfferManager({ items, notify, reload }: Props) {
               <OfferDocument offer={o} editable activeField={activeField} onFieldClick={focusFromPreview} />
             </div>
           </div>
+        </div>
+        {/* Hidden full-size copy, used to render a crisp PDF of the CURRENT edits */}
+        <div className="pdf-stage" aria-hidden="true" ref={pdfStageRef}>
+          <OfferDocument offer={o} />
         </div>
       </div>
     );

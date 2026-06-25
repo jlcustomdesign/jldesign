@@ -257,6 +257,9 @@
 .auto-ind.ok { color: var(--ok); font-weight: 600; }
 
 /* ---- Offer builder: split editor ---- */
+/* Off-screen full-size document, rendered only to capture a crisp PDF. */
+.pdf-stage { position: fixed; left: -10000px; top: 0; width: 1180px; pointer-events: none; z-index: -1; }
+
 /* Editor that fills the viewport: head fixed, split fills, panes scroll inside */
 .adm-editor-fit { display: flex; flex-direction: column; min-height: 0; }
 .ofb { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 22px; align-items: stretch; }
