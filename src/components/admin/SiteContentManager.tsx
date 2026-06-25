@@ -130,22 +130,22 @@ export default function SiteContentManager({ notify }: Props) {
     setClosed((prev) => { if (!prev.has(sec)) return prev; const n = new Set(prev); n.delete(sec); return n; });
     setActiveField(path);
     setMobileTab('form');
-    // The section may need to expand + images may reflow; retry a few frames so
-    // the scroll lands accurately instead of "missing".
+    // The section may need to expand first; poll a few frames until the field
+    // exists, then scroll to it exactly once (multiple smooth-scrolls fight each
+    // other and make the panel feel "stuck").
     let tries = 0;
     const go = () => {
       const c = formRef.current;
       const wrap = c?.querySelector(`[id="f-${path}"]`) as HTMLElement | null;
-      if (!c || !wrap) { if (tries++ < 8) return requestAnimationFrame(go); return; }
+      if (!c || !wrap) { if (tries++ < 12) return setTimeout(go, 30); return; }
       const r = wrap.getBoundingClientRect();
       const cr = c.getBoundingClientRect();
-      c.scrollTo({ top: c.scrollTop + (r.top - cr.top) - cr.height / 2 + r.height / 2, behavior: 'smooth' });
+      const target = c.scrollTop + (r.top - cr.top) - cr.height / 2 + r.height / 2;
+      c.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
       const input = wrap.querySelector('input, textarea') as HTMLElement | null;
       if (input) { syncing.current = true; input.focus({ preventScroll: true }); }
-      // settle once more after layout/scroll, in case content shifted
-      if (tries++ < 2) requestAnimationFrame(go);
     };
-    requestAnimationFrame(() => requestAnimationFrame(go));
+    requestAnimationFrame(go);
   };
   const onFormFocus = (e: React.FocusEvent | React.MouseEvent) => {
     const w = (e.target as HTMLElement).closest?.('[data-cms-path]');
