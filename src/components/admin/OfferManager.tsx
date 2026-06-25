@@ -14,6 +14,14 @@ interface Props {
 type EditOffer = Offer & { slug?: string };
 
 const fromEntry = (e: Entry): EditOffer => ({ ...normalizeOffer(e.data), slug: e.slug });
+
+// Offer drafts live in the BROWSER (localStorage) so edits are instant and never
+// lost. Publishing to the site (a GitHub commit) happens only on "Salvează".
+const DRAFT_PREFIX = 'jl-offer-draft:';
+const draftKey = (slug?: string) => DRAFT_PREFIX + (slug || 'new');
+function writeDraft(o: EditOffer) { try { localStorage.setItem(draftKey(o.slug), JSON.stringify(o)); } catch {} }
+function readDraft(slug?: string): EditOffer | null { try { const s = localStorage.getItem(draftKey(slug)); return s ? (JSON.parse(s) as EditOffer) : null; } catch { return null; } }
+function clearDraft(slug?: string) { try { localStorage.removeItem(draftKey(slug)); } catch {} }
 const countPages = (o: any): number => 1 + (Array.isArray(o?.pages) ? o.pages.length : ['description', 'materials', 'accessories', 'sketches'].filter((k) => o?.[k]?.enabled).length);
 
 const PAGE_TYPES: { type: SectionType; name: string }[] = [
@@ -101,46 +109,54 @@ export default function OfferManager({ items, notify, reload }: Props) {
   const useTemplate = (i: number) => {
     const src = tplOffers[i];
     const clone: EditOffer = typeof structuredClone === 'function' ? structuredClone(src) : JSON.parse(JSON.stringify(src));
-    setOffer(clone); lastSaved.current = JSON.stringify(clone); setAuto('');
+    clearDraft(undefined); // begin a fresh, unsaved offer
+    setOffer(clone); lastSaved.current = ''; setAuto('');
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
   };
   const edit = (e: Entry) => {
-    const o = fromEntry(e);
-    setOffer(o); lastSaved.current = JSON.stringify(o); setAuto('');
+    const server = fromEntry(e);
+    const draft = readDraft(e.slug);
+    const restored = draft && JSON.stringify(draft) !== JSON.stringify(server);
+    setOffer(draft || server); lastSaved.current = JSON.stringify(server); setAuto('');
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+    if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
   };
   const cancel = () => { setOffer(null); setView('list'); reload(); };
+  const resumeNew = () => {
+    const d = readDraft(undefined);
+    if (!d) return;
+    setOffer(d); lastSaved.current = ''; setAuto('');
+    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+  };
 
+  // Publish to the site (the only place that writes to GitHub).
   const save = async () => {
     if (!offer) return;
     if (!offer.clientName.trim()) return notify('Adaugă numele clientului', 'err');
+    const prevSlug = offer.slug;
     setBusy(true);
     try {
       const { slug } = await saveEntry({ collection: 'offers', slug: offer.slug, data: offer });
       await reload();
-      notify('Ofertă salvată', 'ok');
-      setOffer((o) => (o ? { ...o, slug } : o)); // keep editing, now with slug (enables PDF)
-      lastSaved.current = JSON.stringify({ ...offer, slug });
+      const saved = { ...offer, slug };
+      setOffer(saved); // keep editing, now with slug (enables PDF)
+      lastSaved.current = JSON.stringify(saved);
+      clearDraft(prevSlug); clearDraft(slug); clearDraft(undefined); // published → drop local drafts
+      notify('Ofertă publicată pe site', 'ok');
     } catch (e) { notify((e as Error).message, 'err'); } finally { setBusy(false); }
   };
 
-  // Debounced autosave while editing (so the preview/PDF stay up to date).
+  // Autosave to the BROWSER on every change — instant, offline, no commits.
   useEffect(() => {
-    if (view !== 'edit' || !offer || !offer.clientName.trim()) return;
+    if (view !== 'edit' || !offer) return;
     if (JSON.stringify(offer) === lastSaved.current) return;
-    const t = setTimeout(async () => {
+    const t = setTimeout(() => {
       const o = offerRef.current;
-      if (!o || !o.clientName.trim()) return;
-      setAuto('saving');
-      try {
-        const { slug } = await saveEntry({ collection: 'offers', slug: o.slug, data: o });
-        const saved = slug && slug !== o.slug ? { ...offerRef.current!, slug } : offerRef.current!;
-        lastSaved.current = JSON.stringify(saved);
-        if (slug && slug !== o.slug) setOffer((prev) => (prev ? { ...prev, slug } : prev));
-        setAuto('saved');
-        setTimeout(() => setAuto((a) => (a === 'saved' ? '' : a)), 1600);
-      } catch { setAuto(''); }
-    }, 1800);
+      if (!o) return;
+      writeDraft(o);
+      setAuto('saved');
+      setTimeout(() => setAuto((a) => (a === 'saved' ? '' : a)), 1200);
+    }, 400);
     return () => clearTimeout(t);
   }, [offer, view]);
 
@@ -196,18 +212,19 @@ export default function OfferManager({ items, notify, reload }: Props) {
 
   if (view === 'edit' && offer) {
     const o = offer;
+    const dirty = JSON.stringify(o) !== lastSaved.current;
     return (
       <div className="adm-editor-fit">
         <div className="adm-editor-head" style={{ marginBottom: 14 }}>
           <h3 style={{ margin: 0 }}>{o.slug ? 'Editează oferta' : 'Ofertă nouă'}</h3>
-          <span className={`auto-ind${auto === 'saved' ? ' ok' : ''}`}>
-            {auto === 'saving' ? 'Se salvează…' : auto === 'saved' ? 'Salvat automat' : o.clientName.trim() ? 'Salvare automată activă' : 'Adaugă un nume pentru salvare'}
+          <span className={`auto-ind${dirty ? '' : ' ok'}`}>
+            {auto === 'saved' ? '✓ Salvat în browser' : dirty ? 'Nepublicat — apasă „Salvează" pentru a publica' : (o.slug ? '✓ Publicat pe site' : 'Ofertă nouă')}
           </span>
           <div className="adm-spacer" />
           {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}?pdf=1`} target="_blank" rel="noreferrer">⬇ PDF</a>}
           {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}`} target="_blank" rel="noreferrer" style={{ marginLeft: 8 }}>Deschide</a>}
           <button className="adm-btn ghost" onClick={cancel} disabled={busy} style={{ marginLeft: 8 }}>Închide</button>
-          <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>{busy ? 'Se salvează…' : 'Salvează'}</button>
+          <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>{busy ? 'Se publică…' : (dirty ? 'Salvează' : 'Salvat')}</button>
         </div>
 
         <div className="ofb-mobile-switch" role="group">
@@ -433,7 +450,10 @@ export default function OfferManager({ items, notify, reload }: Props) {
   return (
     <div>
       <SectionHead title="Generator oferte" desc={`${items.length} oferte · prezentări de proiect în brand JL Custom Design`}
-        action={<button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick'); }}>＋ Ofertă nouă</button>} />
+        action={<>
+          {readDraft(undefined) && <button className="adm-btn ghost" onClick={resumeNew} style={{ marginRight: 8 }}>Continuă oferta nesalvată</button>}
+          <button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick'); }}>+ Ofertă nouă</button>
+        </>} />
       {items.length === 0 ? (
         <div className="adm-empty">Nicio ofertă încă. Apasă „Ofertă nouă”, alege un model și personalizează-l.</div>
       ) : (
