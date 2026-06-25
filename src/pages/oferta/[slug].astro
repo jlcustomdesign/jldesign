@@ -67,21 +67,51 @@ const title = `Ofertă ${offer.clientName || ''} · JL Custom Design`.trim();
       <span class="ob-hint">Prezentare proiect — {offer.clientName}</span>
       <span class="sp"></span>
       <button class="ob-btn" id="ob-copy" type="button">Copiază link</button>
-      <a class="ob-btn primary" id="ob-pdf" href={`/oferta/${slug}.pdf`}>⬇ Descarcă PDF</a>
+      <button class="ob-btn primary" id="ob-pdf" type="button">⬇ Descarcă PDF</button>
     </div>
 
     <div class="offer-stage">
       <OfferDocument offer={offer} />
     </div>
 
-    <script is:inline>
-      // PDF link shows a brief "se generează" state while the server renders it.
-      document.getElementById('ob-pdf')?.addEventListener('click', (e) => {
-        const a = e.currentTarget;
-        const old = a.textContent;
-        a.textContent = '⏳ Se generează PDF…';
-        setTimeout(() => { a.textContent = old; }, 6000);
+    {/* Client-side PDF generation — renders each page natively (no server Chrome). */}
+    <script>
+      import { jsPDF } from 'jspdf';
+      import { toJpeg } from 'html-to-image';
+
+      async function buildOfferPdf() {
+        const pages = Array.from(document.querySelectorAll('.offer-page')) as HTMLElement[];
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
+        for (let i = 0; i < pages.length; i++) {
+          const el = pages[i];
+          const dataUrl = await toJpeg(el, { quality: 0.9, pixelRatio: 2, cacheBust: true, width: el.offsetWidth, height: el.offsetHeight, backgroundColor: '#ffffff' });
+          if (i > 0) pdf.addPage('a4', 'landscape');
+          pdf.addImage(dataUrl, 'JPEG', 0, 0, 297, 210);
+        }
+        return pdf;
+      }
+      // Exposed so the build can be validated headlessly.
+      (window as any).__buildOfferPdf = async () => (await buildOfferPdf()).output('datauristring');
+
+      const pdfBtn = document.getElementById('ob-pdf');
+      pdfBtn?.addEventListener('click', async () => {
+        const old = pdfBtn.textContent;
+        pdfBtn.textContent = '⏳ Se generează…';
+        (pdfBtn as HTMLButtonElement).disabled = true;
+        try {
+          const pdf = await buildOfferPdf();
+          const name = (document.title || 'Oferta').replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '');
+          pdf.save(name + '.pdf');
+        } catch (e: any) {
+          alert('Eroare la generarea PDF: ' + (e && e.message ? e.message : e));
+        } finally {
+          pdfBtn.textContent = old;
+          (pdfBtn as HTMLButtonElement).disabled = false;
+        }
       });
+    </script>
+
+    <script is:inline>
       document.getElementById('ob-copy')?.addEventListener('click', async (e) => {
         const btn = e.currentTarget;
         try {
