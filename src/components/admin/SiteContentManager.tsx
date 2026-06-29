@@ -66,6 +66,11 @@ function setIn(obj: any, p: (string | number)[], value: any): any {
   return clone;
 }
 
+// Edits autosave to the BROWSER (localStorage); publishing happens on "Salvează tot".
+const SITE_DRAFT_KEY = 'jl-site-draft';
+const readSiteDraft = (): any | null => { try { const s = localStorage.getItem(SITE_DRAFT_KEY); return s ? JSON.parse(s) : null; } catch { return null; } };
+const clearSiteDraft = () => { try { localStorage.removeItem(SITE_DRAFT_KEY); } catch {} };
+
 export default function SiteContentManager({ notify }: Props) {
   const [content, setContent] = useState<Record<string, any> | null>(null);
   const [err, setErr] = useState('');
@@ -84,6 +89,8 @@ export default function SiteContentManager({ notify }: Props) {
   const syncing = useRef(false);
   const [scale, setScale] = useState(1);
   const [ind, setInd] = useState({ left: 0, width: 0 });
+  const savedRef = useRef('');
+  const [dirty, setDirty] = useState(false);
   contentRef.current = content;
 
   // Slide the active-tab highlight smoothly between page tabs.
@@ -122,8 +129,25 @@ export default function SiteContentManager({ notify }: Props) {
   const page = PAGES.find((p) => p.id === pageId)!;
 
   useEffect(() => {
-    fetch('/api/admin/site').then((r) => r.json()).then((d) => { setContent(d); contentRef.current = d; }).catch((e) => setErr(String(e)));
+    fetch('/api/admin/site').then((r) => r.json()).then((server) => {
+      savedRef.current = JSON.stringify(server);
+      const draft = readSiteDraft();
+      if (draft && JSON.stringify(draft) !== savedRef.current) {
+        setContent(draft); contentRef.current = draft; setDirty(true);
+        notify('Am restaurat modificările nesalvate din browser', 'ok');
+      } else { setContent(server); contentRef.current = server; }
+    }).catch((e) => setErr(String(e)));
   }, []);
+
+  // Autosave the whole content draft to the browser on every change.
+  useEffect(() => {
+    if (!content) return;
+    const json = JSON.stringify(content);
+    if (json === savedRef.current) { setDirty(false); return; }
+    setDirty(true);
+    const t = setTimeout(() => { try { localStorage.setItem(SITE_DRAFT_KEY, json); } catch {} }, 700);
+    return () => clearTimeout(t);
+  }, [content]);
 
   const toIframe = (msg: any) => iframeRef.current?.contentWindow?.postMessage({ target: 'cms', ...msg }, '*');
 
@@ -184,7 +208,10 @@ export default function SiteContentManager({ notify }: Props) {
       const res = await fetch('/api/admin/site', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: content }) });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || 'Salvare eșuată');
-      notify('Conținut salvat — apare pe site după redeploy', 'ok');
+      savedRef.current = JSON.stringify(content);
+      setDirty(false);
+      clearSiteDraft();
+      notify('Conținut publicat — apare pe site după redeploy', 'ok');
       iframeRef.current?.contentWindow?.location.reload();
     } catch (e) { notify((e as Error).message, 'err'); } finally { setBusy(false); }
   };
@@ -250,9 +277,12 @@ export default function SiteContentManager({ notify }: Props) {
     <div className="adm-editor-fit">
       <div className="adm-editor-head" style={{ marginBottom: 12 }}>
         <h3 style={{ margin: 0 }}>Conținut site</h3>
+        <span className={`auto-ind${dirty ? '' : ' ok'}`} style={{ marginLeft: 12 }}>
+          {dirty ? 'Nepublicat — apasă „Salvează tot" pentru a publica' : '✓ Publicat pe site'}
+        </span>
         <div className="adm-spacer" />
         <a className="adm-btn ghost" href={page.url} target="_blank" rel="noreferrer">Deschide pagina</a>
-        <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>{busy ? 'Se salvează…' : 'Salvează tot'}</button>
+        <button className="adm-btn gold" onClick={save} disabled={busy || !dirty} style={{ marginLeft: 8 }}>{busy ? 'Se publică…' : (dirty ? 'Salvează tot' : 'Salvat')}</button>
       </div>
 
       {/* Page tabs */}
