@@ -101,7 +101,7 @@ export function ImageInput({
       <button
         type="button"
         className="ai-thumb"
-        style={value ? { backgroundImage: `url(${value})`, ...(aspect ? { aspectRatio: aspect } : {}) } : undefined}
+        style={value ? { backgroundImage: `url("${value}")`, ...(aspect ? { aspectRatio: aspect } : {}) } : undefined}
         onClick={() => ref.current?.click()}
         title={value ? 'Schimbă imaginea' : 'Încarcă imagine'}
       >
@@ -122,7 +122,7 @@ export function ImageInput({
                 <div className="img-lib-empty">Se încarcă…</div>
               ) : (
                 lib.map((src) => (
-                  <button key={src} type="button" className="img-lib-item" style={{ backgroundImage: `url(${src})` }} title={src.split('/').pop()} onClick={() => { onChange(src); setLib(null); }} />
+                  <button key={src} type="button" className="img-lib-item" style={{ backgroundImage: `url("${src}")` }} title={src.split('/').pop()} onClick={() => { onChange(src); setLib(null); }} />
                 ))
               )}
             </div>

@@ -145,6 +145,11 @@
   document.addEventListener('mouseover', function (e) {
     var hit = resolve(e.target, false);
     if (hit && hit.el) hit.el.classList.add('cms-hl');
+    // Reveal the hovered flip-card's back (description) so it's editable.
+    var card = e.target.closest ? e.target.closest('.service-card') : null;
+    var revealed = document.querySelectorAll('.service-card.cms-reveal');
+    for (var i = 0; i < revealed.length; i++) if (revealed[i] !== card) revealed[i].classList.remove('cms-reveal');
+    if (card) card.classList.add('cms-reveal');
   });
   document.addEventListener('mouseout', function (e) {
     var el = e.target.closest && e.target.closest('.cms-hl');
@@ -167,7 +172,13 @@
   var style = document.createElement('style');
   style.textContent =
     '.cms-hl{outline:2px solid #c9a96a !important;outline-offset:2px;cursor:pointer;background:rgba(201,169,106,.12) !important;}' +
-    '.cms-active{outline:3px solid #b8975a !important;outline-offset:2px;box-shadow:0 0 0 6px rgba(184,151,90,.25) !important;}';
+    '.cms-active{outline:3px solid #b8975a !important;outline-offset:2px;box-shadow:0 0 0 6px rgba(184,151,90,.25) !important;}' +
+    // Reveal flip-card backs on hover so the description is reachable + editable
+    // in the content editor. Cross-fade (opacity) instead of the 3D flip, which a
+    // 3D/GSAP transform context was resetting. The back is un-rotated so it reads.
+    '.service-card .service-card-back{transform:none!important;-webkit-backface-visibility:visible!important;backface-visibility:visible!important;opacity:0;transition:opacity .2s ease;z-index:6;pointer-events:none;}' +
+    '.service-card.cms-reveal .service-card-back{opacity:1!important;pointer-events:auto!important;}' +
+    '.service-card.cms-reveal .service-card-front{opacity:0!important;}';
   document.head.appendChild(style);
 
   send('ready', {});

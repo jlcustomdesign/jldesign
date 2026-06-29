@@ -488,7 +488,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
         <div className="adm-grid">
           {items.map((e) => (
             <div className="adm-card" key={e.slug}>
-              <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url(${e.data.coverImage})` } : undefined}>{!e.data.coverImage && 'fără copertă'}</div>
+              <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url("${e.data.coverImage}")` } : undefined}>{!e.data.coverImage && 'fără copertă'}</div>
               <div className="body">
                 <span className="badge">{(Array.isArray(e.data.tags) && e.data.tags.length ? e.data.tags.join(' · ') : e.data.category) || 'Proiect'}</span>
                 <span className="title">{e.data.clientName || e.slug}</span>

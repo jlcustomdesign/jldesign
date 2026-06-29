@@ -167,7 +167,7 @@ export default function BlogManager({ items, notify, reload }: Props) {
         <div className="adm-grid">
           {sorted.map((e) => (
             <div className="adm-card" key={e.slug}>
-              <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url(${e.data.coverImage})` } : undefined}>
+              <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url("${e.data.coverImage}")` } : undefined}>
                 {!e.data.coverImage && 'fără imagine'}
               </div>
               <div className="body">

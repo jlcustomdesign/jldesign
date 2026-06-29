@@ -32,6 +32,30 @@ const SECTION_LABELS: Record<string, string> = {
 };
 
 const prettify = (k: string) => k.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_-]/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
+
+// Plain-Romanian labels so a non-technical user understands every field.
+const FIELD_LABELS: Record<string, string> = {
+  title: 'Titlu', subtitle: 'Subtitlu', desc: 'Descriere', description: 'Descriere', text: 'Text', paragraph: 'Text',
+  img: 'Imagine', image: 'Imagine', heading: 'Titlu', name: 'Nume', href: 'Link', url: 'Link',
+  ctaText: 'Text buton', ctaLabel: 'Text buton', ctaHref: 'Link buton', cta: 'Buton',
+  question: 'Întrebare', answer: 'Răspuns', value: 'Valoare', code: 'Cod', caption: 'Descriere imagine',
+  eyebrow: 'Etichetă mică', logo: 'Logo', copyright: 'Drepturi de autor', phone: 'Telefon', email: 'Email', address: 'Adresă',
+  viewProjectLabel: 'Text buton', placeholder: 'Text exemplu', label: 'Etichetă',
+  cards: 'Carduri', links: 'Linkuri', items: 'Elemente', steps: 'Pași', projects: 'Proiecte',
+  swatches: 'Materiale', specs: 'Specificații', shots: 'Imagini', benefits: 'Beneficii', finishes: 'Finisaje',
+};
+const fieldLabel = (k: string) => FIELD_LABELS[k] || prettify(k);
+// Accessibility / internal plumbing — hidden so beginners see only real content.
+const TECHNICAL = /aria|alt$|^id$|ariaLabel/i;
+const visibleEntries = (obj: any): [string, any][] => Object.entries(obj).filter(([k]) => !TECHNICAL.test(k));
+// A human title for a repeated item ("Bucătării" instead of "Card 1").
+const itemTitle = (item: any, label: string | undefined, i: number): string => {
+  if (item && typeof item === 'object') {
+    const t = item.title || item.name || item.heading || item.question || item.label || item.caption;
+    if (t && typeof t === 'string' && t.trim()) return t.trim().slice(0, 48);
+  }
+  return (label || 'Element') + ' ' + (i + 1);
+};
 const isImage = (s: any) => typeof s === 'string' && (/\.(webp|jpe?g|png|svg|avif|gif)(\?.*)?$/i.test(s) || s.startsWith('data:image'));
 const isLong = (s: string) => s.includes('\n') || s.length > 80;
 function setIn(obj: any, p: (string | number)[], value: any): any {
@@ -198,7 +222,7 @@ export default function SiteContentManager({ notify }: Props) {
           <div className="adm-repeat">
             {value.map((item, i) => (
               <div className="ro" key={i}>
-                <div className="ro-head"><span className="ro-tag">{(label || '#') + ' ' + (i + 1)}</span>
+                <div className="ro-head"><span className="ro-tag">{itemTitle(item, label, i)}</span>
                   <button type="button" className="ro-del" onClick={() => update(pathArr, value.filter((_, j) => j !== i))}>✕</button>
                 </div>
                 <div className="ro-body">{renderValue(item, [...pathArr, i])}</div>
@@ -213,7 +237,7 @@ export default function SiteContentManager({ notify }: Props) {
       return (
         <div key={path} style={{ borderLeft: label ? '2px solid var(--line)' : undefined, paddingLeft: label ? 12 : 0, marginBottom: label ? 10 : 0 }}>
           {label && <div className="sf-block-label" style={{ color: 'var(--ink-2)' }}>{label}</div>}
-          {Object.entries(value).map(([k, v]) => renderValue(v, [...pathArr, k], prettify(k)))}
+          {visibleEntries(value).map(([k, v]) => renderValue(v, [...pathArr, k], fieldLabel(k)))}
         </div>
       );
     return null;
@@ -269,7 +293,7 @@ export default function SiteContentManager({ notify }: Props) {
         <div className="ofb-form-col" ref={formRef} onFocusCapture={onFormFocus} onClickCapture={onFormFocus}>
           <p className="ofb-preview-tip" style={{ margin: '0 0 10px' }}>Apasă pe orice text sau imagine din previzualizare pentru a-l edita aici.</p>
           {page.sections.filter((k) => k in content).map((key) => {
-            const entries = Object.entries(content[key]).filter(([k]) => !(SEO_SECTIONS.includes(key) && SEO_FIELDS.has(k)));
+            const entries = Object.entries(content[key]).filter(([k]) => !TECHNICAL.test(k) && !(SEO_SECTIONS.includes(key) && SEO_FIELDS.has(k)));
             if (!entries.length) return null;
             const isOpen = !closed.has(key);
             return (
@@ -279,7 +303,7 @@ export default function SiteContentManager({ notify }: Props) {
                     <span className="pg-title">{SECTION_LABELS[key] || prettify(key)} <span className="chev">{isOpen ? '▾' : '▸'}</span></span>
                   </button>
                 </div>
-                {isOpen && <div className="pg-card-body">{entries.map(([k, v]) => renderValue(v, [key, k], prettify(k)))}</div>}
+                {isOpen && <div className="pg-card-body">{entries.map(([k, v]) => renderValue(v, [key, k], fieldLabel(k)))}</div>}
               </div>
             );
           })}

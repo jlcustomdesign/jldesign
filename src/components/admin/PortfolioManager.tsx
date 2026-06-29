@@ -130,7 +130,7 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
             <div className="pf-preview">
               <div className="pf-card">
                 {draft.image
-                  ? <div className="pf-img" style={{ backgroundImage: `url(${draft.image})` }} />
+                  ? <div className="pf-img" style={{ backgroundImage: `url("${draft.image}")` }} />
                   : <div className="pf-img empty">fără imagine</div>}
                 <div className="pf-meta">
                   <span className="pf-cat">{catName(draft.category) || 'Categorie'}</span>
@@ -157,7 +157,7 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
         <div className="adm-grid">
           {items.map((e) => (
             <div className="adm-card" key={e.slug}>
-              <div className={`thumb${e.data.image ? '' : ' empty'}`} style={e.data.image ? { backgroundImage: `url(${e.data.image})` } : undefined}>
+              <div className={`thumb${e.data.image ? '' : ' empty'}`} style={e.data.image ? { backgroundImage: `url("${e.data.image}")` } : undefined}>
                 {!e.data.image && 'fără imagine'}
               </div>
               <div className="body">
