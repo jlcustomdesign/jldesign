@@ -71,6 +71,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
   const offerRef = useRef<EditOffer | null>(null);
   const lastSaved = useRef<string>('');
   const [pdfBusy, setPdfBusy] = useState(false);
+  const [preview, setPreview] = useState(false);
   offerRef.current = offer;
 
   const tplOffers = useMemo(() => TEMPLATES.map((t) => t.make()), []);
@@ -173,20 +174,6 @@ export default function OfferManager({ items, notify, reload }: Props) {
     catch (e) { notify('Eroare la generarea PDF: ' + (e as Error).message, 'err'); }
     finally { setPdfBusy(false); }
   };
-  // View the CURRENT edits as a PDF in a new tab (not the hosted/published one).
-  const previewPdf = async () => {
-    if (!offer) return;
-    const win = window.open('', '_blank'); // open synchronously so it isn't blocked
-    setPdfBusy(true);
-    try {
-      const pdf = await buildPdf();
-      if (!pdf) { win?.close(); return; }
-      const url = URL.createObjectURL(pdf.output('blob') as Blob);
-      if (win) win.location.href = url; else window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
-    } catch (e) { win?.close(); notify('Eroare la generarea PDF: ' + (e as Error).message, 'err'); }
-    finally { setPdfBusy(false); }
-  };
 
   // Autosave to the BROWSER on every change — instant, offline, no commits.
   useEffect(() => {
@@ -263,7 +250,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
             {auto === 'saved' ? '✓ Salvat în browser' : dirty ? 'Nepublicat — apasă „Salvează" pentru a publica' : (o.slug ? '✓ Publicat pe site' : 'Ofertă nouă')}
           </span>
           <div className="adm-spacer" />
-          <button className="adm-btn ghost" onClick={previewPdf} disabled={pdfBusy} title="Vezi PDF cu modificările curente (nu versiunea publicată)">Previzualizează</button>
+          <button className="adm-btn ghost" onClick={() => setPreview(true)} title="Vezi cum arată oferta cu modificările curente">Previzualizează</button>
           <button className="adm-btn ghost" onClick={downloadPdf} disabled={pdfBusy} title="Descarcă PDF cu modificările curente" style={{ marginLeft: 8 }}>{pdfBusy ? 'Se generează…' : '⬇ PDF'}</button>
           <button className="adm-btn ghost" onClick={cancel} disabled={busy} style={{ marginLeft: 8 }}>Închide</button>
           <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>{busy ? 'Se publică…' : (dirty ? 'Salvează' : 'Salvat')}</button>
@@ -372,6 +359,21 @@ export default function OfferManager({ items, notify, reload }: Props) {
         <div className="pdf-stage" aria-hidden="true" ref={pdfStageRef}>
           <OfferDocument offer={o} />
         </div>
+
+        {/* Full-screen preview of the CURRENT edits (same as the PDF) — no popup. */}
+        {preview && (
+          <div className="ofr-preview" onClick={() => setPreview(false)}>
+            <div className="ofr-preview-bar" onClick={(e) => e.stopPropagation()}>
+              <span className="ofr-preview-tag">Previzualizare — modificările curente (nepublicate)</span>
+              <div className="adm-spacer" />
+              <button className="adm-btn ghost sm" onClick={downloadPdf} disabled={pdfBusy}>{pdfBusy ? 'Se generează…' : '⬇ Descarcă PDF'}</button>
+              <button className="adm-btn gold sm" onClick={() => setPreview(false)} style={{ marginLeft: 8 }}>Închide</button>
+            </div>
+            <div className="ofr-preview-scroll" onClick={(e) => e.stopPropagation()}>
+              <OfferDocument offer={o} />
+            </div>
+          </div>
+        )}
       </div>
     );
 

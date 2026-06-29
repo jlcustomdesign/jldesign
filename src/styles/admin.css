@@ -260,6 +260,14 @@
 /* Off-screen full-size document, rendered only to capture a crisp PDF. */
 .pdf-stage { position: fixed; left: -10000px; top: 0; width: 1180px; pointer-events: none; z-index: -1; }
 
+/* Full-screen offer preview (current edits) — no popup, renders inline. */
+.ofr-preview { position: fixed; inset: 0; z-index: 200; background: rgba(20,17,13,.82); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); display: flex; flex-direction: column; }
+.ofr-preview-bar { display: flex; align-items: center; gap: 10px; padding: 11px 18px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.ofr-preview-tag { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.ofr-preview-scroll { flex: 1; min-height: 0; overflow: auto; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.ofr-preview-scroll .offer-doc { width: min(1100px, 96%); }
+.ofr-preview-scroll .offer-page { margin: 0 0 22px; box-shadow: 0 22px 60px rgba(0,0,0,.45); }
+
 /* Editor that fills the viewport: head fixed, split fills, panes scroll inside */
 .adm-editor-fit { display: flex; flex-direction: column; min-height: 0; }
 .ofb { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 22px; align-items: stretch; }
