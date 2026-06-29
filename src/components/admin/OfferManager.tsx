@@ -149,24 +149,42 @@ export default function OfferManager({ items, notify, reload }: Props) {
   };
 
   // Build the PDF in the browser from the CURRENT edits (a hidden full-size copy
-  // of the document) — instant, no save/redeploy needed, always up to date.
-  const downloadPdf = async () => {
+  // of the document) — instant, no save/redeploy needed, never touches the host.
+  const buildPdf = async () => {
     const stage = pdfStageRef.current;
-    if (!stage || !offer) return;
+    if (!stage) return null;
+    const [{ jsPDF }, { toJpeg }] = await Promise.all([import('jspdf'), import('html-to-image')]);
+    const pages = Array.from(stage.querySelectorAll('.offer-page')) as HTMLElement[];
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
+    for (let i = 0; i < pages.length; i++) {
+      const el = pages[i];
+      const dataUrl = await toJpeg(el, { quality: 0.9, pixelRatio: 2, cacheBust: true, width: el.offsetWidth, height: el.offsetHeight, backgroundColor: '#ffffff' });
+      if (i > 0) pdf.addPage('a4', 'landscape');
+      pdf.addImage(dataUrl, 'JPEG', 0, 0, 297, 210);
+    }
+    return pdf;
+  };
+  const pdfName = () => ((offer?.clientName || 'Oferta').trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '') || 'Oferta');
+
+  const downloadPdf = async () => {
+    if (!offer) return;
+    setPdfBusy(true);
+    try { const pdf = await buildPdf(); pdf?.save(pdfName() + '.pdf'); }
+    catch (e) { notify('Eroare la generarea PDF: ' + (e as Error).message, 'err'); }
+    finally { setPdfBusy(false); }
+  };
+  // View the CURRENT edits as a PDF in a new tab (not the hosted/published one).
+  const previewPdf = async () => {
+    if (!offer) return;
+    const win = window.open('', '_blank'); // open synchronously so it isn't blocked
     setPdfBusy(true);
     try {
-      const [{ jsPDF }, { toJpeg }] = await Promise.all([import('jspdf'), import('html-to-image')]);
-      const pages = Array.from(stage.querySelectorAll('.offer-page')) as HTMLElement[];
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
-      for (let i = 0; i < pages.length; i++) {
-        const el = pages[i];
-        const dataUrl = await toJpeg(el, { quality: 0.9, pixelRatio: 2, cacheBust: true, width: el.offsetWidth, height: el.offsetHeight, backgroundColor: '#ffffff' });
-        if (i > 0) pdf.addPage('a4', 'landscape');
-        pdf.addImage(dataUrl, 'JPEG', 0, 0, 297, 210);
-      }
-      const name = (offer.clientName || 'Oferta').trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '') || 'Oferta';
-      pdf.save(name + '.pdf');
-    } catch (e) { notify('Eroare la generarea PDF: ' + (e as Error).message, 'err'); }
+      const pdf = await buildPdf();
+      if (!pdf) { win?.close(); return; }
+      const url = URL.createObjectURL(pdf.output('blob') as Blob);
+      if (win) win.location.href = url; else window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (e) { win?.close(); notify('Eroare la generarea PDF: ' + (e as Error).message, 'err'); }
     finally { setPdfBusy(false); }
   };
 
@@ -245,8 +263,8 @@ export default function OfferManager({ items, notify, reload }: Props) {
             {auto === 'saved' ? '✓ Salvat în browser' : dirty ? 'Nepublicat — apasă „Salvează" pentru a publica' : (o.slug ? '✓ Publicat pe site' : 'Ofertă nouă')}
           </span>
           <div className="adm-spacer" />
-          <button className="adm-btn ghost" onClick={downloadPdf} disabled={pdfBusy} title="Descarcă PDF cu modificările curente">{pdfBusy ? 'Se generează…' : '⬇ PDF'}</button>
-          {o.slug && <a className="adm-btn ghost" href={`/oferta/${o.slug}`} target="_blank" rel="noreferrer" style={{ marginLeft: 8 }}>Deschide</a>}
+          <button className="adm-btn ghost" onClick={previewPdf} disabled={pdfBusy} title="Vezi PDF cu modificările curente (nu versiunea publicată)">Previzualizează</button>
+          <button className="adm-btn ghost" onClick={downloadPdf} disabled={pdfBusy} title="Descarcă PDF cu modificările curente" style={{ marginLeft: 8 }}>{pdfBusy ? 'Se generează…' : '⬇ PDF'}</button>
           <button className="adm-btn ghost" onClick={cancel} disabled={busy} style={{ marginLeft: 8 }}>Închide</button>
           <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>{busy ? 'Se publică…' : (dirty ? 'Salvează' : 'Salvat')}</button>
         </div>
