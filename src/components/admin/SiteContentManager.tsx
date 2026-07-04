@@ -110,21 +110,23 @@ export default function SiteContentManager({ notify }: Props) {
   const base = device === 'mobile' ? { w: 390, h: 844 } : { w: 1440, h: 810 };
   useEffect(() => {
     const el = wrapRef.current;
-    if (!el) return;
+    if (!el) return; // SEO page has no preview — nothing to scale
     const compute = () => {
       const availW = el.clientWidth;
-      {
-        const top = el.getBoundingClientRect().top;
-        const availH = window.innerHeight - top - 20;
-        setScale(Math.max(0.1, Math.min(availW / base.w, availH / base.h, 1)));
-      }
+      // Ignore transient 0-width (e.g. the pane being detached) so we never
+      // shrink the preview to the minimum and get stuck tiny.
+      if (availW < 50) return;
+      const top = el.getBoundingClientRect().top;
+      const availH = window.innerHeight - top - 20;
+      setScale(Math.max(0.1, Math.min(availW / base.w, availH / base.h, 1)));
     };
     compute();
     const ro = new ResizeObserver(compute);
     ro.observe(el);
     window.addEventListener('resize', compute);
     return () => { ro.disconnect(); window.removeEventListener('resize', compute); };
-  }, [device, !!content]);
+    // Re-attach + recompute when the preview reappears (e.g. after SEO & Meta).
+  }, [device, !!content, pageId]);
 
   const page = PAGES.find((p) => p.id === pageId)!;
 
