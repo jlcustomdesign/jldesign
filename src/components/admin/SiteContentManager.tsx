@@ -10,13 +10,12 @@ const PAGES: { id: string; label: string; url: string; sections: string[] }[] = 
   { id: 'servicii', label: 'Servicii', url: '/services', sections: ['SERVICES_PAGE'] },
   { id: 'portofoliu', label: 'Portofoliu', url: '/portfolio', sections: ['PORTFOLIO_PAGE'] },
   { id: 'blog', label: 'Blog', url: '/blog', sections: ['BLOG_PAGE'] },
-  { id: 'contact', label: 'Contact', url: '/contact', sections: ['CONTACT_PAGE'] },
   { id: 'brandbook', label: 'Brandbook', url: '/brandbook', sections: ['BRANDBOOK_PAGE'] },
   { id: 'seo', label: 'SEO & Meta', url: '/', sections: [] },
 ];
 
 // SEO/meta fields live on their own page so the content pages stay clean.
-const SEO_SECTIONS = ['HOME', 'SERVICES_PAGE', 'ABOUT_PAGE', 'PORTFOLIO_PAGE', 'BLOG_PAGE', 'CONTACT_PAGE', 'BRANDBOOK_PAGE'];
+const SEO_SECTIONS = ['HOME', 'SERVICES_PAGE', 'ABOUT_PAGE', 'PORTFOLIO_PAGE', 'BLOG_PAGE', 'BRANDBOOK_PAGE'];
 const SEO_FIELDS = new Set(['title', 'description', 'seoFabric']);
 const SEO_SECTION_LABEL: Record<string, string> = {
   HOME: 'Pagina principală', SERVICES_PAGE: 'Pagina Servicii', ABOUT_PAGE: 'Pagina Despre',
