@@ -5,47 +5,47 @@ import { ABOUT_SECTION } from "../config/content";
 ---
 
 <section
-  class="relative bg-secondary py-24 md:py-32 overflow-hidden"
+  class="relative bg-secondary py-16 lg:py-24 overflow-hidden"
   id="about-section"
   data-theme="light"
 >
   <div class="container mx-auto px-4 md:px-8 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
       
       <!-- Left Column: Image Reveal & Decorative Elements -->
-      <div class="lg:col-span-6 relative order-2 lg:order-1">
-        <div class="about-image-main relative rounded-[2.5rem] overflow-hidden aspect-[4/5] shadow-2xl z-10">
+      <div class="lg:col-span-5 lg:col-start-1 relative order-2 lg:order-1">
+        <div class="about-image-main relative rounded-[2.5rem] overflow-hidden aspect-[4/5] max-h-[65vh] mx-auto w-full max-w-md lg:max-w-none shadow-2xl z-10">
           <img
             src="/Poze JL Custom Design - Site/LP/About/About-LP.webp"
             alt={ABOUT_SECTION.imageAlt}
-            class="absolute inset-0 w-full h-full object-cover object-top about-parallax-img scale-110"
+            class="absolute inset-0 w-full h-full object-cover object-bottom about-parallax-img scale-110"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
         </div>
       </div>
 
       <!-- Right Column: Text Content -->
-      <div class="lg:col-span-6 space-y-10 order-1 lg:order-2">
-        <div class="space-y-6">
+      <div class="lg:col-span-6 lg:col-start-7 space-y-8 order-1 lg:order-2">
+        <div class="space-y-4 lg:space-y-6">
           <span class="block text-accent uppercase tracking-[0.3em] text-sm font-bold about-label">
             Povestea Noastră
           </span>
           <h2
-            class="font-serif text-4xl md:text-6xl lg:text-7xl text-primary leading-[1.1] about-heading"
+            class="font-serif text-4xl md:text-5xl lg:text-6xl text-primary leading-[1.1] about-heading"
             set:html={ABOUT_SECTION.headline}
           />
         </div>
 
-        <div class="space-y-8 max-w-xl">
-          <p class="text-xl md:text-2xl text-primary/80 leading-relaxed about-text">
+        <div class="space-y-6 max-w-xl">
+          <p class="text-lg md:text-xl text-primary/80 leading-relaxed about-text">
             {ABOUT_SECTION.paragraph1.replace('20', String(new Date().getFullYear() - 2006))}
           </p>
-          <p class="text-lg text-primary/60 leading-relaxed about-text">
+          <p class="text-base md:text-lg text-primary/60 leading-relaxed about-text">
             {ABOUT_SECTION.paragraph2}
           </p>
         </div>
 
-        <div class="pt-6 about-cta">
+        <div class="pt-4 lg:pt-6 about-cta">
           <BubbleButton href="/about" variant="dark">
             {ABOUT_SECTION.ctaButton}
           </BubbleButton>
