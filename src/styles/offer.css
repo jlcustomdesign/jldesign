@@ -51,6 +51,9 @@
 .cover-spacer { flex: 1 1 auto; }
 
 .cover-logo { display: flex; align-items: center; gap: 1.6cqw; }
+.logo-text { display: flex; align-items: center; gap: 1.6cqw; }
+.logo-img { display: block; max-width: 20cqw; height: auto; }
+.logo-text { display: none; }
 .cl-jl { font-weight: 800; font-size: 3cqw; letter-spacing: -.04em; color: var(--ink); border: 0.18cqw solid var(--gold); border-radius: 50%; width: 6cqw; height: 6cqw; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
 .cl-sub { font-size: 1.05cqw; letter-spacing: .34em; line-height: 1.35; color: var(--gold); font-weight: 600; }
 
@@ -80,7 +83,8 @@
 
 .cols { display: grid; grid-template-columns: 1.12fr 1fr; gap: 4cqw; margin-top: 2.4cqw; align-items: start; }
 .cols.no-img { grid-template-columns: 1fr; }
-.col-right img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 1cqw; box-shadow: 0 1cqw 3cqw rgba(0,0,0,.12); display: block; }
+.col-right img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 1cqw; display: block; }
+.col-right-empty { width: 100%; aspect-ratio: 4/5; background: var(--cream); border: 1px dashed var(--line); border-radius: 1cqw; display: block; }
 
 .block-label { font-size: 1.15cqw; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin: 2.4cqw 0 1.3cqw; display: flex; align-items: center; gap: .8cqw; }
 .block-label::before { content: ""; width: 2cqw; height: 1px; background: var(--gold); }
@@ -90,8 +94,8 @@
 .spec-label { font-size: 1.1cqw; font-weight: 700; letter-spacing: .12em; color: var(--ink); }
 .spec-value { font-size: 1.3cqw; color: var(--ink-soft); }
 
-.swatches { display: flex; gap: 1.6cqw; margin-top: .5cqw; }
-.swatch { flex: 1; }
+.swatches { display: flex; flex-wrap: wrap; gap: 1.6cqw; margin-top: .5cqw; }
+.swatch { flex: 1; min-width: 14cqw; }
 .swatch-img { width: 100%; aspect-ratio: 1.5/1; border-radius: .6cqw; background-size: cover; background-position: center; background-repeat: no-repeat; }
 .swatch-img.empty { background: var(--cream); border: 1px solid var(--line); }
 .swatch-label { font-size: 1.05cqw; font-weight: 700; letter-spacing: .1em; margin-top: .8cqw; }
@@ -108,11 +112,12 @@
 .acc-card { background: var(--card); border: 1px solid var(--line); border-radius: .8cqw; overflow: hidden; display: flex; flex-direction: column; }
 .acc-card.no-img { border-top: 0.45cqw solid var(--gold); }
 .acc-img { width: 100%; aspect-ratio: 16/10; background-size: cover; background-position: center; background-repeat: no-repeat; }
+.acc-img.empty { background: var(--cream); border-bottom: 1px dashed var(--line); }
 .acc-body { padding: 1cqw 1.2cqw 1.2cqw; }
 .acc-title { font-size: 1.3cqw; font-weight: 700; }
 .acc-desc { font-size: 1.1cqw; color: var(--ink-soft); margin-top: .3cqw; line-height: 1.4; }
 
-.sketch-row { display: flex; gap: 2cqw; margin: 2.2cqw 0 1cqw; }
+.sketch-row { display: flex; flex-wrap: wrap; gap: 2cqw; margin: 2.2cqw 0 1cqw; }
 .sketch { flex: 1; margin: 0; }
 .sketch img, .sketch-empty { width: 100%; aspect-ratio: 4/3; border-radius: .7cqw; display: block; }
 .sketch img { object-fit: cover; }
@@ -140,11 +145,12 @@
 .text-body p { font-size: 1.7cqw; line-height: 1.6; color: var(--ink-soft); margin: 0 0 1.4cqw; }
 .text-image { margin-top: auto; padding-top: 2cqw; }
 .text-image img { width: 100%; aspect-ratio: 21/9; object-fit: cover; border-radius: 1cqw; display: block; }
+.text-image-empty { width: 100%; aspect-ratio: 21/9; background: var(--cream); border: 1px dashed var(--line); border-radius: 1cqw; display: block; }
 
 /* Click-to-edit affordances (admin preview only — public/PDF have no data-fid) */
-.offer-doc [data-fid] { cursor: pointer; transition: box-shadow .12s ease; }
-.offer-doc [data-fid]:hover { box-shadow: 0 0 0 2px var(--gold-2); border-radius: 4px; }
-.offer-doc [data-active="true"] { box-shadow: 0 0 0 3px var(--gold), 0 0 0 7px rgba(184,151,90,.28) !important; border-radius: 4px; }
+.offer-doc [data-fid] { cursor: pointer; transition: outline .12s ease, background-color .12s ease; outline-offset: -3px; }
+.offer-doc [data-fid]:hover { outline: 2px solid var(--gold-2); border-radius: 4px; }
+.offer-doc [data-active="true"] { outline: 3px solid var(--gold) !important; background-color: rgba(184,151,90,.08); border-radius: 4px; z-index: 10; position: relative; }
 
 /* ====================== DESIGN STYLES ====================== */
 /* Each style re-defines the palette vars (so dark mode is a clean swap) plus a
@@ -222,4 +228,7 @@
     break-after: page; page-break-after: always;
   }
   .offer-page:last-child { break-after: auto; page-break-after: auto; }
+  
+  /* Hide placeholders when printing so we don't print empty gray boxes */
+  .cover-media-empty, .sketch-empty, .gal-img.empty, .swatch-img.empty { background: transparent !important; border: none !important; display: none !important; }
 }

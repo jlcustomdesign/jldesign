@@ -11,7 +11,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
 
 <Layout
   title={ABOUT_PAGE.title}
-  description={ABOUT_PAGE.description}
+  description={ABOUT_PAGE.description.replace('21', String(new Date().getFullYear() - 2005))}
   breadcrumbs={[
     { name: BREADCRUMBS.home, url: "/" },
     { name: BREADCRUMBS.about, url: "/about" },
@@ -196,7 +196,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           >
             <span
               class="text-6xl md:text-7xl font-serif text-accent mb-2 block scale-100 group-hover:scale-110 transition-transform duration-500 stat-number"
-              >{ABOUT_PAGE.stat1Value}</span
+              >{new Date().getFullYear() - 2005}+</span
             >
             <span class="text-sm uppercase tracking-widest text-white/60"
               >{ABOUT_PAGE.stat1Label}</span
@@ -212,7 +212,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
             class="lg:col-span-5 p-8 md:p-10 bg-secondary border border-primary/10 rounded-3xl flex flex-col justify-center relative bento-card group"
           >
             <p class="text-lg md:text-xl text-primary/80 leading-relaxed">
-              {ABOUT_PAGE.manifesto}
+              {ABOUT_PAGE.manifesto.replace('21', String(new Date().getFullYear() - 2005))}
             </p>
           </div>
 
@@ -226,7 +226,7 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
             >
             <span
               class="text-5xl md:text-6xl font-serif text-primary block stat-number"
-              >{ABOUT_PAGE.stat2Value}</span
+              >{new Date().getFullYear() - 2006}+</span
             >
             <div
               class="w-full bg-secondary h-1 mt-4 rounded-full overflow-hidden"

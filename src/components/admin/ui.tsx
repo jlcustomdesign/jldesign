@@ -40,7 +40,7 @@ export function TagInput({ tags, onChange, placeholder }: { tags: string[]; onCh
   return (
     <div className="tag-input">
       {tags.map((t, i) => (
-        <span className="tag-chip" key={i}>{t}<button type="button" onClick={() => onChange(tags.filter((_, j) => j !== i))}>✕</button></span>
+        <span className="tag-chip" key={i}>{t}<button type="button" onClick={() => onChange(tags.filter((_, j) => j !== i))}><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'text-bottom'}}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></span>
       ))}
       <input
         className="tag-add"
@@ -105,7 +105,7 @@ export function ImageInput({
         onClick={() => ref.current?.click()}
         title={value ? 'Schimbă imaginea' : 'Încarcă imagine'}
       >
-        {busy ? <span className="ai-spin" /> : !value && <span className="ai-plus">+</span>}
+        {busy ? <span className="ai-spin" /> : !value && <span className="ai-plus" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>}
       </button>
       <div className="ai-acts">
         <button type="button" onClick={() => ref.current?.click()} disabled={busy}>{value ? 'Schimbă' : 'Încarcă'}</button>
@@ -116,7 +116,7 @@ export function ImageInput({
       {lib !== null && (
         <div className="img-lib" onClick={() => setLib(null)}>
           <div className="img-lib-box" onClick={(e) => e.stopPropagation()}>
-            <div className="img-lib-head"><span>Alege o imagine din bibliotecă</span><button type="button" onClick={() => setLib(null)}>✕</button></div>
+            <div className="img-lib-head"><span>Alege o imagine din bibliotecă</span><button type="button" onClick={() => setLib(null)}><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'text-bottom'}}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
             <div className="img-lib-grid">
               {lib.length === 0 ? (
                 <div className="img-lib-empty">Se încarcă…</div>

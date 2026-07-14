@@ -36,12 +36,53 @@ const PAGE_TYPES: { type: SectionType; name: string }[] = [
 const blankSection = (type: SectionType): Section => {
   const base = { id: uid(type), type, heading: '', paragraph: '' };
   switch (type) {
-    case 'description': return { ...base, heading: 'Descriere proiect', image: '', specs: [{ label: '', value: '' }] };
-    case 'materials': return { ...base, heading: 'Materiale și finisaje', image: '', swatches: [{ label: '', code: '', image: '' }], finishes: [{ label: '', desc: '' }] };
-    case 'accessories': return { ...base, heading: 'Accesorii și echipare', items: [{ image: '', title: '', description: '' }], benefits: [{ label: '', desc: '' }] };
-    case 'sketches': return { ...base, heading: 'Schițe de concept', shots: [{ image: '', caption: '' }], dims: [{ title: '', lines: '' }] };
-    case 'gallery': return { ...base, heading: 'Galerie foto', shots: [{ image: '', caption: '' }, { image: '', caption: '' }] };
-    case 'text': return { ...base, heading: 'Titlu', image: '' };
+    case 'description': return { ...base, heading: 'Descriere proiect', image: '', specs: [
+      { label: 'Specificație 1', value: '' },
+      { label: 'Specificație 2', value: '' },
+      { label: 'Specificație 3', value: '' }
+    ] };
+    case 'materials': return { ...base, heading: 'Materiale și finisaje', image: '', 
+      swatches: [
+        { label: 'Finisaj 1', code: '', image: '' },
+        { label: 'Finisaj 2', code: '', image: '' },
+        { label: 'Blat / Accent', code: '', image: '' }
+      ], 
+      finishes: [
+        { label: 'Tip Finisaj', desc: '' },
+        { label: 'Feronerie', desc: '' },
+        { label: 'Alte detalii', desc: '' }
+      ] 
+    };
+    case 'accessories': return { ...base, heading: 'Accesorii și echipare', 
+      items: [
+        { image: '', title: '', description: '' },
+        { image: '', title: '', description: '' },
+        { image: '', title: '', description: '' }
+      ], 
+      benefits: [
+        { label: 'Avantaj 1', desc: '' },
+        { label: 'Avantaj 2', desc: '' }
+      ] 
+    };
+    case 'sketches': return { ...base, heading: 'Schițe de concept', 
+      shots: [
+        { image: '', caption: 'Vedere 1' },
+        { image: '', caption: 'Vedere 2' }
+      ], 
+      dims: [
+        { title: 'Dimensiuni generale', lines: 'L=... / H=... / A=...' },
+        { title: 'Note tehnice', lines: '' }
+      ] 
+    };
+    case 'gallery': return { ...base, heading: 'Galerie foto', 
+      shots: [
+        { image: '', caption: '' }, 
+        { image: '', caption: '' },
+        { image: '', caption: '' },
+        { image: '', caption: '' }
+      ] 
+    };
+    case 'text': return { ...base, heading: 'Titlu secțiune', image: '' };
   }
 };
 
@@ -54,7 +95,30 @@ function scrollWithin(container: HTMLElement | null, el: Element | null) {
 }
 
 export default function OfferManager({ items, notify, reload }: Props) {
-  const [view, setView] = useState<'list' | 'pick' | 'edit'>('list');
+  const [view, setViewRaw] = useState<'list' | 'pick_offer' | 'pick_template' | 'edit'>(() => {
+    if (typeof window !== 'undefined') {
+      const h = window.location.hash.replace('#', '');
+      if (h === 'offers-edit') return 'edit';
+      if (h === 'offers-pick_offer') return 'pick_offer';
+    }
+    return 'list';
+  });
+
+  const setView = React.useCallback((v: typeof view) => {
+    setViewRaw(v);
+    window.location.hash = v === 'list' ? 'offers' : `offers-${v}`;
+  }, []);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const h = window.location.hash.replace('#', '');
+      if (h === 'offers-edit') setViewRaw('edit');
+      else if (h === 'offers-pick_offer') setViewRaw('pick_offer');
+      else if (h === 'offers') setViewRaw('list');
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
   const [offer, setOffer] = useState<EditOffer | null>(null);
   const [busy, setBusy] = useState(false);
   const [pickIndex, setPickIndex] = useState(0);
@@ -72,6 +136,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
   const lastSaved = useRef<string>('');
   const [pdfBusy, setPdfBusy] = useState(false);
   const [preview, setPreview] = useState(false);
+
   offerRef.current = offer;
 
   const tplOffers = useMemo(() => TEMPLATES.map((t) => t.make()), []);
@@ -135,7 +200,8 @@ export default function OfferManager({ items, notify, reload }: Props) {
   // Publish to the site (the only place that writes to GitHub).
   const save = async () => {
     if (!offer) return;
-    if (!offer.clientName.trim()) return notify('Adaugă numele clientului', 'err');
+    if (offer.isTemplate && !(offer.templateName || '').trim()) return notify('Adaugă numele șablonului', 'err');
+    if (!offer.isTemplate && !(offer.clientName || '').trim()) return notify('Adaugă numele clientului', 'err');
     const prevSlug = offer.slug;
     setBusy(true);
     try {
@@ -218,34 +284,94 @@ export default function OfferManager({ items, notify, reload }: Props) {
   );
 
   /* ===================== RENDER ===================== */
-  if (view === 'pick') {
+  if (view === 'pick_offer') {
+    const userTemplates = items.filter(e => e.data.isTemplate);
     return (
       <div>
-        <SectionHead title="Alege un model" desc="Apasă pe un model pentru a începe — fiecare e un document complet, gata de personalizat."
+        <SectionHead title="Crează ofertă" desc="Alege unul din șabloanele salvate anterior pentru a începe o ofertă nouă."
           action={<button className="adm-btn ghost" onClick={() => setView('list')}>← Înapoi</button>} />
         <div className="adm-grid tpl-grid">
-          {TEMPLATES.map((t, i) => (
-            <button key={t.id} className="tpl-card" onClick={() => useTemplate(i)}>
-              <div className="tpl-card-doc"><OfferDocument offer={tplOffers[i]} coverOnly /></div>
+          <div className="tpl-card">
+             <div className="tpl-card-doc" style={{ cursor: 'pointer' }} onClick={() => {
+                clearDraft(undefined);
+                setOffer({ clientName: '', date: '', pages: [blankSection('description')] });
+                lastSaved.current = ''; setAuto('');
+                setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+             }}>
+                <div style={{
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  background: 'var(--surface-2, #f5f5f5)',
+                  border: '2px dashed var(--border, #ccc)',
+                  borderRadius: '6px',
+                  aspectRatio: '297 / 210',
+                  width: '100%',
+                  boxSizing: 'border-box'
+                }}>
+                  <span style={{fontSize: 64, color: 'var(--text-muted, #999)', fontWeight: 300}}>+</span>
+                </div>
+             </div>
+             <div className="tpl-card-meta">
+               <span className="nm">Ofertă goală</span>
+               <span className="ds">Începe de la zero cu o ofertă complet nouă.</span>
+               <div style={{ marginTop: 12 }}>
+                 <button className="adm-btn gold sm" onClick={() => {
+                   clearDraft(undefined);
+                   setOffer({ clientName: '', date: '', pages: [blankSection('description')] });
+                   lastSaved.current = ''; setAuto('');
+                   setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+                 }}>Creează →</button>
+               </div>
+             </div>
+          </div>
+          {userTemplates.map((e) => (
+            <div key={e.slug} className="tpl-card">
+              <div className="tpl-card-doc" style={{ cursor: 'pointer' }} onClick={() => {
+                const src = fromEntry(e);
+                const clone = typeof structuredClone === 'function' ? structuredClone(src) : JSON.parse(JSON.stringify(src));
+                delete clone.slug;
+                clone.isTemplate = false;
+                clone.clientName = '';
+                clearDraft(undefined);
+                setOffer(clone); lastSaved.current = ''; setAuto('');
+                setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+              }}><OfferDocument offer={fromEntry(e)} coverOnly /></div>
               <div className="tpl-card-meta">
-                <span className="nm">{t.name}</span>
-                <span className="ds">{t.description}</span>
-                <span className="go">Folosește acest model →</span>
+                <span className="nm">{e.data.templateName || e.data.clientName || 'Șablon'}</span>
+                <span className="ds">{e.data.templateDescription || `${countPages(e.data)} pagini`}</span>
+                <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); edit(e); }}>Editează</button>
+                  <button className="adm-btn danger sm" onClick={(ev) => { ev.stopPropagation(); remove(e); }}>Șterge</button>
+                  <div className="adm-spacer" style={{ flexGrow: 1 }} />
+                  <button className="adm-btn gold sm" onClick={() => {
+                    const src = fromEntry(e);
+                    const clone = typeof structuredClone === 'function' ? structuredClone(src) : JSON.parse(JSON.stringify(src));
+                    delete clone.slug;
+                    clone.isTemplate = false;
+                    clone.clientName = '';
+                    clearDraft(undefined);
+                    setOffer(clone); lastSaved.current = ''; setAuto('');
+                    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+                  }}>Folosește →</button>
+                </div>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>
     );
   }
 
+
+
   if (view === 'edit' && offer) {
     const o = offer;
     const dirty = JSON.stringify(o) !== lastSaved.current;
     return (
       <div className="adm-editor-fit">
-        <div className="adm-editor-head" style={{ marginBottom: 14 }}>
-          <h3 style={{ margin: 0 }}>{o.slug ? 'Editează oferta' : 'Ofertă nouă'}</h3>
+        <div className="adm-editor-head" style={{ marginBottom: 14, position: 'sticky', top: 0, background: 'var(--bg)', zIndex: 100, padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
+          <h3 style={{ margin: 0 }}>{o.slug ? 'Editează oferta' : (o.isTemplate ? 'Editează șablonul' : 'Ofertă nouă')}</h3>
           <span className={`auto-ind${dirty ? '' : ' ok'}`}>
             {auto === 'saved' ? '✓ Salvat în browser' : dirty ? 'Nepublicat — apasă „Salvează" pentru a publica' : (o.slug ? '✓ Publicat pe site' : 'Ofertă nouă')}
           </span>
@@ -273,12 +399,25 @@ export default function OfferManager({ items, notify, reload }: Props) {
               </div>
               {isOpen('cover') && (
                 <div className="pg-card-body">
-                  {sf('cover:clientName', 'Nume client', <TextInput value={o.clientName} onChange={(e) => patch({ clientName: e.target.value })} placeholder="Familia Popescu" />)}
+                  {o.isTemplate ? (
+                    <div className="adm-row">
+                      {sf('cover:templateName', 'Nume șablon', <TextInput value={o.templateName || ''} onChange={(e) => patch({ templateName: e.target.value })} placeholder="ex: Ofertă Bucătării Premium" />)}
+                      {sf('cover:category', 'Categorie', <TextInput value={o.category || ''} onChange={(e) => patch({ category: e.target.value })} placeholder="ex: Bucătărie" />)}
+                    </div>
+                  ) : (
+                    <>
+                      {sf('cover:clientName', 'Nume client', <TextInput value={o.clientName} onChange={(e) => patch({ clientName: e.target.value })} placeholder="Familia Popescu" />)}
+                      {sf('cover:category', 'Categorie', <TextInput value={o.category || ''} onChange={(e) => patch({ category: e.target.value })} placeholder="ex: Bucătărie" />)}
+                    </>
+                  )}
                   {sf('cover:tags', 'Etichete (opțional, mai multe)', <TagInput tags={o.tags || []} onChange={(tags) => patch({ tags })} />)}
-                  <div className="adm-row">
-                    {sf('cover:date', 'Dată afișată', <TextInput value={o.date} onChange={(e) => patch({ date: e.target.value })} placeholder="Iunie 2026" />)}
-                    {sf('cover:coverSubtitle', 'Text mare copertă', <TextInput value={o.coverSubtitle} onChange={(e) => patch({ coverSubtitle: e.target.value })} />)}
-                  </div>
+                  {!o.isTemplate && (
+                    <div className="adm-row">
+                      {sf('cover:date', 'Dată afișată', <TextInput value={o.date} onChange={(e) => patch({ date: e.target.value })} placeholder="Iunie 2026" />)}
+                      {sf('cover:coverSubtitle', 'Text mare copertă', <TextInput value={o.coverSubtitle} onChange={(e) => patch({ coverSubtitle: e.target.value })} />)}
+                    </div>
+                  )}
+                  {o.isTemplate && sf('cover:coverSubtitle', 'Text mare copertă', <TextInput value={o.coverSubtitle} onChange={(e) => patch({ coverSubtitle: e.target.value })} />)}
                   {sf('cover:coverImage', 'Imagine copertă', <ImageInput value={o.coverImage} onChange={(v) => patch({ coverImage: v })} />)}
                   <div className="sf"><label>Stil document</label>
                     <div className="theme-row">
@@ -322,11 +461,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
                     <span className="pg-num">{idx + 1}</span>
                     <span className="pg-title">{s.label || DEFAULT_LABEL[s.type]} <span className="chev">{isOpen(s.id) ? '▾' : '▸'}</span></span>
                   </button>
-                  <div className="pg-tools">
-                    <button className="pg-tool" title="Mută sus" disabled={idx === 0} onClick={() => movePage(idx, -1)}>↑</button>
-                    <button className="pg-tool" title="Mută jos" disabled={idx === o.pages.length - 1} onClick={() => movePage(idx, 1)}>↓</button>
-                    <button className="pg-tool danger" title="Șterge pagina" onClick={() => delPage(idx)}>✕</button>
-                  </div>
+
                 </div>
                 {isOpen(s.id) && <div className="pg-card-body">{renderPageFields(s, idx)}</div>}
               </div>
@@ -500,17 +635,25 @@ export default function OfferManager({ items, notify, reload }: Props) {
       <SectionHead title="Generator oferte" desc={`${items.length} oferte · prezentări de proiect în brand JL Custom Design`}
         action={<>
           {readDraft(undefined) && <button className="adm-btn ghost" onClick={resumeNew} style={{ marginRight: 8 }}>Continuă oferta nesalvată</button>}
-          <button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick'); }}>+ Ofertă nouă</button>
+          <button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick_offer'); }} style={{ marginRight: 8 }}>+ Ofertă nouă</button>
+          <button className="adm-btn ghost" onClick={() => {
+            clearDraft(undefined);
+            setOffer({ clientName: '', templateName: 'Șablon Nou', category: '', isTemplate: true, style: 'editorial', date: '', pages: [blankSection('description')] });
+            lastSaved.current = ''; setAuto('');
+            setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+          }}>+ Șablon nou</button>
         </>} />
-      {items.length === 0 ? (
+      {items.filter(e => !e.data.isTemplate).length === 0 ? (
         <div className="adm-empty">Nicio ofertă încă. Apasă „Ofertă nouă”, alege un model și personalizează-l.</div>
       ) : (
         <div className="adm-grid">
-          {items.map((e) => (
+          {items.filter(e => !e.data.isTemplate).map((e) => (
             <div className="adm-card" key={e.slug}>
               <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url("${e.data.coverImage}")` } : undefined}>{!e.data.coverImage && 'fără copertă'}</div>
               <div className="body">
-                <span className="badge">{(Array.isArray(e.data.tags) && e.data.tags.length ? e.data.tags.join(' · ') : e.data.category) || 'Proiect'}</span>
+                <span className="badge">
+                  {(Array.isArray(e.data.tags) && e.data.tags.length ? e.data.tags.join(' · ') : e.data.category) || 'Proiect'}
+                </span>
                 <span className="title">{e.data.clientName || e.slug}</span>
                 <span className="meta">{e.data.date} · {countPages(e.data)} pagini</span>
               </div>

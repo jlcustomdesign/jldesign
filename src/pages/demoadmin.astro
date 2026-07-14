@@ -1,0 +1,112 @@
+---
+import AdminApp from '../components/admin/AdminApp';
+import '../styles/admin.css';
+import '../styles/offer.css';
+
+export const prerender = false;
+---
+
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Demo Admin · JL Custom Design</title>
+  </head>
+  <body style="margin:0;background:#f6f3ec;">
+    <script>
+      // @ts-nocheck
+      // Demo mode: Intercept network requests and simulate a database in session storage
+      const origFetch = window.fetch;
+      
+      let demoData = null;
+      let demoSiteData = null;
+      
+      const getDemoData = async () => {
+         if (demoData) return demoData;
+         const str = sessionStorage.getItem('jl-demo-db');
+         if (str) {
+             try { demoData = JSON.parse(str); return demoData; } catch {}
+         }
+         // fetch initial from real API
+         const res = await origFetch('/api/admin/data');
+         demoData = res.ok ? await res.json() : { portfolio: [], blog: [], categories: [], offers: [] };
+         sessionStorage.setItem('jl-demo-db', JSON.stringify(demoData));
+         return demoData;
+      };
+      
+      const saveDemoData = () => {
+         sessionStorage.setItem('jl-demo-db', JSON.stringify(demoData));
+      };
+
+      const getDemoSiteData = async () => {
+         if (demoSiteData) return demoSiteData;
+         const str = sessionStorage.getItem('jl-demo-site');
+         if (str) {
+             try { demoSiteData = JSON.parse(str); return demoSiteData; } catch {}
+         }
+         const res = await origFetch('/api/admin/site');
+         demoSiteData = res.ok ? await res.json() : {};
+         sessionStorage.setItem('jl-demo-site', JSON.stringify(demoSiteData));
+         return demoSiteData;
+      };
+      
+      const saveDemoSiteData = () => {
+         sessionStorage.setItem('jl-demo-site', JSON.stringify(demoSiteData));
+      };
+      
+      const toOk = (body) => Promise.resolve(new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+
+      window.fetch = async (input, init) => {
+        const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+        
+        if (url === '/api/admin/data' && (!init || init.method === 'GET' || !init.method)) {
+            return toOk(await getDemoData());
+        }
+        if (url === '/api/admin/save' && init?.method === 'POST') {
+            const payload = JSON.parse(init.body);
+            const data = await getDemoData();
+            const coll = data[payload.collection];
+            const slug = payload.slug || payload.data.title?.toLowerCase().replace(/\s+/g, '-') || payload.data.clientName?.toLowerCase().replace(/\s+/g, '-') || `demo-${Date.now()}`;
+            const entry = { slug, data: payload.data, body: payload.body || '' };
+            const existing = coll.findIndex(e => e.slug === slug);
+            if (existing >= 0) coll[existing] = entry;
+            else coll.push(entry);
+            saveDemoData();
+            return toOk({ slug });
+        }
+        if (url === '/api/admin/delete' && init?.method === 'POST') {
+            const payload = JSON.parse(init.body);
+            const data = await getDemoData();
+            const coll = data[payload.collection];
+            const idx = coll.findIndex(e => e.slug === payload.slug);
+            if (idx >= 0) coll.splice(idx, 1);
+            saveDemoData();
+            return toOk({ success: true });
+        }
+        if (url === '/api/admin/site') {
+            if (!init || init.method === 'GET' || !init.method) {
+                return toOk(await getDemoSiteData());
+            }
+            if (init?.method === 'POST') {
+                const payload = JSON.parse(init.body);
+                demoSiteData = payload.data;
+                saveDemoSiteData();
+                return toOk({ success: true });
+            }
+        }
+        if (url === '/api/admin/logout') {
+            window.location.href = '/';
+            return toOk({ success: true });
+        }
+        
+        return origFetch(input, init);
+      };
+    </script>
+    <div style="background:var(--gold);color:var(--ink);text-align:center;padding:8px 12px;font-size:14px;font-weight:600;z-index:9999;position:relative;">
+      🚀 MOD DEMO: Orice modificare faci aici este doar temporară și se șterge la închiderea paginii.
+    </div>
+    <AdminApp client:only="react" user={{ name: "Utilizator Demo", login: "demo" }} />
+  </body>
+</html>

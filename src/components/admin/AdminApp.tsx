@@ -16,10 +16,37 @@ const SECTIONS: { id: Exclude<Tab, 'home'>; label: string; short: string; desc: 
 ];
 
 export default function AdminApp({ user }: { user?: { name?: string | null; login?: string; avatar?: string } }) {
-  const [tab, setTab] = useState<Tab>(() => {
-    try { return (sessionStorage.getItem('jl-adm-tab') as Tab) || 'home'; } catch { return 'home'; }
+  const [tab, setTabRaw] = useState<Tab>(() => {
+    try {
+      const h = window.location.hash.replace('#', '');
+      const parts = h.split('-');
+      const t = parts[0] as Tab;
+      if (t === 'home' || SECTIONS.find(s => s.id === t)) return t;
+      return (sessionStorage.getItem('jl-adm-tab') as Tab) || 'home';
+    } catch { return 'home'; }
   });
+
+  const setTab = useCallback((t: Tab) => {
+    setTabRaw(t);
+    window.location.hash = t;
+  }, []);
+
   useEffect(() => { try { sessionStorage.setItem('jl-adm-tab', tab); } catch {} }, [tab]);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const h = window.location.hash.replace('#', '');
+      const parts = h.split('-');
+      const t = parts[0] as Tab;
+      if (t === 'home' || SECTIONS.find(s => s.id === t)) {
+        setTabRaw(t);
+      } else if (!h) {
+        setTabRaw('home');
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   const [data, setData] = useState<AllData | null>(null);
   const [error, setError] = useState('');

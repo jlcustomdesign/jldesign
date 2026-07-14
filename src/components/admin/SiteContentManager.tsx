@@ -305,7 +305,7 @@ export default function SiteContentManager({ notify }: Props) {
               <div className="pg-card" key={key}>
                 <div className="pg-card-head">
                   <button type="button" className="pg-card-toggle" onClick={() => setClosed((prev) => { const k2 = 'seo:' + key; const n = new Set(prev); n.has(k2) ? n.delete(k2) : n.add(k2); return n; })}>
-                    <span className="pg-title">{SEO_SECTION_LABEL[key] || prettify(key)} <span className="chev">{isOpen ? '▾' : '▸'}</span></span>
+                    <span className="pg-title">{SEO_SECTION_LABEL[key] || prettify(key)} <span className="chev" style={{display: 'inline-flex', verticalAlign: 'middle', marginLeft: 6}}>{isOpen ? <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg> : <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>}</span></span>
                   </button>
                 </div>
                 {isOpen && <div className="pg-card-body">{fields.map(([k, v]) => renderValue(v, [key, k], prettify(k)))}</div>}
@@ -331,7 +331,7 @@ export default function SiteContentManager({ notify }: Props) {
               <div className="pg-card" key={key}>
                 <div className="pg-card-head">
                   <button type="button" className="pg-card-toggle" onClick={() => setClosed((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; })}>
-                    <span className="pg-title">{SECTION_LABELS[key] || prettify(key)} <span className="chev">{isOpen ? '▾' : '▸'}</span></span>
+                    <span className="pg-title">{SECTION_LABELS[key] || prettify(key)} <span className="chev" style={{display: 'inline-flex', verticalAlign: 'middle', marginLeft: 6}}>{isOpen ? <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg> : <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>}</span></span>
                   </button>
                 </div>
                 {isOpen && <div className="pg-card-body">{entries.map(([k, v]) => renderValue(v, [key, k], fieldLabel(k)))}</div>}

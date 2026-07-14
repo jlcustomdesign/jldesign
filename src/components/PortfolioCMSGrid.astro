@@ -173,15 +173,15 @@ const activeCategories = Object.keys(groupedProjects)
                     </div>
 
                     {hasMore && (
-                        <div class="mt-12 flex justify-center gap-4">
+                        <div class="mt-12 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4">
                             <button 
-                                class="view-more-btn px-8 py-3 rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 uppercase tracking-widest text-sm font-bold"
+                                class="view-more-btn w-full sm:w-auto px-6 py-3 rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 uppercase tracking-widest text-xs sm:text-sm font-bold text-center"
                                 data-target-category={category}
                             >
                                 {PORTFOLIO_PAGE.viewMore}
                             </button>
                              <button 
-                                class="view-less-btn hidden px-8 py-3 rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 uppercase tracking-widest text-sm font-bold"
+                                class="view-less-btn hidden w-full sm:w-auto px-6 py-3 rounded-full border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 uppercase tracking-widest text-xs sm:text-sm font-bold text-center"
                                 data-target-category={category}
                             >
                                 {PORTFOLIO_PAGE.viewLess}

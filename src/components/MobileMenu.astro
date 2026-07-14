@@ -185,10 +185,10 @@ const links = NAV.links;
         target,
         {
           scale: 1, // Grow to full size
-          duration: 0.8,
+          duration: 0.3,
           ease: "power3.inOut",
         },
-        i === 0 ? ">" : "<+=0.3",
+        i === 0 ? ">" : "<+=0.1",
       );
     });
 
@@ -199,7 +199,7 @@ const links = NAV.links;
       scaleY: window.matchMedia("(orientation: landscape)").matches ? 1.2 : 1.8, // Less stretch on landscape
       scaleX: 1.0,
       transformOrigin: "center center",
-      duration: 0.5, // Faster stretch
+      duration: 0.2, // Faster stretch
       ease: "power2.inOut",
     });
 
@@ -209,11 +209,11 @@ const links = NAV.links;
       {
         y: 0,
         opacity: 1,
-        duration: 0.6,
-        stagger: 0.1,
+        duration: 0.3,
+        stagger: 0.05,
         ease: "power2.out",
       },
-      "-=0.6", // Undercut the growth slightly
+      "-=0.2", // Undercut the growth slightly
     );
 
     // 4. Reveal CTA and Close Button
@@ -222,7 +222,7 @@ const links = NAV.links;
       {
         y: 0,
         opacity: 1,
-        duration: 0.6,
+        duration: 0.3,
         ease: "power2.out",
       },
       "<",

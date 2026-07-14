@@ -26,6 +26,7 @@ export interface Offer {
   clientName: string; category?: string; tags?: string[]; date: string; websiteUrl?: string;
   coverImage?: string; coverSubtitle?: string;
   style?: string; accent?: string; coverLayout?: 'right' | 'left' | 'top';
+  isTemplate?: boolean; templateName?: string; templateDescription?: string;
   pages: Section[];
 }
 
@@ -47,7 +48,7 @@ export function normalizeOffer(raw: any): Offer {
   if (o.materials?.enabled) pages.push({ id: 's-materials', type: 'materials', heading: o.materials.heading || '', paragraph: o.materials.paragraph || '', image: o.materials.image || '', swatches: o.materials.swatches || [], finishes: o.materials.finishes || [] });
   if (o.accessories?.enabled) pages.push({ id: 's-accessories', type: 'accessories', heading: o.accessories.heading || '', paragraph: o.accessories.paragraph || '', items: o.accessories.items || [], benefits: o.accessories.benefits || [] });
   if (o.sketches?.enabled) pages.push({ id: 's-sketches', type: 'sketches', heading: o.sketches.heading || '', paragraph: o.sketches.paragraph || '', shots: o.sketches.sketches || [], dims: o.sketches.dims || [] });
-  return { clientName: o.clientName || '', category: o.category || '', tags: o.tags || [], date: o.date || '', websiteUrl: o.websiteUrl || '', coverImage: o.coverImage || '', coverSubtitle: o.coverSubtitle || 'MOBILIER PERSONALIZAT', style: o.style || 'editorial', accent: o.accent, coverLayout: o.coverLayout, pages };
+  return { clientName: o.clientName || '', category: o.category || '', tags: o.tags || [], date: o.date || '', websiteUrl: o.websiteUrl || '', coverImage: o.coverImage || '', coverSubtitle: o.coverSubtitle || 'MOBILIER PERSONALIZAT', style: o.style || 'editorial', accent: o.accent, coverLayout: o.coverLayout, isTemplate: o.isTemplate, templateName: o.templateName, templateDescription: o.templateDescription, pages };
 }
 
 interface DocProps {
@@ -74,8 +75,11 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
 
   const logo = (
     <div className="cover-logo">
-      <span className="cl-jl">JL</span>
-      <span className="cl-sub">CUSTOM<br />DESIGN</span>
+      <div className="logo-text">
+        <span className="cl-jl">JL</span>
+        <span className="cl-sub">CUSTOM<br />DESIGN</span>
+      </div>
+      <img className="logo-img" src="/Images/logos/Fara%20fundal%202.png" alt="JL Custom Design Logo" />
     </div>
   );
 
@@ -91,7 +95,7 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
           {words.map((w, i) => <span key={i} className={i === 0 ? 'ct-thin' : 'ct-bold'}>{w}</span>)}
         </div>
         <div className="cover-client">
-          <div className="cc-name" {...F('cover:clientName')}>{offer.clientName || 'Nume client'}</div>
+          <div className="cc-name" {...F('cover:clientName')}>{offer.isTemplate ? offer.templateName || 'Nume șablon' : offer.clientName || 'Nume client'}</div>
           {coverTags.length > 0 && <div className="cc-cat" {...F('cover:tags')}>{coverTags.join(' · ')}</div>}
         </div>
         <div className="cover-foot">
@@ -120,7 +124,7 @@ function Page({ s, num, date, F, editable }: { s: Section; num: string; date: st
 
   if (s.type === 'description') {
     main = (
-      <div className={`cols${has(s.image) ? '' : ' no-img'}`}>
+      <div className={`cols${has(s.image) || editable ? '' : ' no-img'}`}>
         <div className="col-left">
           {para()}
           <div className="block-label">Specificații tehnice</div>
@@ -130,12 +134,12 @@ function Page({ s, num, date, F, editable }: { s: Section; num: string; date: st
             ))}
           </div>
         </div>
-        {has(s.image) && <div className="col-right"><img src={s.image} alt="" {...F(`${s.id}:image`)} /></div>}
+        {(has(s.image) || editable) && <div className="col-right">{has(s.image) ? <img src={s.image} alt="" {...F(`${s.id}:image`)} /> : <div className="col-right-empty" {...F(`${s.id}:image`)} />}</div>}
       </div>
     );
   } else if (s.type === 'materials') {
     main = (
-      <div className={`cols${has(s.image) ? '' : ' no-img'}`}>
+      <div className={`cols${has(s.image) || editable ? '' : ' no-img'}`}>
         <div className="col-left">
           {para()}
           <div className="swatches">
@@ -153,7 +157,7 @@ function Page({ s, num, date, F, editable }: { s: Section; num: string; date: st
             ))}
           </div>
         </div>
-        {has(s.image) && <div className="col-right"><img src={s.image} alt="" {...F(`${s.id}:image`)} /></div>}
+        {(has(s.image) || editable) && <div className="col-right">{has(s.image) ? <img src={s.image} alt="" {...F(`${s.id}:image`)} /> : <div className="col-right-empty" {...F(`${s.id}:image`)} />}</div>}
       </div>
     );
   } else if (s.type === 'accessories') {
@@ -162,8 +166,8 @@ function Page({ s, num, date, F, editable }: { s: Section; num: string; date: st
         {para('wide')}
         <div className="acc-grid">
           {(s.items || []).filter((i) => i.title || i.image || i.description).map((it, i) => (
-            <div className={`acc-card${it.image ? '' : ' no-img'}`} key={i} {...F(`${s.id}:item:${i}`)}>
-              {it.image && <div className="acc-img" style={{ backgroundImage: `url(${it.image})` }} />}
+            <div className={`acc-card${it.image || editable ? '' : ' no-img'}`} key={i} {...F(`${s.id}:item:${i}`)}>
+              {(it.image || editable) && <div className={`acc-img${it.image ? '' : ' empty'}`} style={it.image ? { backgroundImage: `url(${it.image})` } : undefined} />}
               <div className="acc-body"><div className="acc-title">{it.title}</div><div className="acc-desc">{it.description}</div></div>
             </div>
           ))}
@@ -218,14 +222,13 @@ function Page({ s, num, date, F, editable }: { s: Section; num: string; date: st
         <div className="text-body" {...F(`${s.id}:paragraph`)}>
           {s.paragraph.split('\n').filter(Boolean).map((l, j) => <p key={j}>{l}</p>)}
         </div>
-        {has(s.image) && <div className="text-image"><img src={s.image} alt="" {...F(`${s.id}:image`)} /></div>}
+        {(has(s.image) || editable) && <div className="text-image">{has(s.image) ? <img src={s.image} alt="" {...F(`${s.id}:image`)} /> : <div className="text-image-empty" {...F(`${s.id}:image`)} />}</div>}
       </div>
     );
   }
 
   return (
     <section className="offer-page sheet">
-      <div className="vbrand dark">JL CUSTOM DESIGN</div>
       <div className="sheet-head">
         <div className="eyebrow"><span className="num">{num}</span> {label}</div>
         <h2 className="s-heading" {...F(`${s.id}:heading`)}>{s.heading}</h2>

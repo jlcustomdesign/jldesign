@@ -11,16 +11,16 @@ import Footer from "../components/Footer.astro";
 import { HOME } from "../config/content";
 ---
 
-<Layout title={HOME.title} description={HOME.description}>
+<Layout title={HOME.title} description={HOME.description.replace('21', String(new Date().getFullYear() - 2005))}>
   <main>
     <!-- Semantic keyword fabric for AI engines (GEO) -->
     <div class="sr-only">
       {HOME.seoFabric.map((paragraph) => <p>{paragraph}</p>)}
     </div>
     <HeroSection />
-    <AboutSection />
     <ServicesSectionV2 />
     <PortfolioSection />
+    <AboutSection />
     <ProcessSectionV2 />
     <BlogPreview />
     <FaqSection />

@@ -6,7 +6,7 @@ const services = SERVICES_SECTION.cards;
 
 <section
   id="services-section"
-  class="py-24 md:py-32 bg-secondary overflow-hidden"
+  class="relative py-24 md:py-32 bg-secondary overflow-hidden z-20"
   data-theme="light"
 >
   <div class="w-full pt-32 md:pt-48">
@@ -355,25 +355,7 @@ const services = SERVICES_SECTION.cards;
     });
 
     // --- REFRESH ON IMAGE LOAD ---
-    // This prevents "blocking" glitches when images load after ScrollSmoother has initialized
-    const carouselImages = carousel.querySelectorAll('img');
-    let loadedCount = 0;
-    carouselImages.forEach(img => {
-      if (img.complete) {
-        loadedCount++;
-      } else {
-        img.addEventListener('load', () => {
-          loadedCount++;
-          if (loadedCount === carouselImages.length) {
-            ScrollTrigger.refresh();
-          }
-        }, { once: true });
-      }
-    });
-    
-    if (loadedCount === carouselImages.length) {
-      ScrollTrigger.refresh();
-    }
+    // Removed to prevent scroll blocking. Cards have fixed aspect ratios, so loading images does not change layout height.
   }
 
   // Run on load and Astro transitions

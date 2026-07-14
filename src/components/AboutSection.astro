@@ -5,7 +5,7 @@ import { ABOUT_SECTION } from "../config/content";
 ---
 
 <section
-  class="relative bg-secondary py-24 md:py-32 overflow-hidden z-20"
+  class="relative bg-secondary py-24 md:py-32 overflow-hidden"
   id="about-section"
   data-theme="light"
 >
@@ -22,10 +22,6 @@ import { ABOUT_SECTION } from "../config/content";
           />
           <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
         </div>
-        
-        <!-- Floating Accent Element -->
-        <div class="absolute -bottom-8 -right-8 w-48 h-48 bg-accent rounded-3xl -rotate-12 -z-10 opacity-20 blur-2xl about-accent"></div>
-        <div class="absolute -top-12 -left-12 w-64 h-64 border border-primary/10 rounded-full -z-10 about-circle"></div>
       </div>
 
       <!-- Right Column: Text Content -->
@@ -42,7 +38,7 @@ import { ABOUT_SECTION } from "../config/content";
 
         <div class="space-y-8 max-w-xl">
           <p class="text-xl md:text-2xl text-primary/80 leading-relaxed about-text">
-            {ABOUT_SECTION.paragraph1}
+            {ABOUT_SECTION.paragraph1.replace('20', String(new Date().getFullYear() - 2006))}
           </p>
           <p class="text-lg text-primary/60 leading-relaxed about-text">
             {ABOUT_SECTION.paragraph2}
@@ -65,36 +61,35 @@ import { ABOUT_SECTION } from "../config/content";
 
   gsap.registerPlugin(ScrollTrigger);
 
+  let aboutAnimInitialized = false;
+
   function initAboutSectionRedesign() {
+    if (aboutAnimInitialized) return;
     const section = document.querySelector("#about-section");
     if (!section) return;
+    
+    aboutAnimInitialized = true;
 
     const ctx = gsap.context(() => {
-      // 1. Text Reveals
+      // 1. Continuous Reveal Timeline (Image + Text)
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: "top 80%",
+          start: "top 75%",
         }
       });
 
-      tl.from(".about-label", { opacity: 0, x: -20, duration: 0.8, ease: "power2.out" })
-        .from(".about-heading", { opacity: 0, y: 40, duration: 1, ease: "expo.out" }, "-=0.4")
-        .from(".about-text", { opacity: 0, y: 20, duration: 0.8, stagger: 0.2, ease: "power2.out" }, "-=0.6")
-        .from(".about-cta", { opacity: 0, scale: 0.9, duration: 0.6, ease: "back.out(1.7)" }, "-=0.4");
+      tl.from(".about-image-main", {
+          clipPath: "inset(100% 0 0 0)",
+          duration: 1.2,
+          ease: "expo.inOut"
+        })
+        .from(".about-label", { opacity: 0, x: -20, duration: 0.8, ease: "power2.out" }, "-=0.8")
+        .from(".about-heading", { opacity: 0, y: 30, duration: 1, ease: "expo.out" }, "-=0.6")
+        .from(".about-text", { opacity: 0, y: 20, duration: 0.8, stagger: 0.15, ease: "power2.out" }, "-=0.8")
+        .from(".about-cta", { opacity: 0, y: 20, duration: 0.6, ease: "back.out(1.5)" }, "-=0.6");
 
-      // 2. Image Reveal
-      gsap.from(".about-image-main", {
-        scrollTrigger: {
-          trigger: ".about-image-main",
-          start: "top 85%",
-        },
-        clipPath: "inset(100% 0 0 0)",
-        duration: 1.5,
-        ease: "expo.inOut"
-      });
-
-      // 3. Parallax & Floating
+      // 2. Parallax
       const isMobile = window.innerWidth < 768;
       gsap.to(".about-parallax-img", {
         y: isMobile ? "5%" : "10%",
@@ -107,28 +102,18 @@ import { ABOUT_SECTION } from "../config/content";
         }
       });
 
-      gsap.to(".about-accent", {
-        rotate: 12,
-        duration: 20,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      });
-
-      gsap.to(".about-circle", {
-        scale: 1.1,
-        duration: 15,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      });
-
     }, section);
   }
 
-  document.addEventListener("astro:page-load", initAboutSectionRedesign);
+  document.addEventListener("astro:page-load", () => {
+    aboutAnimInitialized = false;
+    initAboutSectionRedesign();
+  });
+  
   if (document.readyState === "complete" || document.readyState === "interactive") {
     initAboutSectionRedesign();
+  } else {
+    document.addEventListener("DOMContentLoaded", initAboutSectionRedesign);
   }
 </script>
 

@@ -5,7 +5,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function initThemeTransition() {
   const portfolioSection = document.querySelector("#portfolio-section");
-  if (!portfolioSection) {
+  const aboutSection = document.querySelector("#about-section");
+  if (!portfolioSection && !aboutSection) {
      // Check if we are on the portfolio page by URL to be safe, as ID might be missing
      if (window.location.pathname.includes("/portfolio")) return;
      // Otherwise continue (might be Home page with ID issues, or other pages)
@@ -30,8 +31,9 @@ export function initThemeTransition() {
         const textElementsToWhite: HTMLElement[] = [];
 
         // --- A. Collect Background Elements ---
-        // Include Portfolio because it might still be visible
+        // Include Portfolio and About because they might still be visible
         if (portfolioSection) backgroundElementsToBlack.push(portfolioSection as HTMLElement);
+        if (aboutSection) backgroundElementsToBlack.push(aboutSection as HTMLElement);
         if (processSection) backgroundElementsToBlack.push(processSection as HTMLElement);
         if (blogPreview) backgroundElementsToBlack.push(blogPreview as HTMLElement);
         if (faqSection) backgroundElementsToBlack.push(faqSection as HTMLElement);
@@ -43,6 +45,7 @@ export function initThemeTransition() {
             // Re-added .nav-text to ensure Global Theme Sync (First Transition & Footer)
             const selectors = [
                 "#portfolio-section h2", "#portfolio-section h3", "#portfolio-section p", "#portfolio-section span", "#portfolio-section .text-primary",
+                "#about-section h2", "#about-section p", "#about-section span", "#about-section .text-primary", "#about-section .about-label",
                 // Process V2: Text is already white by default spread, but we ensure consistency
                 "#process-section-v2 h2", "#process-section-v2 p", "#process-section-v2 h3",
                 "#blog-preview h2", "#blog-preview h3", "#blog-preview p", "#blog-preview span",
@@ -54,7 +57,10 @@ export function initThemeTransition() {
 
             const elements = document.querySelectorAll(selectors);
             elements.forEach((el) => {
-                 textElementsToWhite.push(el as HTMLElement);
+                 // Exclude button and its inner span to manually handle its inversion
+                 if (!el.closest('.variant-dark')) {
+                     textElementsToWhite.push(el as HTMLElement);
+                 }
             });
         }
 
@@ -96,6 +102,12 @@ export function initThemeTransition() {
             }
         });
         
+        // Invert specific dark buttons in About Section when background goes dark
+        const aboutDarkBtn = document.querySelector("#about-section .variant-dark");
+        if (aboutDarkBtn) {
+             tl.to(aboutDarkBtn, { backgroundColor: "#ffffff", color: "#000000", duration: duration, ease: ease }, 0);
+        }
+
         // FAQ Borders
         const faqItems = document.querySelectorAll(".faq-item-v2");
         faqItems.forEach(item => {
@@ -106,7 +118,7 @@ export function initThemeTransition() {
 
         // Trigger 1: Enter Dark Mode (at Process Section)
         ScrollTrigger.create({
-            trigger: processSection || portfolioSection,
+            trigger: processSection || aboutSection || portfolioSection,
             start: "top 80%", // Adjusted trigger point: Early switch
             onEnter: () => tl.play(),
             onLeaveBack: () => tl.reverse(),
