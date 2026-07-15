@@ -22,13 +22,17 @@ export const POST: APIRoute = async ({ request }) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "Origin": "https://mobilapersonalizatabrasov.ro",
+        "Referer": "https://mobilapersonalizatabrasov.ro/"
       },
       body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: "Eroare la trimiterea către Web3Forms." }), {
+      const errorText = await response.text();
+      console.error("Web3Forms API Error:", errorText);
+      return new Response(JSON.stringify({ error: "Eroare la trimiterea către Web3Forms.", details: errorText }), {
         status: response.status,
         headers: { 'Content-Type': 'application/json' }
       });
