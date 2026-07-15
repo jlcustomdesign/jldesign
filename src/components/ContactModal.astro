@@ -69,6 +69,8 @@ const services = CONTACT_MODAL.serviceOptions;
           id="contact-form"
           data-success-message={CONTACT_MODAL.successMessage}
         >
+          <input type="hidden" name="access_key" value={SITE.web3formsKey} />
+          <input type="hidden" name="subject" value="Mesaj nou de pe site - JL Mobila" />
           <!-- Scrollable Content area -->
           <div
             class="flex-1 overflow-y-auto hide-scrollbar pr-2 -mr-2 space-y-8 pb-4"
@@ -314,32 +316,15 @@ const services = CONTACT_MODAL.serviceOptions;
           Se trimite...
         `;
 
-        const data: Record<string, any> = {};
-        
-        formData.forEach((value, key) => {
-          if (key === 'services') {
-            if (!data.services) data.services = [];
-            data.services.push(value);
-          } else {
-            data[key] = value;
-          }
-        });
-        
-        if (data.services) {
-          data.services = data.services.join(', ');
-        }
-
-        const response = await fetch("/api/contact", {
+        const response = await fetch("https://api.web3forms.com/submit", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify(data)
+          body: new FormData(form)
         });
 
-        if (!response.ok) {
-          throw new Error("Eroare la trimitere.");
+        const resultData = await response.json();
+
+        if (!response.ok || !resultData.success) {
+          throw new Error(resultData.message || "Eroare la trimitere.");
         }
 
         const successMessage =

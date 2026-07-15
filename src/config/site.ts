@@ -15,8 +15,7 @@ export const SITE = {
   /** Contact */
   phone: "+40773504248",
   email: "customdesignjl@gmail.com",
-
-
+  web3formsKey: "5029e4aa-d609-4413-8bb0-cf5766eab20d",
   /** Primary Location */
   address: {
     street: "",                   // ← e.g. "Strada Lungă 123"
