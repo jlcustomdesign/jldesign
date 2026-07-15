@@ -15,7 +15,7 @@ export const SITE = {
   /** Contact */
   phone: "+40773504248",
   email: "customdesignjl@gmail.com",
-  formspreeId: "xvonzpge",       // ← Replace with your Formspree Form ID (e.g. "xvonzpge") to receive submissions
+
 
   /** Primary Location */
   address: {
