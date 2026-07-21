@@ -258,8 +258,8 @@
       tl.set(loaderTextContainer, { opacity: 1 });
       tl.fromTo(loadingLetter, { yPercent: 100 }, {
         yPercent: 0,
-        stagger: 0.025,
-        duration: 1.25
+        stagger: 0.01,
+        duration: 0.4
       });
     }
     
@@ -268,8 +268,8 @@
         width: "0em",
       },{
         width: "1em",
-        duration: 1.25
-      }, "< 1.25");
+        duration: 0.4
+      }, "< 0.4");
     }
 
     if (growingImage.length) {
@@ -277,7 +277,7 @@
         width: "0%",
       },{
         width: "100%",
-        duration: 1.25
+        duration: 0.4
       }, "<");
     }
     
@@ -286,7 +286,7 @@
         x: "0em",
       },{
         x: "-0.05em",
-        duration: 1.25
+        duration: 0.4
       }, "<");
     }
     
@@ -295,7 +295,7 @@
         x: "0em",
       },{
         x: "0.05em",
-        duration: 1.25
+        duration: 0.4
       }, "<");
     }
 
@@ -306,7 +306,7 @@
         opacity: 0,
         duration: 0.05,
         ease: "none",
-        stagger: 0.5
+        stagger: 0.1
       }, "-=0.05");
     }
       
@@ -315,14 +315,14 @@
         width: "100vw",
         height: "100vh",
         borderRadius: "0rem", // Flatten corners as it fills screen
-        duration: 2
-      }, "< 1.25");
+        duration: 0.8
+      }, "< 0.4");
     }
     
     if (box.length) {
       tl.to(box, {
         width: "100vw",
-        duration: 2
+        duration: 0.8
       }, "<");
     }
     
@@ -330,20 +330,20 @@
       tl.set(finalTitleContainer, { opacity: 1 }, "<");
       tl.fromTo(headerLetter, { yPercent: 100 }, {
         yPercent: 0,
-        duration: 1.25,
+        duration: 0.6,
         ease: "expo.out",
-        stagger: 0.025
-      }, "< 1.2");
+        stagger: 0.015
+      }, "< 0.3");
     }
     
     if (navbar) {
       gsap.set(navbar, { css: { transition: "none" } });
       
-      tl.to(navbar, { opacity: 1, duration: 0.05 }, "< 0.5");
+      tl.to(navbar, { opacity: 1, duration: 0.05 }, "< 0.2");
       
       tl.to(navbar, {
         scale: 1,
-        duration: 1.0,
+        duration: 0.6,
         ease: "back.out(1.7)",
         force3D: true,
         onComplete: () => {

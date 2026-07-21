@@ -37,7 +37,7 @@ function runHeroEnterAnimation(section: Element) {
 
   // 1. Reveal Navbar (if hidden)
   if (navbar) {
-    tl.to(navbar, { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.7)" }, 0.2);
+    tl.to(navbar, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)" }, 0.1);
   }
 
   // 2. Minimalist Directional Card Slides
@@ -49,8 +49,8 @@ function runHeroEnterAnimation(section: Element) {
   if (mainCard) {
     tl.fromTo(mainCard,
       { scale: 0.95, y: 50, opacity: 0 }, 
-      { scale: 1, y: 0, opacity: 1, duration: 1.5, ease: "elastic.out(1, 0.75)" },
-      0.1
+      { scale: 1, y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.2)" },
+      0.05
     );
   }
 
@@ -58,8 +58,8 @@ function runHeroEnterAnimation(section: Element) {
   if (textCard) {
     tl.fromTo(textCard,
       { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
-      0.6
+      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+      0.3
     );
   }
 
@@ -68,8 +68,8 @@ function runHeroEnterAnimation(section: Element) {
   if (desktopTitle) {
     tl.fromTo(desktopTitle,
       { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
-      0.4
+      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+      0.2
     );
   }
 
@@ -77,8 +77,8 @@ function runHeroEnterAnimation(section: Element) {
   if (ctaCard) {
     tl.fromTo(ctaCard,
       { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
-      0.8
+      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+      0.4
     );
   }
 
@@ -87,8 +87,8 @@ function runHeroEnterAnimation(section: Element) {
   if (mobileMarquees.length > 0) {
      tl.fromTo(mobileMarquees,
         { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.0, ease: "power3.out", stagger: 0.15 },
-        0.3 // Sync closely with navbar/page load
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", stagger: 0.08 },
+        0.15
      );
   }
 
@@ -97,8 +97,8 @@ function runHeroEnterAnimation(section: Element) {
   if (mobileCTA) {
      tl.fromTo(mobileCTA,
         { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.0, ease: "power3.out" },
-        0.6 // Trigger exactly as the last marquee settles
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+        0.3
      );
   }
 
@@ -111,11 +111,11 @@ function runHeroEnterAnimation(section: Element) {
        { 
          y: "0%", 
          opacity: 1, 
-         duration: 1.0, 
+         duration: 0.6, 
          ease: "power3.out",
-         stagger: 0.08
+         stagger: 0.04
        },
-       "-=1.0" // Sync deeper with card slide
+       "-=0.5"
     );
   }
 
