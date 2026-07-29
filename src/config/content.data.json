@@ -312,6 +312,10 @@
       {
         "q": "Cum începe un proiect de mobilier personalizat?",
         "a": "Proiectul începe cu o discuție despre spațiu, stilul dorit și necesitățile clientului, urmată de măsurători și propunerea unei soluții personalizate."
+      },
+      {
+        "q": "test",
+        "a": "test12345"
       }
     ]
   },
