@@ -1,0 +1,36 @@
+{
+  "clientName": "test1234",
+  "templateName": "Șablon Nou",
+  "category": "",
+  "isTemplate": false,
+  "style": "editorial",
+  "date": "",
+  "pages": [
+    {
+      "id": "description-f2z3",
+      "type": "description",
+      "heading": "Descriere proiect",
+      "paragraph": "",
+      "image": "",
+      "specs": [
+        {
+          "label": "Specificație 1",
+          "value": ""
+        },
+        {
+          "label": "Specificație 2",
+          "value": ""
+        },
+        {
+          "label": "Specificație 3",
+          "value": ""
+        },
+        {
+          "label": "",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "slug": "test1234"
+}
