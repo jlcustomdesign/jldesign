@@ -19,8 +19,10 @@ const SECTIONS: { id: Exclude<Tab, 'home'>; label: string; short: string; desc: 
 const SECTION_LABEL: Record<PendingItem['kind'], string> = {
   'offer-new': 'Oferte',
   'offer-edit': 'Oferte',
-  portfolio: 'Portofoliu',
-  blog: 'Blog',
+  'portfolio-new': 'Portofoliu',
+  'portfolio-edit': 'Portofoliu',
+  'blog-new': 'Blog',
+  'blog-edit': 'Blog',
   site: 'Conținut site',
 };
 
@@ -205,31 +207,6 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
             </div>
           </div>
         </header>
-      )}
-
-      {/* Global pending modifications bar — visible on every page (home + sections). */}
-      {pending.length > 0 && (
-        <div className="adm-pending-bar">
-          <div className="adm-pending-bar-in">
-            <span className="adm-pending-bar-title">Modificări nesalvate</span>
-            <div className="adm-pending-bar-items">
-              {Object.entries(grouped).map(([section, items]) => (
-                <div key={section} className="adm-pending-bar-group">
-                  <span className="adm-pending-bar-section">{section}</span>
-                  {items.map((it, idx) => (
-                    <button key={idx} className="adm-pending-bar-chip" onClick={() => openPending(it)} title="Deschide pentru editare">
-                      {it.kind.includes('new') && <span className="adm-pending-bar-new">Nou</span>}
-                      {it.title}
-                    </button>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <div className="adm-pending-bar-actions">
-              <button className="adm-btn gold sm" onClick={() => setPublishOpen(true)}>Publică toate ({pending.length})</button>
-            </div>
-          </div>
-        </div>
       )}
 
       <div className={tab === 'home' ? 'adm-home' : 'adm-shell'}>

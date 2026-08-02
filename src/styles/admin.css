@@ -209,23 +209,6 @@
 .adm-dialog { position: fixed; inset: 0; z-index: 210; background: rgba(20,17,13,.55); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 24px; }
 .adm-dialog-box { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; width: min(460px, 100%); padding: 22px; box-shadow: 0 24px 70px rgba(0,0,0,.3); }
 
-/* Global pending modifications bar — visible on every admin page */
-.adm-pending-bar { background: #1a1505; color: #fff; padding: 10px 0; }
-.adm-pending-bar-in { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.adm-pending-bar-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-soft); white-space: nowrap; }
-.adm-pending-bar-items { flex: 1 1 auto; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; min-width: 0; }
-.adm-pending-bar-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.adm-pending-bar-section { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: rgba(255,255,255,.55); }
-.adm-pending-bar-chip { appearance: none; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: #fff; border-radius: 999px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: .12s; white-space: nowrap; }
-.adm-pending-bar-chip:hover { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.45); }
-.adm-pending-bar-new { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; background: var(--gold); color: #1a1505; border-radius: 4px; padding: 1px 5px; }
-.adm-pending-bar-actions { flex: 0 0 auto; margin-left: auto; }
-@media (max-width: 979px) {
-  .adm-pending-bar-in { padding: 10px 16px; }
-  .adm-pending-bar-items { width: 100%; order: 3; }
-  .adm-pending-bar-actions { margin-left: 0; }
-}
-
 /* Floating pending changes button (bottom-right) */
 .adm-pending-fab {
   position: fixed; right: 24px; bottom: 92px; z-index: 90;

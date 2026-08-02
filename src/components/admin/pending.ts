@@ -10,8 +10,10 @@ const SITE_DRAFT_KEY = 'jl-site-draft';
 export type PendingItem =
   | { kind: 'offer-new'; collection: 'offers'; title: string; slug?: undefined; draft: EditOffer }
   | { kind: 'offer-edit'; collection: 'offers'; title: string; slug: string; draft: EditOffer }
-  | { kind: 'portfolio'; collection: 'portfolio'; title: string; slug: string; draft: any }
-  | { kind: 'blog'; collection: 'blog'; title: string; slug: string; draft: any }
+  | { kind: 'portfolio-new'; collection: 'portfolio'; title: string; slug?: undefined; draft: any }
+  | { kind: 'portfolio-edit'; collection: 'portfolio'; title: string; slug: string; draft: any }
+  | { kind: 'blog-new'; collection: 'blog'; title: string; slug?: undefined; draft: any }
+  | { kind: 'blog-edit'; collection: 'blog'; title: string; slug: string; draft: any }
   | { kind: 'site'; collection: 'site'; title: string; slug?: undefined; draft: any };
 
 export function readSiteDraft(): any | null {
@@ -70,8 +72,12 @@ export function computePending(data: AllData | null, siteServer: any | null): Pe
     if (!draft) continue;
     const server = { slug: e.slug, name: e.data.name || '', category: e.data.category || '', image: e.data.image || '', body: e.body || '' };
     if (JSON.stringify(draft) !== JSON.stringify(server)) {
-      pending.push({ kind: 'portfolio', collection: 'portfolio', title: e.data.name || e.slug, slug: e.slug, draft });
+      pending.push({ kind: 'portfolio-edit', collection: 'portfolio', title: draft.name || e.data.name || e.slug, slug: e.slug, draft });
     }
+  }
+  const newPortfolio = readDraft<any>('portfolio', undefined);
+  if (newPortfolio && (newPortfolio.name || newPortfolio.image || newPortfolio.body)) {
+    pending.push({ kind: 'portfolio-new', collection: 'portfolio', title: newPortfolio.name || 'Proiect nou', draft: newPortfolio });
   }
 
   // Blog
@@ -90,8 +96,12 @@ export function computePending(data: AllData | null, siteServer: any | null): Pe
       body: e.body || '',
     };
     if (JSON.stringify(draft) !== JSON.stringify(server)) {
-      pending.push({ kind: 'blog', collection: 'blog', title: e.data.title || e.slug, slug: e.slug, draft });
+      pending.push({ kind: 'blog-edit', collection: 'blog', title: draft.title || e.data.title || e.slug, slug: e.slug, draft });
     }
+  }
+  const newBlog = readDraft<any>('blog', undefined);
+  if (newBlog && (newBlog.title || newBlog.coverImage || newBlog.body)) {
+    pending.push({ kind: 'blog-new', collection: 'blog', title: newBlog.title || 'Articol nou', draft: newBlog });
   }
 
   // Site content
