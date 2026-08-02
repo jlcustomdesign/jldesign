@@ -13,14 +13,20 @@ export function readDraft<T>(collection: string, slug?: string): T | null {
   }
 }
 
+function notifyDraftChange() {
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('jl-draft-change'));
+}
+
 export function writeDraft<T>(collection: string, slug: string | undefined, draft: T) {
   try {
     localStorage.setItem(draftKey(collection, slug), JSON.stringify(draft));
   } catch {}
+  notifyDraftChange();
 }
 
 export function clearDraft(collection: string, slug?: string) {
   try {
     localStorage.removeItem(draftKey(collection, slug));
   } catch {}
+  notifyDraftChange();
 }

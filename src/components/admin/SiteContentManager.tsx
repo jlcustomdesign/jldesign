@@ -147,7 +147,10 @@ export default function SiteContentManager({ notify }: Props) {
     const json = JSON.stringify(content);
     if (json === savedRef.current) { setDirty(false); return; }
     setDirty(true);
-    const t = setTimeout(() => { try { localStorage.setItem(SITE_DRAFT_KEY, json); } catch {} }, 700);
+    const t = setTimeout(() => {
+      try { localStorage.setItem(SITE_DRAFT_KEY, json); } catch {}
+      window.dispatchEvent(new Event('jl-draft-change'));
+    }, 700);
     return () => clearTimeout(t);
   }, [content]);
 
@@ -213,6 +216,7 @@ export default function SiteContentManager({ notify }: Props) {
       savedRef.current = JSON.stringify(content);
       setDirty(false);
       clearSiteDraft();
+      window.dispatchEvent(new Event('jl-draft-change'));
       notify('Conținut publicat — apare pe site după redeploy', 'ok');
       iframeRef.current?.contentWindow?.location.reload();
     } catch (e) { notify((e as Error).message, 'err'); } finally { setBusy(false); }
@@ -226,6 +230,7 @@ export default function SiteContentManager({ notify }: Props) {
   const saveLocal = () => {
     if (!content) return;
     try { localStorage.setItem(SITE_DRAFT_KEY, JSON.stringify(content)); } catch {}
+    window.dispatchEvent(new Event('jl-draft-change'));
     setSavePrompt(false);
     notify('Salvat în browser', 'ok');
   };

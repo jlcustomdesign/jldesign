@@ -4,6 +4,8 @@ import { saveEntry, deleteEntry } from './api';
 import { TextInput, TextArea, ImageInput, SectionHead, TagInput } from './ui';
 import OfferDocument, { normalizeOffer, uid, DEFAULT_LABEL, type Offer, type Section, type SectionType } from '../offer/OfferDocument';
 import { fillCrop, GAL_MAX } from '../offer/galleryLayout';
+import * as drafts from './drafts';
+import { isBlankNewOffer } from './pending';
 
 /** Gallery advice: measures the current images' aspect ratios and tells the
    user whether another image (and which orientation) would pack well. The
@@ -51,11 +53,31 @@ const fromEntry = (e: Entry): EditOffer => ({ ...normalizeOffer(e.data), slug: e
 
 // Offer drafts live in the BROWSER (localStorage) so edits are instant and never
 // lost. Publishing to the site (a GitHub commit) happens only on "Salvează".
-const DRAFT_PREFIX = 'jl-offer-draft:';
-const draftKey = (slug?: string) => DRAFT_PREFIX + (slug || 'new');
-function writeDraft(o: EditOffer) { try { localStorage.setItem(draftKey(o.slug), JSON.stringify(o)); } catch {} }
-function readDraft(slug?: string): EditOffer | null { try { const s = localStorage.getItem(draftKey(slug)); return s ? (JSON.parse(s) as EditOffer) : null; } catch { return null; } }
-function clearDraft(slug?: string) { try { localStorage.removeItem(draftKey(slug)); } catch {} }
+// We now use the shared drafts module; the helpers below also read the legacy
+// key so existing unsaved work is not lost.
+const LEGACY_PREFIX = 'jl-offer-draft:';
+const legacyKey = (slug?: string) => LEGACY_PREFIX + (slug || 'new');
+function writeDraft(o: EditOffer) {
+  drafts.writeDraft('offers', o.slug, o);
+  try { localStorage.removeItem(legacyKey(o.slug)); } catch {}
+}
+function readDraft(slug?: string): EditOffer | null {
+  const d = drafts.readDraft<EditOffer>('offers', slug);
+  if (d) return d;
+  try {
+    const s = localStorage.getItem(legacyKey(slug));
+    if (!s) return null;
+    const parsed = JSON.parse(s) as EditOffer;
+    // migrate to the new key on first read
+    drafts.writeDraft('offers', slug, parsed);
+    try { localStorage.removeItem(legacyKey(slug)); } catch {}
+    return parsed;
+  } catch { return null; }
+}
+function clearDraft(slug?: string) {
+  drafts.clearDraft('offers', slug);
+  try { localStorage.removeItem(legacyKey(slug)); } catch {}
+}
 const countPages = (o: any): number => 1 + (Array.isArray(o?.pages) ? o.pages.length : ['description', 'materials', 'accessories', 'sketches'].filter((k) => o?.[k]?.enabled).length);
 
 const PAGE_TYPES: { type: SectionType; name: string }[] = [
@@ -198,15 +220,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
   offerRef.current = offer;
 
   const tplOffers = useMemo(() => TEMPLATES.map((t) => t.make()), []);
-  const pendingCount = useMemo(() => {
-    let n = 0;
-    for (const e of items) {
-      const d = readDraft(e.slug);
-      if (d && JSON.stringify(d) !== JSON.stringify(fromEntry(e))) n++;
-    }
-    if (readDraft(undefined)) n++;
-    return n;
-  }, [items]);
+  const hasUnsavedNew = !!readDraft(undefined) && !isBlankNewOffer(readDraft(undefined));
   const patch = (p: Partial<EditOffer>) => setOffer((o) => (o ? { ...o, ...p } : o));
   const setPages = (pages: Section[]) => patch({ pages });
   // Functional update: async callbacks (e.g. image orientation detection)
@@ -885,7 +899,12 @@ export default function OfferManager({ items, notify, reload }: Props) {
     <div>
       <SectionHead title="Generator oferte" desc={`${items.length} oferte · prezentări de proiect în brand JL Custom Design`}
         action={<>
-          {readDraft(undefined) && <button className="adm-btn ghost" onClick={resumeNew} style={{ marginRight: 8 }} title="Continuă oferta nouă nesalvată">Continuă oferta nesalvată</button>}
+          {hasUnsavedNew && (
+            <>
+              <button className="adm-btn ghost" onClick={resumeNew} style={{ marginRight: 8 }} title="Continuă oferta nouă nesalvată">Continuă oferta nesalvată</button>
+              <button className="adm-btn danger" onClick={() => { if (window.confirm('Ștergi oferta nouă nesalvată?')) clearDraft(undefined); }} style={{ marginRight: 8 }} title="Elimină oferta nesalvată din browser">Șterge oferta nesalvată</button>
+            </>
+          )}
           <button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick_offer'); }} style={{ marginRight: 8 }} title="Creează o ofertă nouă">+ Ofertă nouă</button>
           <button className="adm-btn ghost" onClick={() => {
             clearDraft(undefined);
@@ -893,7 +912,6 @@ export default function OfferManager({ items, notify, reload }: Props) {
             lastSaved.current = ''; setAuto('');
             setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
           }} title="Creează un șablon nou">+ Șablon nou</button>
-          {pendingCount > 0 && <button className="adm-btn gold" onClick={publishAll} disabled={busy} style={{ marginLeft: 8 }} title={`Publică toate cele ${pendingCount} oferte cu modificări nesalvate`}>Publică toate modificările ({pendingCount})</button>}
         </>} />
       {items.filter(e => !e.data.isTemplate && !hiddenSlugs.has(e.slug)).length === 0 ? (
         <div className="adm-empty">Nicio ofertă încă. Apasă „Ofertă nouă", alege un model și personalizează-l.</div>

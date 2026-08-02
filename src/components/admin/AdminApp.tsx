@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { fetchData, type AllData } from './api';
+import { fetchData, saveEntry, type AllData } from './api';
 import { Toast } from './ui';
 import PortfolioManager from './PortfolioManager';
 import BlogManager from './BlogManager';
 import OfferManager from './OfferManager';
 import SiteContentManager from './SiteContentManager';
+import { computePending, clearPendingDrafts, readSiteDraft, type PendingItem } from './pending';
 
 type Tab = 'home' | 'portfolio' | 'blog' | 'offers' | 'site';
 
@@ -14,6 +15,14 @@ const SECTIONS: { id: Exclude<Tab, 'home'>; label: string; short: string; desc: 
   { id: 'offers', label: 'Generator oferte', short: 'Oferte', desc: 'Prezentări de proiect (PDF)' },
   { id: 'site', label: 'Conținut site', short: 'Conținut', desc: 'Texte și imagini din site' },
 ];
+
+const SECTION_LABEL: Record<PendingItem['kind'], string> = {
+  'offer-new': 'Oferte',
+  'offer-edit': 'Oferte',
+  portfolio: 'Portofoliu',
+  blog: 'Blog',
+  site: 'Conținut site',
+};
 
 export default function AdminApp({ user }: { user?: { name?: string | null; login?: string; avatar?: string } }) {
   const [tab, setTabRaw] = useState<Tab>(() => {
@@ -49,6 +58,7 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   }, []);
 
   const [data, setData] = useState<AllData | null>(null);
+  const [siteServer, setSiteServer] = useState<any | null>(null);
   const [error, setError] = useState('');
   const [toast, setToast] = useState<{ msg: string; kind: 'ok' | 'err' | '' }>({ msg: '', kind: '' });
 
@@ -57,9 +67,99 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
     window.setTimeout(() => setToast({ msg: '', kind: '' }), 3200);
   }, []);
   const reload = useCallback(async () => {
-    try { setData(await fetchData()); } catch (e) { setError((e as Error).message); }
+    try {
+      const [all, site] = await Promise.all([fetchData(), fetch('/api/admin/site').then((r) => r.json())]);
+      setData(all);
+      setSiteServer(site);
+    } catch (e) { setError((e as Error).message); }
   }, []);
   useEffect(() => { reload(); }, [reload]);
+
+  const [pending, setPending] = useState<PendingItem[]>([]);
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [publishBusy, setPublishBusy] = useState(false);
+
+  const recomputePending = useCallback(() => {
+    setPending(computePending(data, siteServer));
+  }, [data, siteServer]);
+
+  useEffect(() => { recomputePending(); }, [recomputePending]);
+
+  useEffect(() => {
+    const onDraftChange = () => recomputePending();
+    window.addEventListener('jl-draft-change', onDraftChange);
+    return () => window.removeEventListener('jl-draft-change', onDraftChange);
+  }, [recomputePending]);
+
+  const publishAllPending = async () => {
+    if (pending.length === 0) return;
+    setPublishBusy(true);
+    let count = 0;
+    try {
+      for (const it of pending) {
+        if (it.collection === 'offers') {
+          const d = it.draft;
+          await saveEntry({ collection: 'offers', slug: it.slug, data: d });
+        } else if (it.collection === 'portfolio') {
+          const d = it.draft;
+          await saveEntry({
+            collection: 'portfolio',
+            slug: it.slug,
+            data: { name: d.name?.trim() || '', category: d.category || '', image: d.image || '' },
+            body: d.body || '',
+          });
+        } else if (it.collection === 'blog') {
+          const d = it.draft;
+          await saveEntry({
+            collection: 'blog',
+            slug: it.slug,
+            data: {
+              title: d.title?.trim() || '',
+              description: d.description?.trim() || '',
+              category: d.category || 'inspiratie',
+              author: d.author?.trim() || 'JL Custom Design',
+              publishedDate: d.publishedDate || '',
+              coverImage: d.coverImage || '',
+              coverImageAlt: d.coverImageAlt?.trim() || '',
+            },
+            body: d.body || '',
+          });
+        } else if (it.collection === 'site') {
+          const res = await fetch('/api/admin/site', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: it.draft }),
+          });
+          const j = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(j.error || 'Salvare site eșuată');
+        }
+        count++;
+      }
+      clearPendingDrafts(pending);
+      await reload();
+      notify(count ? `${count} modificări publicate` : 'Nicio modificare de publicat', 'ok');
+      setPublishOpen(false);
+    } catch (e) {
+      notify((e as Error).message, 'err');
+    } finally {
+      setPublishBusy(false);
+    }
+  };
+
+  const grouped = pending.reduce((acc, it) => {
+    const label = SECTION_LABEL[it.kind];
+    acc[label] = acc[label] || [];
+    acc[label].push(it);
+    return acc;
+  }, {} as Record<string, PendingItem[]>);
+
+  const openPending = (it: PendingItem) => {
+    if (it.collection === 'offers') setTab('offers');
+    else if (it.collection === 'portfolio') setTab('portfolio');
+    else if (it.collection === 'blog') setTab('blog');
+    else if (it.collection === 'site') setTab('site');
+    setPublishOpen(false);
+  };
 
   const counts: Record<string, number | undefined> = {
     portfolio: data?.portfolio.length, blog: data?.blog.length, offers: data?.offers.length,
@@ -81,6 +181,16 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
                 </li>
               ))}
             </ul>
+            {pending.length > 0 && (
+              <button
+                className="adm-btn gold"
+                onClick={() => setPublishOpen(true)}
+                title={`Vezi lista cu ${pending.length} modificări nesalvate`}
+                style={{ marginRight: 12 }}
+              >
+                Publică toate modificările ({pending.length})
+              </button>
+            )}
             <a className="adm-cta" href="/api/admin/logout">Ieșire</a>
           </div>
         </header>
@@ -135,7 +245,41 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
         {SECTIONS.map((s) => (
           <button key={s.id} className="adm-dock-btn" aria-current={tab === s.id ? 'true' : undefined} onClick={() => setTab(s.id)}>{s.short}</button>
         ))}
+        {pending.length > 0 && (
+          <button className="adm-dock-btn gold" onClick={() => setPublishOpen(true)} title={`${pending.length} modificări nesalvate`}>
+            Publică ({pending.length})
+          </button>
+        )}
       </nav>
+
+      {/* Global publish-all dialog */}
+      {publishOpen && (
+        <div className="adm-dialog" onClick={() => !publishBusy && setPublishOpen(false)}>
+          <div className="adm-dialog-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 520 }}>
+            <h4>Modificări nesalvate ({pending.length})</h4>
+            <p> aceste elemente sunt salvate doar în browser. Publică-le pe site când ești gata.</p>
+            <div className="pending-list" style={{ maxHeight: '60vh', overflow: 'auto', margin: '16px 0' }}>
+              {Object.entries(grouped).map(([section, items]) => (
+                <div key={section} style={{ marginBottom: 14 }}>
+                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, opacity: 0.7, marginBottom: 6 }}>{section}</div>
+                  {items.map((it, idx) => (
+                    <div key={idx} className="pending-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: 'var(--surface-2)', borderRadius: 6, marginBottom: 6 }}>
+                      <span>{it.title}</span>
+                      <button className="adm-btn ghost sm" onClick={() => openPending(it)}>Deschide</button>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="adm-dialog-actions">
+              <button className="adm-btn ghost" onClick={() => setPublishOpen(false)} disabled={publishBusy}>Anulează</button>
+              <button className="adm-btn gold" onClick={publishAllPending} disabled={publishBusy || pending.length === 0}>
+                {publishBusy ? 'Se publică…' : `Publică toate (${pending.length})`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Toast msg={toast.msg} kind={toast.kind} />
     </div>
