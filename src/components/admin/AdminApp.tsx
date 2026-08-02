@@ -280,9 +280,18 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
                         <div key={idx} className="adm-pending-panel-row">
                           <span className="adm-pending-panel-title">
                             {it.kind.includes('new') && <span className="adm-pending-panel-new">Nou</span>}
-                            {it.title}
+                            <span>{it.title}</span>
                           </span>
-                          <button className="adm-btn ghost sm" onClick={() => { setPendingPanelOpen(false); openPending(it); }}>Editează</button>
+                          <div className="adm-pending-panel-row-actions">
+                            <button className="adm-btn ghost sm" onClick={() => { setPendingPanelOpen(false); openPending(it); }}>Editează</button>
+                            <button
+                              className="adm-btn danger sm"
+                              onClick={() => { if (window.confirm(`Ștergi modificările locale pentru „${it.title}"?`)) clearPendingDrafts([it]); }}
+                              title="Șterge draftul local"
+                            >
+                              Șterge
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
