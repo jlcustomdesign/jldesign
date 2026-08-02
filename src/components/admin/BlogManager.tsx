@@ -41,9 +41,12 @@ export default function BlogManager({ items, notify, reload }: Props) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [busy, setBusy] = useState(false);
   const [savePrompt, setSavePrompt] = useState(false);
+  const [hiddenSlugs, setHiddenSlugs] = useState<Set<string>>(new Set());
   const draftRef = useRef<Draft | null>(null);
   const lastSaved = useRef<string>('');
   draftRef.current = draft;
+  const hideSlug = (slug: string) => setHiddenSlugs((prev) => new Set(prev).add(slug));
+  const unhideSlug = (slug: string) => setHiddenSlugs((prev) => { const n = new Set(prev); n.delete(slug); return n; });
 
   const open = (e?: Entry) => {
     let server: Draft | null = null;
@@ -129,11 +132,15 @@ export default function BlogManager({ items, notify, reload }: Props) {
     return () => clearTimeout(t);
   }, [draft]);
 
-  // Warn before leaving with unpublished changes.
+  // Warn before leaving only if the current draft is neither published nor
+  // saved locally in the browser.
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       const d = draftRef.current;
-      if (!d || JSON.stringify(d) === lastSaved.current) return;
+      if (!d) return;
+      const draft = readDraft<Draft>('blog', d.slug);
+      const curJson = JSON.stringify(d);
+      if (curJson === lastSaved.current || curJson === JSON.stringify(draft)) return;
       e.preventDefault();
       e.returnValue = '';
     };
@@ -143,18 +150,23 @@ export default function BlogManager({ items, notify, reload }: Props) {
 
   const closeEditor = () => {
     const d = draftRef.current;
-    const dirty = d && JSON.stringify(d) !== lastSaved.current;
+    if (!d) { setDraft(null); return; }
+    const draft = readDraft<Draft>('blog', d.slug);
+    const curJson = JSON.stringify(d);
+    const dirty = curJson !== lastSaved.current && curJson !== JSON.stringify(draft);
     if (dirty && !window.confirm('Ai modificări nepublicate. Dacă închizi, rămân salvate în browser. Continui?')) return;
     setDraft(null);
   };
 
   const remove = async (e: Entry) => {
     if (!window.confirm(`Ștergi articolul „${e.data.title || e.slug}”?`)) return;
+    hideSlug(e.slug);
     try {
       await deleteEntry('blog', e.slug);
       await reload();
       notify('Articol șters', 'ok');
     } catch (err) {
+      unhideSlug(e.slug);
       notify((err as Error).message, 'err');
     }
   };
@@ -215,7 +227,7 @@ export default function BlogManager({ items, notify, reload }: Props) {
     );
   }
 
-  const sorted = [...items].sort((a, b) =>
+  const sorted = [...items].filter((e) => !hiddenSlugs.has(e.slug)).sort((a, b) =>
     String(b.data.publishedDate || '').localeCompare(String(a.data.publishedDate || ''))
   );
 
@@ -226,7 +238,7 @@ export default function BlogManager({ items, notify, reload }: Props) {
         desc={`${items.length} articole`}
         action={<button className="adm-btn" onClick={() => open()} title="Adaugă un articol nou pe blog">＋ Articol nou</button>}
       />
-      {items.length === 0 ? (
+      {sorted.length === 0 ? (
         <div className="adm-empty">Niciun articol încă. Apasă „Articol nou” pentru a scrie primul.</div>
       ) : (
         <div className="adm-grid">

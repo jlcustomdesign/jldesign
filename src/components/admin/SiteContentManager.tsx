@@ -230,11 +230,15 @@ export default function SiteContentManager({ notify }: Props) {
     notify('Salvat în browser', 'ok');
   };
 
-  // Warn before leaving with unpublished changes.
+  // Warn before leaving only if the current content differs from both the
+  // published version and the local browser draft.
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       const c = contentRef.current;
-      if (!c || JSON.stringify(c) === savedRef.current) return;
+      if (!c) return;
+      const draft = readSiteDraft();
+      const curJson = JSON.stringify(c);
+      if (curJson === savedRef.current || curJson === JSON.stringify(draft)) return;
       e.preventDefault();
       e.returnValue = '';
     };

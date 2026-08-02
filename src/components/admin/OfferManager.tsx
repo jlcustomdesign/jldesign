@@ -154,12 +154,15 @@ export default function OfferManager({ items, notify, reload }: Props) {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  // Warn before closing the tab if there are unpublished changes.
-  // Browser drafts are preserved, but the user should know they're leaving.
+  // Warn before closing the tab only if the current edits are neither
+  // published (lastSaved) nor saved locally in the browser draft.
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       const cur = offerRef.current;
-      if (!cur || JSON.stringify(cur) === lastSaved.current) return;
+      if (!cur) return;
+      const draft = readDraft(cur.slug);
+      const curJson = JSON.stringify(cur);
+      if (curJson === lastSaved.current || curJson === JSON.stringify(draft)) return;
       e.preventDefault();
       e.returnValue = '';
     };
@@ -184,6 +187,9 @@ export default function OfferManager({ items, notify, reload }: Props) {
   const [pdfBusy, setPdfBusy] = useState(false);
   const [preview, setPreview] = useState(false);
   const [savePrompt, setSavePrompt] = useState(false);
+  const [hiddenSlugs, setHiddenSlugs] = useState<Set<string>>(new Set());
+  const hideSlug = (slug: string) => setHiddenSlugs((prev) => new Set(prev).add(slug));
+  const unhideSlug = (slug: string) => setHiddenSlugs((prev) => { const n = new Set(prev); n.delete(slug); return n; });
   // Index of the page being edited (0 = cover) — the full preview jumps to it.
   const lastPage = useRef(0);
   const [overflowPages, setOverflowPages] = useState<number[]>([]);
@@ -273,7 +279,10 @@ export default function OfferManager({ items, notify, reload }: Props) {
   };
   const cancel = () => {
     const cur = offerRef.current;
-    const dirty = cur && JSON.stringify(cur) !== lastSaved.current;
+    if (!cur) { setOffer(null); setView('list'); reload(); return; }
+    const draft = readDraft(cur.slug);
+    const curJson = JSON.stringify(cur);
+    const dirty = curJson !== lastSaved.current && curJson !== JSON.stringify(draft);
     if (dirty && !window.confirm('Ai modificări nepublicate. Dacă închizi, rămân salvate în browser. Continui?')) return;
     setOffer(null); setView('list'); reload();
   };
@@ -391,8 +400,15 @@ export default function OfferManager({ items, notify, reload }: Props) {
 
   const remove = async (e: Entry) => {
     if (!window.confirm(`Ștergi oferta „${e.data.clientName || e.slug}”?`)) return;
-    try { await deleteEntry('offers', e.slug); await reload(); notify('Ofertă ștearsă', 'ok'); }
-    catch (err) { notify((err as Error).message, 'err'); }
+    hideSlug(e.slug);
+    try {
+      await deleteEntry('offers', e.slug);
+      await reload();
+      notify('Ofertă ștearsă', 'ok');
+    } catch (err) {
+      unhideSlug(e.slug);
+      notify((err as Error).message, 'err');
+    }
   };
 
   // Copy an offer/template exactly — start a new one from the same content.
@@ -443,7 +459,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
 
   /* ===================== RENDER ===================== */
   if (view === 'pick_offer') {
-    const userTemplates = items.filter(e => e.data.isTemplate);
+    const userTemplates = items.filter(e => e.data.isTemplate && !hiddenSlugs.has(e.slug));
     return (
       <div>
         <SectionHead title="Crează ofertă" desc="Alege unul din șabloanele salvate anterior pentru a începe o ofertă nouă."
@@ -539,7 +555,6 @@ export default function OfferManager({ items, notify, reload }: Props) {
           <button className="adm-btn ghost" onClick={downloadPdf} disabled={pdfBusy} title="Descarcă PDF cu modificările curente" style={{ marginLeft: 8 }}>{pdfBusy ? 'Se generează…' : '⬇ PDF'}</button>
           <button className="adm-btn ghost" onClick={cancel} disabled={busy} title="Închide editorul și întoarce-te la listă" style={{ marginLeft: 8 }}>Închide</button>
           <button className="adm-btn gold" onClick={openSavePrompt} disabled={busy || !dirty} title={dirty ? 'Alege: salvează local în browser sau publică pe site' : 'Toate modificările sunt publicate'} style={{ marginLeft: 8 }}>{dirty ? 'Salvează' : 'Salvat'}</button>
-          {pendingCount > 0 && <button className="adm-btn gold" onClick={publishAll} disabled={busy} title={`Publică toate cele ${pendingCount} oferte cu modificări nesalvate`} style={{ marginLeft: 8 }}>Publică toate ({pendingCount})</button>}
         </div>
 
         {overflowPages.length > 0 && (
@@ -880,11 +895,11 @@ export default function OfferManager({ items, notify, reload }: Props) {
           }} title="Creează un șablon nou">+ Șablon nou</button>
           {pendingCount > 0 && <button className="adm-btn gold" onClick={publishAll} disabled={busy} style={{ marginLeft: 8 }} title={`Publică toate cele ${pendingCount} oferte cu modificări nesalvate`}>Publică toate modificările ({pendingCount})</button>}
         </>} />
-      {items.filter(e => !e.data.isTemplate).length === 0 ? (
-        <div className="adm-empty">Nicio ofertă încă. Apasă „Ofertă nouă”, alege un model și personalizează-l.</div>
+      {items.filter(e => !e.data.isTemplate && !hiddenSlugs.has(e.slug)).length === 0 ? (
+        <div className="adm-empty">Nicio ofertă încă. Apasă „Ofertă nouă", alege un model și personalizează-l.</div>
       ) : (
         <div className="adm-grid">
-          {items.filter(e => !e.data.isTemplate).map((e) => (
+          {items.filter(e => !e.data.isTemplate && !hiddenSlugs.has(e.slug)).map((e) => (
             <div className="adm-card" key={e.slug}>
               <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url("${e.data.coverImage}")` } : undefined}>{!e.data.coverImage && 'fără copertă'}</div>
               <div className="body">

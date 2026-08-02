@@ -26,9 +26,12 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
   const [busy, setBusy] = useState(false);
   const [savePrompt, setSavePrompt] = useState(false);
   const [imgOrient, setImgOrient] = useState<'portrait' | 'landscape' | null>(null);
+  const [hiddenSlugs, setHiddenSlugs] = useState<Set<string>>(new Set());
   const draftRef = useRef<Draft | null>(null);
   const lastSaved = useRef<string>('');
   draftRef.current = draft;
+  const hideSlug = (slug: string) => setHiddenSlugs((prev) => new Set(prev).add(slug));
+  const unhideSlug = (slug: string) => setHiddenSlugs((prev) => { const n = new Set(prev); n.delete(slug); return n; });
 
   // Detect orientation of the selected image so the preview frame matches it.
   useEffect(() => {
@@ -123,11 +126,15 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
     return () => clearTimeout(t);
   }, [draft]);
 
-  // Warn before leaving with unpublished changes.
+  // Warn before leaving only if the current draft is neither published nor
+  // saved locally in the browser.
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       const d = draftRef.current;
-      if (!d || JSON.stringify(d) === lastSaved.current) return;
+      if (!d) return;
+      const draft = readDraft<Draft>('portfolio', d.slug);
+      const curJson = JSON.stringify(d);
+      if (curJson === lastSaved.current || curJson === JSON.stringify(draft)) return;
       e.preventDefault();
       e.returnValue = '';
     };
@@ -137,18 +144,23 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
 
   const remove = async (e: Entry) => {
     if (!window.confirm(`Ștergi proiectul „${e.data.name || e.slug}”?`)) return;
+    hideSlug(e.slug);
     try {
       await deleteEntry('portfolio', e.slug);
       await reload();
       notify('Proiect șters', 'ok');
     } catch (err) {
+      unhideSlug(e.slug);
       notify((err as Error).message, 'err');
     }
   };
 
   const closeEditor = () => {
     const d = draftRef.current;
-    const dirty = d && JSON.stringify(d) !== lastSaved.current;
+    if (!d) { setDraft(null); return; }
+    const draft = readDraft<Draft>('portfolio', d.slug);
+    const curJson = JSON.stringify(d);
+    const dirty = curJson !== lastSaved.current && curJson !== JSON.stringify(draft);
     if (dirty && !window.confirm('Ai modificări nepublicate. Dacă închizi, rămân salvate în browser. Continui?')) return;
     setDraft(null);
   };
@@ -223,11 +235,11 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
         desc={`${items.length} proiecte · ${categories.length} categorii`}
         action={<button className="adm-btn" onClick={() => open()} title="Adaugă un proiect nou în portofoliu">＋ Proiect nou</button>}
       />
-      {items.length === 0 ? (
+      {items.filter((e) => !hiddenSlugs.has(e.slug)).length === 0 ? (
         <div className="adm-empty">Niciun proiect încă. Apasă „Proiect nou” pentru a începe.</div>
       ) : (
         <div className="adm-grid">
-          {items.map((e) => (
+          {items.filter((e) => !hiddenSlugs.has(e.slug)).map((e) => (
             <div className="adm-card" key={e.slug}>
               <div className={`thumb${e.data.image ? '' : ' empty'}`} style={e.data.image ? { backgroundImage: `url("${e.data.image}")` } : undefined}>
                 {!e.data.image && 'fără imagine'}
