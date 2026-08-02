@@ -208,6 +208,17 @@
 /* Choice dialog (save local vs publish) */
 .adm-dialog { position: fixed; inset: 0; z-index: 210; background: rgba(20,17,13,.55); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 24px; }
 .adm-dialog-box { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; width: min(460px, 100%); padding: 22px; box-shadow: 0 24px 70px rgba(0,0,0,.3); }
+
+/* Pending modifications island — visible on list pages */
+.pending-island { background: var(--panel); border: 1px solid var(--gold-soft); border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(201,162,39,.10); }
+.pending-island-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.pending-island-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-2); }
+.pending-island-count { font-size: 12px; font-weight: 700; background: var(--gold); color: #1a1505; border-radius: 999px; padding: 2px 9px; }
+.pending-island-body { display: flex; flex-direction: column; gap: 8px; }
+.pending-island-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 10px; background: var(--bg); border-radius: 10px; }
+.pending-island-label { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.pending-island-new { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; background: var(--ink); color: #fff; border-radius: 4px; padding: 2px 6px; }
+.pending-island-actions { display: flex; gap: 6px; }
 .adm-dialog-box h4 { margin: 0 0 8px; font-size: 18px; }
 .adm-dialog-box p { margin: 0 0 20px; color: var(--muted); font-size: 14px; line-height: 1.5; }
 .adm-dialog-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }

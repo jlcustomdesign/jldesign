@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { Entry } from './api';
 import { saveEntry, deleteEntry } from './api';
-import { Field, TextInput, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt } from './ui';
+import { Field, TextInput, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt, PendingIsland } from './ui';
 import { readDraft, writeDraft, clearDraft } from './drafts';
 
 interface Props {
@@ -57,12 +57,22 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
         body: e.body || '',
       };
     }
-    const local = readDraft<Draft>('portfolio', e?.slug);
+    // For a NEW project, always start fresh. Use the separate resume action
+    // to continue an unsaved new draft.
+    const local = e ? readDraft<Draft>('portfolio', e.slug) : null;
     const restored = local && JSON.stringify(local) !== JSON.stringify(server);
     const next = local || server || emptyDraft(categories[0]?.slug || '');
     setDraft(next);
     lastSaved.current = JSON.stringify(server || next);
     if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+  };
+
+  const resumeNew = () => {
+    const d = readDraft<Draft>('portfolio', undefined);
+    if (!d) return;
+    setDraft(d);
+    lastSaved.current = '';
+    notify('Am restaurat proiectul nou nesalvat', 'ok');
   };
 
   const addCategory = async () => {
@@ -113,6 +123,7 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
     writeDraft('portfolio', draft.slug, draft);
     setSavePrompt(false);
     notify('Salvat în browser', 'ok');
+    setDraft(null);
   };
 
   // Autosave to browser on every change.
@@ -228,8 +239,35 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
     );
   }
 
+  const pendingItems = useMemo(() => {
+    const out: { key: string; label: string; isNew: boolean }[] = [];
+    for (const e of items) {
+      const d = readDraft<Draft>('portfolio', e.slug);
+      const server = { slug: e.slug, name: e.data.name || '', category: e.data.category || '', image: e.data.image || '', body: e.body || '' };
+      if (d && JSON.stringify(d) !== JSON.stringify(server)) {
+        out.push({ key: e.slug, label: d.name || e.slug, isNew: false });
+      }
+    }
+    const n = readDraft<Draft>('portfolio', undefined);
+    if (n && (n.name || n.image || n.body)) {
+      out.push({ key: 'new', label: n.name || 'Proiect nou', isNew: true });
+    }
+    return out;
+  }, [items]);
+
+  const editPending = (key: string) => {
+    if (key === 'new') resumeNew();
+    else open(items.find((e) => e.slug === key));
+  };
+
   return (
     <div>
+      <PendingIsland
+        title="Modificări nesalvate"
+        items={pendingItems}
+        onEdit={editPending}
+        onClearNew={() => { if (window.confirm('Ștergi proiectul nou nesalvat?')) { clearDraft('portfolio', undefined); notify('Draft șters', 'ok'); } }}
+      />
       <SectionHead
         title="Portofoliu"
         desc={`${items.length} proiecte · ${categories.length} categorii`}

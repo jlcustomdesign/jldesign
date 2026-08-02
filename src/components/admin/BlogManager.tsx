@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Entry } from './api';
 import { saveEntry, deleteEntry } from './api';
-import { Field, TextInput, TextArea, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt } from './ui';
+import { Field, TextInput, TextArea, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt, PendingIsland } from './ui';
 import { readDraft, writeDraft, clearDraft } from './drafts';
 
 const CATEGORIES = [
@@ -63,12 +63,22 @@ export default function BlogManager({ items, notify, reload }: Props) {
         body: e.body || '',
       };
     }
-    const local = readDraft<Draft>('blog', e?.slug);
+    // For a NEW article, always start fresh. Use the separate resume action
+    // to continue an unsaved new draft.
+    const local = e ? readDraft<Draft>('blog', e.slug) : null;
     const restored = local && JSON.stringify(local) !== JSON.stringify(server);
     const next = local || server || emptyDraft();
     setDraft(next);
     lastSaved.current = JSON.stringify(server || next);
     if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+  };
+
+  const resumeNew = () => {
+    const d = readDraft<Draft>('blog', undefined);
+    if (!d) return;
+    setDraft(d);
+    lastSaved.current = '';
+    notify('Am restaurat articolul nou nesalvat', 'ok');
   };
 
   const publish = async () => {
@@ -119,6 +129,7 @@ export default function BlogManager({ items, notify, reload }: Props) {
     writeDraft('blog', draft.slug, draft);
     setSavePrompt(false);
     notify('Salvat în browser', 'ok');
+    setDraft(null);
   };
 
   // Autosave to browser on every change.
@@ -231,8 +242,39 @@ export default function BlogManager({ items, notify, reload }: Props) {
     String(b.data.publishedDate || '').localeCompare(String(a.data.publishedDate || ''))
   );
 
+  const pendingItems = useMemo(() => {
+    const out: { key: string; label: string; isNew: boolean }[] = [];
+    for (const e of items) {
+      const d = readDraft<Draft>('blog', e.slug);
+      const server = {
+        slug: e.slug, title: e.data.title || '', description: e.data.description || '', category: e.data.category || 'inspiratie',
+        author: e.data.author || 'JL Custom Design', publishedDate: String(e.data.publishedDate || today()).slice(0, 10),
+        coverImage: e.data.coverImage || '', coverImageAlt: e.data.coverImageAlt || '', body: e.body || '',
+      };
+      if (d && JSON.stringify(d) !== JSON.stringify(server)) {
+        out.push({ key: e.slug, label: d.title || e.slug, isNew: false });
+      }
+    }
+    const n = readDraft<Draft>('blog', undefined);
+    if (n && (n.title || n.coverImage || n.body)) {
+      out.push({ key: 'new', label: n.title || 'Articol nou', isNew: true });
+    }
+    return out;
+  }, [items]);
+
+  const editPending = (key: string) => {
+    if (key === 'new') resumeNew();
+    else open(items.find((e) => e.slug === key));
+  };
+
   return (
     <div>
+      <PendingIsland
+        title="Modificări nesalvate"
+        items={pendingItems}
+        onEdit={editPending}
+        onClearNew={() => { if (window.confirm('Ștergi articolul nou nesalvat?')) { clearDraft('blog', undefined); notify('Draft șters', 'ok'); } }}
+      />
       <SectionHead
         title="Blog"
         desc={`${items.length} articole`}

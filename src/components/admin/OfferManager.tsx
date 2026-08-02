@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Entry } from './api';
 import { saveEntry, deleteEntry } from './api';
-import { TextInput, TextArea, ImageInput, SectionHead, TagInput } from './ui';
+import { TextInput, TextArea, ImageInput, SectionHead, TagInput, PendingIsland } from './ui';
 import OfferDocument, { normalizeOffer, uid, DEFAULT_LABEL, type Offer, type Section, type SectionType } from '../offer/OfferDocument';
 import { fillCrop, GAL_MAX } from '../offer/galleryLayout';
 import * as drafts from './drafts';
@@ -338,6 +338,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
     setAuto('saved');
     setSavePrompt(false);
     notify('Salvat în browser', 'ok');
+    setOffer(null); setView('list'); reload();
   };
 
   // Publish every offer that has a local draft different from the server copy.
@@ -730,7 +731,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
               <p>Modificările sunt deja salvate în browser. Poți să le publici pe site acum sau să le păstrezi locale și să publici mai târziu.</p>
               <div className="adm-dialog-actions">
                 <button className="adm-btn ghost" onClick={() => setSavePrompt(false)}>Anulează</button>
-                <button className="adm-btn" onClick={saveLocal}>Salvează local</button>
+                <button className="adm-btn" onClick={saveLocal}>Salvează local și închide</button>
                 <button className="adm-btn gold" onClick={() => { setSavePrompt(false); save(); }}>Publică pe site</button>
               </div>
             </div>
@@ -895,16 +896,36 @@ export default function OfferManager({ items, notify, reload }: Props) {
   }
 
   /* ---------------- LIST ---------------- */
+  const pendingOfferItems = useMemo(() => {
+    const out: { key: string; label: string; isNew: boolean }[] = [];
+    for (const e of items) {
+      const d = readDraft(e.slug);
+      if (d && JSON.stringify(d) !== JSON.stringify(fromEntry(e))) {
+        out.push({ key: e.slug, label: d.clientName || d.templateName || e.slug, isNew: false });
+      }
+    }
+    const n = readDraft(undefined);
+    if (n && !isBlankNewOffer(n)) {
+      out.push({ key: 'new', label: n.clientName || n.templateName || 'Ofertă nouă', isNew: true });
+    }
+    return out;
+  }, [items]);
+
+  const editPending = (key: string) => {
+    if (key === 'new') resumeNew();
+    else edit(items.find((e) => e.slug === key)!);
+  };
+
   return (
     <div>
+      <PendingIsland
+        title="Modificări nesalvate"
+        items={pendingOfferItems}
+        onEdit={editPending}
+        onClearNew={() => { if (window.confirm('Ștergi oferta nouă nesalvată?')) clearDraft(undefined); }}
+      />
       <SectionHead title="Generator oferte" desc={`${items.length} oferte · prezentări de proiect în brand JL Custom Design`}
         action={<>
-          {hasUnsavedNew && (
-            <>
-              <button className="adm-btn ghost" onClick={resumeNew} style={{ marginRight: 8 }} title="Continuă oferta nouă nesalvată">Continuă oferta nesalvată</button>
-              <button className="adm-btn danger" onClick={() => { if (window.confirm('Ștergi oferta nouă nesalvată?')) clearDraft(undefined); }} style={{ marginRight: 8 }} title="Elimină oferta nesalvată din browser">Șterge oferta nesalvată</button>
-            </>
-          )}
           <button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick_offer'); }} style={{ marginRight: 8 }} title="Creează o ofertă nouă">+ Ofertă nouă</button>
           <button className="adm-btn ghost" onClick={() => {
             clearDraft(undefined);

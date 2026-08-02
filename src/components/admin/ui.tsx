@@ -255,6 +255,46 @@ export function SectionHead({
 }
 
 
+/** Persistent island listing unpublished local drafts so the user can see
+    and re-open them without guessing. */
+export function PendingIsland({
+  title,
+  items,
+  onEdit,
+  onClearNew,
+}: {
+  title: string;
+  items: { key: string; label: string; isNew: boolean }[];
+  onEdit: (key: string) => void;
+  onClearNew?: () => void;
+}) {
+  if (items.length === 0) return null;
+  return (
+    <div className="pending-island">
+      <div className="pending-island-head">
+        <span className="pending-island-title">{title}</span>
+        <span className="pending-island-count">{items.length}</span>
+      </div>
+      <div className="pending-island-body">
+        {items.map((it) => (
+          <div key={it.key} className="pending-island-row">
+            <span className="pending-island-label">
+              {it.isNew && <span className="pending-island-new">Nou</span>}
+              {it.label}
+            </span>
+            <div className="pending-island-actions">
+              <button type="button" className="adm-btn ghost sm" onClick={() => onEdit(it.key)}>Editează</button>
+              {it.isNew && onClearNew && (
+                <button type="button" className="adm-btn danger sm" onClick={onClearNew} title="Șterge draftul nesalvat">Șterge</button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Save/publish choice dialog. */
 export function SavePrompt({
   open,
@@ -275,7 +315,7 @@ export function SavePrompt({
         <p>Modificările sunt deja salvate în browser. Poți să le publici pe site acum sau să le păstrezi locale și să publici mai târziu.</p>
         <div className="adm-dialog-actions">
           <button className="adm-btn ghost" onClick={onClose}>Anulează</button>
-          <button className="adm-btn" onClick={onLocal}>Salvează local</button>
+          <button className="adm-btn" onClick={onLocal}>Salvează local și închide</button>
           <button className="adm-btn gold" onClick={onPublish}>Publică pe site</button>
         </div>
       </div>
