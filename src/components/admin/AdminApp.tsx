@@ -181,17 +181,18 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
                 </li>
               ))}
             </ul>
-            {pending.length > 0 && (
-              <button
-                className="adm-btn gold"
-                onClick={() => setPublishOpen(true)}
-                title={`Vezi lista cu ${pending.length} modificări nesalvate`}
-                style={{ marginRight: 12 }}
-              >
-                Publică toate modificările ({pending.length})
-              </button>
-            )}
-            <a className="adm-cta" href="/api/admin/logout">Ieșire</a>
+            <div className="adm-nav-actions" style={{ position: 'relative', zIndex: 55, display: 'flex', alignItems: 'center', gap: 10 }}>
+              {pending.length > 0 && (
+                <button
+                  className="adm-btn gold"
+                  onClick={() => setPublishOpen(true)}
+                  title={`Vezi lista cu ${pending.length} modificări nesalvate`}
+                >
+                  Publică toate ({pending.length})
+                </button>
+              )}
+              <a className="adm-cta" href="/api/admin/logout">Ieșire</a>
+            </div>
           </div>
         </header>
       )}
