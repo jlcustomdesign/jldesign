@@ -85,6 +85,7 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   const [publishOpen, setPublishOpen] = useState(false);
   const [publishBusy, setPublishBusy] = useState(false);
   const [openTarget, setOpenTarget] = useState<OpenTarget | null>(null);
+  const [pendingPanelOpen, setPendingPanelOpen] = useState(false);
 
   const recomputePending = useCallback(() => {
     setPending(computePending(data, siteServer));
@@ -286,6 +287,53 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
           </button>
         )}
       </nav>
+
+      {/* Floating pending changes button + panel */}
+      {pending.length > 0 && (
+        <>
+          <button
+            className="adm-pending-fab"
+            onClick={() => setPendingPanelOpen((v) => !v)}
+            title={`${pending.length} modificări nesalvate`}
+            aria-label="Modificări nesalvate"
+          >
+            <span className="adm-pending-fab-icon">✎</span>
+            <span className="adm-pending-fab-count">{pending.length}</span>
+          </button>
+
+          {pendingPanelOpen && (
+            <div className="adm-pending-panel" onClick={() => setPendingPanelOpen(false)}>
+              <div className="adm-pending-panel-box" onClick={(e) => e.stopPropagation()}>
+                <div className="adm-pending-panel-head">
+                  <h4>Modificări nesalvate ({pending.length})</h4>
+                  <button className="adm-pending-panel-close" onClick={() => setPendingPanelOpen(false)} aria-label="Închide">✕</button>
+                </div>
+                <p className="adm-pending-panel-hint">Salvate doar în browser. Alege una pentru editare sau publică-le pe toate.</p>
+                <div className="adm-pending-panel-body">
+                  {Object.entries(grouped).map(([section, items]) => (
+                    <div key={section} className="adm-pending-panel-group">
+                      <div className="adm-pending-panel-section">{section}</div>
+                      {items.map((it, idx) => (
+                        <div key={idx} className="adm-pending-panel-row">
+                          <span className="adm-pending-panel-title">
+                            {it.kind.includes('new') && <span className="adm-pending-panel-new">Nou</span>}
+                            {it.title}
+                          </span>
+                          <button className="adm-btn ghost sm" onClick={() => { setPendingPanelOpen(false); openPending(it); }}>Editează</button>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                <div className="adm-pending-panel-actions">
+                  <button className="adm-btn ghost" onClick={() => setPendingPanelOpen(false)}>Închide</button>
+                  <button className="adm-btn gold" onClick={() => { setPendingPanelOpen(false); setPublishOpen(true); }}>Publică toate ({pending.length})</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
       {/* Global publish-all dialog */}
       {publishOpen && (

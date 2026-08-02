@@ -226,6 +226,46 @@
   .adm-pending-bar-actions { margin-left: 0; }
 }
 
+/* Floating pending changes button (bottom-right) */
+.adm-pending-fab {
+  position: fixed; right: 24px; bottom: 92px; z-index: 90;
+  width: 60px; height: 60px; border-radius: 50%; border: 0;
+  background: var(--gold); color: #1a1505; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 28px rgba(201,162,39,.45);
+  transition: transform .15s, box-shadow .15s;
+}
+.adm-pending-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(201,162,39,.55); }
+.adm-pending-fab-icon { font-size: 24px; line-height: 1; }
+.adm-pending-fab-count {
+  position: absolute; top: -4px; right: -4px;
+  min-width: 22px; height: 22px; border-radius: 50%;
+  background: var(--danger); color: #fff; font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; padding: 0 5px;
+}
+@media (min-width: 980px) { .adm-pending-fab { bottom: 28px; } }
+
+/* Pending changes slide-over panel */
+.adm-pending-panel { position: fixed; inset: 0; z-index: 220; background: rgba(20,17,13,.45); backdrop-filter: blur(2px); }
+.adm-pending-panel-box {
+  position: absolute; right: 18px; bottom: 90px; width: min(380px, calc(100% - 36px));
+  background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.3); padding: 18px;
+}
+@media (min-width: 980px) { .adm-pending-panel-box { bottom: 28px; } }
+.adm-pending-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.adm-pending-panel-head h4 { margin: 0; font-size: 16px; }
+.adm-pending-panel-close { background: none; border: 0; cursor: pointer; font-size: 18px; color: var(--muted); padding: 4px; }
+.adm-pending-panel-close:hover { color: var(--ink); }
+.adm-pending-panel-hint { margin: 0 0 14px; font-size: 13px; color: var(--muted); line-height: 1.45; }
+.adm-pending-panel-body { max-height: 60vh; overflow: auto; display: flex; flex-direction: column; gap: 14px; }
+.adm-pending-panel-group { display: flex; flex-direction: column; gap: 7px; }
+.adm-pending-panel-section { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.adm-pending-panel-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; background: var(--bg); border-radius: 10px; }
+.adm-pending-panel-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+.adm-pending-panel-new { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; background: var(--ink); color: #fff; border-radius: 4px; padding: 2px 5px; }
+.adm-pending-panel-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+
 /* Pending modifications island — visible on list pages */
 .pending-island { background: var(--panel); border: 1px solid var(--gold-soft); border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(201,162,39,.10); }
 .pending-island-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
