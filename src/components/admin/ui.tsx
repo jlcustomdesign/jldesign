@@ -1,5 +1,5 @@
 /** ui.tsx — small reusable form controls for the admin. */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fileToDataUrl } from './api';
 
 export function Field({
@@ -70,25 +70,59 @@ export function ImageInput({
   onChange,
   small,
   aspect,
+  onMeta,
+  focus,
+  onFocusChange,
 }: {
   value?: string;
   onChange: (dataUrl: string) => void;
   small?: boolean;
   aspect?: string;
+  /** Reports natural image dimensions/orientation after a selection. */
+  onMeta?: (m: { w: number; h: number; orient: 'portrait' | 'landscape' }) => void;
+  focus?: string;
+  onFocusChange?: (focus: string) => void;
 }) {
   const ref = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [drag, setDrag] = useState(false);
   const [lib, setLib] = useState<string[] | null>(null); // null = closed
 
+  const reportMeta = (src: string) => {
+    if (!onMeta || !src) return;
+    const im = new Image();
+    im.onload = () => onMeta({ w: im.naturalWidth, h: im.naturalHeight, orient: im.naturalHeight > im.naturalWidth ? 'portrait' : 'landscape' });
+    im.src = src;
+  };
+  const emit = (src: string) => { onChange(src); reportMeta(src); };
+
   const pick = async (file?: File) => {
     if (!file) return;
     setBusy(true);
-    try { onChange(await fileToDataUrl(file)); }
+    try { emit(await fileToDataUrl(file)); }
     catch (e) { alert((e as Error).message); }
     finally { setBusy(false); }
   };
   const openLib = async () => { setLib([]); setLib(await loadLibrary()); };
+
+  const focusRef = useRef<HTMLDivElement>(null);
+  const parseFocus = (f?: string) => {
+    if (!f) return { x: 50, y: 50 };
+    const m = f.match(/(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%/);
+    if (m) return { x: Math.min(100, Math.max(0, parseFloat(m[1]))), y: Math.min(100, Math.max(0, parseFloat(m[2]))) };
+    return { x: 50, y: 50 };
+  };
+  const [focusPos, setFocusPos] = useState(parseFocus(focus));
+  useEffect(() => setFocusPos(parseFocus(focus)), [focus]);
+  const setPct = (clientX: number, clientY: number) => {
+    const el = focusRef.current; if (!el || !onFocusChange) return;
+    const r = el.getBoundingClientRect();
+    const x = Math.min(100, Math.max(0, ((clientX - r.left) / r.width) * 100));
+    const y = Math.min(100, Math.max(0, ((clientY - r.top) / r.height) * 100));
+    onFocusChange(`${x.toFixed(1)}% ${y.toFixed(1)}%`);
+  };
+  const onPointerDown = (e: React.PointerEvent) => { (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId); setPct(e.clientX, e.clientY); };
+  const onPointerMove = (e: React.PointerEvent) => { if (e.buttons) setPct(e.clientX, e.clientY); };
 
   return (
     <div
@@ -101,7 +135,7 @@ export function ImageInput({
       <button
         type="button"
         className="ai-thumb"
-        style={value ? { backgroundImage: `url("${value}")`, ...(aspect ? { aspectRatio: aspect } : {}) } : undefined}
+        style={value ? { backgroundImage: `url("${value}")`, backgroundPosition: focus || 'center', ...(aspect ? { aspectRatio: aspect } : {}) } : undefined}
         onClick={() => ref.current?.click()}
         title={value ? 'Schimbă imaginea' : 'Încarcă imagine'}
       >
@@ -113,6 +147,19 @@ export function ImageInput({
         {value && <button type="button" className="rm" onClick={() => onChange('')}>Elimină</button>}
       </div>
 
+      {value && onFocusChange && (
+        <div
+          ref={focusRef}
+          className="ai-focus"
+          title="Trage punctul pentru a alege ce zonă a imaginii să fie vizibilă"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          style={{ backgroundImage: `url("${value}")`, backgroundPosition: focus || 'center' }}
+        >
+          <span className="ai-focus-dot" style={{ left: `${focusPos.x}%`, top: `${focusPos.y}%` }} />
+        </div>
+      )}
+
       {lib !== null && (
         <div className="img-lib" onClick={() => setLib(null)}>
           <div className="img-lib-box" onClick={(e) => e.stopPropagation()}>
@@ -122,7 +169,7 @@ export function ImageInput({
                 <div className="img-lib-empty">Se încarcă…</div>
               ) : (
                 lib.map((src) => (
-                  <button key={src} type="button" className="img-lib-item" style={{ backgroundImage: `url("${src}")` }} title={src.split('/').pop()} onClick={() => { onChange(src); setLib(null); }} />
+                  <button key={src} type="button" className="img-lib-item" style={{ backgroundImage: `url("${src}")` }} title={src.split('/').pop()} onClick={() => { emit(src); setLib(null); }} />
                 ))
               )}
             </div>
@@ -203,6 +250,35 @@ export function SectionHead({
         {desc && <p>{desc}</p>}
       </div>
       {action}
+    </div>
+  );
+}
+
+
+/** Save/publish choice dialog. */
+export function SavePrompt({
+  open,
+  onClose,
+  onLocal,
+  onPublish,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onLocal: () => void;
+  onPublish: () => void;
+}) {
+  if (!open) return null;
+  return (
+    <div className="adm-dialog" onClick={onClose}>
+      <div className="adm-dialog-box" onClick={(e) => e.stopPropagation()}>
+        <h4>Publici modificările acum?</h4>
+        <p>Modificările sunt deja salvate în browser. Poți să le publici pe site acum sau să le păstrezi locale și să publici mai târziu.</p>
+        <div className="adm-dialog-actions">
+          <button className="adm-btn ghost" onClick={onClose}>Anulează</button>
+          <button className="adm-btn" onClick={onLocal}>Salvează local</button>
+          <button className="adm-btn gold" onClick={onPublish}>Publică pe site</button>
+        </div>
+      </div>
     </div>
   );
 }

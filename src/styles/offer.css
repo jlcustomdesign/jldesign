@@ -1,7 +1,9 @@
 /* offer.css — branded, minimalist offer/presentation document.
    Shared by the public /oferta page and the admin live preview.
    Sizes use container units (cqw) so the document scales to any width —
-   full size in print, miniature in the admin preview. */
+   full size in print, miniature in the admin preview.
+   Pages auto-fit their content (transform scale, set inline by FitBox in
+   OfferDocument.tsx) and --fs scales body text per page (editor A−/A+). */
 
 @font-face {
   font-family: 'Grift';
@@ -27,6 +29,7 @@
 }
 
 .offer-page {
+  --fs: 1;
   container-type: inline-size; position: relative; width: 100%; aspect-ratio: 297 / 210;
   background: var(--cream); color: var(--ink); overflow: hidden;
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
@@ -41,13 +44,28 @@
 .cover.lay-left { flex-direction: row; }
 .cover.lay-top { flex-direction: column; }
 
+/* lay-full — landscape image spans the whole top; panel is a single bottom
+   strip: title + client on the left, logo bottom-right on the same row. */
+.cover.lay-full { flex-direction: column; }
+.cover.lay-full .cover-media { flex: 1 1 auto; min-height: 0; }
+.cover.lay-full .cover-panel { flex: 0 0 auto; padding: 2.4cqw 3cqw 2.4cqw; }
+.cover.lay-full .cover-spacer { display: none; }
+.cf-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 3cqw; }
+.cf-text { flex: 1 1 auto; min-width: 0; }
+.cover.lay-full .cover-title { margin-bottom: 1.8cqw; }
+.cover.lay-full .cover-client { margin-bottom: 0; }
+.cover.lay-full .cover-logo { flex: 0 0 auto; }
+.cover.lay-full .logo-img { max-width: 13cqw; max-height: 9cqw; }
+.cover.lay-full .cover-foot { margin-top: 2cqw; }
+
 .cover-media { flex: 1 1 55%; position: relative; overflow: hidden; }
 .cover.lay-top .cover-media { flex: 0 0 52%; }
-.cover-media img, .cover-media-empty { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-.cover-media-empty { background: var(--cover-tint); }
+.cover-media img, .cover-media-empty { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 1cqw; }
+.cover-media.contain img { object-fit: contain; }
+.cover-media-empty { background: transparent; }
 
-.cover-panel { flex: 1 1 45%; display: flex; flex-direction: column; padding: 7cqw 6cqw; }
-.cover.lay-top .cover-panel { flex: 1 1 48%; padding: 4.5cqw 6cqw; }
+.cover-panel { flex: 1 1 45%; display: flex; flex-direction: column; padding: 4cqw 3.5cqw; }
+.cover.lay-top .cover-panel { flex: 1 1 48%; padding: 3cqw 3.5cqw; }
 .cover-spacer { flex: 1 1 auto; }
 
 .cover-logo { display: flex; align-items: center; gap: 1.6cqw; }
@@ -57,95 +75,139 @@
 .cl-jl { font-weight: 800; font-size: 3cqw; letter-spacing: -.04em; color: var(--ink); border: 0.18cqw solid var(--gold); border-radius: 50%; width: 6cqw; height: 6cqw; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
 .cl-sub { font-size: 1.05cqw; letter-spacing: .34em; line-height: 1.35; color: var(--gold); font-weight: 600; }
 
-.cover-title { display: flex; flex-direction: column; line-height: 1; margin-bottom: 2.6cqw; }
+/* Title flows naturally and is clamped to 2 rows — a long subtitle can never
+   push the rest of the cover out of the page. */
+.cover-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; line-height: 1.04; margin-bottom: 2.6cqw; overflow-wrap: anywhere; }
 .ct-thin { font-weight: 300; font-size: 3.8cqw; letter-spacing: .01em; color: var(--gold); }
 .ct-bold { font-weight: 800; font-size: 3.8cqw; letter-spacing: 0; color: var(--ink); }
 
 .cover-client { margin-bottom: 2.4cqw; }
-.cc-name { font-size: 2.7cqw; font-weight: 600; font-style: italic; color: var(--ink); line-height: 1.05; }
-.cc-cat { font-size: 1.1cqw; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-top: 1cqw; }
+.cc-name { font-size: 2.7cqw; font-weight: 600; font-style: italic; color: var(--ink); line-height: 1.05; overflow-wrap: anywhere; }
+.cc-cat { font-size: 1.1cqw; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-top: 1cqw; overflow-wrap: anywhere; }
 
 .cover-foot { display: flex; justify-content: space-between; gap: 2cqw; font-size: 1.05cqw; letter-spacing: .08em; color: var(--ink-soft); border-top: 1px solid var(--line); padding-top: 1.6cqw; }
 
 /* ---------------- SHEETS (head / main / foot — no overlap) ---------------- */
-.sheet { display: flex; flex-direction: column; padding: 5cqw 7cqw 3.6cqw; }
-.vbrand { position: absolute; top: 50%; right: 2.6cqw; transform: translateY(-50%); writing-mode: vertical-rl; text-orientation: mixed; font-size: 1.05cqw; letter-spacing: .5em; color: var(--gold); opacity: .8; }
-.sheet-head { flex: 0 0 auto; }
-.sheet-main { flex: 1 1 auto; min-height: 0; overflow: hidden; }
-.sheet-foot { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; margin-top: 2cqw; font-size: 1.05cqw; letter-spacing: .16em; color: var(--ink-soft); }
-.ft-mono { font-weight: 800; color: var(--gold); border: 1px solid var(--gold); border-radius: 50%; width: 2.6cqw; height: 2.6cqw; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1cqw; }
-
+.sheet { display: flex; flex-direction: column; padding: 2.4cqw 3cqw 1.8cqw; }
+.sheet-head { flex: 0 0 auto; display: flex; align-items: center; gap: 1.4cqw; }
+.sh-text { flex: 1 1 auto; min-width: 0; }
+.sheet-logo { flex: 0 0 auto; height: 4.4cqw; width: auto; max-width: 17cqw; object-fit: contain; margin-left: auto; }
+.num { background: var(--ink); color: var(--cream); font-weight: 700; letter-spacing: 0; padding: .5cqw .9cqw; border-radius: .4cqw; font-size: 1.2cqw; }
+.s-heading { font-size: calc(2.8cqw * var(--fs, 1)); font-weight: 700; line-height: 1.1; margin: 0; max-width: 100%; color: var(--ink); overflow-wrap: anywhere; }
 .eyebrow { display: flex; align-items: center; gap: 1.2cqw; font-size: 1.2cqw; letter-spacing: .26em; color: var(--ink-soft); text-transform: uppercase; }
-.eyebrow .num { background: var(--ink); color: var(--cream); font-weight: 700; letter-spacing: 0; padding: .5cqw .9cqw; border-radius: .4cqw; font-size: 1.2cqw; }
-.s-heading { font-size: 3cqw; font-weight: 700; line-height: 1.1; margin: 1.8cqw 0 0; max-width: 80%; color: var(--ink); }
-.s-para { font-size: 1.45cqw; line-height: 1.55; color: var(--ink-soft); max-width: 92%; margin: 2.2cqw 0 0; }
+.vbrand { position: absolute; top: 50%; right: 2.2cqw; transform: translateY(-50%); writing-mode: vertical-rl; text-orientation: mixed; font-size: 1.05cqw; letter-spacing: .5em; color: var(--gold); opacity: .8; }
+/* No overflow:hidden here — it would clip content BEFORE FitBox's scale
+   shrinks it visually. The page's own overflow:hidden is the guardrail. */
+.sheet-main { flex: 1 1 auto; min-height: 0; transform-origin: top center; }
+.sheet-foot { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; margin-top: 1.6cqw; font-size: 1.05cqw; letter-spacing: .16em; color: var(--ink-soft); }
+
+.offer-doc .s-heading.xb { font-weight: 800; }
+.s-para { font-size: calc(1.45cqw * var(--fs, 1)); line-height: 1.55; color: var(--ink-soft); max-width: 92%; margin: 1.8cqw 0 0; }
 .s-para.wide { max-width: 72%; }
 
-.cols { display: grid; grid-template-columns: 1.12fr 1fr; gap: 4cqw; margin-top: 2.4cqw; align-items: start; }
+.cols { display: grid; grid-template-columns: 1.12fr 1fr; gap: 3cqw; margin-top: 1.8cqw; align-items: start; }
 .cols.no-img { grid-template-columns: 1fr; }
-.col-right img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 1cqw; display: block; }
+.col-right { min-width: 0; }
+.col-right img { width: 100%; height: auto; border-radius: 1cqw; display: block; }
 .col-right-empty { width: 100%; aspect-ratio: 4/5; background: var(--cream); border: 1px dashed var(--line); border-radius: 1cqw; display: block; }
 
-.block-label { font-size: 1.15cqw; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin: 2.4cqw 0 1.3cqw; display: flex; align-items: center; gap: .8cqw; }
+.block-label { font-size: calc(1.15cqw * var(--fs, 1)); letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin: 2cqw 0 1.2cqw; display: flex; align-items: center; gap: .8cqw; }
 .block-label::before { content: ""; width: 2cqw; height: 1px; background: var(--gold); }
 
 .spec-list { display: grid; gap: .9cqw; }
 .spec { display: grid; grid-template-columns: 11cqw 1fr; gap: 1.4cqw; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: .9cqw; }
-.spec-label { font-size: 1.1cqw; font-weight: 700; letter-spacing: .12em; color: var(--ink); }
-.spec-value { font-size: 1.3cqw; color: var(--ink-soft); }
+.spec-label { font-size: calc(1.1cqw * var(--fs, 1)); font-weight: 700; letter-spacing: .12em; color: var(--ink); }
+.spec-value { font-size: calc(1.3cqw * var(--fs, 1)); color: var(--ink-soft); }
 
 .swatches { display: flex; flex-wrap: wrap; gap: 1.6cqw; margin-top: .5cqw; }
 .swatch { flex: 1; min-width: 14cqw; }
-.swatch-img { width: 100%; aspect-ratio: 1.5/1; border-radius: .6cqw; background-size: cover; background-position: center; background-repeat: no-repeat; }
-.swatch-img.empty { background: var(--cream); border: 1px solid var(--line); }
-.swatch-label { font-size: 1.05cqw; font-weight: 700; letter-spacing: .1em; margin-top: .8cqw; }
-.swatch-code { font-size: 1.1cqw; color: var(--ink-soft); }
+.swatch-img { width: 100%; height: auto; display: block; border-radius: .6cqw; }
+.swatch-img.empty { width: 100%; aspect-ratio: 1.5/1; background: var(--cream); border: 1px solid var(--line); }
+.swatch-label { font-size: calc(1.05cqw * var(--fs, 1)); font-weight: 700; letter-spacing: .1em; margin-top: .8cqw; }
+.swatch-code { font-size: calc(1.1cqw * var(--fs, 1)); color: var(--ink-soft); }
 
 .badges { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1cqw 2cqw; }
-.badge-pill { display: flex; align-items: center; gap: .9cqw; font-size: 1.2cqw; }
+.badge-pill { display: flex; align-items: center; gap: .9cqw; font-size: calc(1.2cqw * var(--fs, 1)); }
 .bp-dot { width: 1.4cqw; height: 1.4cqw; border-radius: 50%; border: 0.16cqw solid var(--gold); flex: 0 0 auto; position: relative; }
 .bp-dot::after { content: ""; position: absolute; inset: .4cqw; border-radius: 50%; background: var(--gold); }
 .bp-label { font-weight: 700; letter-spacing: .03em; }
-.bp-desc { font-size: 1.05cqw; color: var(--ink-soft); }
+.bp-desc { font-size: calc(1.05cqw * var(--fs, 1)); color: var(--ink-soft); }
 
-.acc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; margin: 2.4cqw 0 1cqw; }
+.acc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; margin: 2cqw 0 1cqw; align-items: start; }
 .acc-card { background: var(--card); border: 1px solid var(--line); border-radius: .8cqw; overflow: hidden; display: flex; flex-direction: column; }
-.acc-card.no-img { border-top: 0.45cqw solid var(--gold); }
-.acc-img { width: 100%; aspect-ratio: 16/10; background-size: cover; background-position: center; background-repeat: no-repeat; }
-.acc-img.empty { background: var(--cream); border-bottom: 1px dashed var(--line); }
+.acc-card.no-img { border-style: dashed; border-color: var(--gold); }
+.acc-img { width: 100%; height: auto; display: block; border-radius: .8cqw .8cqw 0 0; }
+.acc-img.empty { width: 100%; aspect-ratio: 16/10; background: var(--panel); border-radius: .8cqw .8cqw 0 0; display: flex; align-items: center; justify-content: center; }
+.acc-img.empty::after { content: 'Imagine'; font-size: 1.2cqw; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
 .acc-body { padding: 1cqw 1.2cqw 1.2cqw; }
-.acc-title { font-size: 1.3cqw; font-weight: 700; }
-.acc-desc { font-size: 1.1cqw; color: var(--ink-soft); margin-top: .3cqw; line-height: 1.4; }
+.acc-title { font-size: calc(1.3cqw * var(--fs, 1)); font-weight: 700; }
+.acc-desc { font-size: calc(1.1cqw * var(--fs, 1)); color: var(--ink-soft); margin-top: .3cqw; line-height: 1.4; }
 
-.sketch-row { display: flex; flex-wrap: wrap; gap: 2cqw; margin: 2.2cqw 0 1cqw; }
-.sketch { flex: 1; margin: 0; }
-.sketch img, .sketch-empty { width: 100%; aspect-ratio: 4/3; border-radius: .7cqw; display: block; }
-.sketch img { object-fit: cover; }
-.sketch-empty { background: var(--cream); border: 1px dashed var(--line); }
-.sketch figcaption { font-size: 1.05cqw; color: var(--ink-soft); text-align: center; margin-top: .7cqw; letter-spacing: .08em; text-transform: uppercase; }
+.sketch-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; margin: 1.8cqw 0 1cqw; align-items: start; }
+.sketch { margin: 0; min-width: 0; }
+.sketch img, .sketch-empty { border-radius: .7cqw; display: block; }
+.sketch img { width: 100%; aspect-ratio: 4/3; object-fit: contain; }
+.sketch-empty { width: 100%; aspect-ratio: 4/3; background: var(--cream); border: 1px dashed var(--line); }
+.sketch figcaption { font-size: calc(1.05cqw * var(--fs, 1)); color: var(--ink-soft); text-align: center; margin-top: .7cqw; letter-spacing: .08em; text-transform: uppercase; }
 .dims { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6cqw; }
-.dim-title { font-size: 1.1cqw; font-weight: 700; letter-spacing: .1em; color: var(--gold); margin-bottom: .6cqw; }
-.dim-line { font-size: 1.15cqw; color: var(--ink-soft); line-height: 1.5; }
+.dim-title { font-size: calc(1.1cqw * var(--fs, 1)); font-weight: 700; letter-spacing: .1em; color: var(--gold); margin-bottom: .6cqw; }
+.dim-line { font-size: calc(1.15cqw * var(--fs, 1)); color: var(--ink-soft); line-height: 1.5; }
 
-/* Gallery */
-.gallery-grid { display: grid; gap: 2cqw; margin-top: 2.4cqw; }
-.gallery-grid.g1 { grid-template-columns: 1fr; }
-.gallery-grid.g2 { grid-template-columns: repeat(2, 1fr); }
-.gallery-grid.g3 { grid-template-columns: repeat(3, 1fr); }
-.gallery-grid.g4 { grid-template-columns: repeat(2, 1fr); }
-.gal { margin: 0; }
-.gal-img { width: 100%; aspect-ratio: 4/3; background-size: cover; background-position: center; background-repeat: no-repeat; border-radius: .9cqw; }
-.gallery-grid.g1 .gal-img { aspect-ratio: 21/9; }
-.gal-img.empty { background: var(--cream); border: 1px dashed var(--line); }
-.gal figcaption { font-size: 1.05cqw; color: var(--ink-soft); text-align: center; margin-top: .7cqw; letter-spacing: .08em; text-transform: uppercase; }
+/* Gallery — full-bleed fill: the block always covers the entire body area
+   (full width × full height). Rows get height shares from fillArrangement;
+   images cover-fill their cells (crop minimized by the row split). */
+.gal-rows { display: flex; flex-direction: column; gap: 1.6cqw; margin-top: 2cqw; }
+.gal-row { display: flex; gap: 1.6cqw; justify-content: center; }
+.gal { margin: 0; min-width: 0; flex: 0 0 auto; }
+/* On gallery pages the body is a flex column so the gallery stretches to
+   fill ALL remaining height (paragraph takes only what it needs). */
+.gal-main { display: flex; flex-direction: column; }
+.gal-main .gal-rows { flex: 1 1 auto; min-height: 0; }
+.gal-fill .gal-row { min-height: 0; }
+.gal-fill .gal { position: relative; height: 100%; overflow: hidden; border-radius: .9cqw; }
+.gal-fill .gal-img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: .9cqw; }
+.gal-fill .gal-img.empty { aspect-ratio: auto; height: 100%; }
+.gal-fill figcaption { position: absolute; left: .8cqw; bottom: .5cqw; z-index: 1; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.55); margin-top: 0; font-size: calc(1.05cqw * var(--fs, 1)); letter-spacing: .08em; text-transform: uppercase; }
+.gal-img.empty { width: 100%; aspect-ratio: 16/10; background: var(--cream); border: 1px dashed var(--line); border-radius: .9cqw; }
 
-/* Text page */
+/* Text page — cover-like placement modes: bottom (default) / top strips and
+   left / right full-height side panels, plus none (text only). The text/image
+   pair lives in .text-row; "- " lines form a full-width list below it. */
 .text-wrap { display: flex; flex-direction: column; height: 100%; }
-.text-body { margin-top: 2.6cqw; max-width: 78%; }
-.text-body p { font-size: 1.7cqw; line-height: 1.6; color: var(--ink-soft); margin: 0 0 1.4cqw; }
-.text-image { margin-top: auto; padding-top: 2cqw; }
-.text-image img { width: 100%; aspect-ratio: 21/9; object-fit: cover; border-radius: 1cqw; display: block; }
+.text-row { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.text-body { margin-top: 2cqw; max-width: 78%; }
+.text-body p { font-size: calc(1.7cqw * var(--fs, 1)); line-height: 1.6; color: var(--ink-soft); margin: 0 0 1.4cqw; overflow-wrap: anywhere; }
+.text-image { margin-top: auto; padding-top: 1.6cqw; min-width: 0; }
+.text-image img { width: 100%; height: auto; border-radius: 1cqw; display: block; }
 .text-image-empty { width: 100%; aspect-ratio: 21/9; background: var(--cream); border: 1px dashed var(--line); border-radius: 1cqw; display: block; }
+/* portrait images in horizontal strips stay narrow and centred */
+.text-wrap.lay-bottom .text-image.port, .sheet-topimg .text-image.port { max-width: 45%; margin-left: auto; margin-right: auto; }
+
+/* Full-width list (lines starting with "- ") below the text/image row. */
+.text-list { flex: 0 0 auto; width: 100%; columns: 2; column-gap: 3cqw; margin: 1.6cqw 0 0; padding: 0; list-style: none; }
+.text-list li { break-inside: avoid; position: relative; padding-left: 1.7cqw; margin-bottom: .8cqw; font-size: calc(1.5cqw * var(--fs, 1)); line-height: 1.5; color: var(--ink-soft); overflow-wrap: anywhere; }
+.text-list li::before { content: ""; position: absolute; left: 0; top: .6em; width: .7cqw; height: .7cqw; border-radius: 50%; background: var(--gold); }
+
+/* lay-top — full-bleed banner above the page header (like a landscape cover). */
+.sheet-topimg { flex: 0 0 auto; margin: -2.4cqw -3cqw 2.4cqw; }
+.sheet-topimg .text-image { margin: 0; padding: 0; }
+.sheet-topimg .text-image img { width: 100%; max-height: 42cqw; object-fit: cover; border-radius: 1cqw; }
+.sheet-topimg .text-image.port { max-width: 45%; }
+.sheet-topimg .text-image.port img { object-fit: contain; border-radius: 1cqw; margin-top: 2.4cqw; }
+.sheet-topimg .text-image-empty { border-radius: 1cqw; }
+.text-wrap.lay-top .text-body { margin-top: 0; }
+
+/* lay-left / lay-right — full-height side panel, like the cover split. */
+.text-wrap.lay-left .text-row, .text-wrap.lay-right .text-row { flex-direction: row; gap: 3.5cqw; align-items: stretch; }
+.text-wrap.lay-left .text-body, .text-wrap.lay-right .text-body { flex: 1 1 55%; max-width: none; margin-top: 0; }
+.text-wrap.lay-left .text-image, .text-wrap.lay-right .text-image { flex: 1 1 45%; margin-top: 0; padding-top: 0; display: flex; align-items: center; justify-content: center; }
+.text-wrap.lay-left .text-image { order: -1; }
+.text-wrap.lay-left .text-image img, .text-wrap.lay-right .text-image img { width: auto; height: auto; max-width: 100%; max-height: 100%; }
+.text-wrap.lay-left .text-image-empty, .text-wrap.lay-right .text-image-empty { width: 100%; height: 100%; aspect-ratio: auto; }
+.text-wrap.lay-none .text-body { max-width: 92%; }
+
+/* Description page — wide image spans the full width above text + specs. */
+.desc-wide-img img { width: 100%; height: auto; max-height: 40cqw; object-fit: contain; display: block; border-radius: 1cqw; margin-bottom: 2cqw; }
 
 /* Click-to-edit affordances (admin preview only — public/PDF have no data-fid) */
 .offer-doc [data-fid] { cursor: pointer; transition: outline .12s ease, background-color .12s ease; outline-offset: -3px; }
@@ -167,7 +229,6 @@
 }
 .style-noir .offer-page { box-shadow: 0 18px 60px rgba(0,0,0,.5); }
 .style-noir .eyebrow .num { background: var(--gold); color: #15120e; }
-.style-noir .acc-card.no-img { border-top-color: var(--gold); }
 
 /* 3. BOLD — white, monochrome, oversized type, image-top. */
 .style-bold {
@@ -178,12 +239,11 @@
 .style-bold .ct-thin, .style-bold .ct-bold { font-weight: 800; font-size: 4.6cqw; letter-spacing: -.02em; color: var(--ink); }
 .style-bold .cc-name { font-style: normal; font-weight: 800; }
 .style-bold .cc-cat { color: var(--ink-soft); }
-.style-bold .s-heading { font-size: 3.6cqw; font-weight: 800; letter-spacing: -.01em; max-width: 90%; }
+.style-bold .s-heading { font-size: calc(3.6cqw * var(--fs, 1)); font-weight: 800; letter-spacing: -.01em; max-width: 100%; }
 .style-bold .eyebrow { font-weight: 700; }
 .style-bold .eyebrow .num { background: var(--ink); color: #fff; }
 .style-bold .cl-jl { border-color: var(--ink); color: var(--ink); }
-.style-bold .cl-sub, .style-bold .ft-mono { color: var(--ink); }
-.style-bold .ft-mono { border-color: var(--ink); }
+.style-bold .cl-sub { color: var(--ink); }
 .style-bold .vbrand { color: var(--ink-soft); opacity: .5; }
 
 /* 4. CLASSIC — ivory, serif, centred cover. */
@@ -196,9 +256,11 @@
 .style-classic .acc-title, .style-classic .text-body p { font-family: Georgia, 'Times New Roman', serif; }
 .style-classic .cover-panel { align-items: center; text-align: center; }
 .style-classic .cover-logo { justify-content: center; }
-.style-classic .cover-title { align-items: center; }
+.style-classic .cover-title { text-align: center; }
+.style-classic .cf-row { flex-direction: column; align-items: center; gap: 1.6cqw; }
 .style-classic .cover-foot { justify-content: center; gap: 3cqw; }
 .style-classic .s-heading { font-weight: 700; }
+.style-classic .sheet-logo { margin-left: auto; margin-right: auto; }
 .style-classic .eyebrow .num { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
 
 /* 5. MINIMAL — white, thin, lots of whitespace, discreet. */
@@ -210,7 +272,7 @@
 .style-minimal .vbrand { display: none; }
 .style-minimal .eyebrow { font-size: 1cqw; letter-spacing: .32em; }
 .style-minimal .eyebrow .num { background: transparent; color: var(--gold); padding: 0; font-size: 1cqw; }
-.style-minimal .s-heading { font-weight: 600; font-size: 2.6cqw; }
+.style-minimal .s-heading { font-weight: 600; font-size: calc(2.6cqw * var(--fs, 1)); }
 .style-minimal .ct-thin { font-weight: 300; font-size: 3.2cqw; color: var(--ink); }
 .style-minimal .ct-bold { font-weight: 600; font-size: 3.2cqw; }
 .style-minimal .cc-name { font-style: normal; font-weight: 500; }
@@ -228,7 +290,7 @@
     break-after: page; page-break-after: always;
   }
   .offer-page:last-child { break-after: auto; page-break-after: auto; }
-  
+
   /* Hide placeholders when printing so we don't print empty gray boxes */
   .cover-media-empty, .sketch-empty, .gal-img.empty, .swatch-img.empty { background: transparent !important; border: none !important; display: none !important; }
 }

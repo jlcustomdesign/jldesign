@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { TextInput, TextArea, ImageInput } from './ui';
+import { TextInput, TextArea, ImageInput, SavePrompt } from './ui';
 
 interface Props { notify: (msg: string, kind?: 'ok' | 'err') => void; }
 
@@ -90,6 +90,7 @@ export default function SiteContentManager({ notify }: Props) {
   const [ind, setInd] = useState({ left: 0, width: 0 });
   const savedRef = useRef('');
   const [dirty, setDirty] = useState(false);
+  const [savePrompt, setSavePrompt] = useState(false);
   contentRef.current = content;
 
   // Slide the active-tab highlight smoothly between page tabs.
@@ -202,7 +203,7 @@ export default function SiteContentManager({ notify }: Props) {
     if (p) focusFromForm(p);
   };
 
-  const save = async () => {
+  const publish = async () => {
     if (!content) return;
     setBusy(true);
     try {
@@ -216,6 +217,30 @@ export default function SiteContentManager({ notify }: Props) {
       iframeRef.current?.contentWindow?.location.reload();
     } catch (e) { notify((e as Error).message, 'err'); } finally { setBusy(false); }
   };
+
+  const openSavePrompt = () => {
+    if (!content) return;
+    setSavePrompt(true);
+  };
+
+  const saveLocal = () => {
+    if (!content) return;
+    try { localStorage.setItem(SITE_DRAFT_KEY, JSON.stringify(content)); } catch {}
+    setSavePrompt(false);
+    notify('Salvat în browser', 'ok');
+  };
+
+  // Warn before leaving with unpublished changes.
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      const c = contentRef.current;
+      if (!c || JSON.stringify(c) === savedRef.current) return;
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, []);
 
   /* recursive field renderer (each leaf carries data-cms-path + id for sync) */
   const renderValue = (value: any, pathArr: (string | number)[], label?: string): React.ReactNode => {
@@ -282,9 +307,16 @@ export default function SiteContentManager({ notify }: Props) {
           {dirty ? 'Nepublicat — apasă „Salvează tot" pentru a publica' : '✓ Publicat pe site'}
         </span>
         <div className="adm-spacer" />
-        <a className="adm-btn ghost" href={page.url} target="_blank" rel="noreferrer">Deschide pagina</a>
-        <button className="adm-btn gold" onClick={save} disabled={busy || !dirty} style={{ marginLeft: 8 }}>{busy ? 'Se publică…' : (dirty ? 'Salvează tot' : 'Salvat')}</button>
+        <a className="adm-btn ghost" href={page.url} target="_blank" rel="noreferrer" title="Vezi pagina în site">Deschide pagina</a>
+        <button className="adm-btn gold" onClick={openSavePrompt} disabled={busy || !dirty} title={dirty ? 'Alege: salvează local în browser sau publică pe site' : 'Toate modificările sunt publicate'} style={{ marginLeft: 8 }}>{dirty ? 'Salvează tot' : 'Salvat'}</button>
       </div>
+
+      <SavePrompt
+        open={savePrompt}
+        onClose={() => setSavePrompt(false)}
+        onLocal={saveLocal}
+        onPublish={() => { setSavePrompt(false); publish(); }}
+      />
 
       {/* Page tabs */}
       <div className="adm-tabs" ref={tabsRef} style={{ margin: '0 0 14px', display: 'inline-flex' }}>

@@ -3,6 +3,40 @@ import type { Entry } from './api';
 import { saveEntry, deleteEntry } from './api';
 import { TextInput, TextArea, ImageInput, SectionHead, TagInput } from './ui';
 import OfferDocument, { normalizeOffer, uid, DEFAULT_LABEL, type Offer, type Section, type SectionType } from '../offer/OfferDocument';
+import { fillCrop, GAL_MAX } from '../offer/galleryLayout';
+
+/** Gallery advice: measures the current images' aspect ratios and tells the
+   user whether another image (and which orientation) would pack well. The
+   gallery always fills the whole area, so the advice is about CROP: adding
+   an image whose orientation keeps the crop factor low. */
+function GalleryAdvice({ urls }: { urls: string[] }) {
+  const [ratios, setRatios] = useState<(number | null)[]>([]);
+  const key = urls.join('|');
+  useEffect(() => {
+    let alive = true;
+    setRatios(urls.map(() => null));
+    urls.forEach((u, i) => {
+      const im = new Image();
+      im.onload = () => {
+        if (!alive || !im.naturalWidth) return;
+        const r = im.naturalWidth / im.naturalHeight;
+        setRatios((cur) => { const n = cur.slice(); n[i] = r; return n; });
+      };
+      im.src = u;
+    });
+    return () => { alive = false; };
+  }, [key]);
+  if (urls.length === 0) return null;
+  if (ratios.some((r) => r == null)) return <div className="of-cap-note">Se analizează aranjarea imaginilor…</div>;
+  const rs = ratios as number[];
+  if (fillCrop(rs) > 2.2) return <div className="of-cap-note">Atenție: aceste imagini se decupează mult pe o singură pagină — recomandat mai puține sau alte proporții.</div>;
+  if (rs.length >= GAL_MAX) return <div className="of-cap-note">Maximum {GAL_MAX} imagini pe o pagină de galerie.</div>;
+  const cropL = fillCrop([...rs, 1.5]);
+  const cropP = fillCrop([...rs, 0.75]);
+  if (Math.abs(cropL - cropP) < 0.15) return <div className="of-cap-note">Mai poți adăuga o imagine — orizontală sau verticală, ambele se aranjează bine.</div>;
+  if (cropL < cropP) return <div className="of-cap-note">Mai poți adăuga o imagine — recomandat una orizontală (se decupează cel mai puțin).</div>;
+  return <div className="of-cap-note">Mai poți adăuga o imagine — recomandat una verticală (se decupează cel mai puțin).</div>;
+}
 import { TEMPLATES } from './offerTemplates';
 import { STYLE_LIST, getStyle, ACCENT_PRESETS } from '../offer/offerStyles';
 
@@ -119,6 +153,19 @@ export default function OfferManager({ items, notify, reload }: Props) {
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
+
+  // Warn before closing the tab if there are unpublished changes.
+  // Browser drafts are preserved, but the user should know they're leaving.
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      const cur = offerRef.current;
+      if (!cur || JSON.stringify(cur) === lastSaved.current) return;
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, []);
   const [offer, setOffer] = useState<EditOffer | null>(null);
   const [busy, setBusy] = useState(false);
   const [pickIndex, setPickIndex] = useState(0);
@@ -136,13 +183,31 @@ export default function OfferManager({ items, notify, reload }: Props) {
   const lastSaved = useRef<string>('');
   const [pdfBusy, setPdfBusy] = useState(false);
   const [preview, setPreview] = useState(false);
+  const [savePrompt, setSavePrompt] = useState(false);
+  // Index of the page being edited (0 = cover) — the full preview jumps to it.
+  const lastPage = useRef(0);
+  const [overflowPages, setOverflowPages] = useState<number[]>([]);
+  const [imgWarn, setImgWarn] = useState('');
 
   offerRef.current = offer;
 
   const tplOffers = useMemo(() => TEMPLATES.map((t) => t.make()), []);
+  const pendingCount = useMemo(() => {
+    let n = 0;
+    for (const e of items) {
+      const d = readDraft(e.slug);
+      if (d && JSON.stringify(d) !== JSON.stringify(fromEntry(e))) n++;
+    }
+    if (readDraft(undefined)) n++;
+    return n;
+  }, [items]);
   const patch = (p: Partial<EditOffer>) => setOffer((o) => (o ? { ...o, ...p } : o));
   const setPages = (pages: Section[]) => patch({ pages });
-  const setPage = (idx: number, p: Partial<Section>) => offer && setPages(offer.pages.map((s, i) => (i === idx ? { ...s, ...p } : s)));
+  // Functional update: async callbacks (e.g. image orientation detection)
+  // must always merge into the LATEST state, never a stale render closure —
+  // otherwise they silently wipe the image the user just selected.
+  const setPage = (idx: number, p: Partial<Section> | ((s: Section) => Partial<Section>)) =>
+    setOffer((o) => (o ? { ...o, pages: o.pages.map((s, i) => (i === idx ? { ...s, ...(typeof p === 'function' ? (p as (s: Section) => Partial<Section>)(s) : p) } : s)) } : o));
 
   const isOpen = (id: string) => !closed.has(id);
   const toggleOpen = (id: string) => setClosed((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
@@ -170,7 +235,24 @@ export default function OfferManager({ items, notify, reload }: Props) {
   const onFormFocus = (e: React.FocusEvent | React.MouseEvent) => {
     const w = (e.target as HTMLElement).closest?.('[data-fid]');
     const fid = w?.getAttribute('data-fid');
-    if (fid) focusFromForm(fid);
+    if (fid) { focusFromForm(fid); trackPage(fid); }
+  };
+  // Remember which page the user is working on so the preview can jump there.
+  const trackPage = (fid: string) => {
+    const sec = fid.split(':')[0];
+    if (sec === 'cover') { lastPage.current = 0; return; }
+    const idx = (offerRef.current?.pages || []).findIndex((p) => p.id === sec);
+    if (idx >= 0) lastPage.current = idx + 1;
+  };
+  const openPreview = () => {
+    setPreview(true);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const cont = document.querySelector('.ofr-preview-scroll');
+      const pages = cont?.querySelectorAll('.offer-page');
+      if (!cont || !pages || !pages.length) return;
+      const el = pages[Math.min(lastPage.current, pages.length - 1)];
+      if (el) scrollWithin(cont as HTMLElement, el);
+    }));
   };
 
   /* ---- CRUD ---- */
@@ -189,7 +271,12 @@ export default function OfferManager({ items, notify, reload }: Props) {
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
     if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
   };
-  const cancel = () => { setOffer(null); setView('list'); reload(); };
+  const cancel = () => {
+    const cur = offerRef.current;
+    const dirty = cur && JSON.stringify(cur) !== lastSaved.current;
+    if (dirty && !window.confirm('Ai modificări nepublicate. Dacă închizi, rămân salvate în browser. Continui?')) return;
+    setOffer(null); setView('list'); reload();
+  };
   const resumeNew = () => {
     const d = readDraft(undefined);
     if (!d) return;
@@ -215,12 +302,59 @@ export default function OfferManager({ items, notify, reload }: Props) {
     } catch (e) { notify((e as Error).message, 'err'); } finally { setBusy(false); }
   };
 
+  const openSavePrompt = () => {
+    if (!offer) return;
+    if (offer.isTemplate && !(offer.templateName || '').trim()) return notify('Adaugă numele șablonului', 'err');
+    if (!offer.isTemplate && !(offer.clientName || '').trim()) return notify('Adaugă numele clientului', 'err');
+    setSavePrompt(true);
+  };
+
+  const saveLocal = () => {
+    if (!offer) return;
+    writeDraft(offer);
+    setAuto('saved');
+    setSavePrompt(false);
+    notify('Salvat în browser', 'ok');
+  };
+
+  // Publish every offer that has a local draft different from the server copy.
+  const publishAll = async () => {
+    if (!window.confirm('Vrei să publici toate ofertele cu modificări nesalvate?')) return;
+    setBusy(true);
+    let count = 0;
+    try {
+      for (const e of items) {
+        const draft = readDraft(e.slug);
+        if (!draft) continue;
+        const server = fromEntry(e);
+        if (JSON.stringify(draft) === JSON.stringify(server)) continue;
+        const { slug } = await saveEntry({ collection: 'offers', slug: e.slug, data: draft });
+        clearDraft(e.slug); clearDraft(slug);
+        count++;
+      }
+      const newDraft = readDraft(undefined);
+      if (newDraft) {
+        if ((newDraft.isTemplate && (newDraft.templateName || '').trim()) || (!newDraft.isTemplate && (newDraft.clientName || '').trim())) {
+          const { slug } = await saveEntry({ collection: 'offers', slug: undefined, data: newDraft });
+          clearDraft(undefined); clearDraft(slug);
+          count++;
+        }
+      }
+      await reload();
+      notify(count ? `${count} ofertă/oferte publicate` : 'Nu sunt modificări de publicat', 'ok');
+    } catch (e) { notify((e as Error).message, 'err'); } finally { setBusy(false); }
+  };
+
   // Build the PDF in the browser from the CURRENT edits (a hidden full-size copy
   // of the document) — instant, no save/redeploy needed, never touches the host.
   const buildPdf = async () => {
     const stage = pdfStageRef.current;
     if (!stage) return null;
     const [{ jsPDF }, { toJpeg }] = await Promise.all([import('jspdf'), import('html-to-image')]);
+    // Wait for images and let the auto-fit pass settle before rasterizing.
+    const imgs = Array.from(stage.querySelectorAll('img')) as HTMLImageElement[];
+    await Promise.all(imgs.map((i) => (i.complete ? Promise.resolve() : new Promise((r) => { i.onload = i.onerror = () => r(null); }))));
+    await new Promise((r) => setTimeout(r, 350));
     const pages = Array.from(stage.querySelectorAll('.offer-page')) as HTMLElement[];
     const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
     for (let i = 0; i < pages.length; i++) {
@@ -260,6 +394,30 @@ export default function OfferManager({ items, notify, reload }: Props) {
     try { await deleteEntry('offers', e.slug); await reload(); notify('Ofertă ștearsă', 'ok'); }
     catch (err) { notify((err as Error).message, 'err'); }
   };
+
+  // Copy an offer/template exactly — start a new one from the same content.
+  const duplicate = (e: Entry) => {
+    const src = fromEntry(e);
+    const clone: EditOffer = typeof structuredClone === 'function' ? structuredClone(src) : JSON.parse(JSON.stringify(src));
+    delete clone.slug;
+    if (clone.isTemplate) clone.templateName = `${clone.templateName || 'Șablon'} (copie)`;
+    else clone.clientName = `${clone.clientName || 'Ofertă'} (copie)`;
+    clearDraft(undefined);
+    setOffer(clone); lastSaved.current = ''; setAuto('');
+    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+    notify('Copie creată — apasă „Salvează” pentru a o publica', 'ok');
+  };
+
+  // Detect pages whose content still overflows even after auto-fit, and warn.
+  useEffect(() => {
+    if (view !== 'edit' || !offer) return;
+    const t = setTimeout(() => {
+      const pages = Array.from(previewRef.current?.querySelectorAll('.offer-page') || []);
+      const bad = pages.map((p, i) => (p.querySelector('[data-over="true"]') ? i + 1 : 0)).filter(Boolean);
+      setOverflowPages(bad);
+    }, 450);
+    return () => clearTimeout(t);
+  }, [offer, view]);
 
   /* ---- page ops ---- */
   const addPage = (type: SectionType) => { if (!offer) return; setPages([...offer.pages, blankSection(type)]); setAddOpen(false); };
@@ -341,8 +499,9 @@ export default function OfferManager({ items, notify, reload }: Props) {
                 <span className="nm">{e.data.templateName || e.data.clientName || 'Șablon'}</span>
                 <span className="ds">{e.data.templateDescription || `${countPages(e.data)} pagini`}</span>
                 <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
-                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); edit(e); }}>Editează</button>
-                  <button className="adm-btn danger sm" onClick={(ev) => { ev.stopPropagation(); remove(e); }}>Șterge</button>
+                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); edit(e); }} title="Editează șablonul">Editează</button>
+                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); duplicate(e); }} title="Creează o copie identică a șablonului">Duplică</button>
+                  <button className="adm-btn danger sm" onClick={(ev) => { ev.stopPropagation(); remove(e); }} title="Șterge șablonul definitiv">Șterge</button>
                   <div className="adm-spacer" style={{ flexGrow: 1 }} />
                   <button className="adm-btn gold sm" onClick={() => {
                     const src = fromEntry(e);
@@ -353,7 +512,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
                     clearDraft(undefined);
                     setOffer(clone); lastSaved.current = ''; setAuto('');
                     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
-                  }}>Folosește →</button>
+                  }} title="Creează o ofertă nouă pornind de la acest șablon">Folosește →</button>
                 </div>
               </div>
             </div>
@@ -370,17 +529,22 @@ export default function OfferManager({ items, notify, reload }: Props) {
     const dirty = JSON.stringify(o) !== lastSaved.current;
     return (
       <div className="adm-editor-fit">
-        <div className="adm-editor-head" style={{ marginBottom: 14, position: 'sticky', top: 0, background: 'var(--bg)', zIndex: 100, padding: '14px 0', borderBottom: '1px solid var(--border)' }}>
+        <div className="adm-editor-head" style={{ marginBottom: 14, padding: '2px 0 10px', borderBottom: '1px solid var(--line)' }}>
           <h3 style={{ margin: 0 }}>{o.slug ? 'Editează oferta' : (o.isTemplate ? 'Editează șablonul' : 'Ofertă nouă')}</h3>
           <span className={`auto-ind${dirty ? '' : ' ok'}`}>
             {auto === 'saved' ? '✓ Salvat în browser' : dirty ? 'Nepublicat — apasă „Salvează" pentru a publica' : (o.slug ? '✓ Publicat pe site' : 'Ofertă nouă')}
           </span>
           <div className="adm-spacer" />
-          <button className="adm-btn ghost" onClick={() => setPreview(true)} title="Vezi cum arată oferta cu modificările curente">Previzualizează</button>
+          <button className="adm-btn ghost" onClick={openPreview} title="Vezi cum arată oferta cu modificările curente">Previzualizează</button>
           <button className="adm-btn ghost" onClick={downloadPdf} disabled={pdfBusy} title="Descarcă PDF cu modificările curente" style={{ marginLeft: 8 }}>{pdfBusy ? 'Se generează…' : '⬇ PDF'}</button>
-          <button className="adm-btn ghost" onClick={cancel} disabled={busy} style={{ marginLeft: 8 }}>Închide</button>
-          <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>{busy ? 'Se publică…' : (dirty ? 'Salvează' : 'Salvat')}</button>
+          <button className="adm-btn ghost" onClick={cancel} disabled={busy} title="Închide editorul și întoarce-te la listă" style={{ marginLeft: 8 }}>Închide</button>
+          <button className="adm-btn gold" onClick={openSavePrompt} disabled={busy || !dirty} title={dirty ? 'Alege: salvează local în browser sau publică pe site' : 'Toate modificările sunt publicate'} style={{ marginLeft: 8 }}>{dirty ? 'Salvează' : 'Salvat'}</button>
+          {pendingCount > 0 && <button className="adm-btn gold" onClick={publishAll} disabled={busy} title={`Publică toate cele ${pendingCount} oferte cu modificări nesalvate`} style={{ marginLeft: 8 }}>Publică toate ({pendingCount})</button>}
         </div>
+
+        {overflowPages.length > 0 && (
+          <div className="of-overflow">Atenție: {overflowPages.length === 1 ? `pagina ${overflowPages[0]}` : `paginile ${overflowPages.join(', ')}`} are prea mult conținut — textul a fost micșorat la maxim și tot nu încape. Scurtați textul sau eliminați elemente.</div>
+        )}
 
         <div className="ofb-mobile-switch" role="group">
           <button aria-pressed={!showPreview} onClick={() => setShowPreview(false)}>Editează</button>
@@ -418,7 +582,18 @@ export default function OfferManager({ items, notify, reload }: Props) {
                     </div>
                   )}
                   {o.isTemplate && sf('cover:coverSubtitle', 'Text mare copertă', <TextInput value={o.coverSubtitle} onChange={(e) => patch({ coverSubtitle: e.target.value })} />)}
-                  {sf('cover:coverImage', 'Imagine copertă', <ImageInput value={o.coverImage} onChange={(v) => patch({ coverImage: v })} />)}
+                  {sf('cover:coverImage', 'Imagine copertă', <ImageInput value={o.coverImage} focus={o.coverImageFocus} onFocusChange={(v) => patch({ coverImageFocus: v })} onChange={(v) => patch({ coverImage: v })} onMeta={(m) => patch({ coverImageOrient: m.orient })} />)}
+                  {sf('cover:logoImage', 'Logo (opțional — implicit cel JL)', <ImageInput value={o.logoImage || ''} onChange={(v) => patch({ logoImage: v || undefined })} />)}
+                  <div className="sf"><label>Încadrare imagine copertă</label>
+                    <div className="seg">
+                      {([['auto', 'Auto'], ['cover', 'Umplere'], ['contain', 'Imagine întreagă']] as const).map(([v, l]) => (
+                        <button key={v} type="button" className={`seg-btn${(o.coverFit || 'auto') === v ? ' on' : ''}`} onClick={() => patch({ coverFit: v as Offer['coverFit'] })}>{l}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {o.coverImageOrient === 'landscape' && !o.coverLayout && (
+                    <div className="of-hint">Imaginea de copertă este orizontală — am aplicat automat compoziția „Imagine lată sus”, care o afișează pe toată lățimea paginii.</div>
+                  )}
                   <div className="sf"><label>Stil document</label>
                     <div className="theme-row">
                       {STYLE_LIST.map((st) => {
@@ -443,8 +618,8 @@ export default function OfferManager({ items, notify, reload }: Props) {
                   </div>
                   <div className="sf"><label>Compoziție copertă</label>
                     <div className="seg">
-                      {([['right', 'Imagine dreapta'], ['left', 'Imagine stânga'], ['top', 'Imagine sus']] as const).map(([v, l]) => {
-                        const cur = o.coverLayout || getStyle(o.style).layout;
+                      {([['full', 'Imagine lată sus'], ['right', 'Imagine dreapta'], ['left', 'Imagine stânga']] as const).map(([v, l]) => {
+                        const cur = o.coverLayout || (o.coverImageOrient === 'landscape' ? 'full' : getStyle(o.style).layout);
                         return <button key={v} type="button" className={`seg-btn${cur === v ? ' on' : ''}`} onClick={() => patch({ coverLayout: v })}>{l}</button>;
                       })}
                     </div>
@@ -461,7 +636,15 @@ export default function OfferManager({ items, notify, reload }: Props) {
                     <span className="pg-num">{idx + 1}</span>
                     <span className="pg-title">{s.label || DEFAULT_LABEL[s.type]} <span className="chev">{isOpen(s.id) ? '▾' : '▸'}</span></span>
                   </button>
-
+                  <div className="pg-tools" onClick={(e) => e.stopPropagation()}>
+                    <button type="button" className="pg-tool" title="Micșorează textul paginii" onClick={() => setPage(idx, { fontScale: Math.max(0.8, Math.round(((s.fontScale ?? 1) - 0.1) * 100) / 100) })}>A−</button>
+                    <span className="pg-fs">{Math.round((s.fontScale ?? 1) * 100)}%</span>
+                    <button type="button" className="pg-tool" title="Mărește textul paginii" onClick={() => setPage(idx, { fontScale: Math.min(1.3, Math.round(((s.fontScale ?? 1) + 0.1) * 100) / 100) })}>A+</button>
+                    <button type="button" className={`pg-tool${s.headingBold ? ' on' : ''}`} title="Titlu îngroșat" onClick={() => setPage(idx, { headingBold: !s.headingBold })}><b>B</b></button>
+                    <button type="button" className="pg-tool" title="Mută mai sus" disabled={idx === 0} onClick={() => movePage(idx, -1)}>↑</button>
+                    <button type="button" className="pg-tool" title="Mută mai jos" disabled={idx >= (offer?.pages.length ?? 1) - 1} onClick={() => movePage(idx, 1)}>↓</button>
+                    <button type="button" className="pg-tool danger" title="Șterge pagina" onClick={() => delPage(idx)}>✕</button>
+                  </div>
                 </div>
                 {isOpen(s.id) && <div className="pg-card-body">{renderPageFields(s, idx)}</div>}
               </div>
@@ -509,6 +692,21 @@ export default function OfferManager({ items, notify, reload }: Props) {
             </div>
           </div>
         )}
+
+        {/* Save choice: publish now or keep as local browser draft. */}
+        {savePrompt && (
+          <div className="adm-dialog" onClick={() => setSavePrompt(false)}>
+            <div className="adm-dialog-box" onClick={(e) => e.stopPropagation()}>
+              <h4>Publici modificările acum?</h4>
+              <p>Modificările sunt deja salvate în browser. Poți să le publici pe site acum sau să le păstrezi locale și să publici mai târziu.</p>
+              <div className="adm-dialog-actions">
+                <button className="adm-btn ghost" onClick={() => setSavePrompt(false)}>Anulează</button>
+                <button className="adm-btn" onClick={saveLocal}>Salvează local</button>
+                <button className="adm-btn gold" onClick={() => { setSavePrompt(false); save(); }}>Publică pe site</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
 
@@ -516,22 +714,31 @@ export default function OfferManager({ items, notify, reload }: Props) {
     function renderPageFields(s: Section, idx: number) {
       const upd = (p: Partial<Section>) => setPage(idx, p);
       const arr = <T,>(key: keyof Section) => (s[key] as T[]) || [];
-      const setArr = (key: keyof Section, next: any[]) => upd({ [key]: next } as Partial<Section>);
-      const updRow = (key: keyof Section, i: number, p: any) => setArr(key, arr<any>(key).map((x, j) => (j === i ? { ...x, ...p } : x)));
-      const addRowAt = (key: keyof Section, blank: any) => setArr(key, [...arr<any>(key), blank]);
-      const delRowAt = (key: keyof Section, i: number) => setArr(key, arr<any>(key).filter((_, j) => j !== i));
+      // All array edits go through the functional setPage so async updates
+      // (onMeta) can never resurrect a stale copy of the rows.
+      const setArr = (key: keyof Section, next: (cur: any[]) => any[]) => setPage(idx, (s) => ({ [key]: next(((s as any)[key] as any[]) || []) } as Partial<Section>));
+      const updRow = (key: keyof Section, i: number, p: any) => setArr(key, (cur) => cur.map((x, j) => (j === i ? { ...x, ...p } : x)));
+      const addRowAt = (key: keyof Section, blank: any) => setArr(key, (cur) => [...cur, blank]);
+      const delRowAt = (key: keyof Section, i: number) => setArr(key, (cur) => cur.filter((_, j) => j !== i));
 
       const headingPara = (
         <>
           {sf(`${s.id}:heading`, 'Titlu secțiune', <TextInput value={s.heading} onChange={(e) => upd({ heading: e.target.value })} />)}
-          {sf(`${s.id}:paragraph`, s.type === 'text' ? 'Text (un paragraf pe rând)' : 'Paragraf', <TextArea value={s.paragraph} onChange={(e) => upd({ paragraph: e.target.value })} style={{ minHeight: s.type === 'text' ? 110 : 80 }} />)}
+          {sf(`${s.id}:paragraph`, s.type === 'text' ? 'Text (un paragraf pe rând; liniile care încep cu „- " devin listă pe toată lățimea)' : 'Paragraf', <TextArea value={s.paragraph} onChange={(e) => upd({ paragraph: e.target.value })} style={{ minHeight: s.type === 'text' ? 110 : 80 }} />)}
         </>
       );
 
       if (s.type === 'description') return (
         <>
           {headingPara}
-          {sf(`${s.id}:image`, 'Imagine laterală (opțional)', <ImageInput value={s.image} onChange={(v) => upd({ image: v })} />)}
+          {sf(`${s.id}:image`, 'Imagine (opțional)', <ImageInput value={s.image} focus={s.imageFocus} onFocusChange={(v) => upd({ imageFocus: v })} onChange={(v) => upd({ image: v })} onMeta={(m) => upd({ imageOrient: m.orient })} />)}
+          {!!s.image && sf(`${s.id}:imageLayout`, 'Așezare imagine', (
+            <div className="seg">
+              {([['side', 'Alăturat (implicit)'], ['wide', 'Pe toată lățimea']] as const).map(([v, l]) => (
+                <button key={v} type="button" className={`seg-btn${(s.imageLayout || 'side') === v ? ' on' : ''}`} onClick={() => upd({ imageLayout: v })}>{l}</button>
+              ))}
+            </div>
+          ))}
           <label className="sf-block-label">Specificații tehnice</label>
           {arr<any>('specs').map((x, i) => row(`${s.id}:spec:${i}`, `Specificație ${i + 1}`, () => delRowAt('specs', i),
             <div className="adm-row">
@@ -545,7 +752,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
       if (s.type === 'materials') return (
         <>
           {headingPara}
-          {sf(`${s.id}:image`, 'Imagine laterală (opțional)', <ImageInput value={s.image} onChange={(v) => upd({ image: v })} />)}
+          {sf(`${s.id}:image`, 'Imagine laterală (opțional)', <ImageInput value={s.image} focus={s.imageFocus} onFocusChange={(v) => upd({ imageFocus: v })} onChange={(v) => upd({ image: v })} onMeta={(m) => upd({ imageOrient: m.orient })} />)}
           <label className="sf-block-label">Mostre material</label>
           {arr<any>('swatches').map((x, i) => row(`${s.id}:swatch:${i}`, `Mostră ${i + 1}`, () => delRowAt('swatches', i),
             <>
@@ -572,7 +779,7 @@ export default function OfferManager({ items, notify, reload }: Props) {
           <label className="sf-block-label">Accesorii</label>
           {arr<any>('items').map((x, i) => row(`${s.id}:item:${i}`, `Accesoriu ${i + 1}`, () => delRowAt('items', i),
             <>
-              <ImageInput small value={x.image} onChange={(v) => updRow('items', i, { image: v })} />
+              <ImageInput small value={x.image} focus={x.focus} onFocusChange={(v) => updRow('items', i, { focus: v })} onChange={(v) => updRow('items', i, { image: v })} onMeta={(m) => updRow('items', i, { orient: m.orient })} />
               <div>
                 <TextInput placeholder="Titlu" value={x.title} onChange={(e) => updRow('items', i, { title: e.target.value })} style={{ marginBottom: 8 }} />
                 <TextArea placeholder="Descriere" value={x.description} onChange={(e) => updRow('items', i, { description: e.target.value })} style={{ minHeight: 50 }} />
@@ -589,13 +796,30 @@ export default function OfferManager({ items, notify, reload }: Props) {
       if (s.type === 'sketches') return (
         <>
           {headingPara}
-          <label className="sf-block-label">Schițe / randări</label>
+          <label className="sf-block-label">Schițe / randări (imagini orizontale recomandate, maximum 6)</label>
+          {imgWarn && <div className="of-cap-note">{imgWarn}</div>}
           {arr<any>('shots').map((x, i) => row(`${s.id}:shot:${i}`, `Imagine ${i + 1}`, () => delRowAt('shots', i),
             <>
-              <ImageInput small value={x.image} onChange={(v) => updRow('shots', i, { image: v })} />
+              <ImageInput small value={x.image} focus={x.focus} onFocusChange={(v) => updRow('shots', i, { focus: v })} onChange={(v) => updRow('shots', i, { image: v })} onMeta={(m) => {
+                if (m.orient === 'portrait') {
+                  if (window.confirm('Pentru schițe sunt recomandate imagini orizontale (landscape). O imagine verticală va fi decupată. O păstrezi?')) {
+                    updRow('shots', i, { orient: m.orient });
+                    setImgWarn('');
+                  } else {
+                    updRow('shots', i, { image: '', orient: undefined });
+                  }
+                } else {
+                  updRow('shots', i, { orient: m.orient });
+                  setImgWarn('');
+                }
+              }} />
               <TextInput placeholder="Etichetă (opțional)" value={x.caption} onChange={(e) => updRow('shots', i, { caption: e.target.value })} />
             </>, true))}
-          <button type="button" className="ro-add" onClick={() => addRowAt('shots', { image: '', caption: '' })}>＋ Imagine</button>
+          {arr<any>('shots').length < 6 ? (
+            <button type="button" className="ro-add" onClick={() => addRowAt('shots', { image: '', caption: '' })}>＋ Imagine</button>
+          ) : (
+            <div className="of-cap-note">Maximum 6 imagini pe o pagină de schițe (câte 3 pe rând).</div>
+          )}
           <label className="sf-block-label" style={{ marginTop: 14 }}>Date tehnice (dimensiuni)</label>
           {arr<any>('dims').map((x, i) => row(`${s.id}:dim:${i}`, `Bloc ${i + 1}`, () => delRowAt('dims', i),
             <>
@@ -609,13 +833,18 @@ export default function OfferManager({ items, notify, reload }: Props) {
       if (s.type === 'gallery') return (
         <>
           {headingPara}
-          <label className="sf-block-label">Imagini galerie</label>
+          <label className="sf-block-label">Imagini galerie (până la {GAL_MAX} — aranjare automată după forma fiecărei imagini)</label>
+          <GalleryAdvice urls={arr<any>('shots').map((x) => x.image).filter(Boolean)} />
           {arr<any>('shots').map((x, i) => row(`${s.id}:shot:${i}`, `Foto ${i + 1}`, () => delRowAt('shots', i),
             <>
-              <ImageInput small value={x.image} onChange={(v) => updRow('shots', i, { image: v })} />
+              <ImageInput small value={x.image} focus={x.focus} onFocusChange={(v) => updRow('shots', i, { focus: v })} onChange={(v) => updRow('shots', i, { image: v })} onMeta={(m) => updRow('shots', i, { orient: m.orient })} />
               <TextInput placeholder="Etichetă (opțional)" value={x.caption} onChange={(e) => updRow('shots', i, { caption: e.target.value })} />
             </>, true))}
-          <button type="button" className="ro-add" onClick={() => addRowAt('shots', { image: '', caption: '' })}>＋ Imagine</button>
+          {arr<any>('shots').length < GAL_MAX ? (
+            <button type="button" className="ro-add" onClick={() => addRowAt('shots', { image: '', caption: '' })}>＋ Imagine</button>
+          ) : (
+            <div className="of-cap-note">Maximum {GAL_MAX} imagini pe o pagină de galerie.</div>
+          )}
         </>
       );
 
@@ -623,7 +852,14 @@ export default function OfferManager({ items, notify, reload }: Props) {
       return (
         <>
           {headingPara}
-          {sf(`${s.id}:image`, 'Imagine lată (opțional)', <ImageInput value={s.image} onChange={(v) => upd({ image: v })} />)}
+          {sf(`${s.id}:textLayout`, 'Aranjare pagină', (
+            <div className="seg">
+              {([['bottom', 'Imagine jos'], ['top', 'Imagine sus'], ['left', 'Imagine stânga'], ['right', 'Imagine dreapta'], ['none', 'Doar text']] as const).map(([v, l]) => (
+                <button key={v} type="button" className={`seg-btn${(s.textLayout || 'bottom') === v ? ' on' : ''}`} onClick={() => upd({ textLayout: v })}>{l}</button>
+              ))}
+            </div>
+          ))}
+          {(s.textLayout || 'bottom') !== 'none' && sf(`${s.id}:image`, 'Imagine', <ImageInput value={s.image} focus={s.imageFocus} onFocusChange={(v) => upd({ imageFocus: v })} onChange={(v) => upd({ image: v })} onMeta={(m) => upd({ imageOrient: m.orient })} />)}
         </>
       );
     }
@@ -634,14 +870,15 @@ export default function OfferManager({ items, notify, reload }: Props) {
     <div>
       <SectionHead title="Generator oferte" desc={`${items.length} oferte · prezentări de proiect în brand JL Custom Design`}
         action={<>
-          {readDraft(undefined) && <button className="adm-btn ghost" onClick={resumeNew} style={{ marginRight: 8 }}>Continuă oferta nesalvată</button>}
-          <button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick_offer'); }} style={{ marginRight: 8 }}>+ Ofertă nouă</button>
+          {readDraft(undefined) && <button className="adm-btn ghost" onClick={resumeNew} style={{ marginRight: 8 }} title="Continuă oferta nouă nesalvată">Continuă oferta nesalvată</button>}
+          <button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick_offer'); }} style={{ marginRight: 8 }} title="Creează o ofertă nouă">+ Ofertă nouă</button>
           <button className="adm-btn ghost" onClick={() => {
             clearDraft(undefined);
             setOffer({ clientName: '', templateName: 'Șablon Nou', category: '', isTemplate: true, style: 'editorial', date: '', pages: [blankSection('description')] });
             lastSaved.current = ''; setAuto('');
             setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
-          }}>+ Șablon nou</button>
+          }} title="Creează un șablon nou">+ Șablon nou</button>
+          {pendingCount > 0 && <button className="adm-btn gold" onClick={publishAll} disabled={busy} style={{ marginLeft: 8 }} title={`Publică toate cele ${pendingCount} oferte cu modificări nesalvate`}>Publică toate modificările ({pendingCount})</button>}
         </>} />
       {items.filter(e => !e.data.isTemplate).length === 0 ? (
         <div className="adm-empty">Nicio ofertă încă. Apasă „Ofertă nouă”, alege un model și personalizează-l.</div>
@@ -658,9 +895,10 @@ export default function OfferManager({ items, notify, reload }: Props) {
                 <span className="meta">{e.data.date} · {countPages(e.data)} pagini</span>
               </div>
               <div className="actions">
-                <a className="adm-btn ghost sm" href={`/oferta/${e.slug}?pdf=1`} target="_blank" rel="noreferrer">⬇ PDF</a>
-                <button className="adm-btn ghost sm" onClick={() => edit(e)}>Editează</button>
-                <button className="adm-btn danger sm" onClick={() => remove(e)}>Șterge</button>
+                <a className="adm-btn ghost sm" href={`/oferta/${e.slug}?pdf=1`} target="_blank" rel="noreferrer" title="Descarcă PDF-ul publicat">⬇ PDF</a>
+                <button className="adm-btn ghost sm" onClick={() => edit(e)} title="Editează oferta">Editează</button>
+                <button className="adm-btn ghost sm" onClick={() => duplicate(e)} title="Creează o copie identică a ofertei">Duplică</button>
+                <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge oferta definitiv">Șterge</button>
               </div>
             </div>
           ))}

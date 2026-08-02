@@ -4,28 +4,50 @@
  * Optional "editable" mode used by the admin live preview: every editable
  * element carries a `data-fid` and is clickable so the editor can sync
  * form ⇄ preview. Styles: src/styles/offer.css. Palette: offerThemes.
+ *
+ * Auto-fit: each page body is wrapped in <FitBox> which measures content vs
+ * available height and scales it down (transform) so nothing is ever cut off.
+ * Per-page text size (--fs) and heading weight come from Section fields.
  */
 import React from 'react';
 import { getStyle } from './offerStyles';
+import { fillArrangement, GAL_BUDGET, GAL_W } from './galleryLayout';
 
 export type SectionType = 'description' | 'materials' | 'accessories' | 'sketches' | 'gallery' | 'text';
+export type Orient = 'portrait' | 'landscape';
+export type TextLayout = 'bottom' | 'top' | 'left' | 'right' | 'none';
 
 export interface Spec { label: string; value: string; }
 export interface Swatch { label: string; code: string; image?: string; }
 export interface Badge { label: string; desc?: string; }
-export interface AccItem { image?: string; title: string; description: string; }
-export interface Shot { image?: string; caption?: string; }
+export interface AccItem { image?: string; title: string; description: string; orient?: Orient; focus?: string; }
+export interface Shot { image?: string; caption?: string; orient?: Orient; focus?: string; }
 export interface DimBlock { title: string; lines: string; }
 
 export interface Section {
-  id: string; type: SectionType; label?: string; heading: string; paragraph: string; image?: string;
+  id: string; type: SectionType; label?: string; heading: string; paragraph: string; image?: string; imageFocus?: string;
   specs?: Spec[]; swatches?: Swatch[]; finishes?: Badge[]; items?: AccItem[]; benefits?: Badge[]; shots?: Shot[]; dims?: DimBlock[];
+  /** Orientation of the side/wide image (auto-detected at upload). */
+  imageOrient?: Orient;
+  /** Per-page text scale, 0.8–1.3 (default 1). Edited with A−/A+ in the admin. */
+  fontScale?: number;
+  /** Extra-bold section heading. */
+  headingBold?: boolean;
+  /** Text page arrangement (image placement). Default 'bottom'. */
+  textLayout?: TextLayout;
+  /** Description page image placement: 'side' (default) or 'wide' (full width). */
+  imageLayout?: 'side' | 'wide';
 }
 
 export interface Offer {
   clientName: string; category?: string; tags?: string[]; date: string; websiteUrl?: string;
-  coverImage?: string; coverSubtitle?: string;
-  style?: string; accent?: string; coverLayout?: 'right' | 'left' | 'top';
+  coverImage?: string; coverImageFocus?: string; coverSubtitle?: string;
+  /** Custom logo for the cover + page headers (defaults to the JL logo). */
+  logoImage?: string;
+  style?: string; accent?: string; coverLayout?: 'right' | 'left' | 'top' | 'full';
+  /** Cover image framing: 'auto' (contain for landscape in side slots), 'cover' fill, 'contain' fit. */
+  coverFit?: 'auto' | 'cover' | 'contain';
+  coverImageOrient?: Orient;
   isTemplate?: boolean; templateName?: string; templateDescription?: string;
   pages: Section[];
 }
@@ -51,6 +73,173 @@ export function normalizeOffer(raw: any): Offer {
   return { clientName: o.clientName || '', category: o.category || '', tags: o.tags || [], date: o.date || '', websiteUrl: o.websiteUrl || '', coverImage: o.coverImage || '', coverSubtitle: o.coverSubtitle || 'MOBILIER PERSONALIZAT', style: o.style || 'editorial', accent: o.accent, coverLayout: o.coverLayout, isTemplate: o.isTemplate, templateName: o.templateName, templateDescription: o.templateDescription, pages };
 }
 
+const useIsoLayoutEffect = typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect;
+
+/**
+ * useOrient — resolves an image's orientation. A value stored in the offer
+ * (set at upload) wins; otherwise it is detected at runtime from the natural
+ * dimensions once the image loads (covers offers saved before this existed).
+ */
+function useOrient(src?: string, stored?: Orient): Orient | undefined {
+  const [o, setO] = React.useState<Orient | undefined>(stored);
+  React.useEffect(() => {
+    if (stored) { setO(stored); return; }
+    if (!src) { setO(undefined); return; }
+    let alive = true;
+    const im = new Image();
+    im.onload = () => { if (alive) setO(im.naturalHeight > im.naturalWidth ? 'portrait' : 'landscape'); };
+    im.src = src;
+    return () => { alive = false; };
+  }, [src, stored]);
+  return o;
+}
+
+/** Side image (description/materials): frame adapts to the image orientation. */
+function SideImg({ s, fid }: { s: Section; fid: Record<string, any> }) {
+  const o = useOrient(s.image, s.imageOrient);
+  if (!has(s.image)) return <div className="col-right-empty" {...fid} />;
+  return <img src={s.image} alt="" className={o === 'portrait' ? 'portrait' : ''} style={{ objectPosition: s.imageFocus || 'center' }} {...fid} />;
+}
+
+/** Sketch figure: portrait images get a portrait frame. */
+function SketchFigure({ x, fid }: { x: Shot; fid: Record<string, any> }) {
+  const o = useOrient(x.image, x.orient);
+  return (
+    <figure className="sketch" {...fid}>
+      {x.image ? <img src={x.image} alt={x.caption || ''} className={o === 'portrait' ? 'portrait' : ''} style={{ objectPosition: x.focus || 'center' }} /> : <div className="sketch-empty" />}
+      {has(x.caption) && <figcaption>{x.caption}</figcaption>}
+    </figure>
+  );
+}
+
+/** Gallery: measures each image's aspect ratio + the free body area, then
+   fills the ENTIRE rectangle (full width × full height) with cover-fit cells
+   via fillArrangement — zero free space for any count/aspect mix; the row
+   split is chosen for the least crop. */
+function Gallery({ shots, F, sid }: { shots: Shot[]; F: (fid: string) => Record<string, any>; sid: string }) {
+  const [ratios, setRatios] = React.useState<(number | null)[]>([]);
+  const [budget, setBudget] = React.useState(GAL_BUDGET);
+  const [galW, setGalW] = React.useState(GAL_W);
+  const wrapRef = React.useRef<HTMLDivElement>(null);
+  const key = shots.map((x) => x.image).join('|');
+  React.useEffect(() => {
+    let alive = true;
+    setRatios(shots.map(() => null));
+    shots.forEach((x, i) => {
+      if (!x.image) return;
+      const im = new Image();
+      im.onload = () => {
+        if (!alive || !im.naturalWidth) return;
+        const r = im.naturalWidth / im.naturalHeight;
+        setRatios((cur) => { const n = cur.slice(); n[i] = r; return n; });
+      };
+      im.src = x.image;
+    });
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  // Measure the real free area on this page (body minus the paragraph) so the
+  // gallery fills it exactly without triggering FitBox.
+  useIsoLayoutEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const page = el.closest('.offer-page');
+    const main = el.closest('.sheet-main');
+    if (!page || !main) return;
+    const cqwPx = (page as HTMLElement).clientWidth / 100;
+    if (!cqwPx) return;
+    let used = 0;
+    const fit = el.parentElement as HTMLElement;
+    Array.from(fit.children).forEach((ch) => { if (ch !== el) used += (ch as HTMLElement).offsetHeight; });
+    const b = Math.round(((main as HTMLElement).clientHeight - used) / cqwPx - 2.2); // 2 = margin-top, 0.2 rounding safety
+    if (b > 10 && Math.abs(b - budget) > 1) setBudget(b);
+    const w = Math.round((main as HTMLElement).clientWidth / cqwPx);
+    if (w > 40 && Math.abs(w - galW) > 1) setGalW(w);
+  });
+  const rs = shots.map((_, i) => ratios[i] ?? 1.5);
+  const arr = fillArrangement(rs, budget, galW);
+  return (
+    <div className="gal-rows gal-fill" ref={wrapRef}>
+      {arr.rows.map((row, ri) => (
+        <div className="gal-row" style={{ flex: `${arr.weights[ri]} 1 0` }} key={ri}>
+          {row.map((idx) => {
+            const x = shots[idx];
+            return (
+              <figure className="gal" style={{ flex: `${rs[idx]} 1 0` }} key={idx} {...F(`${sid}:shot:${idx}`)}>
+                {x.image ? <img className="gal-img" src={x.image} alt={x.caption || ''} style={{ objectPosition: x.focus || 'center' }} /> : <div className="gal-img empty" />}
+                {has(x.caption) && <figcaption>{x.caption}</figcaption>}
+              </figure>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Accessory card image: frame follows the item image orientation. */
+function AccImg({ it }: { it: AccItem }) {
+  const o = useOrient(it.image, it.orient);
+  return it.image
+    ? <img className={`acc-img${o === 'portrait' ? ' portrait' : ''}`} src={it.image} alt="" style={{ objectPosition: it.focus || 'center' }} />
+    : <div className="acc-img empty" />;
+}
+
+/** Text-page image block: frame follows the image orientation. */
+function TextImage({ s, fid }: { s: Section; fid: Record<string, any> }) {
+  const o = useOrient(s.image, s.imageOrient);
+  return (
+    <div className={`text-image${o === 'portrait' ? ' port' : ''}`}>
+      {has(s.image)
+        ? <img src={s.image} alt="" className={o === 'portrait' ? 'portrait' : ''} style={{ objectPosition: s.imageFocus || 'center' }} {...fid} />
+        : <div className="text-image-empty" {...fid} />}
+    </div>
+  );
+}
+
+/**
+ * FitBox — guarantees its content never overflows vertically: it measures the
+ * natural content height against the available height and scales the box down
+ * (transform, with width compensation) when needed. If even the minimum scale
+ * (0.55) is not enough, it marks itself with data-over="true" so the editor
+ * can warn the user to shorten the text.
+ */
+function FitBox({ className, children }: { className?: string; children: React.ReactNode }) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  useIsoLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const apply = () => {
+      const avail = el.clientHeight;
+      const need = el.scrollHeight;
+      let f = avail > 0 && need > 0 ? Math.min(1, avail / need) : 1;
+      const clamped = f < 0.55;
+      if (clamped) f = 0.55;
+      f = Math.round(f * 1000) / 1000;
+      // Scale only — never widen: with aspect-ratio boxes (image frames), a
+      // wider layout is also TALLER, which feeds back and defeats the fit.
+      // (Transforms don't affect layout, so no reset is needed to measure.)
+      const next = f < 1 ? `scale(${f})` : '';
+      if (el.style.transform !== next) el.style.transform = next;
+      if (clamped) el.dataset.over = 'true';
+      else if (el.dataset.over) delete el.dataset.over;
+    };
+    const schedule = () => requestAnimationFrame(apply);
+    apply();
+    const t = setTimeout(apply, 250);
+    (document as any).fonts?.ready?.then(apply).catch(() => {});
+    // Re-measure when content changes after mount: orientation detection sets
+    // classes, images finish loading, captions render, etc.
+    const mo = new MutationObserver(schedule);
+    mo.observe(el, { attributes: true, childList: true, subtree: true, characterData: true });
+    el.addEventListener('load', schedule, true);
+    return () => { clearTimeout(t); mo.disconnect(); el.removeEventListener('load', schedule, true); };
+  });
+  return <div className={className} ref={ref} style={{ transformOrigin: 'top center' }}>{children}</div>;
+}
+
+const LOGO_SRC = '/Images/logos/Fara%20fundal%202.png';
+
 interface DocProps {
   offer: Offer; coverOnly?: boolean;
   editable?: boolean; activeField?: string | null; onFieldClick?: (fid: string) => void;
@@ -59,7 +248,6 @@ interface DocProps {
 export default function OfferDocument({ offer: raw, coverOnly, editable, activeField, onFieldClick }: DocProps) {
   const offer = normalizeOffer(raw);
   const st = getStyle(offer.style);
-  const layout = offer.coverLayout || st.layout;
   const rootClass = `offer-doc style-${st.id}`;
   // The palette comes from the style class in offer.css; only the accent is
   // overridden inline when the user picks a custom colour.
@@ -73,36 +261,77 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
   const date = offer.date || '';
   const coverTags = offer.tags && offer.tags.length ? offer.tags : (has(offer.category) ? [offer.category!] : []);
 
+  const logoSrc = offer.logoImage || LOGO_SRC;
   const logo = (
-    <div className="cover-logo">
+    <div className="cover-logo" {...F('cover:logoImage')}>
       <div className="logo-text">
         <span className="cl-jl">JL</span>
         <span className="cl-sub">CUSTOM<br />DESIGN</span>
       </div>
-      <img className="logo-img" src="/Images/logos/Fara%20fundal%202.png" alt="JL Custom Design Logo" />
+      <img className="logo-img" src={logoSrc} alt="Logo" />
+    </div>
+  );
+
+  // Landscape covers don't fit tall side slots: show the whole image (contain)
+  // unless the user explicitly chose "Umplere" (cover fill). Orientation comes
+  // from the offer or is detected at runtime for older offers.
+  const detectedCoverOrient = useOrient(offer.coverImage, offer.coverImageOrient);
+  const coverFit = offer.coverFit || 'auto';
+  // Landscape covers default to the full-width layout (image spans the whole
+  // top, logo sits bottom-right next to the title) unless the user picked a
+  // composition explicitly.
+  const layout = offer.coverLayout || (detectedCoverOrient === 'landscape' ? 'full' : st.layout);
+  // In tall side slots a landscape image would be cropped: show it whole
+  // (contain) unless the user explicitly chose "Umplere" (cover fill).
+  const containCover = coverFit === 'contain' || (coverFit === 'auto' && detectedCoverOrient === 'landscape' && (layout === 'left' || layout === 'right'));
+
+  const coverTitle = (
+    <div className="cover-title" {...F('cover:coverSubtitle')}>
+      <span className="ct-thin">{words[0]}</span>
+      {words.length > 1 && <> <span className="ct-bold">{words.slice(1).join(' ')}</span></>}
     </div>
   );
 
   const cover = (
     <section className={`offer-page cover lay-${layout}`}>
-      <div className="cover-media" {...F('cover:coverImage')}>
-        {offer.coverImage ? <img src={offer.coverImage} alt="" /> : <div className="cover-media-empty" />}
+      <div className={`cover-media${containCover ? ' contain' : ''}`} {...F('cover:coverImage')}>
+        {offer.coverImage ? <img src={offer.coverImage} alt="" style={{ objectPosition: offer.coverImageFocus || 'center' }} /> : <div className="cover-media-empty" />}
       </div>
-      <div className="cover-panel">
-        {logo}
-        <div className="cover-spacer" />
-        <div className="cover-title" {...F('cover:coverSubtitle')}>
-          {words.map((w, i) => <span key={i} className={i === 0 ? 'ct-thin' : 'ct-bold'}>{w}</span>)}
-        </div>
-        <div className="cover-client">
-          <div className="cc-name" {...F('cover:clientName')}>{offer.isTemplate ? offer.templateName || 'Nume șablon' : offer.clientName || 'Nume client'}</div>
-          {coverTags.length > 0 && <div className="cc-cat" {...F('cover:tags')}>{coverTags.join(' · ')}</div>}
-        </div>
-        <div className="cover-foot">
-          <span {...F('cover:websiteUrl')}>{offer.websiteUrl}</span>
-          <span {...F('cover:date')}>{date}</span>
-        </div>
-      </div>
+      <FitBox className="cover-panel">
+        {layout === 'full' ? (
+          <>
+            {/* Full-width image: title bottom-left, logo bottom-right, same row. */}
+            <div className="cf-row">
+              <div className="cf-text">
+                {coverTitle}
+                <div className="cover-client">
+                  <div className="cc-name" {...F('cover:clientName')}>{offer.isTemplate ? offer.templateName || 'Nume șablon' : offer.clientName || 'Nume client'}</div>
+                  {coverTags.length > 0 && <div className="cc-cat" {...F('cover:tags')}>{coverTags.join(' · ')}</div>}
+                </div>
+              </div>
+              {logo}
+            </div>
+            <div className="cover-foot">
+              <span {...F('cover:websiteUrl')}>{offer.websiteUrl}</span>
+              <span {...F('cover:date')}>{date}</span>
+            </div>
+          </>
+        ) : (
+          <>
+            {logo}
+            <div className="cover-spacer" />
+            {coverTitle}
+            <div className="cover-client">
+              <div className="cc-name" {...F('cover:clientName')}>{offer.isTemplate ? offer.templateName || 'Nume șablon' : offer.clientName || 'Nume client'}</div>
+              {coverTags.length > 0 && <div className="cc-cat" {...F('cover:tags')}>{coverTags.join(' · ')}</div>}
+            </div>
+            <div className="cover-foot">
+              <span {...F('cover:websiteUrl')}>{offer.websiteUrl}</span>
+              <span {...F('cover:date')}>{date}</span>
+            </div>
+          </>
+        )}
+      </FitBox>
     </section>
   );
 
@@ -111,31 +340,37 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
   return (
     <div className={rootClass} style={docStyle}>
       {cover}
-      {offer.pages.map((s, idx) => <Page key={s.id} s={s} num={String(idx + 1).padStart(2, '0')} date={date} F={F} editable={!!editable} />)}
+      {offer.pages.map((s, idx) => <Page key={s.id} s={s} num={String(idx + 1).padStart(2, '0')} date={date} F={F} editable={!!editable} logoSrc={logoSrc} />)}
     </div>
   );
 }
 
-function Page({ s, num, date, F, editable }: { s: Section; num: string; date: string; F: (fid: string) => Record<string, any>; editable: boolean }) {
+function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string; date: string; F: (fid: string) => Record<string, any>; editable: boolean; logoSrc: string }) {
   const label = s.label || DEFAULT_LABEL[s.type];
   const para = (cls = '') => <p className={`s-para ${cls}`} {...F(`${s.id}:paragraph`)}>{s.paragraph}</p>;
 
   let main: React.ReactNode = null;
+  /** For text pages with image-on-top, the strip is hoisted above the header. */
+  let topImg: React.ReactNode = null;
 
   if (s.type === 'description') {
+    const wide = s.imageLayout === 'wide' && (has(s.image) || editable);
     main = (
-      <div className={`cols${has(s.image) || editable ? '' : ' no-img'}`}>
-        <div className="col-left">
-          {para()}
-          <div className="block-label">Specificații tehnice</div>
-          <div className="spec-list">
-            {(s.specs || []).filter((x) => x.label || x.value).map((x, i) => (
-              <div className="spec" key={i} {...F(`${s.id}:spec:${i}`)}><span className="spec-label">{x.label}</span><span className="spec-value">{x.value}</span></div>
-            ))}
+      <>
+        {wide && <div className="desc-wide-img"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>}
+        <div className={`cols${!has(s.image) && !editable || wide ? ' no-img' : ''}`}>
+          <div className="col-left">
+            {para()}
+            <div className="block-label">Specificații tehnice</div>
+            <div className="spec-list">
+              {(s.specs || []).filter((x) => x.label || x.value).map((x, i) => (
+                <div className="spec" key={i} {...F(`${s.id}:spec:${i}`)}><span className="spec-label">{x.label}</span><span className="spec-value">{x.value}</span></div>
+              ))}
+            </div>
           </div>
+          {!wide && (has(s.image) || editable) && <div className="col-right"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>}
         </div>
-        {(has(s.image) || editable) && <div className="col-right">{has(s.image) ? <img src={s.image} alt="" {...F(`${s.id}:image`)} /> : <div className="col-right-empty" {...F(`${s.id}:image`)} />}</div>}
-      </div>
+      </>
     );
   } else if (s.type === 'materials') {
     main = (
@@ -145,7 +380,7 @@ function Page({ s, num, date, F, editable }: { s: Section; num: string; date: st
           <div className="swatches">
             {(s.swatches || []).filter((x) => x.label || x.code || x.image).map((x, i) => (
               <div className="swatch" key={i} {...F(`${s.id}:swatch:${i}`)}>
-                <div className={`swatch-img${x.image ? '' : ' empty'}`} style={x.image ? { backgroundImage: `url(${x.image})` } : undefined} />
+                {x.image ? <img className="swatch-img" src={x.image} alt="" /> : <div className="swatch-img empty" />}
                 <div className="swatch-label">{x.label}</div><div className="swatch-code">{x.code}</div>
               </div>
             ))}
@@ -157,7 +392,7 @@ function Page({ s, num, date, F, editable }: { s: Section; num: string; date: st
             ))}
           </div>
         </div>
-        {(has(s.image) || editable) && <div className="col-right">{has(s.image) ? <img src={s.image} alt="" {...F(`${s.id}:image`)} /> : <div className="col-right-empty" {...F(`${s.id}:image`)} />}</div>}
+        {(has(s.image) || editable) && <div className="col-right"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>}
       </div>
     );
   } else if (s.type === 'accessories') {
@@ -165,33 +400,28 @@ function Page({ s, num, date, F, editable }: { s: Section; num: string; date: st
       <>
         {para('wide')}
         <div className="acc-grid">
-          {(s.items || []).filter((i) => i.title || i.image || i.description).map((it, i) => (
-            <div className={`acc-card${it.image || editable ? '' : ' no-img'}`} key={i} {...F(`${s.id}:item:${i}`)}>
-              {(it.image || editable) && <div className={`acc-img${it.image ? '' : ' empty'}`} style={it.image ? { backgroundImage: `url(${it.image})` } : undefined} />}
-              <div className="acc-body"><div className="acc-title">{it.title}</div><div className="acc-desc">{it.description}</div></div>
+          {(s.items || []).filter((i) => editable || i.title || i.image || i.description).map((it, i) => (
+            <div className={`acc-card${it.image ? '' : ' no-img'}`} key={i} {...F(`${s.id}:item:${i}`)}>
+              <AccImg it={it} />
+              {(it.title || it.description) && <div className="acc-body"><div className="acc-title">{it.title}</div><div className="acc-desc">{it.description}</div></div>}
             </div>
           ))}
         </div>
         <div className="block-label">Beneficii</div>
         <div className="badges">
           {(s.benefits || []).filter((b) => b.label).map((b, i) => (
-            <div className="badge-pill" key={i} {...F(`${s.id}:benefit:${i}`)}><span className="bp-dot" /><div className="bp-label">{b.label}</div></div>
+            <div className="badge-pill" key={i} {...F(`${s.id}:benefit:${i}`)}><span className="bp-dot" /><div><div className="bp-label">{b.label}</div></div></div>
           ))}
         </div>
       </>
     );
   } else if (s.type === 'sketches') {
-    const shots = editable ? (s.shots || []) : (s.shots || []).filter((x) => x.image);
+    const shots = (editable ? (s.shots || []) : (s.shots || []).filter((x) => x.image)).slice(0, 6); // max 6 per page
     main = (
       <>
         {para('wide')}
         <div className="sketch-row">
-          {shots.map((x, i) => (
-            <figure className="sketch" key={i} {...F(`${s.id}:shot:${i}`)}>
-              {x.image ? <img src={x.image} alt={x.caption || ''} /> : <div className="sketch-empty" />}
-              {has(x.caption) && <figcaption>{x.caption}</figcaption>}
-            </figure>
-          ))}
+          {shots.map((x, i) => <SketchFigure key={i} x={x} fid={F(`${s.id}:shot:${i}`)} />)}
         </div>
         <div className="block-label">Date tehnice</div>
         <div className="dims">
@@ -202,39 +432,49 @@ function Page({ s, num, date, F, editable }: { s: Section; num: string; date: st
       </>
     );
   } else if (s.type === 'gallery') {
-    const shots = editable ? (s.shots || []) : (s.shots || []).filter((x) => x.image);
+    const all = editable ? (s.shots || []) : (s.shots || []).filter((x) => x.image);
+    const shots = all.slice(0, 5); // max 5 images per gallery page
     main = (
       <>
         {para('wide')}
-        <div className={`gallery-grid g${Math.min(shots.length, 4) || 1}`}>
-          {shots.map((x, i) => (
-            <figure className="gal" key={i} {...F(`${s.id}:shot:${i}`)}>
-              <div className={`gal-img${x.image ? '' : ' empty'}`} style={x.image ? { backgroundImage: `url(${x.image})` } : undefined} />
-              {has(x.caption) && <figcaption>{x.caption}</figcaption>}
-            </figure>
-          ))}
-        </div>
+        <Gallery shots={shots} F={F} sid={s.id} />
       </>
     );
   } else {
+    const tl: TextLayout = s.textLayout || 'bottom';
+    const imgBlock = tl !== 'none' && (has(s.image) || editable) ? <TextImage s={s} fid={F(`${s.id}:image`)} /> : null;
+    if (tl === 'top') topImg = imgBlock ? <div className="sheet-topimg">{imgBlock}</div> : null;
+    // Lines starting with "- " become a full-width list below the text/image row.
+    const lines = s.paragraph.split('\n').filter(Boolean);
+    const items = lines.filter((l) => l.trimStart().startsWith('- ')).map((l) => l.trimStart().slice(2));
+    const paras = lines.filter((l) => !l.trimStart().startsWith('- '));
     main = (
-      <div className="text-wrap">
-        <div className="text-body" {...F(`${s.id}:paragraph`)}>
-          {s.paragraph.split('\n').filter(Boolean).map((l, j) => <p key={j}>{l}</p>)}
+      <div className={`text-wrap lay-${tl}`}>
+        <div className="text-row">
+          <div className="text-body" {...F(`${s.id}:paragraph`)}>
+            {paras.map((l, j) => <p key={j}>{l}</p>)}
+          </div>
+          {tl !== 'top' && imgBlock}
         </div>
-        {(has(s.image) || editable) && <div className="text-image">{has(s.image) ? <img src={s.image} alt="" {...F(`${s.id}:image`)} /> : <div className="text-image-empty" {...F(`${s.id}:image`)} />}</div>}
+        {items.length > 0 && (
+          <ul className="text-list">
+            {items.map((l, j) => <li key={j}>{l}</li>)}
+          </ul>
+        )}
       </div>
     );
   }
 
   return (
-    <section className="offer-page sheet">
+    <section className="offer-page sheet" style={{ '--fs': s.fontScale ?? 1 } as React.CSSProperties}>
+      {topImg}
       <div className="sheet-head">
-        <div className="eyebrow"><span className="num">{num}</span> {label}</div>
-        <h2 className="s-heading" {...F(`${s.id}:heading`)}>{s.heading}</h2>
+        <span className="num">{num}</span>
+        <h2 className={`s-heading${s.headingBold ? ' xb' : ''}`} {...F(`${s.id}:heading`)}>{s.heading}</h2>
+        <img className="sheet-logo" src={logoSrc} alt="" {...F('cover:logoImage')} />
       </div>
-      <div className="sheet-main">{main}</div>
-      <div className="sheet-foot"><span className="ft-mono">JL</span><span>{date}</span></div>
+      <FitBox className={`sheet-main${s.type === 'gallery' ? ' gal-main' : ''}`}>{main}</FitBox>
+      <div className="sheet-foot"><span>{date}</span></div>
     </section>
   );
 }

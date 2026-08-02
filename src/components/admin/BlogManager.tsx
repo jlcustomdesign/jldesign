@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Entry } from './api';
 import { saveEntry, deleteEntry } from './api';
-import { Field, TextInput, TextArea, Select, ImageInput, MarkdownEditor, SectionHead } from './ui';
+import { Field, TextInput, TextArea, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt } from './ui';
+import { readDraft, writeDraft, clearDraft } from './drafts';
 
 const CATEGORIES = [
   { value: 'inspiratie', label: 'Inspirație & Design' },
@@ -39,10 +40,15 @@ const emptyDraft = (): Draft => ({
 export default function BlogManager({ items, notify, reload }: Props) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [busy, setBusy] = useState(false);
+  const [savePrompt, setSavePrompt] = useState(false);
+  const draftRef = useRef<Draft | null>(null);
+  const lastSaved = useRef<string>('');
+  draftRef.current = draft;
 
   const open = (e?: Entry) => {
+    let server: Draft | null = null;
     if (e) {
-      setDraft({
+      server = {
         slug: e.slug,
         title: e.data.title || '',
         description: e.data.description || '',
@@ -52,19 +58,26 @@ export default function BlogManager({ items, notify, reload }: Props) {
         coverImage: e.data.coverImage || '',
         coverImageAlt: e.data.coverImageAlt || '',
         body: e.body || '',
-      });
-    } else setDraft(emptyDraft());
+      };
+    }
+    const local = readDraft<Draft>('blog', e?.slug);
+    const restored = local && JSON.stringify(local) !== JSON.stringify(server);
+    const next = local || server || emptyDraft();
+    setDraft(next);
+    lastSaved.current = JSON.stringify(server || next);
+    if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
   };
 
-  const save = async () => {
+  const publish = async () => {
     if (!draft) return;
     if (!draft.title.trim()) return notify('Adaugă un titlu', 'err');
     if (!draft.description.trim()) return notify('Adaugă o descriere SEO', 'err');
     if (!draft.coverImage) return notify('Adaugă o imagine de copertă', 'err');
     if (!draft.coverImageAlt.trim()) return notify('Adaugă textul alternativ al imaginii', 'err');
+    const prevSlug = draft.slug;
     setBusy(true);
     try {
-      const { viewUrl } = await saveEntry({
+      await saveEntry({
         collection: 'blog',
         slug: draft.slug,
         data: {
@@ -79,13 +92,60 @@ export default function BlogManager({ items, notify, reload }: Props) {
         body: draft.body,
       });
       await reload();
-      notify(draft.slug ? 'Articol actualizat' : `Articol publicat${viewUrl ? '' : ''}`, 'ok');
+      notify(prevSlug ? 'Articol actualizat' : 'Articol publicat', 'ok');
       setDraft(null);
+      clearDraft('blog', prevSlug);
     } catch (e) {
       notify((e as Error).message, 'err');
     } finally {
       setBusy(false);
     }
+  };
+
+  const openSavePrompt = () => {
+    if (!draft) return;
+    if (!draft.title.trim()) return notify('Adaugă un titlu', 'err');
+    if (!draft.description.trim()) return notify('Adaugă o descriere SEO', 'err');
+    if (!draft.coverImage) return notify('Adaugă o imagine de copertă', 'err');
+    if (!draft.coverImageAlt.trim()) return notify('Adaugă textul alternativ al imaginii', 'err');
+    setSavePrompt(true);
+  };
+
+  const saveLocal = () => {
+    if (!draft) return;
+    writeDraft('blog', draft.slug, draft);
+    setSavePrompt(false);
+    notify('Salvat în browser', 'ok');
+  };
+
+  // Autosave to browser on every change.
+  useEffect(() => {
+    if (!draft) return;
+    const t = setTimeout(() => {
+      const d = draftRef.current;
+      if (!d) return;
+      writeDraft('blog', d.slug, d);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [draft]);
+
+  // Warn before leaving with unpublished changes.
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      const d = draftRef.current;
+      if (!d || JSON.stringify(d) === lastSaved.current) return;
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, []);
+
+  const closeEditor = () => {
+    const d = draftRef.current;
+    const dirty = d && JSON.stringify(d) !== lastSaved.current;
+    if (dirty && !window.confirm('Ai modificări nepublicate. Dacă închizi, rămân salvate în browser. Continui?')) return;
+    setDraft(null);
   };
 
   const remove = async (e: Entry) => {
@@ -105,11 +165,16 @@ export default function BlogManager({ items, notify, reload }: Props) {
         <div className="adm-editor-head">
           <h3>{draft.slug ? 'Editează articol' : 'Articol nou'}</h3>
           <div className="adm-spacer" />
-          <button className="adm-btn ghost" onClick={() => setDraft(null)} disabled={busy}>Anulează</button>
-          <button className="adm-btn gold" onClick={save} disabled={busy} style={{ marginLeft: 8 }}>
-            {busy ? 'Se salvează…' : 'Publică'}
-          </button>
+          <button className="adm-btn ghost" onClick={closeEditor} disabled={busy} title="Închide editorul și întoarce-te la listă">Anulează</button>
+          <button className="adm-btn gold" onClick={openSavePrompt} disabled={busy} title="Alege: salvează local în browser sau publică pe site" style={{ marginLeft: 8 }}>Salvează</button>
         </div>
+
+        <SavePrompt
+          open={savePrompt}
+          onClose={() => setSavePrompt(false)}
+          onLocal={saveLocal}
+          onPublish={() => { setSavePrompt(false); publish(); }}
+        />
 
         <Field label="Titlu articol">
           <TextInput value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Un titlu atractiv pentru cititori" />
@@ -159,7 +224,7 @@ export default function BlogManager({ items, notify, reload }: Props) {
       <SectionHead
         title="Blog"
         desc={`${items.length} articole`}
-        action={<button className="adm-btn" onClick={() => open()}>＋ Articol nou</button>}
+        action={<button className="adm-btn" onClick={() => open()} title="Adaugă un articol nou pe blog">＋ Articol nou</button>}
       />
       {items.length === 0 ? (
         <div className="adm-empty">Niciun articol încă. Apasă „Articol nou” pentru a scrie primul.</div>
@@ -176,9 +241,9 @@ export default function BlogManager({ items, notify, reload }: Props) {
                 <span className="meta">{String(e.data.publishedDate || '').slice(0, 10)}</span>
               </div>
               <div className="actions">
-                <a className="adm-btn ghost sm" href={`/blog/${e.slug}`} target="_blank" rel="noreferrer">Vezi</a>
-                <button className="adm-btn ghost sm" onClick={() => open(e)}>Editează</button>
-                <button className="adm-btn danger sm" onClick={() => remove(e)}>Șterge</button>
+                <a className="adm-btn ghost sm" href={`/blog/${e.slug}`} target="_blank" rel="noreferrer" title="Vezi articolul pe site">Vezi</a>
+                <button className="adm-btn ghost sm" onClick={() => open(e)} title="Editează articolul">Editează</button>
+                <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge articolul definitiv">Șterge</button>
               </div>
             </div>
           ))}
