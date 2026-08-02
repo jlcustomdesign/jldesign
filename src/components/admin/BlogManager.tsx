@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { Entry } from './api';
 import { saveEntry, deleteEntry } from './api';
-import { Field, TextInput, TextArea, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt, PendingIsland } from './ui';
+import { Field, TextInput, TextArea, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt } from './ui';
 import { readDraft, writeDraft, clearDraft } from './drafts';
 
 const CATEGORIES = [
@@ -16,6 +16,8 @@ interface Props {
   items: Entry[];
   notify: (msg: string, kind?: 'ok' | 'err') => void;
   reload: () => Promise<void>;
+  openTarget?: { collection: 'blog'; slug?: string; isNew?: boolean } | null;
+  onOpenHandled?: () => void;
 }
 
 interface Draft {
@@ -37,7 +39,7 @@ const emptyDraft = (): Draft => ({
   publishedDate: today(), coverImage: '', coverImageAlt: '', body: '',
 });
 
-export default function BlogManager({ items, notify, reload }: Props) {
+export default function BlogManager({ items, notify, reload, openTarget, onOpenHandled }: Props) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [busy, setBusy] = useState(false);
   const [savePrompt, setSavePrompt] = useState(false);
@@ -159,6 +161,30 @@ export default function BlogManager({ items, notify, reload }: Props) {
     return () => window.removeEventListener('beforeunload', handler);
   }, []);
 
+  // Open a specific pending item requested from the global pending bar.
+  useEffect(() => {
+    if (!openTarget || draft) return;
+    if (openTarget.isNew || !openTarget.slug) {
+      const d = readDraft<Draft>('blog', undefined);
+      if (d) { setDraft(d); lastSaved.current = ''; onOpenHandled?.(); }
+    } else {
+      const e = items.find((x) => x.slug === openTarget.slug);
+      if (e) {
+        const server = {
+          slug: e.slug, title: e.data.title || '', description: e.data.description || '', category: e.data.category || 'inspiratie',
+          author: e.data.author || 'JL Custom Design', publishedDate: String(e.data.publishedDate || today()).slice(0, 10),
+          coverImage: e.data.coverImage || '', coverImageAlt: e.data.coverImageAlt || '', body: e.body || '',
+        };
+        const local = readDraft<Draft>('blog', e.slug);
+        const restored = local && JSON.stringify(local) !== JSON.stringify(server);
+        setDraft(local || server); lastSaved.current = JSON.stringify(server);
+        if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+        onOpenHandled?.();
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openTarget]);
+
   const closeEditor = () => {
     const d = draftRef.current;
     if (!d) { setDraft(null); return; }
@@ -242,39 +268,8 @@ export default function BlogManager({ items, notify, reload }: Props) {
     String(b.data.publishedDate || '').localeCompare(String(a.data.publishedDate || ''))
   );
 
-  const pendingItems = useMemo(() => {
-    const out: { key: string; label: string; isNew: boolean }[] = [];
-    for (const e of items) {
-      const d = readDraft<Draft>('blog', e.slug);
-      const server = {
-        slug: e.slug, title: e.data.title || '', description: e.data.description || '', category: e.data.category || 'inspiratie',
-        author: e.data.author || 'JL Custom Design', publishedDate: String(e.data.publishedDate || today()).slice(0, 10),
-        coverImage: e.data.coverImage || '', coverImageAlt: e.data.coverImageAlt || '', body: e.body || '',
-      };
-      if (d && JSON.stringify(d) !== JSON.stringify(server)) {
-        out.push({ key: e.slug, label: d.title || e.slug, isNew: false });
-      }
-    }
-    const n = readDraft<Draft>('blog', undefined);
-    if (n && (n.title || n.coverImage || n.body)) {
-      out.push({ key: 'new', label: n.title || 'Articol nou', isNew: true });
-    }
-    return out;
-  }, [items]);
-
-  const editPending = (key: string) => {
-    if (key === 'new') resumeNew();
-    else open(items.find((e) => e.slug === key));
-  };
-
   return (
     <div>
-      <PendingIsland
-        title="Modificări nesalvate"
-        items={pendingItems}
-        onEdit={editPending}
-        onClearNew={() => { if (window.confirm('Ștergi articolul nou nesalvat?')) { clearDraft('blog', undefined); notify('Draft șters', 'ok'); } }}
-      />
       <SectionHead
         title="Blog"
         desc={`${items.length} articole`}

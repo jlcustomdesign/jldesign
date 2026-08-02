@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Entry } from './api';
 import { saveEntry, deleteEntry } from './api';
-import { Field, TextInput, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt, PendingIsland } from './ui';
+import { Field, TextInput, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt } from './ui';
 import { readDraft, writeDraft, clearDraft } from './drafts';
 
 interface Props {
@@ -9,6 +9,8 @@ interface Props {
   categories: Entry[];
   notify: (msg: string, kind?: 'ok' | 'err') => void;
   reload: () => Promise<void>;
+  openTarget?: { collection: 'portfolio'; slug?: string; isNew?: boolean } | null;
+  onOpenHandled?: () => void;
 }
 
 interface Draft {
@@ -21,7 +23,7 @@ interface Draft {
 
 const emptyDraft = (cat: string): Draft => ({ name: '', category: cat, image: '', body: '' });
 
-export default function PortfolioManager({ items, categories, notify, reload }: Props) {
+export default function PortfolioManager({ items, categories, notify, reload, openTarget, onOpenHandled }: Props) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [busy, setBusy] = useState(false);
   const [savePrompt, setSavePrompt] = useState(false);
@@ -153,6 +155,26 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
     return () => window.removeEventListener('beforeunload', handler);
   }, []);
 
+  // Open a specific pending item requested from the global pending bar.
+  useEffect(() => {
+    if (!openTarget || draft) return;
+    if (openTarget.isNew || !openTarget.slug) {
+      const d = readDraft<Draft>('portfolio', undefined);
+      if (d) { setDraft(d); lastSaved.current = ''; onOpenHandled?.(); }
+    } else {
+      const e = items.find((x) => x.slug === openTarget.slug);
+      if (e) {
+        const server = { slug: e.slug, name: e.data.name || '', category: e.data.category || categories[0]?.slug || '', image: e.data.image || '', body: e.body || '' };
+        const local = readDraft<Draft>('portfolio', e.slug);
+        const restored = local && JSON.stringify(local) !== JSON.stringify(server);
+        setDraft(local || server); lastSaved.current = JSON.stringify(server);
+        if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+        onOpenHandled?.();
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openTarget]);
+
   const remove = async (e: Entry) => {
     if (!window.confirm(`Ștergi proiectul „${e.data.name || e.slug}”?`)) return;
     hideSlug(e.slug);
@@ -239,35 +261,8 @@ export default function PortfolioManager({ items, categories, notify, reload }: 
     );
   }
 
-  const pendingItems = useMemo(() => {
-    const out: { key: string; label: string; isNew: boolean }[] = [];
-    for (const e of items) {
-      const d = readDraft<Draft>('portfolio', e.slug);
-      const server = { slug: e.slug, name: e.data.name || '', category: e.data.category || '', image: e.data.image || '', body: e.body || '' };
-      if (d && JSON.stringify(d) !== JSON.stringify(server)) {
-        out.push({ key: e.slug, label: d.name || e.slug, isNew: false });
-      }
-    }
-    const n = readDraft<Draft>('portfolio', undefined);
-    if (n && (n.name || n.image || n.body)) {
-      out.push({ key: 'new', label: n.name || 'Proiect nou', isNew: true });
-    }
-    return out;
-  }, [items]);
-
-  const editPending = (key: string) => {
-    if (key === 'new') resumeNew();
-    else open(items.find((e) => e.slug === key));
-  };
-
   return (
     <div>
-      <PendingIsland
-        title="Modificări nesalvate"
-        items={pendingItems}
-        onEdit={editPending}
-        onClearNew={() => { if (window.confirm('Ștergi proiectul nou nesalvat?')) { clearDraft('portfolio', undefined); notify('Draft șters', 'ok'); } }}
-      />
       <SectionHead
         title="Portofoliu"
         desc={`${items.length} proiecte · ${categories.length} categorii`}

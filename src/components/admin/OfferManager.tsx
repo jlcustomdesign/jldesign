@@ -1,11 +1,10 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Entry } from './api';
 import { saveEntry, deleteEntry } from './api';
-import { TextInput, TextArea, ImageInput, SectionHead, TagInput, PendingIsland } from './ui';
+import { TextInput, TextArea, ImageInput, SectionHead, TagInput } from './ui';
 import OfferDocument, { normalizeOffer, uid, DEFAULT_LABEL, type Offer, type Section, type SectionType } from '../offer/OfferDocument';
 import { fillCrop, GAL_MAX } from '../offer/galleryLayout';
 import * as drafts from './drafts';
-import { isBlankNewOffer } from './pending';
 
 /** Gallery advice: measures the current images' aspect ratios and tells the
    user whether another image (and which orientation) would pack well. The
@@ -46,6 +45,8 @@ interface Props {
   items: Entry[];
   notify: (msg: string, kind?: 'ok' | 'err') => void;
   reload: () => Promise<void>;
+  openTarget?: { collection: 'offers'; slug?: string; isNew?: boolean } | null;
+  onOpenHandled?: () => void;
 }
 type EditOffer = Offer & { slug?: string };
 
@@ -150,7 +151,7 @@ function scrollWithin(container: HTMLElement | null, el: Element | null) {
   container.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 }
 
-export default function OfferManager({ items, notify, reload }: Props) {
+export default function OfferManager({ items, notify, reload, openTarget, onOpenHandled }: Props) {
   const [view, setViewRaw] = useState<'list' | 'pick_offer' | 'pick_template' | 'edit'>(() => {
     if (typeof window !== 'undefined') {
       const h = window.location.hash.replace('#', '');
@@ -175,6 +176,31 @@ export default function OfferManager({ items, notify, reload }: Props) {
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
+
+  // Open a specific pending item requested from the global pending bar.
+  useEffect(() => {
+    if (!openTarget || offer) return;
+    if (openTarget.isNew || !openTarget.slug) {
+      const d = readDraft(undefined);
+      if (d) {
+        setOffer(d); lastSaved.current = ''; setAuto('');
+        setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+        onOpenHandled?.();
+      }
+    } else {
+      const e = items.find((x) => x.slug === openTarget.slug);
+      if (e) {
+        const server = fromEntry(e);
+        const draft = readDraft(e.slug);
+        const restored = draft && JSON.stringify(draft) !== JSON.stringify(server);
+        setOffer(draft || server); lastSaved.current = JSON.stringify(server); setAuto('');
+        setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+        if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+        onOpenHandled?.();
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openTarget]);
 
   // Warn before closing the tab only if the current edits are neither
   // published (lastSaved) nor saved locally in the browser draft.
@@ -220,7 +246,6 @@ export default function OfferManager({ items, notify, reload }: Props) {
   offerRef.current = offer;
 
   const tplOffers = useMemo(() => TEMPLATES.map((t) => t.make()), []);
-  const hasUnsavedNew = !!readDraft(undefined) && !isBlankNewOffer(readDraft(undefined));
   const patch = (p: Partial<EditOffer>) => setOffer((o) => (o ? { ...o, ...p } : o));
   const setPages = (pages: Section[]) => patch({ pages });
   // Functional update: async callbacks (e.g. image orientation detection)
@@ -896,34 +921,8 @@ export default function OfferManager({ items, notify, reload }: Props) {
   }
 
   /* ---------------- LIST ---------------- */
-  const pendingOfferItems = useMemo(() => {
-    const out: { key: string; label: string; isNew: boolean }[] = [];
-    for (const e of items) {
-      const d = readDraft(e.slug);
-      if (d && JSON.stringify(d) !== JSON.stringify(fromEntry(e))) {
-        out.push({ key: e.slug, label: d.clientName || d.templateName || e.slug, isNew: false });
-      }
-    }
-    const n = readDraft(undefined);
-    if (n && !isBlankNewOffer(n)) {
-      out.push({ key: 'new', label: n.clientName || n.templateName || 'Ofertă nouă', isNew: true });
-    }
-    return out;
-  }, [items]);
-
-  const editPending = (key: string) => {
-    if (key === 'new') resumeNew();
-    else edit(items.find((e) => e.slug === key)!);
-  };
-
   return (
     <div>
-      <PendingIsland
-        title="Modificări nesalvate"
-        items={pendingOfferItems}
-        onEdit={editPending}
-        onClearNew={() => { if (window.confirm('Ștergi oferta nouă nesalvată?')) clearDraft(undefined); }}
-      />
       <SectionHead title="Generator oferte" desc={`${items.length} oferte · prezentări de proiect în brand JL Custom Design`}
         action={<>
           <button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick_offer'); }} style={{ marginRight: 8 }} title="Creează o ofertă nouă">+ Ofertă nouă</button>

@@ -24,6 +24,12 @@ const SECTION_LABEL: Record<PendingItem['kind'], string> = {
   site: 'Conținut site',
 };
 
+export interface OpenTarget {
+  collection: 'offers' | 'portfolio' | 'blog' | 'site';
+  slug?: string;
+  isNew?: boolean;
+}
+
 export default function AdminApp({ user }: { user?: { name?: string | null; login?: string; avatar?: string } }) {
   const [tab, setTabRaw] = useState<Tab>(() => {
     try {
@@ -78,6 +84,7 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   const [pending, setPending] = useState<PendingItem[]>([]);
   const [publishOpen, setPublishOpen] = useState(false);
   const [publishBusy, setPublishBusy] = useState(false);
+  const [openTarget, setOpenTarget] = useState<OpenTarget | null>(null);
 
   const recomputePending = useCallback(() => {
     setPending(computePending(data, siteServer));
@@ -154,10 +161,12 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   }, {} as Record<string, PendingItem[]>);
 
   const openPending = (it: PendingItem) => {
+    const target: OpenTarget = { collection: it.collection, slug: it.slug, isNew: it.kind === 'offer-new' || !it.slug };
     if (it.collection === 'offers') setTab('offers');
     else if (it.collection === 'portfolio') setTab('portfolio');
     else if (it.collection === 'blog') setTab('blog');
-    else if (it.collection === 'site') setTab('site');
+    else if (it.collection === 'site') { setTab('site'); return; }
+    setOpenTarget(target);
     setPublishOpen(false);
   };
 
@@ -197,6 +206,31 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
         </header>
       )}
 
+      {/* Global pending modifications bar — visible on every page (home + sections). */}
+      {pending.length > 0 && (
+        <div className="adm-pending-bar">
+          <div className="adm-pending-bar-in">
+            <span className="adm-pending-bar-title">Modificări nesalvate</span>
+            <div className="adm-pending-bar-items">
+              {Object.entries(grouped).map(([section, items]) => (
+                <div key={section} className="adm-pending-bar-group">
+                  <span className="adm-pending-bar-section">{section}</span>
+                  {items.map((it, idx) => (
+                    <button key={idx} className="adm-pending-bar-chip" onClick={() => openPending(it)} title="Deschide pentru editare">
+                      {it.kind.includes('new') && <span className="adm-pending-bar-new">Nou</span>}
+                      {it.title}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="adm-pending-bar-actions">
+              <button className="adm-btn gold sm" onClick={() => setPublishOpen(true)}>Publică toate ({pending.length})</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={tab === 'home' ? 'adm-home' : 'adm-shell'}>
         {/* Dashboard hub */}
         {tab === 'home' && (
@@ -230,9 +264,9 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
               {!data && !error && <div className="adm-loading"><span className="adm-spin" /> Se încarcă…</div>}
               {data && (
                 <>
-                  {tab === 'portfolio' && <PortfolioManager items={data.portfolio} categories={data.categories} notify={notify} reload={reload} />}
-                  {tab === 'blog' && <BlogManager items={data.blog} notify={notify} reload={reload} />}
-                  {tab === 'offers' && <OfferManager items={data.offers} notify={notify} reload={reload} />}
+                  {tab === 'portfolio' && <PortfolioManager items={data.portfolio} categories={data.categories} notify={notify} reload={reload} openTarget={openTarget?.collection === 'portfolio' ? openTarget : null} onOpenHandled={() => setOpenTarget(null)} />}
+                  {tab === 'blog' && <BlogManager items={data.blog} notify={notify} reload={reload} openTarget={openTarget?.collection === 'blog' ? openTarget : null} onOpenHandled={() => setOpenTarget(null)} />}
+                  {tab === 'offers' && <OfferManager items={data.offers} notify={notify} reload={reload} openTarget={openTarget?.collection === 'offers' ? openTarget : null} onOpenHandled={() => setOpenTarget(null)} />}
                 </>
               )}
             </>
