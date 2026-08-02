@@ -62,7 +62,8 @@ export async function listDir(token: string, dir: string): Promise<string[]> {
   try {
     const res = await gh(
       token,
-      `/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURI(dir)}?ref=${REPO_BRANCH}`
+      `/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURI(dir)}?ref=${REPO_BRANCH}&_cb=${Date.now()}`,
+      { cache: 'no-store' }
     );
     const items = (await res.json()) as Array<{ name: string; type: string }>;
     return items.filter((i) => i.type === 'file').map((i) => i.name);
@@ -76,7 +77,8 @@ export async function readFile(token: string, path: string): Promise<string | nu
   try {
     const res = await gh(
       token,
-      `/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURI(path)}?ref=${REPO_BRANCH}`
+      `/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodeURI(path)}?ref=${REPO_BRANCH}&_cb=${Date.now()}`,
+      { cache: 'no-store' }
     );
     const data = (await res.json()) as { content?: string; encoding?: string };
     if (!data.content) return null;

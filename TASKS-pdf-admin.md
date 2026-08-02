@@ -148,6 +148,9 @@ Status legend: `not done` | `in progress` | `done`
 - [x] **49. Portfolio preview adapts to image orientation** — `done`
   In the portfolio editor the preview card switches to `aspect-ratio: 16/9` for landscape images and stays `4/5` for portraits.
 
+- [x] **50. Instant UI update after delete** — `done`
+  GitHub content reads (`listDir` / `readFile`) now use a cache-busting query string and `cache: 'no-store'`, so after deleting an offer/template/portfolio/blog item the next `reload()` fetches fresh data from GitHub instead of a stale cached tree.
+
 ## Files changed
 
 - `src/styles/offer.css` — layouts, gallery grid, contain frames, lay-full, title clamp, paddings
