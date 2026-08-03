@@ -220,6 +220,18 @@ export default function PortfolioManager({ items, categories, notify, reload, op
     setTempId(null);
   };
 
+  const addCategory = async () => {
+    const name = window.prompt('Numele noii categorii (ex: Bucătărie, Dormitor):');
+    if (!name?.trim()) return;
+    try {
+      await saveEntry({ collection: 'categories', data: { name: name.trim() } });
+      await reload();
+      notify('Categorie adăugată', 'ok');
+    } catch (e) {
+      notify((e as Error).message, 'err');
+    }
+  };
+
   if (draft) {
     return (
       <div className="adm-editor-fit">
@@ -282,18 +294,6 @@ export default function PortfolioManager({ items, categories, notify, reload, op
       </div>
     );
   }
-
-  const addCategory = async () => {
-    const name = window.prompt('Numele noii categorii (ex: Bucătărie, Dormitor):');
-    if (!name?.trim()) return;
-    try {
-      await saveEntry({ collection: 'categories', data: { name: name.trim() } });
-      await reload();
-      notify('Categorie adăugată', 'ok');
-    } catch (e) {
-      notify((e as Error).message, 'err');
-    }
-  };
 
   const visibleItems = items.filter((e) => !hiddenSlugs.has(e.slug));
   const newDrafts = readNewDrafts<Draft>('portfolio');
