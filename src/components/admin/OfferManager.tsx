@@ -278,10 +278,14 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
   };
   const edit = (e: Entry) => {
+    // eslint-disable-next-line no-console
+    console.log('OfferManager.edit', e.slug, 'current view', view);
     setTempId(null);
     const server = fromEntry(e);
     const draft = readExistingDraft(e.slug);
     const restored = draft && JSON.stringify(draft) !== JSON.stringify(server);
+    // eslint-disable-next-line no-console
+    console.log('OfferManager.edit offer set', draft ? 'draft' : 'server');
     setOffer(draft || server); lastSaved.current = JSON.stringify(server); setAuto('');
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
     if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
@@ -1037,7 +1041,7 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
                 </div>
                 <div className="actions">
                   <a className="adm-btn ghost sm" href={`/oferta/${e.slug}?pdf=1`} target="_blank" rel="noreferrer" title="Descarcă PDF-ul publicat">⬇ PDF</a>
-                  <button className="adm-btn ghost sm" onClick={() => edit(e)} title="Editează oferta">Editează</button>
+                  <button className="adm-btn ghost sm" onClick={() => { console.log('click edit list', e.slug); edit(e); }} title="Editează oferta">Editează</button>
                   <button className="adm-btn ghost sm" onClick={() => duplicate(e)} title="Creează o copie identică a ofertei">Duplică</button>
                   <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge oferta definitiv">Șterge</button>
                 </div>
