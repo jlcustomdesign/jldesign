@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Entry } from './api';
 import { saveEntry } from './api';
 import { Field, TextInput, TextArea, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt } from './ui';
-import { readDraft, writeDraft, clearDraft } from './drafts';
+import { readDraft, writeDraft, clearDraft, writeNewDraft, readNewDrafts, clearNewDraft } from './drafts';
 import { addPendingDelete } from './deletes';
 
 const CATEGORIES = [
@@ -17,7 +17,7 @@ interface Props {
   items: Entry[];
   notify: (msg: string, kind?: 'ok' | 'err') => void;
   reload: () => Promise<void>;
-  openTarget?: { collection: 'blog'; slug?: string; isNew?: boolean } | null;
+  openTarget?: { collection: 'blog'; slug?: string; tempId?: string; isNew?: boolean } | null;
   onOpenHandled?: () => void;
 }
 
@@ -39,22 +39,25 @@ const emptyDraft = (): Draft => ({
   title: '', description: '', category: 'inspiratie', author: 'JL Custom Design',
   publishedDate: today(), coverImage: '', coverImageAlt: '', body: '',
 });
+const makeTempId = () => 'new_' + Math.random().toString(36).slice(2, 9) + '_' + Date.now().toString(36);
 
 export default function BlogManager({ items, notify, reload, openTarget, onOpenHandled }: Props) {
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [tempId, setTempId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [savePrompt, setSavePrompt] = useState(false);
   const [hiddenSlugs, setHiddenSlugs] = useState<Set<string>>(new Set());
   const draftRef = useRef<Draft | null>(null);
+  const tempIdRef = useRef<string | null>(null);
   const lastSaved = useRef<string>('');
   draftRef.current = draft;
+  tempIdRef.current = tempId;
   const hideSlug = (slug: string) => setHiddenSlugs((prev) => new Set(prev).add(slug));
-  const unhideSlug = (slug: string) => setHiddenSlugs((prev) => { const n = new Set(prev); n.delete(slug); return n; });
 
   const open = (e?: Entry) => {
-    let server: Draft | null = null;
     if (e) {
-      server = {
+      setTempId(null);
+      const server: Draft = {
         slug: e.slug,
         title: e.data.title || '',
         description: e.data.description || '',
@@ -65,23 +68,29 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
         coverImageAlt: e.data.coverImageAlt || '',
         body: e.body || '',
       };
+      const local = readDraft<Draft>('blog', e.slug);
+      const restored = local && JSON.stringify(local) !== JSON.stringify(server);
+      const next = local || server;
+      setDraft(next);
+      lastSaved.current = JSON.stringify(server);
+      if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+      return;
     }
-    // For a NEW article, always start fresh. Use the separate resume action
-    // to continue an unsaved new draft.
-    const local = e ? readDraft<Draft>('blog', e.slug) : null;
-    const restored = local && JSON.stringify(local) !== JSON.stringify(server);
-    const next = local || server || emptyDraft();
+    // New article: give it a tempId so several new drafts can coexist.
+    const id = makeTempId();
+    setTempId(id);
+    const next = emptyDraft();
     setDraft(next);
-    lastSaved.current = JSON.stringify(server || next);
-    if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+    writeNewDraft('blog', id, next);
+    lastSaved.current = '';
   };
 
-  const resumeNew = () => {
-    const d = readDraft<Draft>('blog', undefined);
+  const openDraft = (tid: string) => {
+    const d = readNewDrafts<Draft>('blog').find((x) => x.tempId === tid)?.draft;
     if (!d) return;
+    setTempId(tid);
     setDraft(d);
     lastSaved.current = '';
-    notify('Am restaurat articolul nou nesalvat', 'ok');
   };
 
   const publish = async () => {
@@ -91,6 +100,7 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
     if (!draft.coverImage) return notify('Adaugă o imagine de copertă', 'err');
     if (!draft.coverImageAlt.trim()) return notify('Adaugă textul alternativ al imaginii', 'err');
     const prevSlug = draft.slug;
+    const prevTempId = tempId;
     setBusy(true);
     try {
       await saveEntry({
@@ -110,7 +120,9 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
       await reload();
       notify(prevSlug ? 'Articol actualizat' : 'Articol publicat', 'ok');
       setDraft(null);
+      setTempId(null);
       clearDraft('blog', prevSlug);
+      if (prevTempId) clearNewDraft('blog', prevTempId);
     } catch (e) {
       notify((e as Error).message, 'err');
     } finally {
@@ -129,10 +141,18 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
 
   const saveLocal = () => {
     if (!draft) return;
-    writeDraft('blog', draft.slug, draft);
+    if (tempId) writeNewDraft('blog', tempId, draft);
+    else writeDraft('blog', draft.slug, draft);
     setSavePrompt(false);
     notify('Salvat în browser', 'ok');
     setDraft(null);
+    setTempId(null);
+  };
+
+  const removeDraft = (tid: string) => {
+    if (!window.confirm('Ștergi articolul nou nesalvat?')) return;
+    clearNewDraft('blog', tid);
+    notify('Draft șters', 'ok');
   };
 
   // Autosave to browser on every change.
@@ -140,8 +160,10 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
     if (!draft) return;
     const t = setTimeout(() => {
       const d = draftRef.current;
+      const tid = tempIdRef.current;
       if (!d) return;
-      writeDraft('blog', d.slug, d);
+      if (tid) writeNewDraft('blog', tid, d);
+      else writeDraft('blog', d.slug, d);
     }, 400);
     return () => clearTimeout(t);
   }, [draft]);
@@ -151,10 +173,13 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       const d = draftRef.current;
+      const tid = tempIdRef.current;
       if (!d) return;
-      const draft = readDraft<Draft>('blog', d.slug);
+      const stored = tid
+        ? readNewDrafts<Draft>('blog').find((x) => x.tempId === tid)?.draft || null
+        : readDraft<Draft>('blog', d.slug);
       const curJson = JSON.stringify(d);
-      if (curJson === lastSaved.current || curJson === JSON.stringify(draft)) return;
+      if (curJson === lastSaved.current || curJson === JSON.stringify(stored)) return;
       e.preventDefault();
       e.returnValue = '';
     };
@@ -165,10 +190,15 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
   // Open a specific pending item requested from the global pending bar.
   useEffect(() => {
     if (!openTarget || draft) return;
-    if (openTarget.isNew || !openTarget.slug) {
-      const d = readDraft<Draft>('blog', undefined);
-      if (d) { setDraft(d); lastSaved.current = ''; onOpenHandled?.(); }
-    } else {
+    if (openTarget.tempId) {
+      const d = readNewDrafts<Draft>('blog').find((x) => x.tempId === openTarget.tempId)?.draft;
+      if (d) {
+        setTempId(openTarget.tempId);
+        setDraft(d);
+        lastSaved.current = '';
+        onOpenHandled?.();
+      }
+    } else if (openTarget.slug) {
       const e = items.find((x) => x.slug === openTarget.slug);
       if (e) {
         const server = {
@@ -179,25 +209,33 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
         const local = readDraft<Draft>('blog', e.slug);
         const restored = local && JSON.stringify(local) !== JSON.stringify(server);
         setDraft(local || server); lastSaved.current = JSON.stringify(server);
+        setTempId(null);
         if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
         onOpenHandled?.();
       }
+    } else if (openTarget.isNew) {
+      open();
+      onOpenHandled?.();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openTarget]);
 
   const closeEditor = () => {
     const d = draftRef.current;
-    if (!d) { setDraft(null); return; }
-    const draft = readDraft<Draft>('blog', d.slug);
+    const tid = tempIdRef.current;
+    if (!d) { setDraft(null); setTempId(null); return; }
+    const stored = tid
+      ? readNewDrafts<Draft>('blog').find((x) => x.tempId === tid)?.draft || null
+      : readDraft<Draft>('blog', d.slug);
     const curJson = JSON.stringify(d);
-    const dirty = curJson !== lastSaved.current && curJson !== JSON.stringify(draft);
+    const dirty = curJson !== lastSaved.current && curJson !== JSON.stringify(stored);
     if (dirty && !window.confirm('Ai modificări nepublicate. Dacă închizi, rămân salvate în browser. Continui?')) return;
     setDraft(null);
+    setTempId(null);
   };
 
   const remove = async (e: Entry) => {
-    if (!window.confirm(`Ștergi articolul „${e.data.title || e.slug}”?`)) return;
+    if (!window.confirm(`Ștergi articolul „${e.data.title || e.slug}"?`)) return;
     hideSlug(e.slug);
     addPendingDelete({ collection: 'blog', slug: e.slug, title: e.data.title || e.slug });
     notify('Ștergere adăugată în coșul de publicare', 'ok');
@@ -262,6 +300,7 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
   const sorted = [...items].filter((e) => !hiddenSlugs.has(e.slug)).sort((a, b) =>
     String(b.data.publishedDate || '').localeCompare(String(a.data.publishedDate || ''))
   );
+  const newDrafts = readNewDrafts<Draft>('blog');
 
   return (
     <div>
@@ -270,10 +309,26 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
         desc={`${items.length} articole`}
         action={<button className="adm-btn" onClick={() => open()} title="Adaugă un articol nou pe blog">＋ Articol nou</button>}
       />
-      {sorted.length === 0 ? (
+      {sorted.length === 0 && newDrafts.length === 0 ? (
         <div className="adm-empty">Niciun articol încă. Apasă „Articol nou” pentru a scrie primul.</div>
       ) : (
         <div className="adm-grid">
+          {newDrafts.map(({ tempId: tid, draft: d }) => (
+            <div className="adm-card" key={`new-${tid}`}>
+              <div className={`thumb${d.coverImage ? '' : ' empty'}`} style={d.coverImage ? { backgroundImage: `url("${d.coverImage}")` } : undefined}>
+                {!d.coverImage && 'fără imagine'}
+              </div>
+              <div className="body">
+                <span className="badge" style={{ background: 'var(--warning, #e6a817)', color: '#111' }}>Draft</span>
+                <span className="title">{d.title || 'Articol nou'}</span>
+                <span className="meta">{d.publishedDate}</span>
+              </div>
+              <div className="actions">
+                <button className="adm-btn ghost sm" onClick={() => openDraft(tid)} title="Continuă editarea draftului">Editează</button>
+                <button className="adm-btn danger sm" onClick={() => removeDraft(tid)} title="Șterge draftul local">Șterge</button>
+              </div>
+            </div>
+          ))}
           {sorted.map((e) => (
             <div className="adm-card" key={e.slug}>
               <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url("${e.data.coverImage}")` } : undefined}>

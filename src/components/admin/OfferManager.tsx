@@ -5,6 +5,7 @@ import { TextInput, TextArea, ImageInput, SectionHead, TagInput } from './ui';
 import OfferDocument, { normalizeOffer, uid, DEFAULT_LABEL, type Offer, type Section, type SectionType } from '../offer/OfferDocument';
 import { fillCrop, GAL_MAX } from '../offer/galleryLayout';
 import * as drafts from './drafts';
+import { isBlankNewOffer } from './pending';
 import { addPendingDelete } from './deletes';
 
 /** Gallery advice: measures the current images' aspect ratios and tells the
@@ -46,7 +47,7 @@ interface Props {
   items: Entry[];
   notify: (msg: string, kind?: 'ok' | 'err') => void;
   reload: () => Promise<void>;
-  openTarget?: { collection: 'offers'; slug?: string; isNew?: boolean } | null;
+  openTarget?: { collection: 'offers'; slug?: string; tempId?: string; isNew?: boolean } | null;
   onOpenHandled?: () => void;
 }
 type EditOffer = Offer & { slug?: string };
@@ -55,29 +56,32 @@ const fromEntry = (e: Entry): EditOffer => ({ ...normalizeOffer(e.data), slug: e
 
 // Offer drafts live in the BROWSER (localStorage) so edits are instant and never
 // lost. Publishing to the site (a GitHub commit) happens only on "Salvează".
-// We now use the shared drafts module; the helpers below also read the legacy
-// key so existing unsaved work is not lost.
+// Existing entries are keyed by slug; new, unsaved entries are keyed by tempId
+// so several of them can coexist before publishing.
 const LEGACY_PREFIX = 'jl-offer-draft:';
 const legacyKey = (slug?: string) => LEGACY_PREFIX + (slug || 'new');
-function writeDraft(o: EditOffer) {
-  drafts.writeDraft('offers', o.slug, o);
-  try { localStorage.removeItem(legacyKey(o.slug)); } catch {}
-}
-function readDraft(slug?: string): EditOffer | null {
+const makeTempId = () => 'new_' + Math.random().toString(36).slice(2, 9) + '_' + Date.now().toString(36);
+
+function readExistingDraft(slug?: string): EditOffer | null {
   const d = drafts.readDraft<EditOffer>('offers', slug);
   if (d) return d;
   try {
     const s = localStorage.getItem(legacyKey(slug));
     if (!s) return null;
     const parsed = JSON.parse(s) as EditOffer;
-    // migrate to the new key on first read
     drafts.writeDraft('offers', slug, parsed);
     try { localStorage.removeItem(legacyKey(slug)); } catch {}
     return parsed;
   } catch { return null; }
 }
-function clearDraft(slug?: string) {
-  drafts.clearDraft('offers', slug);
+function writeOfferDraft(o: EditOffer, tempId?: string | null) {
+  if (tempId) drafts.writeNewDraft('offers', tempId, o);
+  else drafts.writeDraft('offers', o.slug, o);
+  try { localStorage.removeItem(legacyKey(o.slug)); } catch {}
+}
+function clearOfferDraft(tempId?: string | null, slug?: string) {
+  if (tempId) drafts.clearNewDraft('offers', tempId);
+  else drafts.clearDraft('offers', slug);
   try { localStorage.removeItem(legacyKey(slug)); } catch {}
 }
 const countPages = (o: any): number => 1 + (Array.isArray(o?.pages) ? o.pages.length : ['description', 'materials', 'accessories', 'sketches'].filter((k) => o?.[k]?.enabled).length);
@@ -178,47 +182,8 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  // Open a specific pending item requested from the global pending bar.
-  useEffect(() => {
-    if (!openTarget || offer) return;
-    if (openTarget.isNew || !openTarget.slug) {
-      const d = readDraft(undefined);
-      if (d) {
-        setOffer(d); lastSaved.current = ''; setAuto('');
-        setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
-        onOpenHandled?.();
-      }
-    } else {
-      const e = items.find((x) => x.slug === openTarget.slug);
-      if (e) {
-        const server = fromEntry(e);
-        const draft = readDraft(e.slug);
-        const restored = draft && JSON.stringify(draft) !== JSON.stringify(server);
-        setOffer(draft || server); lastSaved.current = JSON.stringify(server); setAuto('');
-        setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
-        if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
-        onOpenHandled?.();
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openTarget]);
-
-  // Warn before closing the tab only if the current edits are neither
-  // published (lastSaved) nor saved locally in the browser draft.
-  useEffect(() => {
-    const handler = (e: BeforeUnloadEvent) => {
-      const cur = offerRef.current;
-      if (!cur) return;
-      const draft = readDraft(cur.slug);
-      const curJson = JSON.stringify(cur);
-      if (curJson === lastSaved.current || curJson === JSON.stringify(draft)) return;
-      e.preventDefault();
-      e.returnValue = '';
-    };
-    window.addEventListener('beforeunload', handler);
-    return () => window.removeEventListener('beforeunload', handler);
-  }, []);
   const [offer, setOffer] = useState<EditOffer | null>(null);
+  const [tempId, setTempId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [pickIndex, setPickIndex] = useState(0);
   const [activeField, setActiveField] = useState<string | null>(null);
@@ -232,19 +197,20 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
   const pdfStageRef = useRef<HTMLDivElement>(null);
   const syncing = useRef(false);
   const offerRef = useRef<EditOffer | null>(null);
+  const tempIdRef = useRef<string | null>(null);
   const lastSaved = useRef<string>('');
   const [pdfBusy, setPdfBusy] = useState(false);
   const [preview, setPreview] = useState(false);
   const [savePrompt, setSavePrompt] = useState(false);
   const [hiddenSlugs, setHiddenSlugs] = useState<Set<string>>(new Set());
   const hideSlug = (slug: string) => setHiddenSlugs((prev) => new Set(prev).add(slug));
-  const unhideSlug = (slug: string) => setHiddenSlugs((prev) => { const n = new Set(prev); n.delete(slug); return n; });
   // Index of the page being edited (0 = cover) — the full preview jumps to it.
   const lastPage = useRef(0);
   const [overflowPages, setOverflowPages] = useState<number[]>([]);
   const [imgWarn, setImgWarn] = useState('');
 
   offerRef.current = offer;
+  tempIdRef.current = tempId;
 
   const tplOffers = useMemo(() => TEMPLATES.map((t) => t.make()), []);
   const patch = (p: Partial<EditOffer>) => setOffer((o) => (o ? { ...o, ...p } : o));
@@ -305,13 +271,15 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
   const useTemplate = (i: number) => {
     const src = tplOffers[i];
     const clone: EditOffer = typeof structuredClone === 'function' ? structuredClone(src) : JSON.parse(JSON.stringify(src));
-    clearDraft(undefined); // begin a fresh, unsaved offer
+    const id = makeTempId();
+    setTempId(id);
     setOffer(clone); lastSaved.current = ''; setAuto('');
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
   };
   const edit = (e: Entry) => {
+    setTempId(null);
     const server = fromEntry(e);
-    const draft = readDraft(e.slug);
+    const draft = readExistingDraft(e.slug);
     const restored = draft && JSON.stringify(draft) !== JSON.stringify(server);
     setOffer(draft || server); lastSaved.current = JSON.stringify(server); setAuto('');
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
@@ -319,18 +287,15 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
   };
   const cancel = () => {
     const cur = offerRef.current;
-    if (!cur) { setOffer(null); setView('list'); reload(); return; }
-    const draft = readDraft(cur.slug);
+    const tid = tempIdRef.current;
+    if (!cur) { setOffer(null); setTempId(null); setView('list'); reload(); return; }
+    const draft = tid
+      ? drafts.readNewDrafts<EditOffer>('offers').find((x) => x.tempId === tid)?.draft || null
+      : readExistingDraft(cur.slug);
     const curJson = JSON.stringify(cur);
     const dirty = curJson !== lastSaved.current && curJson !== JSON.stringify(draft);
     if (dirty && !window.confirm('Ai modificări nepublicate. Dacă închizi, rămân salvate în browser. Continui?')) return;
-    setOffer(null); setView('list'); reload();
-  };
-  const resumeNew = () => {
-    const d = readDraft(undefined);
-    if (!d) return;
-    setOffer(d); lastSaved.current = ''; setAuto('');
-    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+    setOffer(null); setTempId(null); setView('list'); reload();
   };
 
   // Publish to the site (the only place that writes to GitHub).
@@ -339,14 +304,18 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
     if (offer.isTemplate && !(offer.templateName || '').trim()) return notify('Adaugă numele șablonului', 'err');
     if (!offer.isTemplate && !(offer.clientName || '').trim()) return notify('Adaugă numele clientului', 'err');
     const prevSlug = offer.slug;
+    const prevTempId = tempId;
     setBusy(true);
     try {
       const { slug } = await saveEntry({ collection: 'offers', slug: offer.slug, data: offer });
       await reload();
       const saved = { ...offer, slug };
       setOffer(saved); // keep editing, now with slug (enables PDF)
+      setTempId(null);
       lastSaved.current = JSON.stringify(saved);
-      clearDraft(prevSlug); clearDraft(slug); clearDraft(undefined); // published → drop local drafts
+      if (prevTempId) clearOfferDraft(prevTempId, undefined);
+      clearOfferDraft(undefined, prevSlug);
+      clearOfferDraft(undefined, slug);
       notify('Ofertă publicată pe site', 'ok');
     } catch (e) { notify((e as Error).message, 'err'); } finally { setBusy(false); }
   };
@@ -360,11 +329,11 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
 
   const saveLocal = () => {
     if (!offer) return;
-    writeDraft(offer);
+    writeOfferDraft(offer, tempId);
     setAuto('saved');
     setSavePrompt(false);
     notify('Salvat în browser', 'ok');
-    setOffer(null); setView('list'); reload();
+    setOffer(null); setTempId(null); setView('list'); reload();
   };
 
   // Publish every offer that has a local draft different from the server copy.
@@ -374,21 +343,19 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
     let count = 0;
     try {
       for (const e of items) {
-        const draft = readDraft(e.slug);
+        const draft = readExistingDraft(e.slug);
         if (!draft) continue;
         const server = fromEntry(e);
         if (JSON.stringify(draft) === JSON.stringify(server)) continue;
         const { slug } = await saveEntry({ collection: 'offers', slug: e.slug, data: draft });
-        clearDraft(e.slug); clearDraft(slug);
+        clearOfferDraft(undefined, e.slug); clearOfferDraft(undefined, slug);
         count++;
       }
-      const newDraft = readDraft(undefined);
-      if (newDraft) {
-        if ((newDraft.isTemplate && (newDraft.templateName || '').trim()) || (!newDraft.isTemplate && (newDraft.clientName || '').trim())) {
-          const { slug } = await saveEntry({ collection: 'offers', slug: undefined, data: newDraft });
-          clearDraft(undefined); clearDraft(slug);
-          count++;
-        }
+      for (const { tempId: tid, draft } of drafts.readNewDrafts<EditOffer>('offers')) {
+        if (isBlankNewOffer(draft)) continue;
+        const { slug } = await saveEntry({ collection: 'offers', slug: undefined, data: draft });
+        clearOfferDraft(tid, undefined); clearOfferDraft(undefined, slug);
+        count++;
       }
       await reload();
       notify(count ? `${count} ofertă/oferte publicate` : 'Nu sunt modificări de publicat', 'ok');
@@ -431,8 +398,9 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
     if (JSON.stringify(offer) === lastSaved.current) return;
     const t = setTimeout(() => {
       const o = offerRef.current;
+      const tid = tempIdRef.current;
       if (!o) return;
-      writeDraft(o);
+      writeOfferDraft(o, tid);
       setAuto('saved');
       setTimeout(() => setAuto((a) => (a === 'saved' ? '' : a)), 1200);
     }, 400);
@@ -448,6 +416,20 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
     notify('Ștergere adăugată în coșul de publicare', 'ok');
   };
 
+  const openDraft = (tid: string) => {
+    const d = drafts.readNewDrafts<EditOffer>('offers').find((x) => x.tempId === tid)?.draft;
+    if (!d) return;
+    setTempId(tid);
+    setOffer(d); lastSaved.current = ''; setAuto('');
+    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+  };
+
+  const removeDraft = (tid: string) => {
+    if (!window.confirm('Ștergi oferta/șablonul nou nesalvat?')) return;
+    drafts.clearNewDraft('offers', tid);
+    notify('Draft șters', 'ok');
+  };
+
   // Copy an offer/template exactly — start a new one from the same content.
   const duplicate = (e: Entry) => {
     const src = fromEntry(e);
@@ -455,7 +437,8 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
     delete clone.slug;
     if (clone.isTemplate) clone.templateName = `${clone.templateName || 'Șablon'} (copie)`;
     else clone.clientName = `${clone.clientName || 'Ofertă'} (copie)`;
-    clearDraft(undefined);
+    const id = makeTempId();
+    setTempId(id);
     setOffer(clone); lastSaved.current = ''; setAuto('');
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
     notify('Copie creată — apasă „Salvează” pentru a o publica', 'ok');
@@ -471,6 +454,58 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
     }, 450);
     return () => clearTimeout(t);
   }, [offer, view]);
+
+  // Open a specific pending item requested from the global pending bar.
+  useEffect(() => {
+    if (!openTarget || offer) return;
+    if (openTarget.tempId) {
+      const d = drafts.readNewDrafts<EditOffer>('offers').find((x) => x.tempId === openTarget.tempId)?.draft;
+      if (d) {
+        setTempId(openTarget.tempId);
+        setOffer(d); lastSaved.current = ''; setAuto('');
+        setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+        onOpenHandled?.();
+      }
+    } else if (openTarget.slug) {
+      const e = items.find((x) => x.slug === openTarget.slug);
+      if (e) {
+        const server = fromEntry(e);
+        const draft = readExistingDraft(e.slug);
+        const restored = draft && JSON.stringify(draft) !== JSON.stringify(server);
+        setOffer(draft || server); lastSaved.current = JSON.stringify(server); setAuto('');
+        setTempId(null); setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+        if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+        onOpenHandled?.();
+      }
+    } else if (openTarget.isNew) {
+      const id = makeTempId();
+      setTempId(id);
+      setOffer({ clientName: '', date: '', pages: [blankSection('description')] });
+      lastSaved.current = ''; setAuto('');
+      setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+      onOpenHandled?.();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openTarget]);
+
+  // Warn before closing the tab only if the current edits are neither
+  // published (lastSaved) nor saved locally in the browser draft.
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      const cur = offerRef.current;
+      const tid = tempIdRef.current;
+      if (!cur) return;
+      const draft = tid
+        ? drafts.readNewDrafts<EditOffer>('offers').find((x) => x.tempId === tid)?.draft || null
+        : readExistingDraft(cur.slug);
+      const curJson = JSON.stringify(cur);
+      if (curJson === lastSaved.current || curJson === JSON.stringify(draft)) return;
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, []);
 
   /* ---- page ops ---- */
   const addPage = (type: SectionType) => { if (!offer) return; setPages([...offer.pages, blankSection(type)]); setAddOpen(false); };
@@ -497,6 +532,7 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
   /* ===================== RENDER ===================== */
   if (view === 'pick_offer') {
     const userTemplates = items.filter(e => e.data.isTemplate && !hiddenSlugs.has(e.slug));
+    const newTemplates = drafts.readNewDrafts<EditOffer>('offers').filter(({ draft: d }) => d.isTemplate);
     return (
       <div>
         <SectionHead title="Crează ofertă" desc="Alege unul din șabloanele salvate anterior pentru a începe o ofertă nouă."
@@ -504,7 +540,8 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
         <div className="adm-grid tpl-grid">
           <div className="tpl-card">
              <div className="tpl-card-doc" style={{ cursor: 'pointer' }} onClick={() => {
-                clearDraft(undefined);
+                const id = makeTempId();
+                setTempId(id);
                 setOffer({ clientName: '', date: '', pages: [blankSection('description')] });
                 lastSaved.current = ''; setAuto('');
                 setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
@@ -528,7 +565,8 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
                <span className="ds">Începe de la zero cu o ofertă complet nouă.</span>
                <div style={{ marginTop: 12 }}>
                  <button className="adm-btn gold sm" onClick={() => {
-                   clearDraft(undefined);
+                   const id = makeTempId();
+                   setTempId(id);
                    setOffer({ clientName: '', date: '', pages: [blankSection('description')] });
                    lastSaved.current = ''; setAuto('');
                    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
@@ -536,6 +574,21 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
                </div>
              </div>
           </div>
+          {newTemplates.map(({ tempId: tid, draft: d }) => (
+            <div key={`new-${tid}`} className="tpl-card">
+              <div className="tpl-card-doc" style={{ cursor: 'pointer' }} onClick={() => openDraft(tid)}>
+                <OfferDocument offer={d} coverOnly />
+              </div>
+              <div className="tpl-card-meta">
+                <span className="nm">{d.templateName || 'Șablon nou'}</span>
+                <span className="ds">Draft · {d.templateDescription || `${countPages(d)} pagini`}</span>
+                <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); openDraft(tid); }} title="Editează draftul">Editează</button>
+                  <button className="adm-btn danger sm" onClick={(ev) => { ev.stopPropagation(); removeDraft(tid); }} title="Șterge draftul local">Șterge</button>
+                </div>
+              </div>
+            </div>
+          ))}
           {userTemplates.map((e) => (
             <div key={e.slug} className="tpl-card">
               <div className="tpl-card-doc" style={{ cursor: 'pointer' }} onClick={() => {
@@ -544,7 +597,8 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
                 delete clone.slug;
                 clone.isTemplate = false;
                 clone.clientName = '';
-                clearDraft(undefined);
+                const id = makeTempId();
+                setTempId(id);
                 setOffer(clone); lastSaved.current = ''; setAuto('');
                 setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
               }}><OfferDocument offer={fromEntry(e)} coverOnly /></div>
@@ -562,7 +616,8 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
                     delete clone.slug;
                     clone.isTemplate = false;
                     clone.clientName = '';
-                    clearDraft(undefined);
+                    const id = makeTempId();
+                    setTempId(id);
                     setOffer(clone); lastSaved.current = ''; setAuto('');
                     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
                   }} title="Creează o ofertă nouă pornind de la acest șablon">Folosește →</button>
@@ -918,23 +973,40 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
   }
 
   /* ---------------- LIST ---------------- */
+  const newOffers = drafts.readNewDrafts<EditOffer>('offers').filter(({ draft: d }) => !d.isTemplate);
+  const visibleOffers = items.filter(e => !e.data.isTemplate && !hiddenSlugs.has(e.slug));
   return (
     <div>
       <SectionHead title="Generator oferte" desc={`${items.length} oferte · prezentări de proiect în brand JL Custom Design`}
         action={<>
           <button className="adm-btn" onClick={() => { setPickIndex(0); setView('pick_offer'); }} style={{ marginRight: 8 }} title="Creează o ofertă nouă">+ Ofertă nouă</button>
           <button className="adm-btn ghost" onClick={() => {
-            clearDraft(undefined);
+            const id = makeTempId();
+            setTempId(id);
             setOffer({ clientName: '', templateName: 'Șablon Nou', category: '', isTemplate: true, style: 'editorial', date: '', pages: [blankSection('description')] });
             lastSaved.current = ''; setAuto('');
             setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
           }} title="Creează un șablon nou">+ Șablon nou</button>
         </>} />
-      {items.filter(e => !e.data.isTemplate && !hiddenSlugs.has(e.slug)).length === 0 ? (
+      {visibleOffers.length === 0 && newOffers.length === 0 ? (
         <div className="adm-empty">Nicio ofertă încă. Apasă „Ofertă nouă", alege un model și personalizează-l.</div>
       ) : (
         <div className="adm-grid">
-          {items.filter(e => !e.data.isTemplate && !hiddenSlugs.has(e.slug)).map((e) => (
+          {newOffers.map(({ tempId: tid, draft: d }) => (
+            <div className="adm-card" key={`new-${tid}`}>
+              <div className={`thumb${d.coverImage ? '' : ' empty'}`} style={d.coverImage ? { backgroundImage: `url("${d.coverImage}")` } : undefined}>{!d.coverImage && 'fără copertă'}</div>
+              <div className="body">
+                <span className="badge" style={{ background: 'var(--warning, #e6a817)', color: '#111' }}>Draft</span>
+                <span className="title">{d.clientName || 'Ofertă nouă'}</span>
+                <span className="meta">{d.date} · {countPages(d)} pagini</span>
+              </div>
+              <div className="actions">
+                <button className="adm-btn ghost sm" onClick={() => openDraft(tid)} title="Continuă editarea draftului">Editează</button>
+                <button className="adm-btn danger sm" onClick={() => removeDraft(tid)} title="Șterge draftul local">Șterge</button>
+              </div>
+            </div>
+          ))}
+          {visibleOffers.map((e) => (
             <div className="adm-card" key={e.slug}>
               <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url("${e.data.coverImage}")` } : undefined}>{!e.data.coverImage && 'fără copertă'}</div>
               <div className="body">

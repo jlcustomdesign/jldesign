@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { Entry } from './api';
 import { saveEntry } from './api';
 import { Field, TextInput, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt } from './ui';
-import { readDraft, writeDraft, clearDraft } from './drafts';
+import { readDraft, writeDraft, clearDraft, writeNewDraft, readNewDrafts, clearNewDraft } from './drafts';
 import { addPendingDelete } from './deletes';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
   categories: Entry[];
   notify: (msg: string, kind?: 'ok' | 'err') => void;
   reload: () => Promise<void>;
-  openTarget?: { collection: 'portfolio'; slug?: string; isNew?: boolean } | null;
+  openTarget?: { collection: 'portfolio'; slug?: string; tempId?: string; isNew?: boolean } | null;
   onOpenHandled?: () => void;
 }
 
@@ -23,18 +23,21 @@ interface Draft {
 }
 
 const emptyDraft = (cat: string): Draft => ({ name: '', category: cat, image: '', body: '' });
+const makeTempId = () => 'new_' + Math.random().toString(36).slice(2, 9) + '_' + Date.now().toString(36);
 
 export default function PortfolioManager({ items, categories, notify, reload, openTarget, onOpenHandled }: Props) {
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [tempId, setTempId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [savePrompt, setSavePrompt] = useState(false);
   const [imgOrient, setImgOrient] = useState<'portrait' | 'landscape' | null>(null);
   const [hiddenSlugs, setHiddenSlugs] = useState<Set<string>>(new Set());
   const draftRef = useRef<Draft | null>(null);
+  const tempIdRef = useRef<string | null>(null);
   const lastSaved = useRef<string>('');
   draftRef.current = draft;
+  tempIdRef.current = tempId;
   const hideSlug = (slug: string) => setHiddenSlugs((prev) => new Set(prev).add(slug));
-  const unhideSlug = (slug: string) => setHiddenSlugs((prev) => { const n = new Set(prev); n.delete(slug); return n; });
 
   // Detect orientation of the selected image so the preview frame matches it.
   useEffect(() => {
@@ -50,44 +53,38 @@ export default function PortfolioManager({ items, categories, notify, reload, op
     categories.find((c) => c.slug === slug)?.data?.name || slug;
 
   const open = (e?: Entry) => {
-    let server: Draft | null = null;
     if (e) {
-      server = {
+      setTempId(null);
+      const server: Draft = {
         slug: e.slug,
         name: e.data.name || '',
         category: e.data.category || categories[0]?.slug || '',
         image: e.data.image || '',
         body: e.body || '',
       };
+      const local = readDraft<Draft>('portfolio', e.slug);
+      const restored = local && JSON.stringify(local) !== JSON.stringify(server);
+      const next = local || server;
+      setDraft(next);
+      lastSaved.current = JSON.stringify(server);
+      if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+      return;
     }
-    // For a NEW project, always start fresh. Use the separate resume action
-    // to continue an unsaved new draft.
-    const local = e ? readDraft<Draft>('portfolio', e.slug) : null;
-    const restored = local && JSON.stringify(local) !== JSON.stringify(server);
-    const next = local || server || emptyDraft(categories[0]?.slug || '');
+    // New project: give it a tempId so several new drafts can coexist.
+    const id = makeTempId();
+    setTempId(id);
+    const next = emptyDraft(categories[0]?.slug || '');
     setDraft(next);
-    lastSaved.current = JSON.stringify(server || next);
-    if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
+    writeNewDraft('portfolio', id, next);
+    lastSaved.current = '';
   };
 
-  const resumeNew = () => {
-    const d = readDraft<Draft>('portfolio', undefined);
+  const openDraft = (tid: string) => {
+    const d = readNewDrafts<Draft>('portfolio').find((x) => x.tempId === tid)?.draft;
     if (!d) return;
+    setTempId(tid);
     setDraft(d);
     lastSaved.current = '';
-    notify('Am restaurat proiectul nou nesalvat', 'ok');
-  };
-
-  const addCategory = async () => {
-    const name = window.prompt('Numele noii categorii (ex: Bucătărie, Dormitor):');
-    if (!name?.trim()) return;
-    try {
-      await saveEntry({ collection: 'categories', data: { name: name.trim() } });
-      await reload();
-      notify('Categorie adăugată', 'ok');
-    } catch (e) {
-      notify((e as Error).message, 'err');
-    }
   };
 
   const publish = async () => {
@@ -95,6 +92,7 @@ export default function PortfolioManager({ items, categories, notify, reload, op
     if (!draft.name.trim()) return notify('Adaugă un titlu pentru proiect', 'err');
     if (!draft.image) return notify('Adaugă o imagine principală', 'err');
     const prevSlug = draft.slug;
+    const prevTempId = tempId;
     setBusy(true);
     try {
       const { slug } = await saveEntry({
@@ -106,7 +104,10 @@ export default function PortfolioManager({ items, categories, notify, reload, op
       await reload();
       notify(prevSlug ? 'Proiect actualizat' : 'Proiect adăugat', 'ok');
       setDraft(null);
-      clearDraft('portfolio', prevSlug); clearDraft('portfolio', slug);
+      setTempId(null);
+      clearDraft('portfolio', prevSlug);
+      clearDraft('portfolio', slug);
+      if (prevTempId) clearNewDraft('portfolio', prevTempId);
     } catch (e) {
       notify((e as Error).message, 'err');
     } finally {
@@ -123,10 +124,18 @@ export default function PortfolioManager({ items, categories, notify, reload, op
 
   const saveLocal = () => {
     if (!draft) return;
-    writeDraft('portfolio', draft.slug, draft);
+    if (tempId) writeNewDraft('portfolio', tempId, draft);
+    else writeDraft('portfolio', draft.slug, draft);
     setSavePrompt(false);
     notify('Salvat în browser', 'ok');
     setDraft(null);
+    setTempId(null);
+  };
+
+  const removeDraft = (tid: string) => {
+    if (!window.confirm('Ștergi proiectul nou nesalvat?')) return;
+    clearNewDraft('portfolio', tid);
+    notify('Draft șters', 'ok');
   };
 
   // Autosave to browser on every change.
@@ -134,8 +143,10 @@ export default function PortfolioManager({ items, categories, notify, reload, op
     if (!draft) return;
     const t = setTimeout(() => {
       const d = draftRef.current;
+      const tid = tempIdRef.current;
       if (!d) return;
-      writeDraft('portfolio', d.slug, d);
+      if (tid) writeNewDraft('portfolio', tid, d);
+      else writeDraft('portfolio', d.slug, d);
     }, 400);
     return () => clearTimeout(t);
   }, [draft]);
@@ -145,10 +156,13 @@ export default function PortfolioManager({ items, categories, notify, reload, op
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       const d = draftRef.current;
+      const tid = tempIdRef.current;
       if (!d) return;
-      const draft = readDraft<Draft>('portfolio', d.slug);
+      const stored = tid
+        ? readNewDrafts<Draft>('portfolio').find((x) => x.tempId === tid)?.draft || null
+        : readDraft<Draft>('portfolio', d.slug);
       const curJson = JSON.stringify(d);
-      if (curJson === lastSaved.current || curJson === JSON.stringify(draft)) return;
+      if (curJson === lastSaved.current || curJson === JSON.stringify(stored)) return;
       e.preventDefault();
       e.returnValue = '';
     };
@@ -159,25 +173,34 @@ export default function PortfolioManager({ items, categories, notify, reload, op
   // Open a specific pending item requested from the global pending bar.
   useEffect(() => {
     if (!openTarget || draft) return;
-    if (openTarget.isNew || !openTarget.slug) {
-      const d = readDraft<Draft>('portfolio', undefined);
-      if (d) { setDraft(d); lastSaved.current = ''; onOpenHandled?.(); }
-    } else {
+    if (openTarget.tempId) {
+      const d = readNewDrafts<Draft>('portfolio').find((x) => x.tempId === openTarget.tempId)?.draft;
+      if (d) {
+        setTempId(openTarget.tempId);
+        setDraft(d);
+        lastSaved.current = '';
+        onOpenHandled?.();
+      }
+    } else if (openTarget.slug) {
       const e = items.find((x) => x.slug === openTarget.slug);
       if (e) {
         const server = { slug: e.slug, name: e.data.name || '', category: e.data.category || categories[0]?.slug || '', image: e.data.image || '', body: e.body || '' };
         const local = readDraft<Draft>('portfolio', e.slug);
         const restored = local && JSON.stringify(local) !== JSON.stringify(server);
         setDraft(local || server); lastSaved.current = JSON.stringify(server);
+        setTempId(null);
         if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
         onOpenHandled?.();
       }
+    } else if (openTarget.isNew) {
+      open();
+      onOpenHandled?.();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openTarget]);
 
   const remove = async (e: Entry) => {
-    if (!window.confirm(`Ștergi proiectul „${e.data.name || e.slug}”?`)) return;
+    if (!window.confirm(`Ștergi proiectul „${e.data.name || e.slug}"?`)) return;
     hideSlug(e.slug);
     addPendingDelete({ collection: 'portfolio', slug: e.slug, title: e.data.name || e.slug });
     notify('Ștergere adăugată în coșul de publicare', 'ok');
@@ -185,19 +208,23 @@ export default function PortfolioManager({ items, categories, notify, reload, op
 
   const closeEditor = () => {
     const d = draftRef.current;
-    if (!d) { setDraft(null); return; }
-    const draft = readDraft<Draft>('portfolio', d.slug);
+    const tid = tempIdRef.current;
+    if (!d) { setDraft(null); setTempId(null); return; }
+    const stored = tid
+      ? readNewDrafts<Draft>('portfolio').find((x) => x.tempId === tid)?.draft || null
+      : readDraft<Draft>('portfolio', d.slug);
     const curJson = JSON.stringify(d);
-    const dirty = curJson !== lastSaved.current && curJson !== JSON.stringify(draft);
+    const dirty = curJson !== lastSaved.current && curJson !== JSON.stringify(stored);
     if (dirty && !window.confirm('Ai modificări nepublicate. Dacă închizi, rămân salvate în browser. Continui?')) return;
     setDraft(null);
+    setTempId(null);
   };
 
   if (draft) {
     return (
       <div className="adm-editor-fit">
         <div className="adm-editor-head" style={{ marginBottom: 14 }}>
-          <h3 style={{ margin: 0 }}>{draft.slug ? 'Editează proiect' : 'Proiect nou'}</h3>
+          <h3 style={{ margin: 0 }}>{draft.slug ? 'Editează proiect' : (tempId ? 'Proiect nou' : 'Proiect nou')}</h3>
           <div className="adm-spacer" />
           <button className="adm-btn ghost" onClick={closeEditor} disabled={busy} title="Închide editorul și întoarce-te la listă">Anulează</button>
           <button className="adm-btn gold" onClick={openSavePrompt} disabled={busy} title="Alege: salvează local în browser sau publică pe site" style={{ marginLeft: 8 }}>Salvează</button>
@@ -256,6 +283,21 @@ export default function PortfolioManager({ items, categories, notify, reload, op
     );
   }
 
+  const addCategory = async () => {
+    const name = window.prompt('Numele noii categorii (ex: Bucătărie, Dormitor):');
+    if (!name?.trim()) return;
+    try {
+      await saveEntry({ collection: 'categories', data: { name: name.trim() } });
+      await reload();
+      notify('Categorie adăugată', 'ok');
+    } catch (e) {
+      notify((e as Error).message, 'err');
+    }
+  };
+
+  const visibleItems = items.filter((e) => !hiddenSlugs.has(e.slug));
+  const newDrafts = readNewDrafts<Draft>('portfolio');
+
   return (
     <div>
       <SectionHead
@@ -263,11 +305,26 @@ export default function PortfolioManager({ items, categories, notify, reload, op
         desc={`${items.length} proiecte · ${categories.length} categorii`}
         action={<button className="adm-btn" onClick={() => open()} title="Adaugă un proiect nou în portofoliu">＋ Proiect nou</button>}
       />
-      {items.filter((e) => !hiddenSlugs.has(e.slug)).length === 0 ? (
+      {visibleItems.length === 0 && newDrafts.length === 0 ? (
         <div className="adm-empty">Niciun proiect încă. Apasă „Proiect nou” pentru a începe.</div>
       ) : (
         <div className="adm-grid">
-          {items.filter((e) => !hiddenSlugs.has(e.slug)).map((e) => (
+          {newDrafts.map(({ tempId: tid, draft: d }) => (
+            <div className="adm-card" key={`new-${tid}`}>
+              <div className={`thumb${d.image ? '' : ' empty'}`} style={d.image ? { backgroundImage: `url("${d.image}")` } : undefined}>
+                {!d.image && 'fără imagine'}
+              </div>
+              <div className="body">
+                <span className="badge" style={{ background: 'var(--warning, #e6a817)', color: '#111' }}>Draft</span>
+                <span className="title">{d.name || 'Proiect nou'}</span>
+              </div>
+              <div className="actions">
+                <button className="adm-btn ghost sm" onClick={() => openDraft(tid)} title="Continuă editarea draftului">Editează</button>
+                <button className="adm-btn danger sm" onClick={() => removeDraft(tid)} title="Șterge draftul local">Șterge</button>
+              </div>
+            </div>
+          ))}
+          {visibleItems.map((e) => (
             <div className="adm-card" key={e.slug}>
               <div className={`thumb${e.data.image ? '' : ' empty'}`} style={e.data.image ? { backgroundImage: `url("${e.data.image}")` } : undefined}>
                 {!e.data.image && 'fără imagine'}

@@ -1,6 +1,6 @@
 /** pending.ts — compute unpublished browser drafts across all admin sections. */
 import type { AllData, Entry } from './api';
-import { readDraft, draftKey } from './drafts';
+import { readDraft, readNewDrafts, draftKey, clearNewDraft } from './drafts';
 import { readPendingDeletes, removePendingDelete } from './deletes';
 import type { Offer } from '../offer/OfferDocument';
 
@@ -9,13 +9,13 @@ export type EditOffer = Offer & { slug?: string };
 const SITE_DRAFT_KEY = 'jl-site-draft';
 
 export type PendingItem =
-  | { kind: 'offer-new'; collection: 'offers'; title: string; slug?: undefined; draft: EditOffer }
+  | { kind: 'offer-new'; collection: 'offers'; title: string; tempId: string; slug?: undefined; draft: EditOffer }
   | { kind: 'offer-edit'; collection: 'offers'; title: string; slug: string; draft: EditOffer }
   | { kind: 'offer-delete'; collection: 'offers'; title: string; slug: string; draft: null }
-  | { kind: 'portfolio-new'; collection: 'portfolio'; title: string; slug?: undefined; draft: any }
+  | { kind: 'portfolio-new'; collection: 'portfolio'; title: string; tempId: string; slug?: undefined; draft: any }
   | { kind: 'portfolio-edit'; collection: 'portfolio'; title: string; slug: string; draft: any }
   | { kind: 'portfolio-delete'; collection: 'portfolio'; title: string; slug: string; draft: null }
-  | { kind: 'blog-new'; collection: 'blog'; title: string; slug?: undefined; draft: any }
+  | { kind: 'blog-new'; collection: 'blog'; title: string; tempId: string; slug?: undefined; draft: any }
   | { kind: 'blog-edit'; collection: 'blog'; title: string; slug: string; draft: any }
   | { kind: 'blog-delete'; collection: 'blog'; title: string; slug: string; draft: null }
   | { kind: 'site'; collection: 'site'; title: string; slug?: undefined; draft: any };
@@ -65,9 +65,10 @@ export function computePending(data: AllData | null, siteServer: any | null): Pe
       pending.push({ kind: 'offer-edit', collection: 'offers', title: e.data.clientName || e.data.templateName || e.slug, slug: e.slug, draft });
     }
   }
-  const newOffer = readDraft<EditOffer>('offers', undefined);
-  if (newOffer && !isBlankNewOffer(newOffer)) {
-    pending.push({ kind: 'offer-new', collection: 'offers', title: newOffer.clientName || newOffer.templateName || 'Ofertă nouă', draft: newOffer });
+  for (const { tempId, draft } of readNewDrafts<EditOffer>('offers')) {
+    if (!isBlankNewOffer(draft)) {
+      pending.push({ kind: 'offer-new', collection: 'offers', title: draft.clientName || draft.templateName || 'Ofertă nouă', tempId, draft });
+    }
   }
 
   // Portfolio
@@ -79,9 +80,10 @@ export function computePending(data: AllData | null, siteServer: any | null): Pe
       pending.push({ kind: 'portfolio-edit', collection: 'portfolio', title: draft.name || e.data.name || e.slug, slug: e.slug, draft });
     }
   }
-  const newPortfolio = readDraft<any>('portfolio', undefined);
-  if (newPortfolio && (newPortfolio.name || newPortfolio.image || newPortfolio.body)) {
-    pending.push({ kind: 'portfolio-new', collection: 'portfolio', title: newPortfolio.name || 'Proiect nou', draft: newPortfolio });
+  for (const { tempId, draft } of readNewDrafts<any>('portfolio')) {
+    if (draft.name || draft.image || draft.body) {
+      pending.push({ kind: 'portfolio-new', collection: 'portfolio', title: draft.name || 'Proiect nou', tempId, draft });
+    }
   }
 
   // Blog
@@ -103,9 +105,10 @@ export function computePending(data: AllData | null, siteServer: any | null): Pe
       pending.push({ kind: 'blog-edit', collection: 'blog', title: draft.title || e.data.title || e.slug, slug: e.slug, draft });
     }
   }
-  const newBlog = readDraft<any>('blog', undefined);
-  if (newBlog && (newBlog.title || newBlog.coverImage || newBlog.body)) {
-    pending.push({ kind: 'blog-new', collection: 'blog', title: newBlog.title || 'Articol nou', draft: newBlog });
+  for (const { tempId, draft } of readNewDrafts<any>('blog')) {
+    if (draft.title || draft.coverImage || draft.body) {
+      pending.push({ kind: 'blog-new', collection: 'blog', title: draft.title || 'Articol nou', tempId, draft });
+    }
   }
 
   // Site content
@@ -140,6 +143,7 @@ export function clearPendingDrafts(items: PendingItem[]) {
   for (const it of items) {
     try {
       if (it.collection === 'site') localStorage.removeItem(SITE_DRAFT_KEY);
+      else if (it.kind.endsWith('-new')) clearNewDraft(it.collection, (it as any).tempId);
       else localStorage.removeItem(draftKey(it.collection, it.slug));
     } catch {}
   }

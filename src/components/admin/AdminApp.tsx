@@ -33,6 +33,7 @@ const SECTION_LABEL: Record<PendingItem['kind'], string> = {
 export interface OpenTarget {
   collection: 'offers' | 'portfolio' | 'blog' | 'site';
   slug?: string;
+  tempId?: string;
   isNew?: boolean;
 }
 
@@ -166,7 +167,13 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   }, {} as Record<string, PendingItem[]>);
 
   const openPending = (it: PendingItem) => {
-    const target: OpenTarget = { collection: it.collection, slug: it.slug, isNew: it.kind === 'offer-new' || !it.slug };
+    const isNew = it.kind.endsWith('-new');
+    const target: OpenTarget = {
+      collection: it.collection,
+      slug: it.slug,
+      tempId: isNew ? (it as any).tempId : undefined,
+      isNew,
+    };
     if (it.collection === 'offers') setTab('offers');
     else if (it.collection === 'portfolio') setTab('portfolio');
     else if (it.collection === 'blog') setTab('blog');
