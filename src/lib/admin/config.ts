@@ -7,8 +7,8 @@
  * tested without GitHub.
  */
 
-export const REPO_OWNER = 'RobertGyorgy';
-export const REPO_NAME = 'JL-Design';
+export const REPO_OWNER = 'jlcustomdesign';
+export const REPO_NAME = 'jldesign';
 export const REPO_BRANCH = 'main';
 
 /** Cookie that stores the GitHub OAuth access token (set by the OAuth callback). */

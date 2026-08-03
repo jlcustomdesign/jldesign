@@ -84,7 +84,6 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   useEffect(() => { reload(); }, [reload]);
 
   const [pending, setPending] = useState<PendingItem[]>([]);
-  const [publishOpen, setPublishOpen] = useState(false);
   const [publishBusy, setPublishBusy] = useState(false);
   const [openTarget, setOpenTarget] = useState<OpenTarget | null>(null);
   const [pendingPanelOpen, setPendingPanelOpen] = useState(false);
@@ -103,6 +102,8 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
 
   const publishAllPending = async () => {
     if (pending.length === 0) return;
+    if (!window.confirm(`Publici ${pending.length} modificări pe site?`)) return;
+    setPendingPanelOpen(false);
     setPublishBusy(true);
     let count = 0;
     try {
@@ -148,7 +149,6 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
       clearPendingDrafts(pending);
       await reload();
       notify(count ? `${count} modificări publicate` : 'Nicio modificare de publicat', 'ok');
-      setPublishOpen(false);
     } catch (e) {
       notify((e as Error).message, 'err');
     } finally {
@@ -170,7 +170,6 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
     else if (it.collection === 'blog') setTab('blog');
     else if (it.collection === 'site') { setTab('site'); return; }
     setOpenTarget(target);
-    setPublishOpen(false);
   };
 
   const counts: Record<string, number | undefined> = {
@@ -299,41 +298,14 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
                 </div>
                 <div className="adm-pending-panel-actions">
                   <button className="adm-btn ghost" onClick={() => setPendingPanelOpen(false)}>Închide</button>
-                  <button className="adm-btn gold" onClick={() => { setPendingPanelOpen(false); setPublishOpen(true); }}>Publică toate ({pending.length})</button>
+                  <button className="adm-btn gold" onClick={publishAllPending} disabled={publishBusy}>
+                    {publishBusy ? 'Se publică…' : `Publică toate (${pending.length})`}
+                  </button>
                 </div>
               </div>
             </div>
           )}
         </>
-      )}
-
-      {/* Global publish-all dialog */}
-      {publishOpen && (
-        <div className="adm-dialog" onClick={() => !publishBusy && setPublishOpen(false)}>
-          <div className="adm-dialog-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 520 }}>
-            <h4>Modificări nesalvate ({pending.length})</h4>
-            <p> aceste elemente sunt salvate doar în browser. Publică-le pe site când ești gata.</p>
-            <div className="pending-list" style={{ maxHeight: '60vh', overflow: 'auto', margin: '16px 0' }}>
-              {Object.entries(grouped).map(([section, items]) => (
-                <div key={section} style={{ marginBottom: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, opacity: 0.7, marginBottom: 6 }}>{section}</div>
-                  {items.map((it, idx) => (
-                    <div key={idx} className="pending-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: 'var(--surface-2)', borderRadius: 6, marginBottom: 6 }}>
-                      <span>{it.title}</span>
-                      <button className="adm-btn ghost sm" onClick={() => openPending(it)}>Deschide</button>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <div className="adm-dialog-actions">
-              <button className="adm-btn ghost" onClick={() => setPublishOpen(false)} disabled={publishBusy}>Anulează</button>
-              <button className="adm-btn gold" onClick={publishAllPending} disabled={publishBusy || pending.length === 0}>
-                {publishBusy ? 'Se publică…' : `Publică toate (${pending.length})`}
-              </button>
-            </div>
-          </div>
-        </div>
       )}
 
       <Toast msg={toast.msg} kind={toast.kind} />
