@@ -1,0 +1,115 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+interface Props {
+  title: string;
+  subtitle: string;
+  updated?: string;
+}
+
+const { title, subtitle, updated = "[data publicării]" } = Astro.props;
+---
+
+<Layout title={title} description={`${title} - JL Custom Design`}>
+  <main class="pt-28 md:pt-36 px-4 md:px-8 pb-20 md:pb-28" data-theme="light">
+    <div class="max-w-3xl mx-auto">
+      <!-- Header -->
+      <header class="text-center mb-12 md:mb-16">
+        <h1
+          class="font-serif text-3xl md:text-5xl lg:text-6xl text-primary mb-4 leading-tight"
+        >
+          {title}
+        </h1>
+        <p class="text-lg md:text-xl text-primary/60 mb-2">{subtitle}</p>
+        <p class="text-sm text-primary/40">Ultima actualizare: {updated}</p>
+      </header>
+
+      <!-- Content -->
+      <article class="legal-content">
+        <slot />
+      </article>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  .legal-content {
+    color: rgba(30, 25, 18, 0.85);
+    line-height: 1.8;
+    font-size: 1rem;
+  }
+
+  .legal-content h2 {
+    font-family: var(--font-serif, ui-serif, Georgia, serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary, #1e1912);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(30, 25, 18, 0.08);
+  }
+
+  .legal-content h2:first-child {
+    margin-top: 0;
+  }
+
+  .legal-content p {
+    margin-bottom: 1rem;
+  }
+
+  .legal-content ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1.25rem;
+  }
+
+  .legal-content ul li {
+    position: relative;
+    padding-left: 1.75rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .legal-content ul li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.65rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--color-accent, #c9a66b);
+    flex-shrink: 0;
+  }
+
+  .legal-content .info-box {
+    background: rgba(201, 166, 107, 0.08);
+    border-left: 3px solid var(--color-accent, #c9a66b);
+    border-radius: 0 1rem 1rem 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.25rem 0;
+  }
+
+  .legal-content .info-box p {
+    margin-bottom: 0.35rem;
+  }
+
+  .legal-content .info-box p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 768px) {
+    .legal-content {
+      font-size: 1.05rem;
+    }
+
+    .legal-content h2 {
+      font-size: 1.75rem;
+      margin-top: 3rem;
+    }
+
+    .legal-content ul li {
+      padding-left: 2rem;
+    }
+  }
+</style>
