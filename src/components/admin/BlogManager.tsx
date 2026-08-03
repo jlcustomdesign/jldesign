@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { Entry } from './api';
-import { saveEntry, deleteEntry } from './api';
+import { saveEntry } from './api';
 import { Field, TextInput, TextArea, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt } from './ui';
 import { readDraft, writeDraft, clearDraft } from './drafts';
+import { addPendingDelete } from './deletes';
 
 const CATEGORIES = [
   { value: 'inspiratie', label: 'Inspirație & Design' },
@@ -198,14 +199,8 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
   const remove = async (e: Entry) => {
     if (!window.confirm(`Ștergi articolul „${e.data.title || e.slug}”?`)) return;
     hideSlug(e.slug);
-    try {
-      await deleteEntry('blog', e.slug);
-      await reload();
-      notify('Articol șters', 'ok');
-    } catch (err) {
-      unhideSlug(e.slug);
-      notify((err as Error).message, 'err');
-    }
+    addPendingDelete({ collection: 'blog', slug: e.slug, title: e.data.title || e.slug });
+    notify('Ștergere adăugată în coșul de publicare', 'ok');
   };
 
   if (draft) {

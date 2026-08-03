@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Entry } from './api';
-import { saveEntry, deleteEntry } from './api';
+import { saveEntry } from './api';
 import { Field, TextInput, Select, ImageInput, MarkdownEditor, SectionHead, SavePrompt } from './ui';
 import { readDraft, writeDraft, clearDraft } from './drafts';
+import { addPendingDelete } from './deletes';
 
 interface Props {
   items: Entry[];
@@ -178,14 +179,8 @@ export default function PortfolioManager({ items, categories, notify, reload, op
   const remove = async (e: Entry) => {
     if (!window.confirm(`Ștergi proiectul „${e.data.name || e.slug}”?`)) return;
     hideSlug(e.slug);
-    try {
-      await deleteEntry('portfolio', e.slug);
-      await reload();
-      notify('Proiect șters', 'ok');
-    } catch (err) {
-      unhideSlug(e.slug);
-      notify((err as Error).message, 'err');
-    }
+    addPendingDelete({ collection: 'portfolio', slug: e.slug, title: e.data.name || e.slug });
+    notify('Ștergere adăugată în coșul de publicare', 'ok');
   };
 
   const closeEditor = () => {

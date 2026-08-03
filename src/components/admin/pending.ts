@@ -1,6 +1,7 @@
 /** pending.ts — compute unpublished browser drafts across all admin sections. */
 import type { AllData, Entry } from './api';
 import { readDraft, draftKey } from './drafts';
+import { readPendingDeletes, removePendingDelete } from './deletes';
 import type { Offer } from '../offer/OfferDocument';
 
 export type EditOffer = Offer & { slug?: string };
@@ -10,10 +11,13 @@ const SITE_DRAFT_KEY = 'jl-site-draft';
 export type PendingItem =
   | { kind: 'offer-new'; collection: 'offers'; title: string; slug?: undefined; draft: EditOffer }
   | { kind: 'offer-edit'; collection: 'offers'; title: string; slug: string; draft: EditOffer }
+  | { kind: 'offer-delete'; collection: 'offers'; title: string; slug: string; draft: null }
   | { kind: 'portfolio-new'; collection: 'portfolio'; title: string; slug?: undefined; draft: any }
   | { kind: 'portfolio-edit'; collection: 'portfolio'; title: string; slug: string; draft: any }
+  | { kind: 'portfolio-delete'; collection: 'portfolio'; title: string; slug: string; draft: null }
   | { kind: 'blog-new'; collection: 'blog'; title: string; slug?: undefined; draft: any }
   | { kind: 'blog-edit'; collection: 'blog'; title: string; slug: string; draft: any }
+  | { kind: 'blog-delete'; collection: 'blog'; title: string; slug: string; draft: null }
   | { kind: 'site'; collection: 'site'; title: string; slug?: undefined; draft: any };
 
 export function readSiteDraft(): any | null {
@@ -108,6 +112,20 @@ export function computePending(data: AllData | null, siteServer: any | null): Pe
   const siteDraft = readSiteDraft();
   if (siteDraft && JSON.stringify(siteDraft) !== JSON.stringify(siteServer)) {
     pending.push({ kind: 'site', collection: 'site', title: 'Conținut site', draft: siteDraft });
+  }
+
+  // Pending deletions (staged locally, published in bulk)
+  const serverSlugs = {
+    offers: new Set(data.offers.map((e) => e.slug)),
+    portfolio: new Set(data.portfolio.map((e) => e.slug)),
+    blog: new Set(data.blog.map((e) => e.slug)),
+  };
+  for (const d of readPendingDeletes()) {
+    if (!serverSlugs[d.collection].has(d.slug)) {
+      removePendingDelete(d.collection, d.slug);
+      continue;
+    }
+    pending.push({ kind: `${d.collection}-delete` as PendingItem['kind'], collection: d.collection, title: d.title, slug: d.slug, draft: null });
   }
 
   return pending;

@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { fetchData, saveEntry, type AllData } from './api';
+import { fetchData, saveEntry, deleteEntry, type AllData } from './api';
 import { Toast } from './ui';
 import PortfolioManager from './PortfolioManager';
 import BlogManager from './BlogManager';
 import OfferManager from './OfferManager';
 import SiteContentManager from './SiteContentManager';
 import { computePending, clearPendingDrafts, readSiteDraft, type PendingItem } from './pending';
+import { readPendingDeletes, clearPendingDeletes, removePendingDelete } from './deletes';
 
 type Tab = 'home' | 'portfolio' | 'blog' | 'offers' | 'site';
 
@@ -19,10 +20,13 @@ const SECTIONS: { id: Exclude<Tab, 'home'>; label: string; short: string; desc: 
 const SECTION_LABEL: Record<PendingItem['kind'], string> = {
   'offer-new': 'Oferte',
   'offer-edit': 'Oferte',
+  'offer-delete': 'Oferte',
   'portfolio-new': 'Portofoliu',
   'portfolio-edit': 'Portofoliu',
+  'portfolio-delete': 'Portofoliu',
   'blog-new': 'Blog',
   'blog-edit': 'Blog',
+  'blog-delete': 'Blog',
   site: 'Conținut site',
 };
 
@@ -107,7 +111,9 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
     setPublishBusy(true);
     let count = 0;
     try {
+      const deletes = readPendingDeletes();
       for (const it of pending) {
+        if (it.kind.endsWith('-delete')) continue;
         if (it.collection === 'offers') {
           const d = it.draft;
           await saveEntry({ collection: 'offers', slug: it.slug, data: d });
@@ -146,7 +152,12 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
         }
         count++;
       }
+      for (const d of deletes) {
+        await deleteEntry(d.collection, d.slug);
+        count++;
+      }
       clearPendingDrafts(pending);
+      clearPendingDeletes();
       await reload();
       notify(count ? `${count} modificări publicate` : 'Nicio modificare de publicat', 'ok');
     } catch (e) {
@@ -275,24 +286,40 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
                   {Object.entries(grouped).map(([section, items]) => (
                     <div key={section} className="adm-pending-panel-group">
                       <div className="adm-pending-panel-section">{section}</div>
-                      {items.map((it, idx) => (
-                        <div key={idx} className="adm-pending-panel-row">
-                          <span className="adm-pending-panel-title">
-                            {it.kind.includes('new') && <span className="adm-pending-panel-new">Nou</span>}
-                            <span>{it.title}</span>
-                          </span>
-                          <div className="adm-pending-panel-row-actions">
-                            <button className="adm-btn ghost sm" onClick={() => { setPendingPanelOpen(false); openPending(it); }}>Editează</button>
-                            <button
-                              className="adm-btn danger sm"
-                              onClick={() => { if (window.confirm(`Ștergi modificările locale pentru „${it.title}"?`)) clearPendingDrafts([it]); }}
-                              title="Șterge draftul local"
-                            >
-                              Șterge
-                            </button>
+                      {items.map((it, idx) => {
+                        const isDelete = it.kind.endsWith('-delete');
+                        return (
+                          <div key={idx} className="adm-pending-panel-row">
+                            <span className="adm-pending-panel-title">
+                              {it.kind.includes('new') && <span className="adm-pending-panel-new">Nou</span>}
+                              {isDelete && <span className="adm-pending-panel-new" style={{ background: 'var(--danger)' }}>Șters</span>}
+                              <span>{it.title}</span>
+                            </span>
+                            <div className="adm-pending-panel-row-actions">
+                              {!isDelete && (
+                                <button className="adm-btn ghost sm" onClick={() => { setPendingPanelOpen(false); openPending(it); }}>Editează</button>
+                              )}
+                              {isDelete ? (
+                                <button
+                                  className="adm-btn ghost sm"
+                                  onClick={() => { removePendingDelete(it.collection, it.slug!); notify('Ștergere anulată — reîncarc lista', 'ok'); }}
+                                  title="Anulează ștergerea"
+                                >
+                                  Anulează
+                                </button>
+                              ) : (
+                                <button
+                                  className="adm-btn danger sm"
+                                  onClick={() => { if (window.confirm(`Ștergi modificările locale pentru „${it.title}"?`)) clearPendingDrafts([it]); }}
+                                  title="Șterge draftul local"
+                                >
+                                  Șterge
+                                </button>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ))}
                 </div>

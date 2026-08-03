@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Entry } from './api';
-import { saveEntry, deleteEntry } from './api';
+import { saveEntry } from './api';
 import { TextInput, TextArea, ImageInput, SectionHead, TagInput } from './ui';
 import OfferDocument, { normalizeOffer, uid, DEFAULT_LABEL, type Offer, type Section, type SectionType } from '../offer/OfferDocument';
 import { fillCrop, GAL_MAX } from '../offer/galleryLayout';
 import * as drafts from './drafts';
+import { addPendingDelete } from './deletes';
 
 /** Gallery advice: measures the current images' aspect ratios and tells the
    user whether another image (and which orientation) would pack well. The
@@ -439,16 +440,12 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
   }, [offer, view]);
 
   const remove = async (e: Entry) => {
-    if (!window.confirm(`Ștergi oferta „${e.data.clientName || e.slug}”?`)) return;
+    const title = e.data.clientName || e.data.templateName || e.slug;
+    const kind = e.data.isTemplate ? 'șablonul' : 'oferta';
+    if (!window.confirm(`Ștergi ${kind} „${title}"?`)) return;
     hideSlug(e.slug);
-    try {
-      await deleteEntry('offers', e.slug);
-      await reload();
-      notify('Ofertă ștearsă', 'ok');
-    } catch (err) {
-      unhideSlug(e.slug);
-      notify((err as Error).message, 'err');
-    }
+    addPendingDelete({ collection: 'offers', slug: e.slug, title });
+    notify('Ștergere adăugată în coșul de publicare', 'ok');
   };
 
   // Copy an offer/template exactly — start a new one from the same content.
