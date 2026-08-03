@@ -49,6 +49,7 @@ const CATEGORY_ORDER = ['bucatarii', 'living', 'dormitor', 'hol', 'birou', 'hore
 // Group Projects & Smart Packing
 type Project = (typeof allProjects[0]) & { isHiddenInitially?: boolean };
 const groupedProjects: Record<string, Project[]> = {};
+const visibleCounts: Record<string, number> = {};
 
 // Initialize groups
 categoryEntries.forEach(cat => groupedProjects[cat.slug] = []);
@@ -83,10 +84,19 @@ Object.keys(groupedProjects).forEach(cat => {
         }
     }
 
-    // Show the first 4 items by default; hide the rest and add a "view more" button.
-    packed.forEach((item, idx) => {
-        if (idx >= 4) item.isHiddenInitially = true;
+    // Show exactly one row (max 3 columns) by default; hide the rest.
+    let totalCols = 0;
+    let visibleCount = 0;
+    packed.forEach((item) => {
+        const cols = item.isLandscape ? 2 : 1;
+        if (totalCols >= 3) {
+            item.isHiddenInitially = true;
+        } else {
+            visibleCount++;
+        }
+        totalCols += cols;
     });
+    visibleCounts[cat] = visibleCount;
 
     groupedProjects[cat] = packed;
 });
@@ -120,7 +130,7 @@ const activeCategories = Object.keys(groupedProjects)
             const categoryName = categoryMap[category] || category;
             
             return (
-                <div class="category-section" data-category={category} data-visible="4">
+                <div class="category-section" data-category={category} data-visible={visibleCounts[category]}>
                      <div class="flex items-center gap-4 mb-12">
                         <div class="h-[2px] w-8 bg-accent"></div>
                         <h2 class="text-3xl md:text-4xl font-serif text-primary capitalize">
