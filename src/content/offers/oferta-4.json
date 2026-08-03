@@ -1,0 +1,66 @@
+{
+  "clientName": "",
+  "templateName": "familia andrei",
+  "category": "bucatarie",
+  "isTemplate": true,
+  "style": "editorial",
+  "date": "",
+  "pages": [
+    {
+      "id": "description-u4rv",
+      "type": "description",
+      "heading": "Descriere proiect",
+      "paragraph": "",
+      "image": "/assets/offers/oferta-4/0.webp",
+      "specs": [
+        {
+          "label": "Specificație 1",
+          "value": ""
+        },
+        {
+          "label": "Specificație 2",
+          "value": ""
+        },
+        {
+          "label": "Specificație 3",
+          "value": ""
+        }
+      ],
+      "imageOrient": "portrait",
+      "imageLayout": "side"
+    },
+    {
+      "id": "gallery-v35x",
+      "type": "gallery",
+      "heading": "Galerie foto",
+      "paragraph": "",
+      "shots": [
+        {
+          "image": "/assets/offers/oferta-4/1.webp",
+          "caption": "",
+          "orient": "portrait",
+          "focus": "47.2% 98.6%"
+        },
+        {
+          "image": "/assets/offers/oferta-4/2.webp",
+          "caption": "",
+          "orient": "portrait",
+          "focus": "50.9% 13.7%"
+        }
+      ]
+    },
+    {
+      "id": "text-w3sp",
+      "type": "text",
+      "heading": "Titlu secțiune",
+      "paragraph": "",
+      "image": "/assets/offers/oferta-4/3.webp",
+      "textLayout": "bottom",
+      "imageOrient": "landscape"
+    }
+  ],
+  "coverImage": "/assets/offers/oferta-4/4.webp",
+  "coverImageOrient": "landscape",
+  "coverImageFocus": "47.7% 23.2%",
+  "slug": "oferta-4"
+}
