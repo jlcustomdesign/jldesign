@@ -1,0 +1,38 @@
+{
+  "clientName": "",
+  "templateName": "sablon test",
+  "category": "dormitor",
+  "isTemplate": true,
+  "style": "editorial",
+  "date": "",
+  "pages": [
+    {
+      "id": "description-f2gg",
+      "type": "description",
+      "heading": "Descriere proiect",
+      "paragraph": "",
+      "image": "",
+      "specs": [
+        {
+          "label": "Specificație 1",
+          "value": ""
+        },
+        {
+          "label": "Specificație 2",
+          "value": ""
+        },
+        {
+          "label": "Specificație 3",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "text"
+  ],
+  "coverImage": "/assets/offers/oferta/0.webp",
+  "coverImageOrient": "landscape",
+  "coverImageFocus": "47.9% 60.8%",
+  "slug": "oferta"
+}
