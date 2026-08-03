@@ -17,6 +17,7 @@ interface Props {
   items: Entry[];
   notify: (msg: string, kind?: 'ok' | 'err') => void;
   reload: () => Promise<void>;
+  onPublishAll?: () => Promise<void>;
   openTarget?: { collection: 'blog'; slug?: string; tempId?: string; isNew?: boolean } | null;
   onOpenHandled?: () => void;
 }
@@ -41,7 +42,7 @@ const emptyDraft = (): Draft => ({
 });
 const makeTempId = () => 'new_' + Math.random().toString(36).slice(2, 9) + '_' + Date.now().toString(36);
 
-export default function BlogManager({ items, notify, reload, openTarget, onOpenHandled }: Props) {
+export default function BlogManager({ items, notify, reload, onPublishAll, openTarget, onOpenHandled }: Props) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [tempId, setTempId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -103,26 +104,34 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
     const prevTempId = tempId;
     setBusy(true);
     try {
-      await saveEntry({
-        collection: 'blog',
-        slug: draft.slug,
-        data: {
-          title: draft.title.trim(),
-          description: draft.description.trim(),
-          category: draft.category,
-          author: draft.author.trim() || 'JL Custom Design',
-          publishedDate: draft.publishedDate,
-          coverImage: draft.coverImage,
-          coverImageAlt: draft.coverImageAlt.trim(),
-        },
-        body: draft.body,
-      });
-      await reload();
-      notify(prevSlug ? 'Articol actualizat' : 'Articol publicat', 'ok');
-      setDraft(null);
-      setTempId(null);
-      clearDraft('blog', prevSlug);
-      if (prevTempId) clearNewDraft('blog', prevTempId);
+      if (onPublishAll) {
+        if (prevTempId) writeNewDraft('blog', prevTempId, draft);
+        else writeDraft('blog', prevSlug, draft);
+        await onPublishAll();
+        setDraft(null);
+        setTempId(null);
+      } else {
+        await saveEntry({
+          collection: 'blog',
+          slug: draft.slug,
+          data: {
+            title: draft.title.trim(),
+            description: draft.description.trim(),
+            category: draft.category,
+            author: draft.author.trim() || 'JL Custom Design',
+            publishedDate: draft.publishedDate,
+            coverImage: draft.coverImage,
+            coverImageAlt: draft.coverImageAlt.trim(),
+          },
+          body: draft.body,
+        });
+        await reload();
+        notify(prevSlug ? 'Articol actualizat' : 'Articol publicat', 'ok');
+        setDraft(null);
+        setTempId(null);
+        clearDraft('blog', prevSlug);
+        if (prevTempId) clearNewDraft('blog', prevTempId);
+      }
     } catch (e) {
       notify((e as Error).message, 'err');
     } finally {
@@ -329,23 +338,30 @@ export default function BlogManager({ items, notify, reload, openTarget, onOpenH
               </div>
             </div>
           ))}
-          {sorted.map((e) => (
-            <div className="adm-card" key={e.slug}>
-              <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url("${e.data.coverImage}")` } : undefined}>
-                {!e.data.coverImage && 'fără imagine'}
+          {sorted.map((e) => {
+            const local = readDraft<Draft>('blog', e.slug);
+            const display = local || e.data;
+            const hasDraft = !!local;
+            return (
+              <div className="adm-card" key={e.slug}>
+                <div className={`thumb${display.coverImage ? '' : ' empty'}`} style={display.coverImage ? { backgroundImage: `url("${display.coverImage}")` } : undefined}>
+                  {!display.coverImage && 'fără imagine'}
+                </div>
+                <div className="body">
+                  <span className="badge" style={hasDraft ? { background: 'var(--warning, #e6a817)', color: '#111' } : undefined}>
+                    {hasDraft ? 'Modificat' : (CATEGORIES.find((c) => c.value === display.category)?.label || display.category)}
+                  </span>
+                  <span className="title">{display.title || e.slug}</span>
+                  <span className="meta">{String(display.publishedDate || '').slice(0, 10)}</span>
+                </div>
+                <div className="actions">
+                  <a className="adm-btn ghost sm" href={`/blog/${e.slug}`} target="_blank" rel="noreferrer" title="Vezi articolul pe site">Vezi</a>
+                  <button className="adm-btn ghost sm" onClick={() => open(e)} title="Editează articolul">Editează</button>
+                  <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge articolul definitiv">Șterge</button>
+                </div>
               </div>
-              <div className="body">
-                <span className="badge">{CATEGORIES.find((c) => c.value === e.data.category)?.label || e.data.category}</span>
-                <span className="title">{e.data.title || e.slug}</span>
-                <span className="meta">{String(e.data.publishedDate || '').slice(0, 10)}</span>
-              </div>
-              <div className="actions">
-                <a className="adm-btn ghost sm" href={`/blog/${e.slug}`} target="_blank" rel="noreferrer" title="Vezi articolul pe site">Vezi</a>
-                <button className="adm-btn ghost sm" onClick={() => open(e)} title="Editează articolul">Editează</button>
-                <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge articolul definitiv">Șterge</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -10,6 +10,7 @@ interface Props {
   categories: Entry[];
   notify: (msg: string, kind?: 'ok' | 'err') => void;
   reload: () => Promise<void>;
+  onPublishAll?: () => Promise<void>;
   openTarget?: { collection: 'portfolio'; slug?: string; tempId?: string; isNew?: boolean } | null;
   onOpenHandled?: () => void;
 }
@@ -25,7 +26,7 @@ interface Draft {
 const emptyDraft = (cat: string): Draft => ({ name: '', category: cat, image: '', body: '' });
 const makeTempId = () => 'new_' + Math.random().toString(36).slice(2, 9) + '_' + Date.now().toString(36);
 
-export default function PortfolioManager({ items, categories, notify, reload, openTarget, onOpenHandled }: Props) {
+export default function PortfolioManager({ items, categories, notify, reload, onPublishAll, openTarget, onOpenHandled }: Props) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [tempId, setTempId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -95,19 +96,28 @@ export default function PortfolioManager({ items, categories, notify, reload, op
     const prevTempId = tempId;
     setBusy(true);
     try {
-      const { slug } = await saveEntry({
-        collection: 'portfolio',
-        slug: draft.slug,
-        data: { name: draft.name.trim(), category: draft.category, image: draft.image },
-        body: draft.body,
-      });
-      await reload();
-      notify(prevSlug ? 'Proiect actualizat' : 'Proiect adăugat', 'ok');
-      setDraft(null);
-      setTempId(null);
-      clearDraft('portfolio', prevSlug);
-      clearDraft('portfolio', slug);
-      if (prevTempId) clearNewDraft('portfolio', prevTempId);
+      if (onPublishAll) {
+        // Make sure the current draft is included in the global batch publish.
+        if (prevTempId) writeNewDraft('portfolio', prevTempId, draft);
+        else writeDraft('portfolio', prevSlug, draft);
+        await onPublishAll();
+        setDraft(null);
+        setTempId(null);
+      } else {
+        const { slug } = await saveEntry({
+          collection: 'portfolio',
+          slug: draft.slug,
+          data: { name: draft.name.trim(), category: draft.category, image: draft.image },
+          body: draft.body,
+        });
+        await reload();
+        notify(prevSlug ? 'Proiect actualizat' : 'Proiect adăugat', 'ok');
+        setDraft(null);
+        setTempId(null);
+        clearDraft('portfolio', prevSlug);
+        clearDraft('portfolio', slug);
+        if (prevTempId) clearNewDraft('portfolio', prevTempId);
+      }
     } catch (e) {
       notify((e as Error).message, 'err');
     } finally {
@@ -324,21 +334,28 @@ export default function PortfolioManager({ items, categories, notify, reload, op
               </div>
             </div>
           ))}
-          {visibleItems.map((e) => (
-            <div className="adm-card" key={e.slug}>
-              <div className={`thumb${e.data.image ? '' : ' empty'}`} style={e.data.image ? { backgroundImage: `url("${e.data.image}")` } : undefined}>
-                {!e.data.image && 'fără imagine'}
+          {visibleItems.map((e) => {
+            const local = readDraft<Draft>('portfolio', e.slug);
+            const display = local || e.data;
+            const hasDraft = !!local;
+            return (
+              <div className="adm-card" key={e.slug}>
+                <div className={`thumb${display.image ? '' : ' empty'}`} style={display.image ? { backgroundImage: `url("${display.image}")` } : undefined}>
+                  {!display.image && 'fără imagine'}
+                </div>
+                <div className="body">
+                  <span className="badge" style={hasDraft ? { background: 'var(--warning, #e6a817)', color: '#111' } : undefined}>
+                    {hasDraft ? 'Modificat' : catName(display.category)}
+                  </span>
+                  <span className="title">{display.name || e.slug}</span>
+                </div>
+                <div className="actions">
+                  <button className="adm-btn ghost sm" onClick={() => open(e)} title="Editează proiectul">Editează</button>
+                  <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge proiectul definitiv">Șterge</button>
+                </div>
               </div>
-              <div className="body">
-                <span className="badge">{catName(e.data.category)}</span>
-                <span className="title">{e.data.name || e.slug}</span>
-              </div>
-              <div className="actions">
-                <button className="adm-btn ghost sm" onClick={() => open(e)} title="Editează proiectul">Editează</button>
-                <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge proiectul definitiv">Șterge</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

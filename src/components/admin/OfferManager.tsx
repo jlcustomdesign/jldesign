@@ -47,6 +47,7 @@ interface Props {
   items: Entry[];
   notify: (msg: string, kind?: 'ok' | 'err') => void;
   reload: () => Promise<void>;
+  onPublishAll?: () => Promise<void>;
   openTarget?: { collection: 'offers'; slug?: string; tempId?: string; isNew?: boolean } | null;
   onOpenHandled?: () => void;
 }
@@ -156,7 +157,7 @@ function scrollWithin(container: HTMLElement | null, el: Element | null) {
   container.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 }
 
-export default function OfferManager({ items, notify, reload, openTarget, onOpenHandled }: Props) {
+export default function OfferManager({ items, notify, reload, onPublishAll, openTarget, onOpenHandled }: Props) {
   const [view, setViewRaw] = useState<'list' | 'pick_offer' | 'pick_template' | 'edit'>(() => {
     if (typeof window !== 'undefined') {
       const h = window.location.hash.replace('#', '');
@@ -298,7 +299,8 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
     setOffer(null); setTempId(null); setView('list'); reload();
   };
 
-  // Publish to the site (the only place that writes to GitHub).
+  // Publish to the site. If onPublishAll is provided, the current offer is
+  // saved locally and all pending modifications are published in one batch.
   const save = async () => {
     if (!offer) return;
     if (offer.isTemplate && !(offer.templateName || '').trim()) return notify('Adaugă numele șablonului', 'err');
@@ -307,16 +309,23 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
     const prevTempId = tempId;
     setBusy(true);
     try {
-      const { slug } = await saveEntry({ collection: 'offers', slug: offer.slug, data: offer });
-      await reload();
-      const saved = { ...offer, slug };
-      setOffer(saved); // keep editing, now with slug (enables PDF)
-      setTempId(null);
-      lastSaved.current = JSON.stringify(saved);
-      if (prevTempId) clearOfferDraft(prevTempId, undefined);
-      clearOfferDraft(undefined, prevSlug);
-      clearOfferDraft(undefined, slug);
-      notify('Ofertă publicată pe site', 'ok');
+      if (onPublishAll) {
+        // Include current offer in the global batch publish (single build).
+        writeOfferDraft(offer, prevTempId);
+        await onPublishAll();
+        setOffer(null); setTempId(null); setView('list');
+      } else {
+        const { slug } = await saveEntry({ collection: 'offers', slug: offer.slug, data: offer });
+        await reload();
+        const saved = { ...offer, slug };
+        setOffer(saved); // keep editing, now with slug (enables PDF)
+        setTempId(null);
+        lastSaved.current = JSON.stringify(saved);
+        if (prevTempId) clearOfferDraft(prevTempId, undefined);
+        clearOfferDraft(undefined, prevSlug);
+        clearOfferDraft(undefined, slug);
+        notify('Ofertă publicată pe site', 'ok');
+      }
     } catch (e) { notify((e as Error).message, 'err'); } finally { setBusy(false); }
   };
 
@@ -589,42 +598,48 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
               </div>
             </div>
           ))}
-          {userTemplates.map((e) => (
-            <div key={e.slug} className="tpl-card">
-              <div className="tpl-card-doc" style={{ cursor: 'pointer' }} onClick={() => {
-                const src = fromEntry(e);
-                const clone = typeof structuredClone === 'function' ? structuredClone(src) : JSON.parse(JSON.stringify(src));
-                delete clone.slug;
-                clone.isTemplate = false;
-                clone.clientName = '';
-                const id = makeTempId();
-                setTempId(id);
-                setOffer(clone); lastSaved.current = ''; setAuto('');
-                setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
-              }}><OfferDocument offer={fromEntry(e)} coverOnly /></div>
-              <div className="tpl-card-meta">
-                <span className="nm">{e.data.templateName || e.data.clientName || 'Șablon'}</span>
-                <span className="ds">{e.data.templateDescription || `${countPages(e.data)} pagini`}</span>
-                <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
-                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); edit(e); }} title="Editează șablonul">Editează</button>
-                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); duplicate(e); }} title="Creează o copie identică a șablonului">Duplică</button>
-                  <button className="adm-btn danger sm" onClick={(ev) => { ev.stopPropagation(); remove(e); }} title="Șterge șablonul definitiv">Șterge</button>
-                  <div className="adm-spacer" style={{ flexGrow: 1 }} />
-                  <button className="adm-btn gold sm" onClick={() => {
-                    const src = fromEntry(e);
-                    const clone = typeof structuredClone === 'function' ? structuredClone(src) : JSON.parse(JSON.stringify(src));
-                    delete clone.slug;
-                    clone.isTemplate = false;
-                    clone.clientName = '';
-                    const id = makeTempId();
-                    setTempId(id);
-                    setOffer(clone); lastSaved.current = ''; setAuto('');
-                    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
-                  }} title="Creează o ofertă nouă pornind de la acest șablon">Folosește →</button>
+          {userTemplates.map((e) => {
+            const local = readExistingDraft(e.slug);
+            const display = local || e.data;
+            const displayOffer = local || fromEntry(e);
+            const hasDraft = !!local;
+            return (
+              <div key={e.slug} className="tpl-card">
+                <div className="tpl-card-doc" style={{ cursor: 'pointer' }} onClick={() => {
+                  const src = displayOffer;
+                  const clone = typeof structuredClone === 'function' ? structuredClone(src) : JSON.parse(JSON.stringify(src));
+                  delete clone.slug;
+                  clone.isTemplate = false;
+                  clone.clientName = '';
+                  const id = makeTempId();
+                  setTempId(id);
+                  setOffer(clone); lastSaved.current = ''; setAuto('');
+                  setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+                }}><OfferDocument offer={displayOffer} coverOnly /></div>
+                <div className="tpl-card-meta">
+                  <span className="nm">{display.templateName || display.clientName || 'Șablon'}</span>
+                  <span className="ds">{hasDraft ? 'Modificat · ' : ''}{display.templateDescription || `${countPages(display)} pagini`}</span>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+                    <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); edit(e); }} title="Editează șablonul">Editează</button>
+                    <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); duplicate(e); }} title="Creează o copie identică a șablonului">Duplică</button>
+                    <button className="adm-btn danger sm" onClick={(ev) => { ev.stopPropagation(); remove(e); }} title="Șterge șablonul definitiv">Șterge</button>
+                    <div className="adm-spacer" style={{ flexGrow: 1 }} />
+                    <button className="adm-btn gold sm" onClick={() => {
+                      const src = displayOffer;
+                      const clone = typeof structuredClone === 'function' ? structuredClone(src) : JSON.parse(JSON.stringify(src));
+                      delete clone.slug;
+                      clone.isTemplate = false;
+                      clone.clientName = '';
+                      const id = makeTempId();
+                      setTempId(id);
+                      setOffer(clone); lastSaved.current = ''; setAuto('');
+                      setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+                    }} title="Creează o ofertă nouă pornind de la acest șablon">Folosește →</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     );
@@ -1006,24 +1021,29 @@ export default function OfferManager({ items, notify, reload, openTarget, onOpen
               </div>
             </div>
           ))}
-          {visibleOffers.map((e) => (
-            <div className="adm-card" key={e.slug}>
-              <div className={`thumb${e.data.coverImage ? '' : ' empty'}`} style={e.data.coverImage ? { backgroundImage: `url("${e.data.coverImage}")` } : undefined}>{!e.data.coverImage && 'fără copertă'}</div>
-              <div className="body">
-                <span className="badge">
-                  {(Array.isArray(e.data.tags) && e.data.tags.length ? e.data.tags.join(' · ') : e.data.category) || 'Proiect'}
-                </span>
-                <span className="title">{e.data.clientName || e.slug}</span>
-                <span className="meta">{e.data.date} · {countPages(e.data)} pagini</span>
+          {visibleOffers.map((e) => {
+            const local = readExistingDraft(e.slug);
+            const display = local || e.data;
+            const hasDraft = !!local;
+            return (
+              <div className="adm-card" key={e.slug}>
+                <div className={`thumb${display.coverImage ? '' : ' empty'}`} style={display.coverImage ? { backgroundImage: `url("${display.coverImage}")` } : undefined}>{!display.coverImage && 'fără copertă'}</div>
+                <div className="body">
+                  <span className="badge" style={hasDraft ? { background: 'var(--warning, #e6a817)', color: '#111' } : undefined}>
+                    {hasDraft ? 'Modificat' : ((Array.isArray(display.tags) && display.tags.length ? display.tags.join(' · ') : display.category) || 'Proiect')}
+                  </span>
+                  <span className="title">{display.clientName || e.slug}</span>
+                  <span className="meta">{display.date} · {countPages(display)} pagini</span>
+                </div>
+                <div className="actions">
+                  <a className="adm-btn ghost sm" href={`/oferta/${e.slug}?pdf=1`} target="_blank" rel="noreferrer" title="Descarcă PDF-ul publicat">⬇ PDF</a>
+                  <button className="adm-btn ghost sm" onClick={() => edit(e)} title="Editează oferta">Editează</button>
+                  <button className="adm-btn ghost sm" onClick={() => duplicate(e)} title="Creează o copie identică a ofertei">Duplică</button>
+                  <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge oferta definitiv">Șterge</button>
+                </div>
               </div>
-              <div className="actions">
-                <a className="adm-btn ghost sm" href={`/oferta/${e.slug}?pdf=1`} target="_blank" rel="noreferrer" title="Descarcă PDF-ul publicat">⬇ PDF</a>
-                <button className="adm-btn ghost sm" onClick={() => edit(e)} title="Editează oferta">Editează</button>
-                <button className="adm-btn ghost sm" onClick={() => duplicate(e)} title="Creează o copie identică a ofertei">Duplică</button>
-                <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge oferta definitiv">Șterge</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

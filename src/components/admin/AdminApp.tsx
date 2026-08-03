@@ -106,12 +106,14 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   }, [recomputePending]);
 
   const publishAllPending = async () => {
-    if (pending.length === 0) return;
-    if (!window.confirm(`Publici ${pending.length} modificări pe site?`)) return;
+    // Recompute fresh from localStorage so any draft saved milliseconds ago is included.
+    const freshPending = computePending(data, siteServer);
+    if (freshPending.length === 0) return;
+    if (!window.confirm(`Publici ${freshPending.length} modificări pe site?`)) return;
     setPendingPanelOpen(false);
     setPublishBusy(true);
     try {
-      const edits = pending
+      const edits = freshPending
         .filter((it) => !it.kind.endsWith('-delete'))
         .map((it) => {
           if (it.collection === 'offers') {
@@ -148,7 +150,7 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
         });
       const deletes = readPendingDeletes();
       const { count } = await publishBatch({ edits, deletes });
-      clearPendingDrafts(pending);
+      clearPendingDrafts(freshPending);
       clearPendingDeletes();
       await reload();
       notify(count ? `${count} modificări publicate într-un singur commit` : 'Nicio modificare de publicat', 'ok');
@@ -241,9 +243,9 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
               {!data && !error && <div className="adm-loading"><span className="adm-spin" /> Se încarcă…</div>}
               {data && (
                 <>
-                  {tab === 'portfolio' && <PortfolioManager items={data.portfolio} categories={data.categories} notify={notify} reload={reload} openTarget={openTarget?.collection === 'portfolio' ? openTarget : null} onOpenHandled={() => setOpenTarget(null)} />}
-                  {tab === 'blog' && <BlogManager items={data.blog} notify={notify} reload={reload} openTarget={openTarget?.collection === 'blog' ? openTarget : null} onOpenHandled={() => setOpenTarget(null)} />}
-                  {tab === 'offers' && <OfferManager items={data.offers} notify={notify} reload={reload} openTarget={openTarget?.collection === 'offers' ? openTarget : null} onOpenHandled={() => setOpenTarget(null)} />}
+                  {tab === 'portfolio' && <PortfolioManager items={data.portfolio} categories={data.categories} notify={notify} reload={reload} onPublishAll={publishAllPending} openTarget={openTarget?.collection === 'portfolio' ? openTarget : null} onOpenHandled={() => setOpenTarget(null)} />}
+                  {tab === 'blog' && <BlogManager items={data.blog} notify={notify} reload={reload} onPublishAll={publishAllPending} openTarget={openTarget?.collection === 'blog' ? openTarget : null} onOpenHandled={() => setOpenTarget(null)} />}
+                  {tab === 'offers' && <OfferManager items={data.offers} notify={notify} reload={reload} onPublishAll={publishAllPending} openTarget={openTarget?.collection === 'offers' ? openTarget : null} onOpenHandled={() => setOpenTarget(null)} />}
                 </>
               )}
             </>
