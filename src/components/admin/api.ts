@@ -44,6 +44,20 @@ export async function deleteEntry(collection: string, slug: string): Promise<voi
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Ștergerea a eșuat');
 }
 
+export async function publishBatch(payload: {
+  edits: { collection: string; slug?: string; data?: Record<string, any>; body?: string }[];
+  deletes: { collection: string; slug: string }[];
+}): Promise<{ ok: boolean; count: number }> {
+  const res = await fetch('/api/admin/publish', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || 'Publicarea a eșuat');
+  return json;
+}
+
 /**
  * Read a File, downscale it on the client (cap longest side) and return a
  * JPEG data URL. Keeps the upload payload small; the server re-encodes to WebP.

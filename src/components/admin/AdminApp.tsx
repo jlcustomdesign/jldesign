@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { fetchData, saveEntry, deleteEntry, type AllData } from './api';
+import { fetchData, publishBatch, type AllData } from './api';
 import { Toast } from './ui';
 import PortfolioManager from './PortfolioManager';
 import BlogManager from './BlogManager';
@@ -109,57 +109,48 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
     if (!window.confirm(`Publici ${pending.length} modificări pe site?`)) return;
     setPendingPanelOpen(false);
     setPublishBusy(true);
-    let count = 0;
     try {
+      const edits = pending
+        .filter((it) => !it.kind.endsWith('-delete'))
+        .map((it) => {
+          if (it.collection === 'offers') {
+            return { collection: 'offers' as const, slug: it.slug, data: it.draft };
+          }
+          if (it.collection === 'portfolio') {
+            const d = it.draft;
+            return {
+              collection: 'portfolio' as const,
+              slug: it.slug,
+              data: { name: d.name?.trim() || '', category: d.category || '', image: d.image || '' },
+              body: d.body || '',
+            };
+          }
+          if (it.collection === 'blog') {
+            const d = it.draft;
+            return {
+              collection: 'blog' as const,
+              slug: it.slug,
+              data: {
+                title: d.title?.trim() || '',
+                description: d.description?.trim() || '',
+                category: d.category || 'inspiratie',
+                author: d.author?.trim() || 'JL Custom Design',
+                publishedDate: d.publishedDate || '',
+                coverImage: d.coverImage || '',
+                coverImageAlt: d.coverImageAlt?.trim() || '',
+              },
+              body: d.body || '',
+            };
+          }
+          // site
+          return { collection: 'site' as const, data: it.draft };
+        });
       const deletes = readPendingDeletes();
-      for (const it of pending) {
-        if (it.kind.endsWith('-delete')) continue;
-        if (it.collection === 'offers') {
-          const d = it.draft;
-          await saveEntry({ collection: 'offers', slug: it.slug, data: d });
-        } else if (it.collection === 'portfolio') {
-          const d = it.draft;
-          await saveEntry({
-            collection: 'portfolio',
-            slug: it.slug,
-            data: { name: d.name?.trim() || '', category: d.category || '', image: d.image || '' },
-            body: d.body || '',
-          });
-        } else if (it.collection === 'blog') {
-          const d = it.draft;
-          await saveEntry({
-            collection: 'blog',
-            slug: it.slug,
-            data: {
-              title: d.title?.trim() || '',
-              description: d.description?.trim() || '',
-              category: d.category || 'inspiratie',
-              author: d.author?.trim() || 'JL Custom Design',
-              publishedDate: d.publishedDate || '',
-              coverImage: d.coverImage || '',
-              coverImageAlt: d.coverImageAlt?.trim() || '',
-            },
-            body: d.body || '',
-          });
-        } else if (it.collection === 'site') {
-          const res = await fetch('/api/admin/site', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: it.draft }),
-          });
-          const j = await res.json().catch(() => ({}));
-          if (!res.ok) throw new Error(j.error || 'Salvare site eșuată');
-        }
-        count++;
-      }
-      for (const d of deletes) {
-        await deleteEntry(d.collection, d.slug);
-        count++;
-      }
+      const { count } = await publishBatch({ edits, deletes });
       clearPendingDrafts(pending);
       clearPendingDeletes();
       await reload();
-      notify(count ? `${count} modificări publicate` : 'Nicio modificare de publicat', 'ok');
+      notify(count ? `${count} modificări publicate într-un singur commit` : 'Nicio modificare de publicat', 'ok');
     } catch (e) {
       notify((e as Error).message, 'err');
     } finally {

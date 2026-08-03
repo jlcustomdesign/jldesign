@@ -83,15 +83,9 @@ Object.keys(groupedProjects).forEach(cat => {
         }
     }
 
-    // Mark items to be hidden initially (anything beyond the first row or first 3 columns)
-    let totalCols = 0;
+    // Show the first 4 items by default; hide the rest and add a "view more" button.
     packed.forEach((item, idx) => {
-        const cols = item.isLandscape ? 2 : 1;
-        // Show first row only (3 cols) OR first 2 items if they make exactly 3 cols
-        if (totalCols >= 3) {
-            item.isHiddenInitially = true;
-        }
-        totalCols += cols;
+        if (idx >= 4) item.isHiddenInitially = true;
     });
 
     groupedProjects[cat] = packed;
@@ -122,11 +116,11 @@ const activeCategories = Object.keys(groupedProjects)
       <div class="flex flex-col gap-24">
         {activeCategories.map((category) => {
             const items = groupedProjects[category];
-            const hasMore = items.length > 3;
+            const hasMore = items.some((item) => item.isHiddenInitially);
             const categoryName = categoryMap[category] || category;
             
             return (
-                <div class="category-section" data-category={category}>
+                <div class="category-section" data-category={category} data-visible="4">
                      <div class="flex items-center gap-4 mb-12">
                         <div class="h-[2px] w-8 bg-accent"></div>
                         <h2 class="text-3xl md:text-4xl font-serif text-primary capitalize">
