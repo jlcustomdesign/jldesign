@@ -311,13 +311,14 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
     if (!offer.isTemplate && !(offer.clientName || '').trim()) return notify('Adaugă numele clientului', 'err');
     const prevSlug = offer.slug;
     const prevTempId = tempId;
+    const wasTemplate = offer.isTemplate;
     setBusy(true);
     try {
       if (onPublishAll) {
         // Include current offer in the global batch publish (single build).
         writeOfferDraft(offer, prevTempId);
         await onPublishAll();
-        setOffer(null); setTempId(null); setView('list');
+        setOffer(null); setTempId(null); setView(wasTemplate ? 'pick_offer' : 'list');
       } else {
         const { slug } = await saveEntry({ collection: 'offers', slug: offer.slug, data: offer });
         await reload();
@@ -346,7 +347,9 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
     setAuto('saved');
     setSavePrompt(false);
     notify('Salvat în browser', 'ok');
-    setOffer(null); setTempId(null); setView('list'); reload();
+    setOffer(null); setTempId(null);
+    setView(offer.isTemplate ? 'pick_offer' : 'list');
+    reload();
   };
 
   // Publish every offer that has a local draft different from the server copy.
@@ -441,6 +444,19 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
     if (!window.confirm('Ștergi oferta/șablonul nou nesalvat?')) return;
     drafts.clearNewDraft('offers', tid);
     notify('Draft șters', 'ok');
+  };
+
+  const duplicateDraft = (tid: string) => {
+    const d = drafts.readNewDrafts<EditOffer>('offers').find((x) => x.tempId === tid)?.draft;
+    if (!d) return;
+    const clone: EditOffer = typeof structuredClone === 'function' ? structuredClone(d) : JSON.parse(JSON.stringify(d));
+    const id = makeTempId();
+    if (clone.isTemplate) clone.templateName = `${clone.templateName || 'Șablon'} (copie)`;
+    else clone.clientName = `${clone.clientName || 'Ofertă'} (copie)`;
+    setTempId(id);
+    setOffer(clone); lastSaved.current = ''; setAuto('');
+    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+    notify('Copie creată — apasă „Salvează” pentru a o publica', 'ok');
   };
 
   // Copy an offer/template exactly — start a new one from the same content.
@@ -594,9 +610,13 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
               </div>
               <div className="tpl-card-meta">
                 <span className="nm">{d.templateName || 'Șablon nou'}</span>
-                <span className="ds">Draft · {d.templateDescription || `${countPages(d)} pagini`}</span>
+                <span className="ds" style={{ color: 'var(--warning, #e6a817)' }}>Nepublicat încă · draft</span>
+                <span className="ds">{d.templateDescription || `${countPages(d)} pagini`}</span>
                 <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
-                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); openDraft(tid); }} title="Editează draftul">Editează</button>
+                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); openDraft(tid); }} title="Editează șablonul">Editează</button>
+                  <button className="adm-btn ghost sm" onClick={(ev) => { ev.stopPropagation(); duplicateDraft(tid); }} title="Creează o copie a șablonului">Duplică</button>
+                  <div className="adm-spacer" style={{ flexGrow: 1 }} />
+                  <button className="adm-btn gold sm" onClick={(ev) => { ev.stopPropagation(); const clone = typeof structuredClone === 'function' ? structuredClone(d) : JSON.parse(JSON.stringify(d)); delete clone.slug; clone.isTemplate = false; clone.clientName = ''; const id = makeTempId(); setTempId(id); setOffer(clone); lastSaved.current = ''; setAuto(''); setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false); }} title="Creează o ofertă nouă pornind de la acest șablon">Folosește →</button>
                   <button className="adm-btn danger sm" onClick={(ev) => { ev.stopPropagation(); removeDraft(tid); }} title="Șterge draftul local">Șterge</button>
                 </div>
               </div>
