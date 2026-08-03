@@ -1,0 +1,32 @@
+{
+  "clientName": "",
+  "templateName": "Șablon Nou",
+  "category": "bucatarie",
+  "isTemplate": true,
+  "style": "editorial",
+  "date": "",
+  "pages": [
+    {
+      "id": "description-u3mm",
+      "type": "description",
+      "heading": "Descriere proiect",
+      "paragraph": "",
+      "image": "",
+      "specs": [
+        {
+          "label": "Specificație 1",
+          "value": ""
+        },
+        {
+          "label": "Specificație 2",
+          "value": ""
+        },
+        {
+          "label": "Specificație 3",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "slug": "oferta-3"
+}
