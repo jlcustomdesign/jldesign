@@ -167,10 +167,10 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
     return 'list';
   });
 
-  const setView = React.useCallback((v: typeof view) => {
+  const setView = (v: typeof view) => {
     setViewRaw(v);
     window.location.hash = v === 'list' ? 'offers' : `offers-${v}`;
-  }, []);
+  };
 
   useEffect(() => {
     const onHashChange = () => {
@@ -278,16 +278,15 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
   };
   const edit = (e: Entry) => {
-    // eslint-disable-next-line no-console
-    console.log('OfferManager.edit', e.slug, 'current view', view);
     setTempId(null);
     const server = fromEntry(e);
     const draft = readExistingDraft(e.slug);
     const restored = draft && JSON.stringify(draft) !== JSON.stringify(server);
-    // eslint-disable-next-line no-console
-    console.log('OfferManager.edit offer set', draft ? 'draft' : 'server');
     setOffer(draft || server); lastSaved.current = JSON.stringify(server); setAuto('');
-    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+    setClosed(new Set()); setActiveField(null); setShowPreview(false);
+    // Set hash before state so a remount (if any) also lands on the editor.
+    window.location.hash = 'offers-edit';
+    setViewRaw('edit');
     if (restored) notify('Am restaurat modificările nesalvate din browser', 'ok');
   };
   const cancel = () => {
@@ -471,6 +470,20 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
     setOffer(clone); lastSaved.current = ''; setAuto('');
     setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
     notify('Copie creată — apasă „Salvează” pentru a o publica', 'ok');
+  };
+
+  // Convert the template currently being edited into a new offer draft.
+  const createOfferFromTemplate = () => {
+    if (!offer || !offer.isTemplate) return;
+    const clone: EditOffer = typeof structuredClone === 'function' ? structuredClone(offer) : JSON.parse(JSON.stringify(offer));
+    delete clone.slug;
+    clone.isTemplate = false;
+    clone.clientName = '';
+    const id = makeTempId();
+    setTempId(id);
+    setOffer(clone); lastSaved.current = ''; setAuto('');
+    setClosed(new Set()); setActiveField(null); setView('edit'); setShowPreview(false);
+    notify('Ofertă nouă creată din șablon — adaugă numele clientului', 'ok');
   };
 
   // Detect pages whose content still overflows even after auto-fit, and warn.
@@ -677,11 +690,19 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
     return (
       <div className="adm-editor-fit">
         <div className="adm-editor-head" style={{ marginBottom: 14, padding: '2px 0 10px', borderBottom: '1px solid var(--line)' }}>
-          <h3 style={{ margin: 0 }}>{o.slug ? 'Editează oferta' : (o.isTemplate ? 'Editează șablonul' : 'Ofertă nouă')}</h3>
+          <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            {o.slug ? 'Editează oferta' : (o.isTemplate ? 'Editează șablonul' : 'Ofertă nouă')}
+            {o.isTemplate && !o.slug && <span className="badge" style={{ background: 'var(--warning, #e6a817)', color: '#111' }}>Draft</span>}
+          </h3>
           <span className={`auto-ind${dirty ? '' : ' ok'}`}>
             {auto === 'saved' ? '✓ Salvat în browser' : dirty ? 'Nepublicat — apasă „Salvează" pentru a publica' : (o.slug ? '✓ Publicat pe site' : 'Ofertă nouă')}
           </span>
           <div className="adm-spacer" />
+          {o.isTemplate && (
+            <button className="adm-btn gold" onClick={createOfferFromTemplate} disabled={busy} title="Creează o ofertă nouă pornind de la acest șablon" style={{ marginRight: 8 }}>
+              Folosește pentru ofertă
+            </button>
+          )}
           <button className="adm-btn ghost" onClick={openPreview} title="Vezi cum arată oferta cu modificările curente">Previzualizează</button>
           <button className="adm-btn ghost" onClick={downloadPdf} disabled={pdfBusy} title="Descarcă PDF cu modificările curente" style={{ marginLeft: 8 }}>{pdfBusy ? 'Se generează…' : '⬇ PDF'}</button>
           <button className="adm-btn ghost" onClick={cancel} disabled={busy} title="Închide editorul și întoarce-te la listă" style={{ marginLeft: 8 }}>Închide</button>
@@ -1061,7 +1082,7 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
                 </div>
                 <div className="actions">
                   <a className="adm-btn ghost sm" href={`/oferta/${e.slug}?pdf=1`} target="_blank" rel="noreferrer" title="Descarcă PDF-ul publicat">⬇ PDF</a>
-                  <button className="adm-btn ghost sm" onClick={() => { console.log('click edit list', e.slug); edit(e); }} title="Editează oferta">Editează</button>
+                  <button className="adm-btn ghost sm" onClick={() => edit(e)} title="Editează oferta">Editează</button>
                   <button className="adm-btn ghost sm" onClick={() => duplicate(e)} title="Creează o copie identică a ofertei">Duplică</button>
                   <button className="adm-btn danger sm" onClick={() => remove(e)} title="Șterge oferta definitiv">Șterge</button>
                 </div>
