@@ -1,0 +1,213 @@
+{
+  "clientName": "Ani&Endre",
+  "category": "Bucătărie",
+  "date": "August 2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": "MOBILIER PERSONALIZAT",
+  "coverImage": "/assets/offers/ani-endre/0.webp",
+  "pages": [
+    {
+      "id": "d",
+      "type": "description",
+      "heading": "DESCRIERE PROIECT",
+      "paragraph": "Mobilă bucătărie personalizată, cu fronturi din MDF vopsit Alb Ivory și interior din PAL Egger de 18 mm, în aceeași culoare. Echipată cu accesorii Blum, iluminare LED sub corpurile suspendate. Corpurile superioare combină fronturi pline cu uși cu ramă frezată și sticlă fumurie maro, iar mânerele și butonii completează aspectul clasic al mobilierului.",
+      "image": "/assets/offers/ani-endre/1.webp",
+      "specs": [
+        {
+          "label": "FRONTURI",
+          "value": "MDF frezat vopsit  alb-ivory mat"
+        },
+        {
+          "label": "CORPURI INTERIOARE",
+          "value": "PAL Egger 18 mm, cant ABS"
+        },
+        {
+          "label": "BLAT",
+          "value": "Termorezistent Egger -decor lemn la alegere -38 mm"
+        },
+        {
+          "label": "CONTRABLAT",
+          "value": "Termorezistent Egger - decor la alegere"
+        },
+        {
+          "label": "ILUMINARE",
+          "value": "Bandă LED integrată - lumina calda"
+        },
+        {
+          "label": "FERONERIE",
+          "value": "BLUM gama PREMIUM- soft close (balamale si glisiere))"
+        },
+        {
+          "label": "ACCESORII",
+          "value": "Suport tacamuri, cos jolly, sistem depozitare coloana extractibila, priza in blat."
+        },
+        {
+          "label": "FINISAJE PREMIUM",
+          "value": "Materiale premium, pentru rezistenta, estetica si durabilitate."
+        }
+      ],
+      "fontScale": 1.2,
+      "imageOrient": "portrait",
+      "imageFocus": "37.7% 66.1%",
+      "imageLayout": "side"
+    },
+    {
+      "id": "m",
+      "type": "materials",
+      "heading": "Materiale si finisaje",
+      "paragraph": "Decorurile și finisajele alese pentru integrare armonioasă și rezistență.",
+      "image": "/assets/offers/ani-endre/2.webp",
+      "swatches": [
+        {
+          "label": "FRONTURI",
+          "code": "MDF vopsit alb-ivory mat",
+          "image": "/assets/offers/ani-endre/14.webp"
+        },
+        {
+          "label": "CORPURI",
+          "code": "Egger U104 ST9",
+          "image": "/assets/offers/ani-endre/15.webp"
+        },
+        {
+          "label": "BLAT",
+          "code": "Decor stejar",
+          "image": "/assets/offers/ani-endre/16.webp"
+        },
+        {
+          "label": "Contrablat - Marmura Crystal",
+          "code": "F800 ST9",
+          "image": "/assets/offers/ani-endre/17.webp"
+        }
+      ],
+      "finishes": [
+        {
+          "label": "SUPRAFAȚĂ",
+          "desc": "Textură mată"
+        },
+        {
+          "label": "REZISTENȚĂ",
+          "desc": "Materiale durabile pentru utilizare zilnică"
+        },
+        {
+          "label": "ÎNTREȚINERE",
+          "desc": "Ușor de curățat"
+        },
+        {
+          "label": "MATERIALE SIGURE",
+          "desc": "Certificate"
+        }
+      ],
+      "fontScale": 1.1,
+      "imageOrient": "portrait",
+      "imageFocus": "73.6% 50.0%"
+    },
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "Accesorii și echipare",
+      "paragraph": "Echiparea mobilierului a fost configurată în funcție de cerințe și de spațiile disponibile. Sunt prevăzute sisteme de deschidere și glisare BLUM gama premium, iluminare LED cu alimentare 24V și control wireless, precum și o priză integrată pentru alimentarea echipamentelor utilizate pe blat.",
+      "items": [
+        {
+          "image": "/assets/offers/ani-endre/3.webp",
+          "title": "LED COB 24V",
+          "description": "LED cu tehnologie COB si profil slim de aluminiu.",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/4.webp",
+          "title": "Sertare BLUM",
+          "description": "Sertar cu laterale metalice albe de la BLUM, echipate cu închidere lentă și silențioasă.",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/5.webp",
+          "title": "Balamale BLUM",
+          "description": "Gama premium cu inchidere lenta + reglaj 3D.",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/6.webp",
+          "title": "Coloană extractibilă dulap înalt -Hafele",
+          "description": "Pentru organizarea alimentelor si accesoriilor.",
+          "orient": "portrait"
+        },
+        {
+          "image": "/assets/offers/ani-endre/7.webp",
+          "title": "Organizator tacamuri",
+          "description": "Alb",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/8.webp",
+          "title": "Usi frezate",
+          "description": "3 Usi la corpurile superioare cu sticla fumurie maro.",
+          "orient": "landscape",
+          "focus": "0.0% 0.0%"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Funcționare silențioasă"
+        },
+        {
+          "label": "Acces facil"
+        },
+        {
+          "label": "Închidere soft-close"
+        },
+        {
+          "label": "Componente BLUM/Hafele -Made in Germany"
+        }
+      ],
+      "fontScale": 1
+    },
+    {
+      "id": "text-f3iw",
+      "type": "text",
+      "heading": "OFERTA INCLUDE",
+      "paragraph": "\nMobilier bucătărie + accesorii premium\nProiect 3D\nRandări realiste\nConsultanță\nMontaj\nTransport\nGaranție - 24 luni\n\n-----------------------------\n\nInvestiția pentru acest proiect\n8.150 €\n",
+      "image": "/assets/offers/ani-endre/9.webp",
+      "fontScale": 1.2,
+      "imageOrient": "portrait",
+      "imageFocus": "57.0% 17.9%",
+      "textLayout": "right",
+      "headingBold": true
+    },
+    {
+      "id": "gallery-g3to",
+      "type": "gallery",
+      "heading": "Galerie foto",
+      "paragraph": "",
+      "shots": [
+        {
+          "image": "/assets/offers/ani-endre/10.webp",
+          "caption": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/11.webp",
+          "caption": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/12.webp",
+          "caption": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/13.webp",
+          "caption": "",
+          "orient": "landscape"
+        }
+      ]
+    }
+  ],
+  "coverImageOrient": "landscape",
+  "tags": [
+    "BUCATARIE FRONTURI MDF"
+  ],
+  "coverImageFocus": "21.1% 55.4%",
+  "coverFit": "auto",
+  "slug": "ani-endre"
+}
