@@ -1,5 +1,5 @@
 {
-  "clientName": "Familia Popa",
+  "clientName": "Familia Popescu",
   "category": "Bucătărie",
   "date": "Iunie 2026",
   "style": "editorial",
@@ -38,7 +38,8 @@
           "label": "FINISAJE",
           "value": "Profil gola, fără mânere"
         }
-      ]
+      ],
+      "imageLayout": "side"
     },
     {
       "id": "m",
@@ -91,7 +92,8 @@
         {
           "image": "/assets/portfolio/bucatariibucatarie-coresi2.webp",
           "title": "Sertare BLUM",
-          "description": "Extragere totală, soft-close."
+          "description": "Extragere totală, soft-close.",
+          "focus": "25.8% 74.3%"
         },
         {
           "image": "/assets/portfolio/bucatariibucatarie-pensiune.webp",
@@ -120,5 +122,6 @@
       ]
     }
   ],
-  "slug": "familia-popescu"
+  "slug": "familia-popescu",
+  "coverFit": "contain"
 }
