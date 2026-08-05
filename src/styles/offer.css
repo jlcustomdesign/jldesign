@@ -198,7 +198,7 @@
 .bp-label { font-weight: 700; letter-spacing: .03em; }
 .bp-desc { font-size: calc(1.05cqw * var(--fs, 1)); color: var(--ink-soft); }
 
-.acc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2cqw; margin: 1cqw 0; align-items: start; }
+.acc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8cqw; margin: .6cqw 0; align-items: start; }
 .acc-card { background: var(--card); border: 1px solid var(--line); border-radius: .8cqw; overflow: hidden; display: flex; flex-direction: column; }
 .acc-card.no-img { border-style: dashed; border-color: var(--gold); }
 .acc-img-frame { width: 100%; aspect-ratio: 16/10; height: auto; border-radius: .8cqw .8cqw 0 0; background: var(--panel); }
@@ -206,8 +206,8 @@
 .acc-img-frame.portrait .img-fg { object-fit: contain; width: 100%; height: 100%; }
 .acc-img.empty { width: 100%; aspect-ratio: 16/10; background: var(--panel); border-radius: .8cqw .8cqw 0 0; display: flex; align-items: center; justify-content: center; }
 .acc-img.empty::after { content: 'Imagine'; font-size: 1.2cqw; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
-.acc-body { padding: .5cqw .7cqw .7cqw; }
-.acc-grid + .block-label { margin-top: 1cqw; }
+.acc-body { padding: .35cqw .5cqw .5cqw; }
+.acc-grid + .block-label { margin-top: .7cqw; }
 .acc-title { font-size: calc(1.25cqw * var(--fs, 1)); font-weight: 700; }
 .acc-desc { font-size: calc(1.05cqw * var(--fs, 1)); color: var(--ink-soft); margin-top: .2cqw; line-height: 1.35; }
 
