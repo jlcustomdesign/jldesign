@@ -94,7 +94,7 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   const [pendingPanelOpen, setPendingPanelOpen] = useState(false);
   const pendingPanelUserOpen = useRef(false);
   const openPendingPanel = () => { pendingPanelUserOpen.current = true; setPendingPanelOpen(true); };
-  const closePendingPanel = () => { pendingPanelUserOpen.current = false; closePendingPanel(); };
+  const closePendingPanel = () => { pendingPanelUserOpen.current = false; setPendingPanelOpen(false); };
   const togglePendingPanel = () => {
     setPendingPanelOpen((v) => {
       const next = !v;
@@ -108,14 +108,6 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   }, [data, siteServer]);
 
   useEffect(() => { recomputePending(); }, [recomputePending]);
-
-  // Never let the pending panel open by itself. If it ever flips to open
-  // without an explicit user click, force it closed.
-  useEffect(() => {
-    if (!pendingPanelUserOpen.current) {
-      closePendingPanel();
-    }
-  }, [pending.length]);
 
   useEffect(() => {
     const onDraftChange = () => recomputePending();
