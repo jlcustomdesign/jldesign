@@ -366,6 +366,7 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
   let mediaContent: React.ReactNode = null;
   let bodyDir: 'col' | 'row' = 'col';
   let mediaBeforeText = false;
+  let finishesContent: React.ReactNode = null;
   /** For text pages with image-on-top, the strip is hoisted above the header. */
   let topImg: React.ReactNode = null;
 
@@ -404,17 +405,21 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
             </div>
           ))}
         </div>
+      </>
+    );
+    finishesContent = (
+      <div className="materials-finishes-bar">
         <div className="block-label materials-finishes-label">Finisaje</div>
         <div className="badges materials-finishes">
           {(s.finishes || []).filter((b) => b.label).map((b, i) => (
             <div className="badge-pill" key={i} {...F(`${s.id}:finish:${i}`)}><span className="bp-dot" /><div><div className="bp-label">{b.label}</div>{has(b.desc) && <div className="bp-desc">{b.desc}</div>}</div></div>
           ))}
         </div>
-      </>
+      </div>
     );
     if (has(s.image) || editable) {
       bodyDir = 'row';
-      mediaContent = <div className="sheet-media side-media"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>;
+      mediaContent = <div className="sheet-media side-media mat-side"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>;
     }
   } else if (s.type === 'accessories') {
     textContent = (
@@ -502,11 +507,21 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
         <h2 className={`s-heading${s.headingBold ? ' xb' : ''}`} {...F(`${s.id}:heading`)}>{s.heading}</h2>
         <img className="sheet-logo" src={logoSrc} alt="" {...F('cover:logoImage')} />
       </div>
-      <div className={`sheet-body ${bodyDir === 'row' ? 'row' : 'col'}`}>
-        {mediaBeforeText && mediaContent}
-        <FitBox className={`sheet-fit${s.type === 'gallery' || s.type === 'accessories' || s.type === 'sketches' ? ' fit-compact' : ''}`}>{textContent}</FitBox>
-        {!mediaBeforeText && mediaContent}
-      </div>
+      {s.type === 'materials' && finishesContent ? (
+        <div className="sheet-body col mat-body">
+          <div className="sheet-body row mat-top">
+            <FitBox className="sheet-fit">{textContent}</FitBox>
+            {mediaContent}
+          </div>
+          {finishesContent}
+        </div>
+      ) : (
+        <div className={`sheet-body ${bodyDir === 'row' ? 'row' : 'col'}`}>
+          {mediaBeforeText && mediaContent}
+          <FitBox className={`sheet-fit${s.type === 'gallery' || s.type === 'accessories' || s.type === 'sketches' ? ' fit-compact' : ''}`}>{textContent}</FitBox>
+          {!mediaBeforeText && mediaContent}
+        </div>
+      )}
       <div className="sheet-foot"><span>{date}</span></div>
     </section>
   );

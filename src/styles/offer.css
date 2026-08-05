@@ -148,7 +148,8 @@
 .acc-media .acc-card { min-height: 0; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
 .acc-media .acc-img-frame { flex: 1 1 auto; min-height: 0; width: 100%; position: relative; }
 .acc-media .acc-img-frame .img-fg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.acc-media .acc-body { flex: 0 0 auto; }
+.acc-media .acc-body { flex: 1 1 auto; display: flex; flex-direction: column; }
+.acc-media .acc-desc { flex: 1 1 auto; min-height: 2.8em; }
 .sketch-media .sketch-row { height: 100%; grid-auto-rows: 1fr; align-items: stretch; }
 .sketch-media .sketch { min-height: 0; display: flex; flex-direction: column; }
 .sketch-media .sketch-img-frame { flex: 1 1 auto; min-height: 0; }
@@ -160,10 +161,10 @@
 
 .offer-doc .s-heading.xb { font-weight: 800; }
 .s-para { font-size: calc(1.45cqw * var(--fs, 1)); line-height: 1.55; color: var(--ink-soft); max-width: 92%; margin: 1.2cqw 0 0; }
-.s-para.wide { max-width: 72%; }
-.acc-main .s-para.wide { max-width: 100%; }
+.s-para.wide { max-width: 100%; }
 
-.side-media { height: 100%; }
+.side-media { max-height: 100%; }
+.sheet-body.row .side-media.mat-side { max-height: 78%; align-self: flex-start; }
 .side-media .side-img-frame { width: 100%; height: 100%; border-radius: 1cqw; }
 .side-media .side-img-frame .img-fg { object-fit: cover; }
 .side-media .col-right-empty { width: 100%; aspect-ratio: 3/4; background: var(--cream); border: 1px dashed var(--line); border-radius: 1cqw; display: block; }
@@ -188,7 +189,8 @@
 
 .badges { display: flex; flex-wrap: wrap; gap: 1cqw 2cqw; width: 100%; }
 .badge-pill { display: inline-flex; align-items: center; gap: .9cqw; font-size: calc(1.15cqw * var(--fs, 1)); }
-.materials-finishes-label { margin-top: 1.6cqw; }
+.materials-finishes-bar { width: 100%; flex: 0 0 auto; margin-top: 1.2cqw; }
+.materials-finishes-label { margin-top: 0; }
 .materials-finishes { width: 100%; justify-content: flex-start; }
 .bp-dot { width: 1.4cqw; height: 1.4cqw; border-radius: 50%; border: 0.16cqw solid var(--gold); flex: 0 0 auto; position: relative; }
 .bp-dot::after { content: ""; position: absolute; inset: .4cqw; border-radius: 50%; background: var(--gold); }
