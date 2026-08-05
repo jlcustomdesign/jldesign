@@ -202,6 +202,7 @@
 .acc-card { background: var(--card); border: 1px solid var(--line); border-radius: .8cqw; overflow: hidden; display: flex; flex-direction: column; }
 .acc-card.no-img { border-style: dashed; border-color: var(--gold); }
 .acc-img-frame { width: 100%; aspect-ratio: 16/10; height: auto; border-radius: .8cqw .8cqw 0 0; background: var(--panel); }
+.acc-img-frame .img-fg { object-position: center !important; }
 .acc-img-frame.portrait .img-fg { object-fit: contain; width: auto; max-width: 100%; }
 .acc-img.empty { width: 100%; aspect-ratio: 16/10; background: var(--panel); border-radius: .8cqw .8cqw 0 0; display: flex; align-items: center; justify-content: center; }
 .acc-img.empty::after { content: 'Imagine'; font-size: 1.2cqw; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
@@ -212,6 +213,7 @@
 .sketch-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; margin: 1.8cqw 0 1cqw; align-items: start; }
 .sketch { margin: 0; min-width: 0; }
 .sketch .sketch-img-frame, .sketch-empty { border-radius: .7cqw; display: block; width: 100%; aspect-ratio: 4/3; }
+.sketch .sketch-img-frame .img-fg { object-position: center !important; }
 .sketch .sketch-img-frame.portrait .img-fg { object-fit: contain; width: auto; max-width: 100%; }
 .sketch-empty { background: var(--cream); border: 1px dashed var(--line); }
 .sketch figcaption { font-size: calc(1.05cqw * var(--fs, 1)); color: var(--ink-soft); text-align: center; margin-top: .7cqw; letter-spacing: .08em; text-transform: uppercase; }
