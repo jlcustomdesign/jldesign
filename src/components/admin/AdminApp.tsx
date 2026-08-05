@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { fetchData, publishBatch, type AllData } from './api';
 import { Toast } from './ui';
 import PortfolioManager from './PortfolioManager';
@@ -92,12 +92,30 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
   const [publishBusy, setPublishBusy] = useState(false);
   const [openTarget, setOpenTarget] = useState<OpenTarget | null>(null);
   const [pendingPanelOpen, setPendingPanelOpen] = useState(false);
+  const pendingPanelUserOpen = useRef(false);
+  const openPendingPanel = () => { pendingPanelUserOpen.current = true; setPendingPanelOpen(true); };
+  const closePendingPanel = () => { pendingPanelUserOpen.current = false; closePendingPanel(); };
+  const togglePendingPanel = () => {
+    setPendingPanelOpen((v) => {
+      const next = !v;
+      pendingPanelUserOpen.current = next;
+      return next;
+    });
+  };
 
   const recomputePending = useCallback(() => {
     setPending(computePending(data, siteServer));
   }, [data, siteServer]);
 
   useEffect(() => { recomputePending(); }, [recomputePending]);
+
+  // Never let the pending panel open by itself. If it ever flips to open
+  // without an explicit user click, force it closed.
+  useEffect(() => {
+    if (!pendingPanelUserOpen.current) {
+      closePendingPanel();
+    }
+  }, [pending.length]);
 
   useEffect(() => {
     const onDraftChange = () => recomputePending();
@@ -110,7 +128,7 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
     const freshPending = computePending(data, siteServer);
     if (freshPending.length === 0) return;
     if (!window.confirm(`Publici ${freshPending.length} modificări pe site?`)) return;
-    setPendingPanelOpen(false);
+    closePendingPanel();
     setPublishBusy(true);
     try {
       const edits = freshPending
@@ -266,7 +284,7 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
         <>
           <button
             className="adm-pending-fab"
-            onClick={() => setPendingPanelOpen((v) => !v)}
+            onClick={togglePendingPanel}
             title={`${pending.length} modificări nesalvate`}
             aria-label="Modificări nesalvate"
           >
@@ -275,11 +293,11 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
           </button>
 
           {pendingPanelOpen && (
-            <div className="adm-pending-panel" onClick={() => setPendingPanelOpen(false)}>
+            <div className="adm-pending-panel" onClick={() => closePendingPanel()}>
               <div className="adm-pending-panel-box" onClick={(e) => e.stopPropagation()}>
                 <div className="adm-pending-panel-head">
                   <h4>Modificări nesalvate ({pending.length})</h4>
-                  <button className="adm-pending-panel-close" onClick={() => setPendingPanelOpen(false)} aria-label="Închide">✕</button>
+                  <button className="adm-pending-panel-close" onClick={() => closePendingPanel()} aria-label="Închide">✕</button>
                 </div>
                 <p className="adm-pending-panel-hint">Salvate doar în browser. Alege una pentru editare sau publică-le pe toate.</p>
                 <div className="adm-pending-panel-body">
@@ -297,7 +315,7 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
                             </span>
                             <div className="adm-pending-panel-row-actions">
                               {!isDelete && (
-                                <button className="adm-btn ghost sm" onClick={() => { setPendingPanelOpen(false); openPending(it); }}>Editează</button>
+                                <button className="adm-btn ghost sm" onClick={() => { closePendingPanel(); openPending(it); }}>Editează</button>
                               )}
                               {isDelete ? (
                                 <button
@@ -324,7 +342,7 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
                   ))}
                 </div>
                 <div className="adm-pending-panel-actions">
-                  <button className="adm-btn ghost" onClick={() => setPendingPanelOpen(false)}>Închide</button>
+                  <button className="adm-btn ghost" onClick={() => closePendingPanel()}>Închide</button>
                   <button className="adm-btn gold" onClick={publishAllPending} disabled={publishBusy}>
                     {publishBusy ? 'Se publică…' : `Publică toate (${pending.length})`}
                   </button>
