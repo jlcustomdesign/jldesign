@@ -269,12 +269,12 @@
 .sheet-topimg .text-image.port img { object-fit: contain; border-radius: 1cqw; margin-top: 2.4cqw; }
 .sheet-topimg .text-image-empty { border-radius: 1cqw; }
 
-/* lay-left / lay-right — full-height side panel, like the cover split. */
+/* lay-left / lay-right — side panel aligned with the first text line. */
 .text-media-side { height: 100%; }
-.text-media-side .text-image { width: 100%; height: 100%; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; }
-.text-media-side .text-img-frame { width: 100%; height: 100%; border-radius: 1cqw; }
+.text-media-side .text-image { width: 100%; height: 100%; margin: 0; padding: 3cqw 0 0; display: flex; align-items: flex-start; justify-content: center; }
+.text-media-side .text-img-frame { width: 100%; height: auto; aspect-ratio: 3/4; max-height: calc(100% - 3cqw); border-radius: 1cqw; }
 .text-media-side .text-img-frame .img-fg { object-fit: cover; }
-.text-media-side .text-image-empty { width: 100%; height: 100%; aspect-ratio: 3/4; }
+.text-media-side .text-image-empty { width: 100%; height: auto; aspect-ratio: 3/4; max-height: calc(100% - 3cqw); }
 
 /* Description page — wide image spans the full width above text + specs. */
 .desc-wide-img { width: 100%; flex: 0 0 auto; }
