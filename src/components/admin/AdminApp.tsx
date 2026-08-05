@@ -115,6 +115,17 @@ export default function AdminApp({ user }: { user?: { name?: string | null; logi
     return () => window.removeEventListener('jl-draft-change', onDraftChange);
   }, [recomputePending]);
 
+  // Reset the panel on mount and whenever pending changes from 0 to >0,
+  // so it never pops open by itself when the user makes a change.
+  useEffect(() => { setPendingPanelOpen(false); }, []);
+  const prevPendingLen = useRef(0);
+  useEffect(() => {
+    if (pending.length > 0 && prevPendingLen.current === 0 && !pendingPanelUserOpen.current) {
+      setPendingPanelOpen(false);
+    }
+    prevPendingLen.current = pending.length;
+  }, [pending.length]);
+
   const publishAllPending = async () => {
     // Recompute fresh from localStorage so any draft saved milliseconds ago is included.
     const freshPending = computePending(data, siteServer);
