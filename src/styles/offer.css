@@ -207,7 +207,7 @@
 .acc-img.empty { width: 100%; aspect-ratio: 16/10; background: var(--panel); border-radius: .8cqw .8cqw 0 0; display: flex; align-items: center; justify-content: center; }
 .acc-img.empty::after { content: 'Imagine'; font-size: 1.2cqw; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
 .acc-body { padding: .35cqw .5cqw .5cqw; }
-.acc-grid + .block-label { margin-top: .7cqw; }
+.acc-grid + .block-label { margin: .5cqw 0 .3cqw; }
 .acc-title { font-size: calc(1.25cqw * var(--fs, 1)); font-weight: 700; }
 .acc-desc { font-size: calc(1.05cqw * var(--fs, 1)); color: var(--ink-soft); margin-top: .2cqw; line-height: 1.35; }
 
