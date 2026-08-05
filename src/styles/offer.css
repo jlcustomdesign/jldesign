@@ -148,8 +148,8 @@
 .acc-media .acc-card { min-height: 0; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
 .acc-media .acc-img-frame { flex: 1 1 auto; min-height: 0; width: 100%; position: relative; }
 .acc-media .acc-img-frame .img-fg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.acc-media .acc-body { flex: 1 1 auto; display: flex; flex-direction: column; }
-.acc-media .acc-desc { flex: 1 1 auto; min-height: 2.8em; }
+.acc-media .acc-body { flex: 0 0 auto; display: flex; flex-direction: column; padding: .6cqw .8cqw .8cqw; height: 6.2cqw; overflow: hidden; }
+.acc-media .acc-desc { flex: 0 0 auto; max-height: 2.8em; overflow: hidden; }
 .sketch-media .sketch-row { height: 100%; grid-auto-rows: 1fr; align-items: stretch; }
 .sketch-media .sketch { min-height: 0; display: flex; flex-direction: column; }
 .sketch-media .sketch-img-frame { flex: 1 1 auto; min-height: 0; }
@@ -164,7 +164,7 @@
 .s-para.wide { max-width: 100%; }
 
 .side-media { max-height: 100%; }
-.sheet-body.row .side-media.mat-side { max-height: 78%; align-self: flex-start; }
+.sheet-body.row .side-media.mat-side { align-self: flex-start; }
 .side-media .side-img-frame { width: 100%; height: 100%; border-radius: 1cqw; }
 .side-media .side-img-frame .img-fg { object-fit: cover; }
 .side-media .col-right-empty { width: 100%; aspect-ratio: 3/4; background: var(--cream); border: 1px dashed var(--line); border-radius: 1cqw; display: block; }
