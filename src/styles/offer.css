@@ -128,7 +128,7 @@
 /* No overflow:hidden here — it would clip content BEFORE FitBox's scale
    shrinks it visually. The page's own overflow:hidden is the guardrail. */
 .sheet-body { flex: 1 1 auto; min-height: 0; display: flex; gap: 2.5cqw; }
-.sheet-body.col { flex-direction: column; }
+.sheet-body.col { flex-direction: column; gap: 1.2cqw; }
 .sheet-body.row { flex-direction: row; align-items: stretch; }
 .sheet-fit { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; transform-origin: top center; }
 .sheet-fit.fit-compact { flex: 0 0 auto; }
