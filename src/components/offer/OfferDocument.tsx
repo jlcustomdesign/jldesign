@@ -364,6 +364,7 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
 
   let textContent: React.ReactNode = null;
   let mediaContent: React.ReactNode = null;
+  let postMediaContent: React.ReactNode = null;
   let bodyDir: 'col' | 'row' = 'col';
   let mediaBeforeText = false;
   let finishesContent: React.ReactNode = null;
@@ -422,19 +423,8 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
       mediaContent = <div className="sheet-media side-media mat-side"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>;
     }
   } else if (s.type === 'accessories') {
-    textContent = (
-      <>
-        {para('wide')}
-        <div className="block-label">Beneficii</div>
-        <div className="badges">
-          {(s.benefits || []).filter((b) => b.label).map((b, i) => (
-            <div className="badge-pill" key={i} {...F(`${s.id}:benefit:${i}`)}><span className="bp-dot" /><div><div className="bp-label">{b.label}</div></div></div>
-          ))}
-        </div>
-      </>
-    );
+    textContent = para('wide');
     bodyDir = 'col';
-    mediaBeforeText = true;
     mediaContent = (
       <div className="acc-grid sheet-media acc-media">
         {(s.items || []).filter((i) => editable || i.title || i.image || i.description).map((it, i) => (
@@ -444,6 +434,16 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
           </div>
         ))}
       </div>
+    );
+    postMediaContent = (
+      <>
+        <div className="block-label">Beneficii</div>
+        <div className="badges">
+          {(s.benefits || []).filter((b) => b.label).map((b, i) => (
+            <div className="badge-pill" key={i} {...F(`${s.id}:benefit:${i}`)}><span className="bp-dot" /><div><div className="bp-label">{b.label}</div></div></div>
+          ))}
+        </div>
+      </>
     );
   } else if (s.type === 'sketches') {
     const shots = (editable ? (s.shots || []) : (s.shots || []).filter((x) => x.image)).slice(0, 6); // max 6 per page
@@ -521,6 +521,7 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
           {mediaBeforeText && mediaContent}
           <FitBox className={`sheet-fit${s.type === 'gallery' || s.type === 'accessories' || s.type === 'sketches' ? ' fit-compact' : ''}`}>{textContent}</FitBox>
           {!mediaBeforeText && mediaContent}
+          {postMediaContent}
         </div>
       )}
       <div className="sheet-foot"><span>{date}</span></div>
