@@ -27,6 +27,8 @@ export interface DimBlock { title: string; lines: string; }
 export interface Section {
   id: string; type: SectionType; label?: string; heading: string; paragraph: string; image?: string; imageFocus?: string;
   specs?: Spec[]; swatches?: Swatch[]; finishes?: Badge[]; items?: AccItem[]; benefits?: Badge[]; shots?: Shot[]; dims?: DimBlock[];
+  /** Additional text blocks for the text/mesaj page. */
+  paragraphs?: string[];
   /** Orientation of the side/wide image (auto-detected at upload). */
   imageOrient?: Orient;
   /** Per-page text scale, 0.8–1.3 (default 1). Edited with A−/A+ in the admin. */
@@ -94,11 +96,23 @@ function useOrient(src?: string, stored?: Orient): Orient | undefined {
   return o;
 }
 
+/** Frame image: rounded corners + blurred background fill for images that
+    don't fully cover their frame. The foreground image keeps its original
+    fit behaviour (contain/cover) set via the wrapper class. */
+function FitImage({ src, alt = '', className, imgClassName, style, imgStyle, ...rest }: { src?: string; alt?: string; className?: string; imgClassName?: string; style?: React.CSSProperties; imgStyle?: React.CSSProperties } & Record<string, any>) {
+  if (!src) return null;
+  return (
+    <div className={`img-frame${className ? ' ' + className : ''}`} style={{ ...style, '--img-bg': `url(${src})` } as React.CSSProperties} {...rest}>
+      <img className={`img-fg${imgClassName ? ' ' + imgClassName : ''}`} src={src} alt={alt} style={imgStyle} />
+    </div>
+  );
+}
+
 /** Side image (description/materials): frame adapts to the image orientation. */
 function SideImg({ s, fid }: { s: Section; fid: Record<string, any> }) {
   const o = useOrient(s.image, s.imageOrient);
   if (!has(s.image)) return <div className="col-right-empty" {...fid} />;
-  return <img src={s.image} alt="" className={o === 'portrait' ? 'portrait' : ''} style={{ objectPosition: s.imageFocus || 'center' }} {...fid} />;
+  return <FitImage src={s.image} alt="" className={`side-img-frame${o === 'portrait' ? ' portrait' : ''}`} imgStyle={{ objectPosition: s.imageFocus || 'center' }} {...fid} />;
 }
 
 /** Sketch figure: portrait images get a portrait frame. */
@@ -106,7 +120,7 @@ function SketchFigure({ x, fid }: { x: Shot; fid: Record<string, any> }) {
   const o = useOrient(x.image, x.orient);
   return (
     <figure className="sketch" {...fid}>
-      {x.image ? <img src={x.image} alt={x.caption || ''} className={o === 'portrait' ? 'portrait' : ''} style={{ objectPosition: x.focus || 'center' }} /> : <div className="sketch-empty" />}
+      {x.image ? <FitImage src={x.image} alt={x.caption || ''} className={`sketch-img-frame${o === 'portrait' ? ' portrait' : ''}`} imgStyle={{ objectPosition: x.focus || 'center' }} /> : <div className="sketch-empty" />}
       {has(x.caption) && <figcaption>{x.caption}</figcaption>}
     </figure>
   );
@@ -159,14 +173,14 @@ function Gallery({ shots, F, sid }: { shots: Shot[]; F: (fid: string) => Record<
   const rs = shots.map((_, i) => ratios[i] ?? 1.5);
   const arr = fillArrangement(rs, budget, galW);
   return (
-    <div className="gal-rows gal-fill" ref={wrapRef}>
+    <div className="gal-rows gal-fill gal-media" ref={wrapRef}>
       {arr.rows.map((row, ri) => (
         <div className="gal-row" style={{ flex: `${arr.weights[ri]} 1 0` }} key={ri}>
           {row.map((idx) => {
             const x = shots[idx];
             return (
               <figure className="gal" style={{ flex: `${rs[idx]} 1 0` }} key={idx} {...F(`${sid}:shot:${idx}`)}>
-                {x.image ? <img className="gal-img" src={x.image} alt={x.caption || ''} style={{ objectPosition: x.focus || 'center' }} /> : <div className="gal-img empty" />}
+                {x.image ? <FitImage src={x.image} alt={x.caption || ''} className="gal-img-frame" imgStyle={{ objectPosition: x.focus || 'center' }} /> : <div className="gal-img empty" />}
                 {has(x.caption) && <figcaption>{x.caption}</figcaption>}
               </figure>
             );
@@ -181,7 +195,7 @@ function Gallery({ shots, F, sid }: { shots: Shot[]; F: (fid: string) => Record<
 function AccImg({ it }: { it: AccItem }) {
   const o = useOrient(it.image, it.orient);
   return it.image
-    ? <img className={`acc-img${o === 'portrait' ? ' portrait' : ''}`} src={it.image} alt="" style={{ objectPosition: it.focus || 'center' }} />
+    ? <FitImage src={it.image} alt="" className={`acc-img-frame${o === 'portrait' ? ' portrait' : ''}`} imgStyle={{ objectPosition: it.focus || 'center' }} />
     : <div className="acc-img empty" />;
 }
 
@@ -189,10 +203,10 @@ function AccImg({ it }: { it: AccItem }) {
 function TextImage({ s, fid }: { s: Section; fid: Record<string, any> }) {
   const o = useOrient(s.image, s.imageOrient);
   return (
-    <div className={`text-image${o === 'portrait' ? ' port' : ''}`}>
+    <div className={`text-image${o === 'portrait' ? ' port' : ''}`} {...fid}>
       {has(s.image)
-        ? <img src={s.image} alt="" className={o === 'portrait' ? 'portrait' : ''} style={{ objectPosition: s.imageFocus || 'center' }} {...fid} />
-        : <div className="text-image-empty" {...fid} />}
+        ? <FitImage src={s.image!} alt="" className="text-img-frame" imgClassName={o === 'portrait' ? 'img-contain' : ''} imgStyle={{ objectPosition: s.imageFocus || 'center' }} />
+        : <div className="text-image-empty" />}
     </div>
   );
 }
@@ -295,7 +309,7 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
   const cover = (
     <section className={`offer-page cover lay-${layout}`}>
       <div className={`cover-media${containCover ? ' contain' : ''}`} {...F('cover:coverImage')}>
-        {offer.coverImage ? <img src={offer.coverImage} alt="" style={{ objectPosition: offer.coverImageFocus || 'center' }} /> : <div className="cover-media-empty" />}
+        {offer.coverImage ? <FitImage src={offer.coverImage} alt="" className="cover-img-frame" imgClassName={containCover ? 'img-contain' : ''} imgStyle={{ objectPosition: offer.coverImageFocus || 'center' }} /> : <div className="cover-media-empty" />}
       </div>
       <FitBox className="cover-panel">
         {layout === 'full' ? (
@@ -346,67 +360,66 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
 }
 
 function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string; date: string; F: (fid: string) => Record<string, any>; editable: boolean; logoSrc: string }) {
-  const label = s.label || DEFAULT_LABEL[s.type];
   const para = (cls = '') => <p className={`s-para ${cls}`} {...F(`${s.id}:paragraph`)}>{s.paragraph}</p>;
 
-  let main: React.ReactNode = null;
+  let textContent: React.ReactNode = null;
+  let mediaContent: React.ReactNode = null;
+  let bodyDir: 'col' | 'row' = 'col';
+  let mediaBeforeText = false;
   /** For text pages with image-on-top, the strip is hoisted above the header. */
   let topImg: React.ReactNode = null;
 
   if (s.type === 'description') {
     const wide = s.imageLayout === 'wide' && (has(s.image) || editable);
-    main = (
+    textContent = (
       <>
-        {wide && <div className="desc-wide-img"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>}
-        <div className={`cols${!has(s.image) && !editable || wide ? ' no-img' : ''}`}>
-          <div className="col-left">
-            {para()}
-            <div className="block-label">Specificații tehnice</div>
-            <div className="spec-list">
-              {(s.specs || []).filter((x) => x.label || x.value).map((x, i) => (
-                <div className="spec" key={i} {...F(`${s.id}:spec:${i}`)}><span className="spec-label">{x.label}</span><span className="spec-value">{x.value}</span></div>
-              ))}
-            </div>
-          </div>
-          {!wide && (has(s.image) || editable) && <div className="col-right"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>}
+        {para()}
+        <div className="block-label">Specificații tehnice</div>
+        <div className="spec-list">
+          {(s.specs || []).filter((x) => x.label || x.value).map((x, i) => (
+            <div className="spec" key={i} {...F(`${s.id}:spec:${i}`)}><span className="spec-label">{x.label}</span><span className="spec-value">{x.value}</span></div>
+          ))}
         </div>
       </>
     );
+    if (wide) {
+      bodyDir = 'col';
+      mediaBeforeText = true;
+      mediaContent = <div className="desc-wide-img"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>;
+    } else if (has(s.image) || editable) {
+      bodyDir = 'row';
+      mediaContent = <div className="sheet-media side-media"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>;
+    }
   } else if (s.type === 'materials') {
-    main = (
-      <div className={`cols${has(s.image) || editable ? '' : ' no-img'}`}>
-        <div className="col-left">
-          {para()}
-          <div className="swatches">
-            {(s.swatches || []).filter((x) => x.label || x.code || x.image).map((x, i) => (
-              <div className="swatch" key={i} {...F(`${s.id}:swatch:${i}`)}>
-                {x.image ? <img className="swatch-img" src={x.image} alt="" /> : <div className="swatch-img empty" />}
-                <div className="swatch-label">{x.label}</div><div className="swatch-code">{x.code}</div>
-              </div>
-            ))}
-          </div>
-          <div className="block-label">Finisaje</div>
-          <div className="badges">
-            {(s.finishes || []).filter((b) => b.label).map((b, i) => (
-              <div className="badge-pill" key={i} {...F(`${s.id}:finish:${i}`)}><span className="bp-dot" /><div><div className="bp-label">{b.label}</div>{has(b.desc) && <div className="bp-desc">{b.desc}</div>}</div></div>
-            ))}
-          </div>
-        </div>
-        {(has(s.image) || editable) && <div className="col-right"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>}
-      </div>
-    );
-  } else if (s.type === 'accessories') {
-    main = (
+    const visibleSwatches = (s.swatches || []).filter((x) => x.label || x.code || x.image);
+    const swatchCols = visibleSwatches.length <= 3 ? 1 : 2;
+    textContent = (
       <>
-        {para('wide')}
-        <div className="acc-grid">
-          {(s.items || []).filter((i) => editable || i.title || i.image || i.description).map((it, i) => (
-            <div className={`acc-card${it.image ? '' : ' no-img'}`} key={i} {...F(`${s.id}:item:${i}`)}>
-              <AccImg it={it} />
-              {(it.title || it.description) && <div className="acc-body"><div className="acc-title">{it.title}</div><div className="acc-desc">{it.description}</div></div>}
+        {para()}
+        <div className={`swatches swatches-cols-${swatchCols}`}>
+          {visibleSwatches.map((x, i) => (
+            <div className="swatch" key={i} {...F(`${s.id}:swatch:${i}`)}>
+              {x.image ? <FitImage src={x.image} alt="" className="swatch-img-frame" /> : <div className="swatch-img empty" />}
+              <div className="swatch-label">{x.label}</div><div className="swatch-code">{x.code}</div>
             </div>
           ))}
         </div>
+        <div className="block-label materials-finishes-label">Finisaje</div>
+        <div className="badges materials-finishes">
+          {(s.finishes || []).filter((b) => b.label).map((b, i) => (
+            <div className="badge-pill" key={i} {...F(`${s.id}:finish:${i}`)}><span className="bp-dot" /><div><div className="bp-label">{b.label}</div>{has(b.desc) && <div className="bp-desc">{b.desc}</div>}</div></div>
+          ))}
+        </div>
+      </>
+    );
+    if (has(s.image) || editable) {
+      bodyDir = 'row';
+      mediaContent = <div className="sheet-media side-media"><SideImg s={s} fid={F(`${s.id}:image`)} /></div>;
+    }
+  } else if (s.type === 'accessories') {
+    textContent = (
+      <>
+        {para('wide')}
         <div className="block-label">Beneficii</div>
         <div className="badges">
           {(s.benefits || []).filter((b) => b.label).map((b, i) => (
@@ -415,14 +428,22 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
         </div>
       </>
     );
+    bodyDir = 'col';
+    mediaContent = (
+      <div className="acc-grid sheet-media acc-media">
+        {(s.items || []).filter((i) => editable || i.title || i.image || i.description).map((it, i) => (
+          <div className={`acc-card${it.image ? '' : ' no-img'}`} key={i} {...F(`${s.id}:item:${i}`)}>
+            <AccImg it={it} />
+            {(it.title || it.description) && <div className="acc-body"><div className="acc-title">{it.title}</div><div className="acc-desc">{it.description}</div></div>}
+          </div>
+        ))}
+      </div>
+    );
   } else if (s.type === 'sketches') {
     const shots = (editable ? (s.shots || []) : (s.shots || []).filter((x) => x.image)).slice(0, 6); // max 6 per page
-    main = (
+    textContent = (
       <>
         {para('wide')}
-        <div className="sketch-row">
-          {shots.map((x, i) => <SketchFigure key={i} x={x} fid={F(`${s.id}:shot:${i}`)} />)}
-        </div>
         <div className="block-label">Date tehnice</div>
         <div className="dims">
           {(s.dims || []).filter((d) => d.title || d.lines).map((d, i) => (
@@ -431,38 +452,46 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
         </div>
       </>
     );
+    bodyDir = 'col';
+    mediaContent = (
+      <div className="sketch-row sheet-media sketch-media">
+        {shots.map((x, i) => <SketchFigure key={i} x={x} fid={F(`${s.id}:shot:${i}`)} />)}
+      </div>
+    );
   } else if (s.type === 'gallery') {
     const all = editable ? (s.shots || []) : (s.shots || []).filter((x) => x.image);
     const shots = all.slice(0, 5); // max 5 images per gallery page
-    main = (
-      <>
-        {para('wide')}
-        <Gallery shots={shots} F={F} sid={s.id} />
-      </>
-    );
+    textContent = para('wide');
+    bodyDir = 'col';
+    mediaContent = <Gallery shots={shots} F={F} sid={s.id} />;
   } else {
     const tl: TextLayout = s.textLayout || 'bottom';
     const imgBlock = tl !== 'none' && (has(s.image) || editable) ? <TextImage s={s} fid={F(`${s.id}:image`)} /> : null;
     if (tl === 'top') topImg = imgBlock ? <div className="sheet-topimg">{imgBlock}</div> : null;
-    // Lines starting with "- " become a full-width list below the text/image row.
-    const lines = s.paragraph.split('\n').filter(Boolean);
-    const items = lines.filter((l) => l.trimStart().startsWith('- ')).map((l) => l.trimStart().slice(2));
-    const paras = lines.filter((l) => !l.trimStart().startsWith('- '));
-    main = (
-      <div className={`text-wrap lay-${tl}`}>
-        <div className="text-row">
-          <div className="text-body" {...F(`${s.id}:paragraph`)}>
+    // Combine the main paragraph with optional extra text blocks.
+    const blocks = [s.paragraph, ...(s.paragraphs || [])].filter((b): b is string => !!b);
+    const blockEls = blocks.map((block, bidx) => {
+      const lines = (typeof block === 'string' ? block : '').split('\n').filter(Boolean);
+      const paras = lines.filter((l) => !l.trimStart().startsWith('- '));
+      const items = lines.filter((l) => l.trimStart().startsWith('- ')).map((l) => l.trimStart().slice(2));
+      return (
+        <div className="text-block" key={bidx}>
+          <div className="text-body" {...(bidx === 0 ? F(`${s.id}:paragraph`) : {})}>
             {paras.map((l, j) => <p key={j}>{l}</p>)}
           </div>
-          {tl !== 'top' && imgBlock}
+          {items.length > 0 && (
+            <ul className="text-list">
+              {items.map((l, j) => <li key={j}>{l}</li>)}
+            </ul>
+          )}
         </div>
-        {items.length > 0 && (
-          <ul className="text-list">
-            {items.map((l, j) => <li key={j}>{l}</li>)}
-          </ul>
-        )}
-      </div>
-    );
+      );
+    });
+    textContent = <div className={`text-blocks lay-${tl}`}>{blockEls}</div>;
+    if (tl === 'left') { bodyDir = 'row'; mediaBeforeText = true; mediaContent = imgBlock ? <div className="sheet-media text-media-side">{imgBlock}</div> : null; }
+    else if (tl === 'right') { bodyDir = 'row'; mediaContent = imgBlock ? <div className="sheet-media text-media-side">{imgBlock}</div> : null; }
+    else if (tl === 'bottom') { bodyDir = 'col'; mediaContent = imgBlock ? <div className="sheet-media text-media-bottom">{imgBlock}</div> : null; }
+    else { bodyDir = 'col'; }
   }
 
   return (
@@ -473,7 +502,11 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
         <h2 className={`s-heading${s.headingBold ? ' xb' : ''}`} {...F(`${s.id}:heading`)}>{s.heading}</h2>
         <img className="sheet-logo" src={logoSrc} alt="" {...F('cover:logoImage')} />
       </div>
-      <FitBox className={`sheet-main${s.type === 'gallery' ? ' gal-main' : ''}`}>{main}</FitBox>
+      <div className={`sheet-body ${bodyDir === 'row' ? 'row' : 'col'}`}>
+        {mediaBeforeText && mediaContent}
+        <FitBox className={`sheet-fit${s.type === 'gallery' || s.type === 'accessories' || s.type === 'sketches' ? ' fit-compact' : ''}`}>{textContent}</FitBox>
+        {!mediaBeforeText && mediaContent}
+      </div>
       <div className="sheet-foot"><span>{date}</span></div>
     </section>
   );

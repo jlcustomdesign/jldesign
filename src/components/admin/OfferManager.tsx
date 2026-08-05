@@ -259,13 +259,18 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
   };
   const openPreview = () => {
     setPreview(true);
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const cont = document.querySelector('.ofr-preview-scroll');
+    // Wait for the overlay to render and the OfferDocument to paint, then jump
+    // to the page the user was last editing.
+    setTimeout(() => {
+      const cont = document.querySelector('.ofr-preview-scroll') as HTMLElement | null;
       const pages = cont?.querySelectorAll('.offer-page');
       if (!cont || !pages || !pages.length) return;
-      const el = pages[Math.min(lastPage.current, pages.length - 1)];
-      if (el) scrollWithin(cont as HTMLElement, el);
-    }));
+      const el = pages[Math.min(lastPage.current, pages.length - 1)] as HTMLElement | undefined;
+      if (!el) return;
+      const c = cont.getBoundingClientRect();
+      const e = el.getBoundingClientRect();
+      cont.scrollTop = cont.scrollTop + (e.top - c.top);
+    }, 120);
   };
 
   /* ---- CRUD ---- */
@@ -1016,9 +1021,20 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
       );
 
       // text
+      const textBlocks = s.paragraphs || [];
+      const setParagraph = (i: number, val: string) => setArr('paragraphs', (cur) => (cur || []).map((x, j) => (j === i ? val : x)));
       return (
         <>
-          {headingPara}
+          {sf(`${s.id}:heading`, 'Titlu secțiune', <TextInput value={s.heading} onChange={(e) => upd({ heading: e.target.value })} />)}
+          {sf(`${s.id}:paragraph`, 'Text principal (un paragraf pe rând; liniile care încep cu „- " devin listă pe toată lățimea)', <TextArea value={s.paragraph} onChange={(e) => upd({ paragraph: e.target.value })} style={{ minHeight: 90 }} />)}
+          {textBlocks.map((block, i) => (
+            <React.Fragment key={`${s.id}:paragraph:${i}`}>
+              {i === 0 && <div className="sf-block-sep" />}
+              {row(`${s.id}:paragraph:${i}`, `Text box ${i + 2}`, () => setArr('paragraphs', (cur) => (cur || []).filter((_, j) => j !== i)),
+                <TextArea value={block} onChange={(e) => setParagraph(i, e.target.value)} style={{ minHeight: 70 }} />, false)}
+            </React.Fragment>
+          ))}
+          <button type="button" className="ro-add" onClick={() => addRowAt('paragraphs', '')}>＋ Adaugă text box</button>
           {sf(`${s.id}:textLayout`, 'Aranjare pagină', (
             <div className="seg">
               {([['bottom', 'Imagine jos'], ['top', 'Imagine sus'], ['left', 'Imagine stânga'], ['right', 'Imagine dreapta'], ['none', 'Doar text']] as const).map(([v, l]) => (
