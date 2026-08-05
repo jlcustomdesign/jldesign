@@ -147,7 +147,7 @@
 .acc-media .acc-grid { height: 100%; grid-auto-rows: 1fr; align-items: stretch; }
 .acc-media .acc-card { min-height: 0; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
 .acc-media .acc-img-frame { flex: 1 1 auto; min-height: 0; width: 100%; position: relative; }
-.acc-media .acc-img-frame .img-fg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.acc-media .acc-img-frame .img-fg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .acc-media .acc-body { flex: 0 0 auto; display: flex; flex-direction: column; padding: .6cqw .8cqw .8cqw; height: 6.2cqw; overflow: hidden; }
 .acc-media .acc-desc { flex: 0 0 auto; max-height: 2.8em; overflow: hidden; }
 .sketch-media .sketch-row { height: 100%; grid-auto-rows: 1fr; align-items: stretch; }
@@ -189,9 +189,10 @@
 
 .badges { display: flex; flex-wrap: wrap; gap: 1cqw 2cqw; width: 100%; }
 .badge-pill { display: inline-flex; align-items: center; gap: .9cqw; font-size: calc(1.15cqw * var(--fs, 1)); }
-.materials-finishes-bar { width: 100%; flex: 0 0 auto; margin-top: 1.2cqw; }
-.materials-finishes-label { margin-top: 0; }
-.materials-finishes { width: 100%; justify-content: flex-start; }
+.materials-finishes-bar { width: 100%; flex: 0 0 auto; margin-top: 1.2cqw; text-align: right; }
+.materials-finishes-label { margin-top: 0; justify-content: flex-end; }
+.materials-finishes { width: 100%; justify-content: flex-end; }
+.materials-finishes .badge-pill { flex-direction: row-reverse; text-align: right; }
 .bp-dot { width: 1.4cqw; height: 1.4cqw; border-radius: 50%; border: 0.16cqw solid var(--gold); flex: 0 0 auto; position: relative; }
 .bp-dot::after { content: ""; position: absolute; inset: .4cqw; border-radius: 50%; background: var(--gold); }
 .bp-label { font-weight: 700; letter-spacing: .03em; }
@@ -240,7 +241,7 @@
    left / right full-height side panels, plus none (text only). The text lives
    in .sheet-fit (scaled by FitBox) and the image is a separate .sheet-media
    element so changing font size never shrinks the image. */
-.text-blocks { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.text-blocks { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; margin-top: 1.8cqw; }
 .text-blocks.lay-none { max-width: 92%; }
 .text-block + .text-block { border-top: 1px solid var(--line); padding-top: 3.5cqw; margin-top: 3.5cqw; }
 .text-body { max-width: 100%; }
