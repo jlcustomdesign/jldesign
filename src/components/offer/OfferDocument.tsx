@@ -434,6 +434,7 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
       </>
     );
     bodyDir = 'col';
+    mediaBeforeText = true;
     mediaContent = (
       <div className="acc-grid sheet-media acc-media">
         {(s.items || []).filter((i) => editable || i.title || i.image || i.description).map((it, i) => (
