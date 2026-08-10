@@ -1,0 +1,54 @@
+{
+  "clientName": "Banda LED sub corpurile inferioare din bucatarie",
+  "category": "",
+  "date": "August 2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": " ",
+  "coverImage": "/assets/offers/banda-led-sub-corpurile-inferioare-din-bucatarie/0.webp",
+  "pages": [
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "Banda LED Hafele ",
+      "paragraph": "Banda LED flexibila incastrata cu suport de silicon, alimentare 24V și control wireless. \nBanda LED va fi încastrată în placa de bază a corpurilor, astfel încât să nu interfereze cu curățarea sau spălarea pardoselii. Totodată, soluția permite îndepărtarea plintei fără demontarea iluminatului, facilitând curățarea spațiului de sub mobilier.",
+      "items": [
+        {
+          "image": "/assets/offers/banda-led-sub-corpurile-inferioare-din-bucatarie/1.webp",
+          "title": "LED 24V",
+          "description": "LED cu tehnologie COB incastrata. Lumina calda",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/banda-led-sub-corpurile-inferioare-din-bucatarie/2.webp",
+          "title": "Convertor",
+          "description": "Convertor banda LED smart 24 V",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/banda-led-sub-corpurile-inferioare-din-bucatarie/3.webp",
+          "title": "Intrerupator Wireless",
+          "description": "Întrerupătorul permite controlul iluminatului fără atingere, printr-o simplă mișcare a mâinii, și oferă și funcție de reglare a intensității luminoase. Alimentarea se realizează prin baterie reîncărcabilă USB-C, iar montajul este simplu și discret, fiind potrivit pentru integrarea în mobilier.",
+          "orient": "landscape"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Invizibil"
+        },
+        {
+          "label": "Lumina calda"
+        },
+        {
+          "label": "Componente Hafele -Made in Germany"
+        }
+      ],
+      "fontScale": 1
+    }
+  ],
+  "coverImageOrient": "landscape",
+  "tags": [],
+  "coverImageFocus": "21.1% 55.4%",
+  "coverFit": "auto",
+  "slug": "banda-led-sub-corpurile-inferioare-din-bucatarie"
+}

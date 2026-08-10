@@ -78,6 +78,11 @@
           "label": "Contrablat - Marmura Crystal",
           "code": "F800 ST9",
           "image": "/assets/offers/ani-endre/17.webp"
+        },
+        {
+          "label": "u",
+          "code": "123",
+          "image": "/assets/offers/ani-endre/0.webp"
         }
       ],
       "finishes": [
@@ -98,7 +103,7 @@
           "desc": "Certificate"
         }
       ],
-      "fontScale": 1.1,
+      "fontScale": 0.9,
       "imageOrient": "portrait",
       "imageFocus": "73.6% 50.0%"
     },
@@ -209,5 +214,6 @@
   ],
   "coverImageFocus": "21.1% 55.4%",
   "coverFit": "auto",
-  "slug": "ani-endre"
+  "slug": "ani-endre",
+  "coverLayout": "full"
 }
