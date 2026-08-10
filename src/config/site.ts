@@ -9,19 +9,19 @@ export const SITE = {
   /** Company / Brand */
   name: "JL Mobila",
   legalName: "JL Mobila S.R.L.",
-  tagline: "Mobilier la comandă din lemn masiv",
+  tagline: "Mobilă la comandă și mobilier personalizat din lemn masiv",
   url: "https://mobilapersonalizatabrasov.ro",
 
   /** Contact */
   phone: "+40773504248",
   email: "customdesignjl@gmail.com",
   web3formsKey: "5029e4aa-d609-4413-8bb0-cf5766eab20d",
-  /** Primary Location */
+  /** Primary Location — service-area business (no customer-facing address) */
   address: {
-    street: "",                   // ← e.g. "Strada Lungă 123"
+    street: "",                   // gol intenționat: atelierul nu primește clienți; omis din schema
     city: "Brașov",
     region: "Brașov",
-    postalCode: "",               // ← e.g. "500001"
+    postalCode: "",               // gol = nu apare în schema
     country: "RO",
   },
 
@@ -48,6 +48,8 @@ export const SITE = {
 
   /** Social / External profiles — uncomment and fill when ready */
   sameAs: [
+    // Google Business Profile
+    "https://share.google/cUQZiqrkOqymZzNSb",
     // "https://www.facebook.com/jlmobila",
     // "https://www.instagram.com/jlmobila",
     // "https://wa.me/40773504248",
@@ -75,11 +77,16 @@ export const SITE = {
     // Material
     "lemn masiv", "MDF vopsit", "PAL melaminat", "furnir natural",
     "Egger", "Kronospan", "feronerie Blum", "Hettich", "Hafele",
-    // Location (prioritize exact search term)
-    "mobilapersonalizatabrasov.ro", "mobilapersonalizatabrasov", "mobila personalizata brasov",
-    "mobilă personalizată Brașov", "mobilă la comandă Brașov", "mobilier personalizat Brașov",
-    "mobilă Brașov", "mobilier Brașov", "mobilier la comandă Brașov", "mobilier custom Brașov",
-    "mobilă pe comandă Brașov", "mobilier Buzău", "mobilier Sibiu", "mobilier Sfântu Gheorghe",
+    // Location (prioritize exact search terms for both "personalizat" and "la comandă")
+    "mobilapersonalizatabrasov.ro", "mobilapersonalizatabrasov",
+    "mobila personalizata brasov", "mobila personalizata in brasov", "mobila personalizata",
+    "mobilă personalizată Brașov", "mobilă personalizată", "mobilier personalizat Brașov", "mobilier personalizat brasov",
+    "mobila la comanda brasov", "mobila la comanda in brasov", "mobila la comanda",
+    "mobilă la comandă Brașov", "mobilă la comandă", "mobilier la comandă Brașov", "mobilier la comanda brasov",
+    "mobilier comanda brasov", "mobila comanda brasov",
+    "mobilă Brașov", "mobilier Brașov", "mobilier custom Brașov",
+    "mobilă pe comandă Brașov", "mobila pe comanda brasov",
+    "mobilier Buzău", "mobilier Sibiu", "mobilier Sfântu Gheorghe",
     "mobilier Făgăraș",
   ],
 

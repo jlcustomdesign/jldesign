@@ -25,7 +25,7 @@ interface Props {
 
 const {
   title,
-  description = `${SITE.tagline} — Design interior, mobilier din lemn masiv și soluții premium de la ${SITE.name} în ${targetCitiesString()}.`,
+  description = `${SITE.tagline} — design interior, mobilier la comandă, mobilă personalizată și soluții premium de la ${SITE.name} în ${targetCitiesString()}.`,
   image = SITE.defaultOgImage,
   canonicalURL = new URL(Astro.url.pathname, SITE.url),
   type = "website",
@@ -48,9 +48,23 @@ const organizationSchema = JSON.stringify({
   "url": SITE.url,
   "logo": absoluteUrl(SITE.logo),
   "image": absoluteUrl(SITE.defaultOgImage),
-  "description": `${SITE.tagline} — soluții premium de design interior în ${targetCitiesString()}.`,
+  "description": `${SITE.tagline}. Atelier de mobilă la comandă și mobilier personalizat în ${targetCitiesString()}.`,
   "telephone": SITE.phone,
   "email": SITE.email,
+  "knowsAbout": [
+    "mobilă la comandă",
+    "mobilier personalizat",
+    "mobilă Brașov",
+    "mobilă la comandă Brașov",
+    "bucătării la comandă",
+    "dressinguri la comandă",
+    "design interior",
+    "proiectare 3D",
+    "lemn masiv",
+    "MDF vopsit",
+    "PAL melaminat",
+    "furnir natural",
+  ],
   "sameAs": [
     ...SITE.sameAs,
     // Wikidata entity disambiguation
@@ -66,22 +80,26 @@ const organizationSchema = JSON.stringify({
 });
 
 // 2. LocalBusiness with precise PostalAddress + GeoCoordinates
+//    Using both LocalBusiness and Carpenter types gives Google richer signals
+//    for "mobilă la comandă" / custom furniture searches.
 const localBusinessSchema = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  "@type": ["LocalBusiness", "Carpenter"],
   "name": SITE.name,
   "image": absoluteUrl(SITE.defaultOgImage),
   "url": SITE.url,
   "telephone": SITE.phone,
   "email": SITE.email,
-  "description": `Atelier de mobilier la comandă și mobilă personalizată din lemn masiv, MDF și PAL în ${targetCitiesString(8)}. Proiectare 3D și montaj profesional.`,
+  "description": `Atelier de mobilă la comandă și mobilier personalizat din lemn masiv, MDF și PAL în ${targetCitiesString(8)}. Proiectare 3D, execuție custom și montaj profesional.`,
   "priceRange": "$$$",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": SITE.address.street,
+    // Empty fields (street / postalCode) are omitted from schema — a missing
+    // property is cleaner than an empty string for local SEO signals.
+    ...(SITE.address.street ? { "streetAddress": SITE.address.street } : {}),
     "addressLocality": SITE.address.city,
     "addressRegion": SITE.address.region,
-    "postalCode": SITE.address.postalCode,
+    ...(SITE.address.postalCode ? { "postalCode": SITE.address.postalCode } : {}),
     "addressCountry": SITE.address.country,
   },
   "geo": {
@@ -89,10 +107,77 @@ const localBusinessSchema = JSON.stringify({
     "latitude": SITE.geo.latitude,
     "longitude": SITE.geo.longitude,
   },
-  "areaServed": SITE.targetCities.map(city => ({
-    "@type": "City",
-    "name": city,
-  })),
+  "areaServed": [
+    {
+      "@type": "City",
+      "name": "Brașov",
+      "containedIn": "Brașov County, Romania",
+    },
+    ...SITE.targetCities.slice(1).map(city => ({
+      "@type": "City",
+      "name": city,
+    })),
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Servicii mobilă la comandă Brașov",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Mobilă la comandă",
+          "description": "Mobilier personalizat și mobilă la comandă pentru locuințe, birouri și spații comerciale în Brașov.",
+        },
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Proiectare 3D și randări",
+          "description": "Consultanță, design interior, proiectare tehnică și randări fotorealiste înainte de execuție.",
+        },
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Producție și montaj mobilier",
+          "description": "Execuție în atelier propriu și montaj profesional de mobilier din lemn masiv, MDF vopsit și PAL melaminat.",
+        },
+      },
+    ],
+  },
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "name": "Bucătării la comandă Brașov",
+      },
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "name": "Dressinguri și dulapuri la comandă",
+      },
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "name": "Mobilier living și biblioteci",
+      },
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "name": "Mobilier birouri și spații comerciale",
+      },
+    },
+  ],
 });
 
 // 3. WebSite (enables Google Sitelinks search box)

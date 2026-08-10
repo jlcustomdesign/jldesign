@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import PortfolioCategoriesHover from "../components/PortfolioCategoriesHover.astro";
 import ServicesGridV2 from "../components/ServicesGridV2.astro";
 import ServicesCTA from "../components/ServicesCTA.astro";
+import FaqSection from "../components/FaqSection.astro";
 import Footer from "../components/Footer.astro";
 import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
 ---
@@ -163,6 +164,8 @@ import { SERVICES_PAGE, BREADCRUMBS } from "../config/content";
     title="Categorii de Mobilier"
     items={SERVICES_PAGE.services} 
   />
+
+  <FaqSection />
 
   <ServicesCTA />
 

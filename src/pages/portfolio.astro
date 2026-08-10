@@ -4,6 +4,27 @@ import PortfolioHero from "../components/PortfolioHero.astro";
 import PortfolioCMSGrid from "../components/PortfolioCMSGrid.astro";
 import Footer from "../components/Footer.astro";
 import { PORTFOLIO_PAGE, BREADCRUMBS } from "../config/content";
+import { SITE } from "../config/site";
+
+// CollectionPage schema: tells search engines and AI engines that this page
+// is a curated gallery of completed custom-furniture projects.
+const collectionSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Portofoliu proiecte de mobilier la comandă — " + SITE.name,
+  "url": `${SITE.url}/portfolio`,
+  "description": PORTFOLIO_PAGE.description,
+  "inLanguage": "ro",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": SITE.name,
+    "url": SITE.url,
+  },
+  "about": {
+    "@type": "Thing",
+    "name": "Mobilier la comandă și mobilă personalizată în Brașov",
+  },
+});
 ---
 
 <Layout
@@ -15,6 +36,7 @@ import { PORTFOLIO_PAGE, BREADCRUMBS } from "../config/content";
   ]}
 >
   <main>
+    <script type="application/ld+json" set:html={collectionSchema}></script>
     <!-- Semantic keywords for AI engines (GEO) -->
     <div class="sr-only">
       {

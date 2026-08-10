@@ -10,7 +10,8 @@ Disallow: /oferta/
 Disallow: /api/
 Disallow: /test-simultaneous
 
-# Block AI crawlers (Optional - Un-comment to prevent AI scraping if desired)
+# AI / LLM crawlers are allowed to index this site for AI search and answer engines.
+# To block AI scraping, uncomment the relevant User-agent rules below.
 # User-agent: CCBot
 # Disallow: /
 # User-agent: ChatGPT-User
@@ -30,8 +31,9 @@ Allow: /assets/
 Allow: /Fonts/
 Allow: /Images/
 
-# Sitemap location
+# Sitemap locations
 Sitemap: https://mobilapersonalizatabrasov.ro/sitemap-index.xml
+Sitemap: https://mobilapersonalizatabrasov.ro/sitemap-images.xml
 
 # Crawl-delay (optional, helps prevent server overload)
 Crawl-delay: 1

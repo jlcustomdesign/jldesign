@@ -1,0 +1,21 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CategoryLanding from "../components/CategoryLanding.astro";
+import Footer from "../components/Footer.astro";
+import { CATEGORIES } from "../config/categories";
+import { BREADCRUMBS } from "../config/content";
+
+const cat = CATEGORIES.dormitor;
+---
+
+<Layout
+  title={cat.title}
+  description={cat.description}
+  breadcrumbs={[
+    { name: BREADCRUMBS.home, url: "/" },
+    { name: cat.name, url: `/${cat.slug}` },
+  ]}
+>
+  <CategoryLanding cat={cat} />
+  <Footer slot="footer" />
+</Layout>
