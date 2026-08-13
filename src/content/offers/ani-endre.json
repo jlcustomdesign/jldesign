@@ -62,7 +62,7 @@
         {
           "label": "FRONTURI",
           "code": "MDF vopsit alb-ivory mat",
-          "image": "/assets/offers/ani-endre/14.webp"
+          "image": "/assets/offers/ani-endre/2.webp"
         },
         {
           "label": "CORPURI",
@@ -71,18 +71,13 @@
         },
         {
           "label": "BLAT",
-          "code": "Decor stejar",
+          "code": "Egger-H3170 ST12",
           "image": "/assets/offers/ani-endre/16.webp"
         },
         {
           "label": "Contrablat - Marmura Crystal",
-          "code": "F800 ST9",
+          "code": "Egger-F800 ST9",
           "image": "/assets/offers/ani-endre/17.webp"
-        },
-        {
-          "label": "u",
-          "code": "123",
-          "image": "/assets/offers/ani-endre/0.webp"
         }
       ],
       "finishes": [
@@ -116,7 +111,7 @@
         {
           "image": "/assets/offers/ani-endre/3.webp",
           "title": "LED COB 24V",
-          "description": "LED cu tehnologie COB si profil slim de aluminiu.",
+          "description": "Iluminare uniforma a blatului, lumina calda",
           "orient": "landscape"
         },
         {
@@ -127,20 +122,20 @@
         },
         {
           "image": "/assets/offers/ani-endre/5.webp",
-          "title": "Balamale BLUM",
-          "description": "Gama premium cu inchidere lenta + reglaj 3D.",
+          "title": "Balamale BLUM-inchidere lenta + reglaj 3D.",
+          "description": "Inchidere lina si silentioasa, cu aliniere precisa a usilor.",
           "orient": "landscape"
         },
         {
           "image": "/assets/offers/ani-endre/6.webp",
           "title": "Coloană extractibilă dulap înalt -Hafele",
-          "description": "Pentru organizarea alimentelor si accesoriilor.",
+          "description": "Acces rapid si organizare eficienta pentru provizii.",
           "orient": "portrait"
         },
         {
           "image": "/assets/offers/ani-endre/7.webp",
           "title": "Organizator tacamuri",
-          "description": "Alb",
+          "description": "Ordine in sertar si acces rapid la fiecare tacam.",
           "orient": "landscape"
         },
         {
@@ -156,13 +151,13 @@
           "label": "Funcționare silențioasă"
         },
         {
-          "label": "Acces facil"
+          "label": "Organizare eficienta"
         },
         {
-          "label": "Închidere soft-close"
+          "label": "Confort zilnic"
         },
         {
-          "label": "Componente BLUM/Hafele -Made in Germany"
+          "label": "Componente premium BLUM/Hafele "
         }
       ],
       "fontScale": 1
@@ -171,18 +166,21 @@
       "id": "text-f3iw",
       "type": "text",
       "heading": "OFERTA INCLUDE",
-      "paragraph": "\nMobilier bucătărie + accesorii premium\nProiect 3D\nRandări realiste\nConsultanță\nMontaj\nTransport\nGaranție - 24 luni\n\n-----------------------------\n\nInvestiția pentru acest proiect\n €\n",
+      "paragraph": "PROIECTARE & CONSULTANȚĂ\nProiectare 3D • Randări fotorealiste • Consultanță  și soluții\n\nPRODUCȚIE\nExecuție mobilier conform proiectului • Materiale și feronerie conform specificațiilor\n\nLIVRARE & MONTAJ\nTransport • Montaj • Reglaj și verificare finală\n\nMĂSURĂTORI\nVerificarea dimensiunilor finale înainte de intrarea în producție\n\n",
       "image": "/assets/offers/ani-endre/9.webp",
-      "fontScale": 1.2,
+      "fontScale": 1.1,
       "imageOrient": "portrait",
       "imageFocus": "57.0% 17.9%",
       "textLayout": "right",
-      "headingBold": true
+      "headingBold": false,
+      "paragraphs": [
+        "INVESTIȚIA PENTRU ACEST PROIECT\n1000 €\nTVA inclus"
+      ]
     },
     {
       "id": "gallery-g3to",
       "type": "gallery",
-      "heading": "Galerie foto",
+      "heading": "Proiecte realizate",
       "paragraph": "",
       "shots": [
         {
@@ -210,7 +208,8 @@
   ],
   "coverImageOrient": "landscape",
   "tags": [
-    "BUCATARIE FRONTURI MDF"
+    "BUCATARIE FRONTURI MDF",
+    "(Concept vizual)"
   ],
   "coverImageFocus": "21.1% 55.4%",
   "coverFit": "auto",
