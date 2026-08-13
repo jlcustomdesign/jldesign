@@ -166,7 +166,7 @@
       "id": "text-f3iw",
       "type": "text",
       "heading": "OFERTA INCLUDE",
-      "paragraph": "PROIECTARE & CONSULTANȚĂ\nProiectare 3D • Randări fotorealiste • Consultanță  și soluții\n\nPRODUCȚIE\nExecuție mobilier conform proiectului • Materiale și feronerie conform specificațiilor\n\nLIVRARE & MONTAJ\nTransport • Montaj • Reglaj și verificare finală\n\nMĂSURĂTORI\nVerificarea dimensiunilor finale înainte de intrarea în producție\n\n",
+      "paragraph": "PROIECTARE & CONSULTANȚĂ\nProiectare 3D • Randări fotorealiste • Consultanță materiale  și soluții tehnice\n\nPRODUCȚIE\nExecuție mobilier conform proiectului \n\nLIVRARE & MONTAJ\nTransport • Montaj • Reglaj și verificare finală\n\nMĂSURĂTORI\nVerificarea dimensiunilor finale înainte de intrarea în producție\n\n",
       "image": "/assets/offers/ani-endre/9.webp",
       "fontScale": 1.1,
       "imageOrient": "portrait",
@@ -174,7 +174,8 @@
       "textLayout": "right",
       "headingBold": false,
       "paragraphs": [
-        "INVESTIȚIA PENTRU ACEST PROIECT\n1000 €\nTVA inclus"
+        "INVESTIȚIA PENTRU ACEST PROIECT\n1000 €\nTVA inclus",
+        "Garanție: 24 luni"
       ]
     },
     {
@@ -206,7 +207,7 @@
       ]
     }
   ],
-  "coverImageOrient": "landscape",
+  "coverImageOrient": "portrait",
   "tags": [
     "BUCATARIE FRONTURI MDF",
     "(Concept vizual)"
@@ -214,5 +215,5 @@
   "coverImageFocus": "21.1% 55.4%",
   "coverFit": "auto",
   "slug": "ani-endre",
-  "coverLayout": "full"
+  "coverLayout": "right"
 }
