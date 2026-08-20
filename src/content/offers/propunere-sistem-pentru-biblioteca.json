@@ -1,0 +1,81 @@
+{
+  "clientName": "PROPUNERE SISTEM PENTRU BIBLIOTECA",
+  "category": "",
+  "date": "August 2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": " ",
+  "coverImage": "/assets/offers/propunere-sistem-pentru-biblioteca/0.webp",
+  "pages": [
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "Sistem modular de rafturi",
+      "paragraph": "Structură din oțel vopsit negru, cu înălțimea de 1790 mm, concepută pentru realizarea unei biblioteci cu 6 polițe. Permite configurarea unor soluții originale prin combinarea modulelor și suportă până la 30 kg/poliță.",
+      "items": [
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca/1.webp",
+          "title": "Se recomandă polițe de 690 × 350 × 19 mm.",
+          "description": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca/2.webp",
+          "title": "Inălțime de 1790 mm și o lățime de 350 mm",
+          "description": "",
+          "orient": "portrait"
+        },
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca/3.webp",
+          "title": "Pana la30 kg pe fiecare poliță",
+          "description": "",
+          "orient": "landscape"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Montaj simplu și structură rezistentă",
+          "desc": ""
+        }
+      ],
+      "fontScale": 1.1
+    },
+    {
+      "id": "accessories-f61u",
+      "type": "accessories",
+      "heading": "Sistem modular tip 2",
+      "paragraph": "",
+      "items": [
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca/4.webp",
+          "title": "Fixare in podea si perete. Inaltime 2150 mm",
+          "description": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca/5.webp",
+          "title": "Sistemul suportă peste 100 kg/poliță sau modul, iar poziționarea elementelor se poate ajusta fără demontarea structurii.",
+          "description": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca/6.webp",
+          "title": "Dimensiuni configurabile în funcție de proiect, cu posibilitatea utilizării unor polițe cu adâncimea de până la 330 mm.",
+          "description": "",
+          "orient": "landscape"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Configurații complet personalizabile",
+          "desc": ""
+        }
+      ]
+    }
+  ],
+  "coverImageOrient": "landscape",
+  "tags": [],
+  "coverImageFocus": "21.1% 55.4%",
+  "coverFit": "auto",
+  "slug": "propunere-sistem-pentru-biblioteca"
+}
