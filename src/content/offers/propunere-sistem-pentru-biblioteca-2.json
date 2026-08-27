@@ -1,0 +1,94 @@
+{
+  "clientName": "PROPUNERE SISTEM PENTRU BIBLIOTECA",
+  "category": "",
+  "date": "August 2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": " ",
+  "coverImage": "/assets/offers/propunere-sistem-pentru-biblioteca-2/0.webp",
+  "pages": [
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "Sistem modular-Biblioteca",
+      "paragraph": "Două sisteme modulare de bibliotecă, cu polițe susținute de cadre metalice. Fiecare sistem este prevăzut cu 4 polițe de 1350 × 350 mm, iluminate LED cu lumină caldă. În partea inferioară, corpul de mobilier este prevăzut cu 4 sertare BLUM, oferind un spațiu de depozitare practic și elegant.",
+      "items": [
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca/1.webp",
+          "title": "Polite PAL sau MDF",
+          "description": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca/2.webp",
+          "title": "Inălțime de 1790 mm și o lățime de 350 mm",
+          "description": "",
+          "orient": "portrait"
+        },
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca/3.webp",
+          "title": "Pana la30 kg pe fiecare poliță",
+          "description": "",
+          "orient": "landscape"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Montaj simplu și structură rezistentă",
+          "desc": ""
+        }
+      ],
+      "fontScale": 1.1
+    },
+    {
+      "id": "accessories-f61u",
+      "type": "accessories",
+      "heading": "Accesorii",
+      "paragraph": "",
+      "items": [
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca-2/1.webp",
+          "title": "Lumina LED incastrata la nivelul politei",
+          "description": "Iluminare uniforma, lumina calda.",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca-2/2.webp",
+          "title": "Intrerupator smart wireless, ce permite controlul iliminatului fara atingere.",
+          "description": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/propunere-sistem-pentru-biblioteca-2/3.webp",
+          "title": "Sertare Blum-Merivobox.",
+          "description": "Sertar cu laterale metalice de la BLUM, echipate cu închidere lentă și silențioasă.",
+          "orient": "landscape"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Configurații complet personalizabile",
+          "desc": ""
+        }
+      ]
+    },
+    {
+      "id": "text-f3vl",
+      "type": "text",
+      "heading": "Oferta include",
+      "paragraph": "PROIECTARE & CONSULTANȚĂ\nProiectare 3D • Randări fotorealiste • Consultanță materiale  și soluții tehnice\n\nPRODUCȚIE\nExecuție mobilier conform proiectului \n\nLIVRARE & MONTAJ\nTransport • Montaj • Reglaj și verificare finală\n\nMĂSURĂTORI\nVerificarea dimensiunilor finale înainte de intrarea în producție\n\n",
+      "image": "/assets/offers/propunere-sistem-pentru-biblioteca-2/4.webp",
+      "imageOrient": "landscape",
+      "textLayout": "right",
+      "paragraphs": [
+        "Varianta 1 \nPolite 60 mm grosime din MDF- furnir stejar natural vopsit\nInvestitie  Varianta 1 = 4100 euro",
+        "Varianta 2\nPolite 36 mm grosime din dublu PAL (2x18 mm)- Culoare la alegere.\nInvestitie Varianta 2 = 2400 euro"
+      ]
+    }
+  ],
+  "coverImageOrient": "landscape",
+  "tags": [],
+  "coverImageFocus": "21.1% 55.4%",
+  "coverFit": "auto",
+  "slug": "propunere-sistem-pentru-biblioteca-2"
+}
