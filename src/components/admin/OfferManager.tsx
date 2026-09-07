@@ -87,14 +87,29 @@ function clearOfferDraft(tempId?: string | null, slug?: string) {
 }
 const countPages = (o: any): number => 1 + (Array.isArray(o?.pages) ? o.pages.length : ['description', 'materials', 'accessories', 'sketches'].filter((k) => o?.[k]?.enabled).length);
 
-const PAGE_TYPES: { type: SectionType; name: string }[] = [
+const PAGE_TYPES: { type: SectionType; name: string; closing?: boolean }[] = [
   { type: 'description', name: 'Descriere & specificații' },
   { type: 'materials', name: 'Materiale & finisaje' },
   { type: 'accessories', name: 'Accesorii & echipare' },
   { type: 'sketches', name: 'Schițe & dimensiuni' },
   { type: 'gallery', name: 'Galerie foto' },
   { type: 'text', name: 'Text / mesaj' },
+  { type: 'text', name: 'Pagină de închidere (mulțumire + copyright)', closing: true },
 ];
+
+/** Final "thank you" page with the standard legal texts. {{an}} auto-expands to
+    the current year at render time — never hardcode the year here. */
+const closingSection = (): Section => ({
+  id: uid('closing'),
+  type: 'text',
+  heading: 'Vă mulțumim!',
+  paragraph: 'Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.',
+  paragraphs: [
+    '© {{an}} JL Custom Design. Toate drepturile rezervate. Conținutul acestei oferte, inclusiv textele, imaginile, randările, desenele, soluțiile de design și materialele grafice, este proprietatea JL Custom Design și este destinat exclusiv evaluării proiectului prezentat. Copierea, reproducerea, distribuirea sau utilizarea acestuia în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.',
+    'Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție.',
+  ],
+  textLayout: 'none',
+});
 
 const blankSection = (type: SectionType): Section => {
   const base = { id: uid(type), type, heading: '', paragraph: '' };
@@ -560,7 +575,7 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
   }, []);
 
   /* ---- page ops ---- */
-  const addPage = (type: SectionType) => { if (!offer) return; setPages([...offer.pages, blankSection(type)]); setAddOpen(false); };
+  const addPage = (type: SectionType, closing = false) => { if (!offer) return; setPages([...offer.pages, closing ? closingSection() : blankSection(type)]); setAddOpen(false); };
   const delPage = (idx: number) => { if (!offer) return; if (!window.confirm('Ștergi această pagină?')) return; setPages(offer.pages.filter((_, i) => i !== idx)); };
   const movePage = (idx: number, dir: -1 | 1) => {
     if (!offer) return; const j = idx + dir; if (j < 0 || j >= offer.pages.length) return;
@@ -834,7 +849,7 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
               ) : (
                 <div className="addpage-grid">
                   {PAGE_TYPES.map((p) => (
-                    <button key={p.type} type="button" className="addpage-opt" onClick={() => addPage(p.type)}>{p.name}</button>
+                    <button key={p.name} type="button" className="addpage-opt" onClick={() => addPage(p.type, p.closing)}>{p.name}</button>
                   ))}
                   <button type="button" className="addpage-opt" style={{ gridColumn: '1 / -1', justifyContent: 'center', color: 'var(--muted)' }} onClick={() => setAddOpen(false)}>Anulează</button>
                 </div>

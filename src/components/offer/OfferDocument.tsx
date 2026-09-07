@@ -360,7 +360,10 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
 }
 
 function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string; date: string; F: (fid: string) => Record<string, any>; editable: boolean; logoSrc: string }) {
-  const para = (cls = '') => <p className={`s-para ${cls}`} {...F(`${s.id}:paragraph`)}>{s.paragraph}</p>;
+  // {{an}} in any text expands to the CURRENT year at render time, so the
+  // copyright line stays correct forever without editing the offer.
+  const sub = (t?: string) => (t || '').replaceAll('{{an}}', String(new Date().getFullYear()));
+  const para = (cls = '') => <p className={`s-para ${cls}`} {...F(`${s.id}:paragraph`)}>{sub(s.paragraph)}</p>;
 
   let textContent: React.ReactNode = null;
   let mediaContent: React.ReactNode = null;
@@ -477,7 +480,7 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
     // Combine the main paragraph with optional extra text blocks.
     const blocks = [s.paragraph, ...(s.paragraphs || [])].filter((b): b is string => !!b);
     const blockEls = blocks.map((block, bidx) => {
-      const lines = (typeof block === 'string' ? block : '').split('\n').filter(Boolean);
+      const lines = (typeof block === 'string' ? sub(block) : '').split('\n').filter(Boolean);
       const paras = lines.filter((l) => !l.trimStart().startsWith('- '));
       const items = lines.filter((l) => l.trimStart().startsWith('- ')).map((l) => l.trimStart().slice(2));
       return (
@@ -505,7 +508,7 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
       {topImg}
       <div className="sheet-head">
         <span className="num">{num}</span>
-        <h2 className={`s-heading${s.headingBold ? ' xb' : ''}`} {...F(`${s.id}:heading`)}>{s.heading}</h2>
+        <h2 className={`s-heading${s.headingBold ? ' xb' : ''}`} {...F(`${s.id}:heading`)}>{sub(s.heading)}</h2>
         <img className="sheet-logo" src={logoSrc} alt="" {...F('cover:logoImage')} />
       </div>
       {s.type === 'materials' && finishesContent ? (
