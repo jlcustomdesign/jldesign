@@ -49,7 +49,7 @@
       ],
       "fontScale": 1.1,
       "imageOrient": "landscape",
-      "imageFocus": "19.8% 39.3%",
+      "imageFocus": "0.0% 58.9%",
       "imageLayout": "side"
     },
     {
@@ -62,22 +62,22 @@
         {
           "label": "FRONTURI",
           "code": "Gri casmir- U702 ST9",
-          "image": "/assets/offers/familia-davideanu/3.webp"
+          "image": "/assets/offers/familia-davideanu/2.webp"
         },
         {
           "label": "CORPURI",
           "code": "Gri casmir- U702 ST9",
-          "image": "/assets/offers/familia-davideanu/4.webp"
+          "image": "/assets/offers/familia-davideanu/3.webp"
         },
         {
           "label": "BLAT+CB",
           "code": "Egger-Marmura Cremona F229 ST75",
-          "image": "/assets/offers/familia-davideanu/5.webp"
+          "image": "/assets/offers/familia-davideanu/4.webp"
         },
         {
           "label": "Insula",
           "code": "Egger-H3322 ST17",
-          "image": "/assets/offers/familia-davideanu/6.webp"
+          "image": "/assets/offers/familia-davideanu/5.webp"
         }
       ],
       "finishes": [
@@ -259,6 +259,14 @@
           "orient": "portrait"
         }
       ]
+    },
+    {
+      "id": "text-h6ln",
+      "type": "text",
+      "heading": "Titlu secțiune",
+      "paragraph": "",
+      "image": "",
+      "textLayout": "right"
     }
   ],
   "coverImageOrient": "landscape",
