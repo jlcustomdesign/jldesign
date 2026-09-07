@@ -26,6 +26,15 @@
           "value": ""
         }
       ]
+    },
+    {
+      "id": "text-194nd",
+      "type": "text",
+      "heading": "Titlu secțiune",
+      "paragraph": "ihihij",
+      "image": "/assets/offers/familia-testulescu/umtrdy0jr-0.webp",
+      "textLayout": "right",
+      "imageOrient": "portrait"
     }
   ],
   "tags": [

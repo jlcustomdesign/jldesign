@@ -232,6 +232,21 @@
       ]
     },
     {
+      "id": "closing-multumim",
+      "type": "text",
+      "heading": "Vă mulțumim!",
+      "paragraph": "Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.",
+      "paragraphs": [
+        "© {{an}} JL Custom Design. Toate drepturile rezervate. Conținutul acestei oferte, inclusiv textele, imaginile, randările, desenele, soluțiile de design și materialele grafice, este proprietatea JL Custom Design și este destinat exclusiv evaluării proiectului prezentat. Copierea, reproducerea, distribuirea sau utilizarea acestuia în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.",
+        "Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție."
+      ],
+      "textLayout": "right",
+      "image": "/assets/offers/familia-davideanu/umtrdy0ea-0.webp",
+      "imageOrient": "landscape",
+      "imageFocus": "42.9% 58.9%",
+      "fontScale": 0.8
+    },
+    {
       "id": "gallery-g3to",
       "type": "gallery",
       "heading": "Proiecte realizate",
@@ -259,17 +274,6 @@
           "orient": "portrait"
         }
       ]
-    },
-    {
-      "id": "closing-multumim",
-      "type": "text",
-      "heading": "Vă mulțumim!",
-      "paragraph": "Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.",
-      "paragraphs": [
-        "© {{an}} JL Custom Design. Toate drepturile rezervate. Conținutul acestei oferte, inclusiv textele, imaginile, randările, desenele, soluțiile de design și materialele grafice, este proprietatea JL Custom Design și este destinat exclusiv evaluării proiectului prezentat. Copierea, reproducerea, distribuirea sau utilizarea acestuia în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.",
-        "Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție."
-      ],
-      "textLayout": "none"
     }
   ],
   "coverImageOrient": "landscape",
