@@ -90,7 +90,10 @@ export async function buildSave(payload: SavePayload, existing: Entry[]): Promis
     case 'offers': {
       const slug = payload.slug || uniqueSlug(data.clientName || data.title || 'oferta', existing);
       // Deep-walk: convert any uploaded image to WebP under this offer's folder.
+      // Fresh uploads MUST get unique names — reusing 0.webp, 1.webp... would
+      // overwrite files other fields still reference (that bug scrambled offers).
       let counter = 0;
+      const stamp = Date.now().toString(36);
       const walk = async (node: any): Promise<any> => {
         if (Array.isArray(node)) return Promise.all(node.map(walk));
         if (node && typeof node === 'object') {
@@ -99,7 +102,7 @@ export async function buildSave(payload: SavePayload, existing: Entry[]): Promis
           return out;
         }
         if (isDataUrl(node)) {
-          const name = `${counter++}.webp`;
+          const name = `u${stamp}-${counter++}.webp`;
           const repoPath = `${ASSETS.offers}/${slug}/${name}`;
           changes.push(await encodeImage(node, repoPath));
           return `/assets/offers/${slug}/${name}`;
