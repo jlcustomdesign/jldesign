@@ -6,13 +6,27 @@
  * paths ("/assets/..."). Fresh uploads are converted to WebP and stored; the
  * field value is rewritten to the served path.
  */
-import { ASSETS, PATHS, type CollectionName } from './config';
+import { ASSETS, IS_DEV, PATHS, type CollectionName } from './config';
 import { decodeDataUrl, serializeEntry, slugify, toWebp } from './content';
-import type { FileChange } from './github';
+import { readBinary, type FileChange } from './github';
 import type { Entry } from './store';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 const isDataUrl = (v: unknown): v is string => typeof v === 'string' && v.startsWith('data:');
 const publicToRepo = (p: string) => `public${p.startsWith('/') ? '' : '/'}${p}`;
+
+/** Read an asset file (dev → local public/, prod → GitHub), or null if missing. */
+async function readAsset(token: string | null, repoPath: string): Promise<Buffer | null> {
+  if (IS_DEV) {
+    try {
+      return await fs.readFile(path.join(process.cwd(), repoPath));
+    } catch {
+      return null;
+    }
+  }
+  return token ? readBinary(token, repoPath) : null;
+}
 
 async function encodeImage(dataUrl: string, repoPath: string): Promise<FileChange> {
   const { buffer } = decodeDataUrl(dataUrl);
@@ -25,6 +39,8 @@ export interface SavePayload {
   slug?: string;
   data: Record<string, any>;
   body?: string;
+  /** Set when editing under a new slug: owned images must move to the new folder. */
+  renameFrom?: string;
 }
 
 export interface SaveResult {
@@ -35,8 +51,9 @@ export interface SaveResult {
 }
 
 /** Build the file changes for creating/updating one entry. */
-export async function buildSave(payload: SavePayload, existing: Entry[]): Promise<SaveResult> {
-  const { collection, data, body } = payload;
+export async function buildSave(payload: SavePayload, existing: Entry[], token: string | null = null): Promise<SaveResult> {
+  let { data } = payload;
+  const { collection, body } = payload;
   const changes: FileChange[] = [];
 
   switch (collection) {
@@ -89,6 +106,31 @@ export async function buildSave(payload: SavePayload, existing: Entry[]): Promis
 
     case 'offers': {
       const slug = payload.slug || uniqueSlug(data.clientName || data.title || 'oferta', existing);
+
+      // Rename: move images that live under the old slug's folder so refs stay valid.
+      if (payload.renameFrom && payload.renameFrom !== slug) {
+        const oldBase = `/assets/offers/${payload.renameFrom}/`;
+        const migrate = async (node: any): Promise<any> => {
+          if (Array.isArray(node)) return Promise.all(node.map(migrate));
+          if (node && typeof node === 'object') {
+            const out: Record<string, any> = {};
+            for (const [k, v] of Object.entries(node)) out[k] = await migrate(v);
+            return out;
+          }
+          if (typeof node === 'string' && node.startsWith(oldBase)) {
+            const name = node.slice(oldBase.length);
+            const buf = await readAsset(token, publicToRepo(node));
+            if (buf) {
+              changes.push({ path: `${ASSETS.offers}/${slug}/${name}`, content: buf });
+              changes.push({ path: publicToRepo(node), delete: true });
+              return `/assets/offers/${slug}/${name}`;
+            }
+          }
+          return node;
+        };
+        data = await migrate(data);
+      }
+
       // Deep-walk: convert any uploaded image to WebP under this offer's folder.
       // Fresh uploads MUST get unique names — reusing 0.webp, 1.webp... would
       // overwrite files other fields still reference (that bug scrambled offers).

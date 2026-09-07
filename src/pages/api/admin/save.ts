@@ -29,7 +29,11 @@ export async function POST(ctx: APIContext) {
 
   try {
     const existing = await readCollection(payload.collection, auth.token);
-    const result = await buildSave(payload, existing);
+    const result = await buildSave(
+      payload.collection === 'offers' ? { ...payload, renameFrom: payload.slug } : payload,
+      existing,
+      auth.token
+    );
 
     // Handle rename: editing under a new slug should remove the old file.
     if (payload.slug && result.slug !== payload.slug) {

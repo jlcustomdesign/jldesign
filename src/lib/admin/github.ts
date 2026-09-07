@@ -74,6 +74,12 @@ export async function listDir(token: string, dir: string): Promise<string[]> {
 
 /** Read a UTF-8 text file from the repo, or null if it does not exist. */
 export async function readFile(token: string, path: string): Promise<string | null> {
+  const buf = await readBinary(token, path);
+  return buf ? buf.toString('utf-8') : null;
+}
+
+/** Read a binary file from the repo (base64 content API), or null if missing. */
+export async function readBinary(token: string, path: string): Promise<Buffer | null> {
   try {
     const res = await gh(
       token,
@@ -82,7 +88,7 @@ export async function readFile(token: string, path: string): Promise<string | nu
     );
     const data = (await res.json()) as { content?: string; encoding?: string };
     if (!data.content) return null;
-    return Buffer.from(data.content, (data.encoding as BufferEncoding) || 'base64').toString('utf-8');
+    return Buffer.from(data.content, (data.encoding as BufferEncoding) || 'base64');
   } catch {
     return null;
   }

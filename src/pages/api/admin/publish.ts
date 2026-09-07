@@ -101,8 +101,9 @@ export async function POST(ctx: APIContext) {
       const coll = edit.collection as CollectionName;
       const list = existing[coll]!;
       const result = await buildSave(
-        { collection: coll, slug: edit.slug, data: edit.data || {}, body: edit.body },
-        list
+        { collection: coll, slug: edit.slug, data: edit.data || {}, body: edit.body, ...(coll === 'offers' ? { renameFrom: edit.slug } : {}) },
+        list,
+        auth.token
       );
       // Handle rename: remove the old file if the slug changed.
       if (edit.slug && result.slug !== edit.slug) {

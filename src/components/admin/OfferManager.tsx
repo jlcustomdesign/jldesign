@@ -391,6 +391,11 @@ export default function OfferManager({ items, notify, reload, onPublishAll, open
     // Wait for images and let the auto-fit pass settle before rasterizing.
     const imgs = Array.from(stage.querySelectorAll('img')) as HTMLImageElement[];
     await Promise.all(imgs.map((i) => (i.complete ? Promise.resolve() : new Promise((r) => { i.onload = i.onerror = () => r(null); }))));
+    // Never produce a silently-broken PDF: abort if any image failed to load.
+    const broken = imgs.filter((i) => i.naturalWidth === 0).map((i) => (i.currentSrc || i.src).split('/').pop());
+    if (broken.length) {
+      throw new Error(`PDF-ul NU a fost generat — ${broken.length} imagine(i) lipsesc sau nu încarcă: ${[...new Set(broken)].join(', ')}. Repară imaginile în ofertă și încearcă din nou.`);
+    }
     await new Promise((r) => setTimeout(r, 350));
     const pages = Array.from(stage.querySelectorAll('.offer-page')) as HTMLElement[];
     const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
