@@ -5,14 +5,14 @@
   "style": "editorial",
   "websiteUrl": "www.mobilapersonalizatabrasov.ro",
   "coverSubtitle": "MOBILIER PERSONALIZAT",
-  "coverImage": "/assets/offers/familia-davideanu/0.webp",
+  "coverImage": "/assets/offers/familia-davideanu/bucatarie-render.webp",
   "pages": [
     {
       "id": "d",
       "type": "description",
       "heading": "DESCRIERE PROIECT - Bucatarie",
       "paragraph": "Mobila de bucatarie personalizata, cu fronturi din PAL EGGER U702 Gri-Casmir si interior in aceeasi nuanta. Echipata cu accesorii Blum si iluminare LED sub corpurile suspendate. Corpurile superioare au fronturi inalte, pana in tavan, fara manere, completand aspectul minimalist si elegant al mobilierului.",
-      "image": "/assets/offers/familia-davideanu/1.webp",
+      "image": "/assets/offers/familia-davideanu/bucatarie-render.webp",
       "specs": [
         {
           "label": "FRONTURI",
@@ -57,27 +57,27 @@
       "type": "materials",
       "heading": "Materiale si finisaje- Bucatarie",
       "paragraph": "Decorurile și finisajele alese pentru integrare armonioasă și rezistență.",
-      "image": "/assets/offers/familia-davideanu/0.webp",
+      "image": "/assets/offers/familia-davideanu/moodboard-materiale.webp",
       "swatches": [
         {
           "label": "FRONTURI",
           "code": "Gri casmir- U702 ST9",
-          "image": "/assets/offers/familia-davideanu/3.webp"
+          "image": "/assets/offers/familia-davideanu/swatch-u702-gri-casmir.webp"
         },
         {
           "label": "CORPURI",
           "code": "Gri casmir- U702 ST9",
-          "image": "/assets/offers/familia-davideanu/4.webp"
+          "image": "/assets/offers/familia-davideanu/swatch-u702-gri-casmir.webp"
         },
         {
           "label": "BLAT+CB",
           "code": "Egger-Marmura Cremona F229 ST75",
-          "image": "/assets/offers/familia-davideanu/5.webp"
+          "image": "/assets/offers/familia-davideanu/swatch-marmura-cremona-f229.webp"
         },
         {
           "label": "Insula",
           "code": "Egger-H3322 ST17",
-          "image": "/assets/offers/familia-davideanu/6.webp"
+          "image": "/assets/offers/familia-davideanu/swatch-h3322-stejar.webp"
         }
       ],
       "finishes": [
@@ -127,7 +127,7 @@
           "orient": "landscape"
         },
         {
-          "image": "/assets/offers/familia-davideanu/1.webp",
+          "image": "/assets/offers/familia-davideanu/accesoriu-coloana-jolly.webp",
           "title": "Coloană Jolly",
           "description": "Acces rapid si organizare eficienta pentru provizii.",
           "orient": "portrait"
@@ -139,7 +139,7 @@
           "orient": "landscape"
         },
         {
-          "image": "/assets/offers/familia-davideanu/2.webp",
+          "image": "/assets/offers/familia-davideanu/accesoriu-priza-blat.webp",
           "title": "Priza blat",
           "description": "3x 220 - Incorporabila in blat",
           "orient": "portrait",
@@ -167,7 +167,7 @@
       "type": "description",
       "heading": "Descriere proiect - Usi culisante",
       "paragraph": "Usi culisante cu sistem de culisare ascuns Terno Scorrevoli. Usile sunt realizate pe structura din PAL tubular, placata cu MDF pentru obtinerea unei suprafete uniforme. Finisajul va fi vopsit: gri casmir pentru usa din bucatarie si alb RAL 9010 pentru usa dressingului.",
-      "image": "/assets/offers/familia-davideanu/3.webp",
+      "image": "/assets/offers/familia-davideanu/usi-culisante-terno.webp",
       "specs": [
         {
           "label": "Finisaj personalizat",
@@ -220,7 +220,7 @@
       "type": "text",
       "heading": "OFERTA INCLUDE",
       "paragraph": "\n\nPROIECTARE & CONSULTANȚĂ\nProiectare 3D • Randări fotorealiste • Consultanță materiale  și soluții tehnice\n\nPRODUCȚIE\nExecuție mobilier conform proiectului \n\nLIVRARE & MONTAJ\nTransport • Montaj • Reglaj și verificare finală\n\nMĂSURĂTORI\nVerificarea dimensiunilor finale înainte de intrarea în producție\n\n",
-      "image": "/assets/offers/familia-davideanu/4.webp",
+      "image": "/assets/offers/familia-davideanu/moodboard-materiale.webp",
       "fontScale": 1.1,
       "imageOrient": "portrait",
       "imageFocus": "57.0% 17.9%",
@@ -243,18 +243,18 @@
           "orient": "landscape"
         },
         {
-          "image": "/assets/offers/familia-davideanu/5.webp",
+          "image": "/assets/offers/familia-davideanu/proiect-bucatarie-lemn.webp",
           "caption": "",
           "orient": "landscape"
         },
         {
-          "image": "/assets/offers/familia-davideanu/6.webp",
+          "image": "/assets/offers/familia-davideanu/proiect-marmura-neagra-vitrina.webp",
           "caption": "",
           "orient": "landscape",
           "focus": "51.7% 47.1%"
         },
         {
-          "image": "/assets/offers/familia-davideanu/7.webp",
+          "image": "/assets/offers/familia-davideanu/proiect-bucatarie-neagra.webp",
           "caption": "",
           "orient": "portrait"
         }
