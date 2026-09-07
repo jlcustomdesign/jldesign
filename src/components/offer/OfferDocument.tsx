@@ -63,16 +63,36 @@ const has = (s?: string) => !!(s && s.trim());
 let counter = 0;
 export const uid = (prefix = 'id') => `${prefix}-${(counter++).toString(36)}${Math.floor(Math.random() * 1e4).toString(36)}`;
 
+/** Default final page: thank-you + legal texts. {{an}} expands to the current year. */
+export const CLOSING_DEFAULT: Section = {
+  id: 'closing',
+  type: 'text',
+  heading: 'Vă mulțumim!',
+  paragraph: 'Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.',
+  paragraphs: [
+    '© {{an}} JL Custom Design. Toate drepturile rezervate. Conținutul acestei oferte, inclusiv textele, imaginile, randările, desenele, soluțiile de design și materialele grafice, este proprietatea JL Custom Design și este destinat exclusiv evaluării proiectului prezentat. Copierea, reproducerea, distribuirea sau utilizarea acestuia în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.',
+    'Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție.',
+  ],
+  textLayout: 'none',
+};
+
+/** Every offer ends with the closing page — appended automatically when missing,
+    so all existing and future offers (and their PDFs) include it by default. */
+export function withClosingPage(pages: Section[]): Section[] {
+  if (pages.some((p) => p.id && p.id.startsWith('closing'))) return pages;
+  return [...pages, { ...CLOSING_DEFAULT }];
+}
+
 /** Accept both the new {pages:[]} shape and the old {description,materials,...} shape. */
 export function normalizeOffer(raw: any): Offer {
   if (!raw) return { clientName: '', category: '', date: '', pages: [] };
-  if (Array.isArray(raw.pages)) return raw as Offer;
+  if (Array.isArray(raw.pages)) return { ...raw, pages: withClosingPage(raw.pages) } as Offer;
   const o = raw; const pages: Section[] = [];
   if (o.description?.enabled) pages.push({ id: 's-description', type: 'description', heading: o.description.heading || '', paragraph: o.description.paragraph || '', image: o.description.image || '', specs: o.description.specs || [] });
   if (o.materials?.enabled) pages.push({ id: 's-materials', type: 'materials', heading: o.materials.heading || '', paragraph: o.materials.paragraph || '', image: o.materials.image || '', swatches: o.materials.swatches || [], finishes: o.materials.finishes || [] });
   if (o.accessories?.enabled) pages.push({ id: 's-accessories', type: 'accessories', heading: o.accessories.heading || '', paragraph: o.accessories.paragraph || '', items: o.accessories.items || [], benefits: o.accessories.benefits || [] });
   if (o.sketches?.enabled) pages.push({ id: 's-sketches', type: 'sketches', heading: o.sketches.heading || '', paragraph: o.sketches.paragraph || '', shots: o.sketches.sketches || [], dims: o.sketches.dims || [] });
-  return { clientName: o.clientName || '', category: o.category || '', tags: o.tags || [], date: o.date || '', websiteUrl: o.websiteUrl || '', coverImage: o.coverImage || '', coverSubtitle: o.coverSubtitle || 'MOBILIER PERSONALIZAT', style: o.style || 'editorial', accent: o.accent, coverLayout: o.coverLayout, isTemplate: o.isTemplate, templateName: o.templateName, templateDescription: o.templateDescription, pages };
+  return { clientName: o.clientName || '', category: o.category || '', tags: o.tags || [], date: o.date || '', websiteUrl: o.websiteUrl || '', coverImage: o.coverImage || '', coverSubtitle: o.coverSubtitle || 'MOBILIER PERSONALIZAT', style: o.style || 'editorial', accent: o.accent, coverLayout: o.coverLayout, isTemplate: o.isTemplate, templateName: o.templateName, templateDescription: o.templateDescription, pages: withClosingPage(pages) };
 }
 
 const useIsoLayoutEffect = typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect;

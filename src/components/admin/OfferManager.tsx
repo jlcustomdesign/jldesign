@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Entry } from './api';
 import { saveEntry } from './api';
 import { TextInput, TextArea, ImageInput, SectionHead, TagInput } from './ui';
-import OfferDocument, { normalizeOffer, uid, DEFAULT_LABEL, type Offer, type Section, type SectionType } from '../offer/OfferDocument';
+import OfferDocument, { normalizeOffer, uid, DEFAULT_LABEL, CLOSING_DEFAULT, type Offer, type Section, type SectionType } from '../offer/OfferDocument';
 import { fillCrop, GAL_MAX } from '../offer/galleryLayout';
 import * as drafts from './drafts';
 import { isBlankNewOffer } from './pending';
@@ -99,17 +99,7 @@ const PAGE_TYPES: { type: SectionType; name: string; closing?: boolean }[] = [
 
 /** Final "thank you" page with the standard legal texts. {{an}} auto-expands to
     the current year at render time — never hardcode the year here. */
-const closingSection = (): Section => ({
-  id: uid('closing'),
-  type: 'text',
-  heading: 'Vă mulțumim!',
-  paragraph: 'Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.',
-  paragraphs: [
-    '© {{an}} JL Custom Design. Toate drepturile rezervate. Conținutul acestei oferte, inclusiv textele, imaginile, randările, desenele, soluțiile de design și materialele grafice, este proprietatea JL Custom Design și este destinat exclusiv evaluării proiectului prezentat. Copierea, reproducerea, distribuirea sau utilizarea acestuia în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.',
-    'Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție.',
-  ],
-  textLayout: 'none',
-});
+const closingSection = (): Section => ({ ...CLOSING_DEFAULT, id: uid('closing') });
 
 const blankSection = (type: SectionType): Section => {
   const base = { id: uid(type), type, heading: '', paragraph: '' };
