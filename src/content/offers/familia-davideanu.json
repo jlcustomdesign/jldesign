@@ -199,7 +199,7 @@
       "type": "description",
       "heading": "Descriere proiect - Dressing",
       "paragraph": "Dressing modern si elegant, realizat in nuanta gri casmir U702 EGGER, cu compartimentare pe ambele laturi si acces central. Include spatii pentru haine pe umeras, rafturi, sertare si zone dedicate pentru incaltaminte, genti si accesorii, valorificand eficient spatiul pana la tavan.",
-      "image": "/assets/offers/familia-davideanu/umtrjd2cl-0.webp",
+      "image": "/assets/offers/familia-davideanu/umtrjhz3y-0.webp",
       "specs": [
         {
           "label": "FINISAJ",
@@ -228,17 +228,17 @@
       "paragraph": "",
       "shots": [
         {
-          "image": "/assets/offers/familia-davideanu/umtrjd2cl-1.webp",
+          "image": "/assets/offers/familia-davideanu/umtrjhz3y-1.webp",
           "caption": "",
           "orient": "portrait"
         },
         {
-          "image": "/assets/offers/familia-davideanu/umtrjd2cl-2.webp",
+          "image": "/assets/offers/familia-davideanu/umtrjhz3y-2.webp",
           "caption": "",
           "orient": "portrait"
         },
         {
-          "image": "/assets/offers/familia-davideanu/umtrjd2cl-3.webp",
+          "image": "/assets/offers/familia-davideanu/umtrjhz3y-3.webp",
           "caption": "",
           "orient": "landscape",
           "focus": "66.7% 0.0%"
@@ -254,7 +254,7 @@
       "type": "description",
       "heading": "Baie",
       "paragraph": "Mobilier modern pentru baie, realizat in finisaj de stejar natural inchis, cu lavoar suspendat  si  doua sertare generoase. Ansamblul este completat de placarea zonei WC-ului si corpul superior cu doua usi, pentru un design unitar si spatiu suplimentar de depozitare.",
-      "image": "/assets/offers/familia-davideanu/umtrjd2cl-4.webp",
+      "image": "/assets/offers/familia-davideanu/umtrjhz3y-4.webp",
       "specs": [
         {
           "label": "FINISAJ",
@@ -298,21 +298,6 @@
       ]
     },
     {
-      "id": "closing-multumim",
-      "type": "text",
-      "heading": "Vă mulțumim!",
-      "paragraph": "Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.",
-      "paragraphs": [
-        "© {{an}}  JL Custom Design. Toate drepturile rezervate.\nMaterialele create de JL Custom Design și incluse în această ofertă — texte, randări, desene, soluții de design și materiale grafice — sunt proprietatea JL Custom Design și sunt destinate exclusiv evaluării proiectului prezentat.\n\nImaginile și materialele furnizate de client sau provenite din surse terțe rămân supuse drepturilor de autor ale titularilor acestora.\n\nCopierea, reproducerea, distribuirea sau utilizarea materialelor aparținând JL Custom Design în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.",
-        "Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție."
-      ],
-      "textLayout": "bottom",
-      "image": "/assets/offers/familia-davideanu/umtrdy0ea-0.webp",
-      "imageOrient": "landscape",
-      "imageFocus": "44.2% 64.3%",
-      "fontScale": 0.8
-    },
-    {
       "id": "gallery-g3to",
       "type": "gallery",
       "heading": "Proiecte realizate",
@@ -340,6 +325,21 @@
           "orient": "portrait"
         }
       ]
+    },
+    {
+      "id": "closing-multumim",
+      "type": "text",
+      "heading": "Vă mulțumim!",
+      "paragraph": "Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.",
+      "paragraphs": [
+        "© {{an}}  JL Custom Design. Toate drepturile rezervate.\nMaterialele create de JL Custom Design și incluse în această ofertă — texte, randări, desene, soluții de design și materiale grafice — sunt proprietatea JL Custom Design și sunt destinate exclusiv evaluării proiectului prezentat.\n\nImaginile și materialele furnizate de client sau provenite din surse terțe rămân supuse drepturilor de autor ale titularilor acestora.\n\nCopierea, reproducerea, distribuirea sau utilizarea materialelor aparținând JL Custom Design în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.",
+        "Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție."
+      ],
+      "textLayout": "bottom",
+      "image": "/assets/offers/familia-davideanu/umtrdy0ea-0.webp",
+      "imageOrient": "landscape",
+      "imageFocus": "44.2% 64.3%",
+      "fontScale": 0.8
     }
   ],
   "coverImageOrient": "landscape",
