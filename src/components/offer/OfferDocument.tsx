@@ -272,7 +272,6 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
 
   const subtitle = offer.coverSubtitle || 'MOBILIER PERSONALIZAT';
   const words = subtitle.split(' ');
-  const date = offer.date || '';
   const coverTags = offer.tags && offer.tags.length ? offer.tags : (has(offer.category) ? [offer.category!] : []);
 
   const logoSrc = offer.logoImage || LOGO_SRC;
@@ -327,7 +326,8 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
             </div>
             <div className="cover-foot">
               <span {...F('cover:websiteUrl')}>{offer.websiteUrl}</span>
-              <span {...F('cover:date')}>{date}</span>
+              <span>Imagini doar de referință</span>
+              <span>© {new Date().getFullYear()} JL Custom Design. Toate drepturile rezervate.</span>
             </div>
           </>
         ) : (
@@ -341,7 +341,8 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
             </div>
             <div className="cover-foot">
               <span {...F('cover:websiteUrl')}>{offer.websiteUrl}</span>
-              <span {...F('cover:date')}>{date}</span>
+              <span>Imagini doar de referință</span>
+              <span>© {new Date().getFullYear()} JL Custom Design. Toate drepturile rezervate.</span>
             </div>
           </>
         )}
@@ -354,12 +355,12 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
   return (
     <div className={rootClass} style={docStyle}>
       {cover}
-      {offer.pages.map((s, idx) => <Page key={s.id} s={s} num={String(idx + 1).padStart(2, '0')} date={date} F={F} editable={!!editable} logoSrc={logoSrc} />)}
+      {offer.pages.map((s, idx) => <Page key={s.id} s={s} num={String(idx + 1).padStart(2, '0')} F={F} editable={!!editable} logoSrc={logoSrc} />)}
     </div>
   );
 }
 
-function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string; date: string; F: (fid: string) => Record<string, any>; editable: boolean; logoSrc: string }) {
+function Page({ s, num, F, editable, logoSrc }: { s: Section; num: string; F: (fid: string) => Record<string, any>; editable: boolean; logoSrc: string }) {
   // {{an}} in any text expands to the CURRENT year at render time, so the
   // copyright line stays correct forever without editing the offer.
   const sub = (t?: string) => (t || '').replaceAll('{{an}}', String(new Date().getFullYear()));
@@ -527,7 +528,10 @@ function Page({ s, num, date, F, editable, logoSrc }: { s: Section; num: string;
           {postMediaContent}
         </div>
       )}
-      <div className="sheet-foot"><span>{date}</span></div>
+      <div className="sheet-foot">
+        <span>Imagini doar de referință</span>
+        <span>© {new Date().getFullYear()} JL Custom Design. Toate drepturile rezervate.</span>
+      </div>
     </section>
   );
 }
