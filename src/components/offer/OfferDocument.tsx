@@ -346,7 +346,6 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
             </div>
             <div className="cover-foot">
               <span {...F('cover:websiteUrl')}>{offer.websiteUrl}</span>
-              <span>Imagini doar de referință</span>
               <span>© {new Date().getFullYear()} JL Custom Design. Toate drepturile rezervate.</span>
             </div>
           </>
@@ -361,7 +360,6 @@ export default function OfferDocument({ offer: raw, coverOnly, editable, activeF
             </div>
             <div className="cover-foot">
               <span {...F('cover:websiteUrl')}>{offer.websiteUrl}</span>
-              <span>Imagini doar de referință</span>
               <span>© {new Date().getFullYear()} JL Custom Design. Toate drepturile rezervate.</span>
             </div>
           </>
@@ -506,7 +504,7 @@ function Page({ s, num, F, editable, logoSrc }: { s: Section; num: string; F: (f
       const items = lines.filter((l) => l.trimStart().startsWith('- ')).map((l) => l.trimStart().slice(2));
       return (
         <div className="text-block" key={bidx}>
-          <div className="text-body" {...(bidx === 0 ? F(`${s.id}:paragraph`) : {})}>
+          <div className="text-body" {...F(bidx === 0 ? `${s.id}:paragraph` : `${s.id}:paragraph:${bidx - 1}`)}>
             {paras.map((l, j) => <p key={j}>{l}</p>)}
           </div>
           {items.length > 0 && (
@@ -549,7 +547,6 @@ function Page({ s, num, F, editable, logoSrc }: { s: Section; num: string; F: (f
         </div>
       )}
       <div className="sheet-foot">
-        <span>Imagini doar de referință</span>
         <span>© {new Date().getFullYear()} JL Custom Design. Toate drepturile rezervate.</span>
       </div>
     </section>
