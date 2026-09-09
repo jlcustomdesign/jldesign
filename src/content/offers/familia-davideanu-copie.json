@@ -1,0 +1,351 @@
+{
+  "clientName": "Familia Davideanu (copie)",
+  "category": "BUCATARIE • USI CULISANTE • DRESSING • BAIE",
+  "date": "Septembrie 2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": "MOBILIER PERSONALIZAT",
+  "coverImage": "/assets/offers/familia-davideanu/bucatarie-render.webp",
+  "pages": [
+    {
+      "id": "d",
+      "type": "description",
+      "heading": "DESCRIERE PROIECT - Bucatarie",
+      "paragraph": "Mobila de bucatarie personalizata, cu fronturi din PAL EGGER U702 Gri-Casmir si interior in aceeasi nuanta. Echipata cu accesorii Blum si iluminare LED sub corpurile suspendate. Corpurile superioare au fronturi inalte, pana in tavan, fara manere, completand aspectul minimalist si elegant al mobilierului.",
+      "image": "/assets/offers/familia-davideanu/bucatarie-render.webp",
+      "specs": [
+        {
+          "label": "FRONTURI",
+          "value": "Gri Casmir Suprafata mata"
+        },
+        {
+          "label": "CORPURI INTERIOARE",
+          "value": "PAL Egger 18 mm, cant ABS 0.8"
+        },
+        {
+          "label": "BLAT",
+          "value": "Termorezistent Egger -Marmura cremona -38 mm"
+        },
+        {
+          "label": "CONTRABLAT",
+          "value": "Termorezistent Egger - decor Marmura cremona"
+        },
+        {
+          "label": "ILUMINARE",
+          "value": "Bandă LED integrată - lumina calda"
+        },
+        {
+          "label": "FERONERIE",
+          "value": "BLUM gama PREMIUM- soft close (balamale si glisiere)"
+        },
+        {
+          "label": "ACCESORII",
+          "value": "Suport tacamuri, scurgator vase, coloana jolly, priza in blat."
+        },
+        {
+          "label": "FINISAJE PREMIUM",
+          "value": "Materiale premium, pentru rezistenta, estetica si durabilitate."
+        }
+      ],
+      "fontScale": 1.1,
+      "imageOrient": "landscape",
+      "imageFocus": "19.8% 39.3%",
+      "imageLayout": "side"
+    },
+    {
+      "id": "m",
+      "type": "materials",
+      "heading": "Materiale si finisaje- Bucatarie",
+      "paragraph": "Decorurile și finisajele alese pentru integrare armonioasă și rezistență.",
+      "image": "/assets/offers/familia-davideanu/moodboard-materiale.webp",
+      "swatches": [
+        {
+          "label": "FRONTURI",
+          "code": "Gri casmir- U702 ST9",
+          "image": "/assets/offers/familia-davideanu/swatch-u702-gri-casmir.webp"
+        },
+        {
+          "label": "CORPURI",
+          "code": "Gri casmir- U702 ST9",
+          "image": "/assets/offers/familia-davideanu/swatch-u702-gri-casmir.webp"
+        },
+        {
+          "label": "BLAT+CB",
+          "code": "Egger-Marmura Cremona F229 ST75",
+          "image": "/assets/offers/familia-davideanu/swatch-marmura-cremona-f229.webp"
+        },
+        {
+          "label": "Insula",
+          "code": "Egger-H3322 ST17",
+          "image": "/assets/offers/familia-davideanu/swatch-h3322-stejar.webp"
+        }
+      ],
+      "finishes": [
+        {
+          "label": "SUPRAFAȚĂ",
+          "desc": "Textură mată"
+        },
+        {
+          "label": "REZISTENȚĂ",
+          "desc": "Materiale durabile pentru utilizare zilnică"
+        },
+        {
+          "label": "ÎNTREȚINERE",
+          "desc": "Ușor de curățat"
+        },
+        {
+          "label": "MATERIALE SIGURE",
+          "desc": "Certificate"
+        }
+      ],
+      "fontScale": 1,
+      "imageOrient": "portrait",
+      "imageFocus": "73.6% 50.0%"
+    },
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "Accesorii și echipare - Bucatarie",
+      "paragraph": "Echiparea mobilierului a fost configurată în funcție de cerințe și de spațiile disponibile. Sunt prevăzute sisteme de deschidere și glisare BLUM gama premium, iluminare LED cu alimentare 24V și control wireless, precum și o priză integrată pentru alimentarea echipamentelor utilizate pe blat.",
+      "items": [
+        {
+          "image": "/assets/offers/ani-endre/3.webp",
+          "title": "LED COB 24V",
+          "description": "Iluminare uniforma a blatului, lumina calda",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/4.webp",
+          "title": "Sertare BLUM",
+          "description": "Sertar cu laterale metalice albe de la BLUM, echipate cu închidere lentă și silențioasă.",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/5.webp",
+          "title": "Balamale BLUM-inchidere lina + reglaj 3D.",
+          "description": "Inchidere lina si silentioasa, cu aliniere precisa a usilor.",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/familia-davideanu/accesoriu-coloana-jolly.webp",
+          "title": "Coloană Jolly",
+          "description": "Acces rapid si organizare eficienta pentru provizii.",
+          "orient": "portrait"
+        },
+        {
+          "image": "/assets/offers/ani-endre/7.webp",
+          "title": "Organizator tacamuri",
+          "description": "Ordine in sertar si acces rapid la fiecare tacam.",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/familia-davideanu/accesoriu-priza-blat.webp",
+          "title": "Priza blat",
+          "description": "3x 220 - Incorporabila in blat",
+          "orient": "portrait",
+          "focus": "0.0% 0.0%"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Funcționare silențioasă"
+        },
+        {
+          "label": "Organizare eficienta"
+        },
+        {
+          "label": "Confort zilnic"
+        },
+        {
+          "label": "Spațiu utilizat inteligent"
+        }
+      ],
+      "fontScale": 1
+    },
+    {
+      "id": "description-f40s",
+      "type": "description",
+      "heading": "Descriere proiect - Usi culisante",
+      "paragraph": "Usi culisante cu sistem de culisare ascuns Terno Scorrevoli. Usile sunt realizate pe structura din PAL tubular, placata cu MDF pentru obtinerea unei suprafete uniforme. Finisajul va fi vopsit: gri casmir pentru usa din bucatarie si alb RAL 9010 pentru usa dressingului.",
+      "image": "/assets/offers/familia-davideanu/usi-culisante-terno.webp",
+      "specs": [
+        {
+          "label": "FINISAJ PERSONALIZAT",
+          "value": "Gri casmir-Alb RAL 9010"
+        },
+        {
+          "label": "USI",
+          "value": "Structura solida PAL tubular"
+        },
+        {
+          "label": "SISTEM CULISARE",
+          "value": "TERNO SCORREVOLI – sistem invizibil, complet integrat in usa"
+        },
+        {
+          "label": "AMORTIZARE",
+          "value": "Tehnologie Fluid – inchidere progresiva, lina si silentioasa"
+        },
+        {
+          "label": "CAPACITATE",
+          "value": "Pana la 80 kg / usa"
+        }
+      ],
+      "imageOrient": "portrait",
+      "imageFocus": "0.0% 58.9%",
+      "fontScale": 1.1
+    },
+    {
+      "id": "description-g28c",
+      "type": "description",
+      "heading": "Descriere proiect - Dressing",
+      "paragraph": "Dressing modern si elegant, realizat in nuanta gri casmir U702 EGGER, cu compartimentare pe ambele laturi si acces central. Include spatii pentru haine pe umeras, rafturi, sertare si zone dedicate pentru incaltaminte, genti si accesorii, valorificand eficient spatiul pana la tavan.",
+      "image": "/assets/offers/familia-davideanu/umtrjhz3y-0.webp",
+      "specs": [
+        {
+          "label": "FINISAJ",
+          "value": "Mat- Gri Casmir- U702"
+        },
+        {
+          "label": "CORPURI MOBILA",
+          "value": "PAL 18 mm Egger-cant 0.8mm"
+        },
+        {
+          "label": "BARA HAINE",
+          "value": "Crom"
+        },
+        {
+          "label": "GLISIERE",
+          "value": "BLUM-inchidere lenta"
+        }
+      ],
+      "imageOrient": "portrait",
+      "fontScale": 1.1
+    },
+    {
+      "id": "gallery-f633",
+      "type": "gallery",
+      "heading": "DRESSING",
+      "paragraph": "",
+      "shots": [
+        {
+          "image": "/assets/offers/familia-davideanu/umtrjhz3y-1.webp",
+          "caption": "",
+          "orient": "portrait"
+        },
+        {
+          "image": "/assets/offers/familia-davideanu/umtrjhz3y-2.webp",
+          "caption": "",
+          "orient": "portrait"
+        },
+        {
+          "image": "/assets/offers/familia-davideanu/umtrjhz3y-3.webp",
+          "caption": "",
+          "orient": "landscape",
+          "focus": "66.7% 0.0%"
+        },
+        {
+          "image": "",
+          "caption": ""
+        }
+      ]
+    },
+    {
+      "id": "description-g6he",
+      "type": "description",
+      "heading": "Baie",
+      "paragraph": "Mobilier modern pentru baie, realizat in finisaj de stejar natural inchis, cu lavoar suspendat  si  doua sertare generoase. Ansamblul este completat de placarea zonei WC-ului si corpul superior cu doua usi, pentru un design unitar si spatiu suplimentar de depozitare.",
+      "image": "/assets/offers/familia-davideanu/umtrjhz3y-4.webp",
+      "specs": [
+        {
+          "label": "FINISAJ",
+          "value": "Stejar"
+        },
+        {
+          "label": "CORP MOBILIER/FRONT",
+          "value": "PAL 18 mm, cant 0.8 mm aplicat cu adeziv poliuretanic, pentru o mai buna rezistenta la umiditate."
+        },
+        {
+          "label": "SERTARE",
+          "value": "BLUM- inchidere lenta"
+        },
+        {
+          "label": "CORP SUPERIOR",
+          "value": "Balamale BLUM inchidere lenta"
+        },
+        {
+          "label": "USI",
+          "value": "Push to open"
+        }
+      ],
+      "imageOrient": "portrait",
+      "imageFocus": "37.7% 51.8%",
+      "fontScale": 1.1
+    },
+    {
+      "id": "text-f3iw",
+      "type": "text",
+      "heading": "OFERTA INCLUDE",
+      "paragraph": "\n\nPROIECTARE & CONSULTANȚĂ\nProiectare 3D • Randări fotorealiste • Consultanță materiale  și soluții tehnice\n\nPRODUCȚIE\nExecuție mobilier conform proiectului \n\nLIVRARE & MONTAJ\nTransport • Montaj • Reglaj și verificare finală\n\nMĂSURĂTORI\nVerificarea dimensiunilor finale înainte de intrarea în producție\n\n",
+      "image": "/assets/offers/familia-davideanu/moodboard-materiale.webp",
+      "fontScale": 1.1,
+      "imageOrient": "portrait",
+      "imageFocus": "57.0% 17.9%",
+      "textLayout": "right",
+      "headingBold": false,
+      "paragraphs": [
+        "INVESTITIE PROIECT\n\nValoare proiect: 13.650 €\nReducere proiect: −650 €\n\nPRET FINAL: 13.000 €\n\nBucatarie · Dressing · 2 usi culisante · Baie",
+        "Garanție: 24 luni"
+      ]
+    },
+    {
+      "id": "gallery-g3to",
+      "type": "gallery",
+      "heading": "Proiecte realizate",
+      "paragraph": "",
+      "shots": [
+        {
+          "image": "/assets/offers/ani-endre/10.webp",
+          "caption": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/familia-davideanu/proiect-bucatarie-lemn.webp",
+          "caption": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/familia-davideanu/proiect-marmura-neagra-vitrina.webp",
+          "caption": "",
+          "orient": "landscape",
+          "focus": "51.7% 47.1%"
+        },
+        {
+          "image": "/assets/offers/familia-davideanu/proiect-bucatarie-neagra.webp",
+          "caption": "",
+          "orient": "portrait"
+        }
+      ]
+    },
+    {
+      "id": "closing-multumim",
+      "type": "text",
+      "heading": "Vă mulțumim!",
+      "paragraph": "Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.",
+      "paragraphs": [
+        "© {{an}}  JL Custom Design. Toate drepturile rezervate.\nMaterialele create de JL Custom Design și incluse în această ofertă — texte, randări, desene, soluții de design și materiale grafice — sunt proprietatea JL Custom Design și sunt destinate exclusiv evaluării proiectului prezentat.\n\nImaginile și materialele furnizate de client sau provenite din surse terțe rămân supuse drepturilor de autor ale titularilor acestora.\n\nCopierea, reproducerea, distribuirea sau utilizarea materialelor aparținând JL Custom Design în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.",
+        "Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție."
+      ],
+      "textLayout": "bottom",
+      "image": "/assets/offers/familia-davideanu/umtrdy0ea-0.webp",
+      "imageOrient": "landscape",
+      "imageFocus": "44.2% 64.3%",
+      "fontScale": 0.8
+    }
+  ],
+  "coverImageOrient": "landscape",
+  "tags": [],
+  "coverImageFocus": "39.0% 32.1%",
+  "coverFit": "cover",
+  "coverLayout": "full",
+  "slug": "familia-davideanu-copie"
+}
