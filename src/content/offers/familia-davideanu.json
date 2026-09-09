@@ -1,6 +1,6 @@
 {
   "clientName": "Familia Davideanu",
-  "category": "BUCATARIE • USI CULISANTE • DRESSING • BAIE",
+  "category": "BUCATARIE • DRESSING • BAIE",
   "date": "Septembrie 2026",
   "style": "editorial",
   "websiteUrl": "www.mobilapersonalizatabrasov.ro",
@@ -163,38 +163,6 @@
       "fontScale": 1
     },
     {
-      "id": "description-f40s",
-      "type": "description",
-      "heading": "Descriere proiect - Usi culisante",
-      "paragraph": "Usi culisante cu sistem de culisare ascuns Terno Scorrevoli. Usile sunt realizate pe structura din PAL tubular, placata cu MDF pentru obtinerea unei suprafete uniforme. Finisajul va fi vopsit: gri casmir pentru usa din bucatarie si alb RAL 9010 pentru usa dressingului.",
-      "image": "/assets/offers/familia-davideanu/usi-culisante-terno.webp",
-      "specs": [
-        {
-          "label": "FINISAJ PERSONALIZAT",
-          "value": "Gri casmir-Alb RAL 9010"
-        },
-        {
-          "label": "USI",
-          "value": "Structura solida PAL tubular"
-        },
-        {
-          "label": "SISTEM CULISARE",
-          "value": "TERNO SCORREVOLI – sistem invizibil, complet integrat in usa"
-        },
-        {
-          "label": "AMORTIZARE",
-          "value": "Tehnologie Fluid – inchidere progresiva, lina si silentioasa"
-        },
-        {
-          "label": "CAPACITATE",
-          "value": "Pana la 80 kg / usa"
-        }
-      ],
-      "imageOrient": "portrait",
-      "imageFocus": "0.0% 58.9%",
-      "fontScale": 1.1
-    },
-    {
       "id": "description-g28c",
       "type": "description",
       "heading": "Descriere proiect - Dressing",
@@ -254,7 +222,7 @@
       "type": "description",
       "heading": "Baie",
       "paragraph": "Mobilier modern pentru baie, realizat in finisaj de stejar natural inchis, cu lavoar suspendat  si  doua sertare generoase. Ansamblul este completat de placarea zonei WC-ului si corpul superior cu doua usi, pentru un design unitar si spatiu suplimentar de depozitare.",
-      "image": "/assets/offers/familia-davideanu/umtrjhz3y-4.webp",
+      "image": "/assets/offers/familia-davideanu/umttysi60-0.webp",
       "specs": [
         {
           "label": "FINISAJ",
@@ -293,7 +261,7 @@
       "textLayout": "right",
       "headingBold": false,
       "paragraphs": [
-        "INVESTITIE PROIECT\n\nValoare proiect: 13.650 €\nReducere proiect: −650 €\n\nPRET FINAL: 13.000 €\n\nBucatarie · Dressing · 2 usi culisante · Baie",
+        "INVESTITIE PROIECT\n\nValoare proiect: 11000 €\nReducere proiect: −600 €\n\nPRET FINAL: 10.400 €\n\nBucatarie · Dressing · Baie",
         "Garanție: 24 luni"
       ]
     },
