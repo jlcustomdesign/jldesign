@@ -15,7 +15,7 @@
       "items": [
         {
           "image": "/assets/offers/propunere-sistem-pentru-biblioteca/1.webp",
-          "title": "Polite PAL sau MDF",
+          "title": "Polite PAL EGGER",
           "description": "",
           "orient": "landscape"
         },
@@ -84,6 +84,17 @@
         "Polite din PAL, cu grosime de 54 mm (3 x 18 mm), finisaj stejar deschis – 8 buc.\nCorpuri inferioare din PAL de 18 mm, prevazute cu cate 4 sertare BLUM Merivobox – 2 buc.\n\nINVESTITIE PROIECT\n\nValoare proiect: 2950 €\nReducere proiect: −250 €\n\nPRET FINAL: 2700 €\n\n"
       ],
       "headingBold": false
+    },
+    {
+      "id": "closing",
+      "type": "text",
+      "heading": "Vă mulțumim!",
+      "paragraph": "Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.",
+      "paragraphs": [
+        "© {{an}} JL Custom Design. Toate drepturile rezervate. Conținutul acestei oferte, inclusiv textele, imaginile, randările, desenele, soluțiile de design și materialele grafice, este proprietatea JL Custom Design și este destinat exclusiv evaluării proiectului prezentat. Copierea, reproducerea, distribuirea sau utilizarea acestuia în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.",
+        "Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție."
+      ],
+      "textLayout": "none"
     }
   ],
   "coverImageOrient": "landscape",
