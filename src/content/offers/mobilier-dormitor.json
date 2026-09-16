@@ -1,0 +1,201 @@
+{
+  "clientName": "Mobilier dormitor",
+  "category": "",
+  "date": "Septembrie 2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": "MOBILIER PERSONALIZAT",
+  "coverImage": "/assets/offers/mobilier-dormitor/umu3w7utl-0.webp",
+  "pages": [
+    {
+      "id": "d",
+      "type": "description",
+      "heading": "DESCRIERE PROIECT",
+      "paragraph": "Mobilier personalizat, destinat pentru spatiu de odihna, studiu si depozitare.   \n\n•\tZona de studiu e compusa dintr-un birou de 1,90 x 0,60 m, continuat cu doua corpuri de depozitare, 1,10 x 0,40 x 0,60 m (H x A x L). Sub birou este prevazut un corp cu 4 sertare.\n•\tPe ambele parti ale zonei de birou sunt amplasate 2 dulapuri de depozitare, cu dimensiunile de 2,45 x 0,40 x 0,60 m (H x A x L), oferind spatiu suplimentar pentru carti si obiecte personale \n•\tZona de dormit include 2 paturi de 0,90 x 2,00 m, fiecare prevazut cu spatii de depozitare integrate.\n•\tZona media  comoda TV cu 4 sertare.\n•\tPentru depozitarea hainelor este prevazut un dulap de 2,45 x 0,60 x 2,40 m (H x A x L), organizat pentru depozitarea hainelor impaturite si a hainelor pe umerase. \n\n            Toate corpurile sunt echipate cu accesorii BLUM, inclusiv balamale si sisteme de glisare cu inchidere lenta, pentru un plus de confort in utilizare, durabilitate si functionare silentioasa.\n",
+      "image": "/assets/offers/mobilier-dormitor/umu3w7utl-1.webp",
+      "specs": [
+        {
+          "label": "FRONTURI",
+          "value": "Bej/Verde Eucalipt/Stejar"
+        },
+        {
+          "label": "CORPURI INTERIOARE",
+          "value": "PAL Egger 18 mm, cant ABS 0.8"
+        },
+        {
+          "label": "BLAT Birou",
+          "value": "Blat dublu PAL Egger -36 mm"
+        },
+        {
+          "label": "FERONERIE",
+          "value": "BLUM gama PREMIUM- soft close (balamale si glisiere)"
+        },
+        {
+          "label": "ACCESORII",
+          "value": "Suport tacamuri, scurgator vase, coloana jolly, priza in blat."
+        },
+        {
+          "label": "FINISAJE PREMIUM",
+          "value": "Materiale premium, pentru rezistenta, estetica si durabilitate."
+        }
+      ],
+      "fontScale": 1,
+      "imageOrient": "landscape",
+      "imageFocus": "45.4% 62.5%",
+      "imageLayout": "side"
+    },
+    {
+      "id": "m",
+      "type": "materials",
+      "heading": "Materiale si finisaje",
+      "paragraph": "Decorurile și finisajele alese pentru integrare armonioasă și rezistență.",
+      "image": "/assets/offers/mobilier-dormitor/umu3w7utl-2.webp",
+      "swatches": [
+        {
+          "label": "FRONTURI",
+          "code": "Bej ceme- U216 ",
+          "image": "/assets/offers/mobilier-dormitor/umu3w7utl-9.webp"
+        },
+        {
+          "label": "Fronturi",
+          "code": "Verde salvie- U604 ST9",
+          "image": "/assets/offers/mobilier-dormitor/umu3w7utl-10.webp"
+        },
+        {
+          "label": "BLAT birou-dulapuri-pat",
+          "code": "Stejar Vicenza- H3157 ST9",
+          "image": "/assets/offers/mobilier-dormitor/umu3w7utl-11.webp"
+        }
+      ],
+      "finishes": [
+        {
+          "label": "SUPRAFAȚĂ",
+          "desc": "Textură mată"
+        },
+        {
+          "label": "REZISTENȚĂ",
+          "desc": "Materiale durabile pentru utilizare zilnică"
+        },
+        {
+          "label": "ÎNTREȚINERE",
+          "desc": "Ușor de curățat"
+        },
+        {
+          "label": "MATERIALE SIGURE",
+          "desc": "Certificate"
+        }
+      ],
+      "fontScale": 1.1,
+      "imageOrient": "portrait",
+      "imageFocus": "73.6% 50.0%"
+    },
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "Accesorii și echipare ",
+      "paragraph": "Echiparea mobilierului a fost configurată în funcție de cerințe și de spațiile disponibile. Sunt prevăzute sisteme de deschidere și glisare BLUM gama premium, precum și o priză integrată pentru alimentarea echipamentelor utilizate pe birou.",
+      "items": [
+        {
+          "image": "/assets/offers/ani-endre/4.webp",
+          "title": "Sertare BLUM",
+          "description": "Sertare de la BLUM, echipate cu închidere lentă și silențioasă.",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/ani-endre/5.webp",
+          "title": "Balamale BLUM-inchidere lina + reglaj 3D.",
+          "description": "Inchidere lina si silentioasa, cu aliniere precisa a usilor.",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/familia-davideanu/accesoriu-priza-blat.webp",
+          "title": "Priza blat",
+          "description": "3x 220 - Incorporabila in blat",
+          "orient": "portrait",
+          "focus": "0.0% 0.0%"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Funcționare silențioasă"
+        },
+        {
+          "label": "Organizare eficienta"
+        },
+        {
+          "label": "Confort zilnic"
+        },
+        {
+          "label": "Spațiu utilizat inteligent"
+        }
+      ],
+      "fontScale": 1
+    },
+    {
+      "id": "text-f3iw",
+      "type": "text",
+      "heading": "OFERTA INCLUDE",
+      "paragraph": "\n\nPROIECTARE & CONSULTANȚĂ\nProiectare 3D • Randări fotorealiste • Consultanță materiale  și soluții tehnice\n\nPRODUCȚIE\nExecuție mobilier conform proiectului \n\nLIVRARE & MONTAJ\nTransport • Montaj • Reglaj și verificare finală\n\nMĂSURĂTORI\nVerificarea dimensiunilor finale înainte de intrarea în producție\n\n",
+      "image": "/assets/offers/mobilier-dormitor/umu3w7utl-3.webp",
+      "fontScale": 1.1,
+      "imageOrient": "portrait",
+      "imageFocus": "57.0% 17.9%",
+      "textLayout": "right",
+      "headingBold": false,
+      "paragraphs": [
+        "INVESTITIE PROIECT\n\nValoare proiect: 5400 €\nReducere proiect: −250 €\n\nPRET FINAL: 5150 €\n\n",
+        "Garanție: 24 luni"
+      ]
+    },
+    {
+      "id": "gallery-g3to",
+      "type": "gallery",
+      "heading": "Proiecte realizate",
+      "paragraph": "",
+      "shots": [
+        {
+          "image": "/assets/offers/mobilier-dormitor/umu3w7utl-4.webp",
+          "caption": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/mobilier-dormitor/umu3w7utl-5.webp",
+          "caption": "",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/mobilier-dormitor/umu3w7utl-6.webp",
+          "caption": "",
+          "orient": "landscape",
+          "focus": "51.7% 47.1%"
+        },
+        {
+          "image": "/assets/offers/mobilier-dormitor/umu3w7utl-7.webp",
+          "caption": "",
+          "orient": "landscape"
+        }
+      ]
+    },
+    {
+      "id": "closing-multumim",
+      "type": "text",
+      "heading": "Vă mulțumim!",
+      "paragraph": "Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.",
+      "paragraphs": [
+        "© {{an}}  JL Custom Design. Toate drepturile rezervate.\nMaterialele create de JL Custom Design și incluse în această ofertă — texte, randări, desene, soluții de design și materiale grafice — sunt proprietatea JL Custom Design și sunt destinate exclusiv evaluării proiectului prezentat.\n\nImaginile și materialele furnizate de client sau provenite din surse terțe rămân supuse drepturilor de autor ale titularilor acestora.\n\nCopierea, reproducerea, distribuirea sau utilizarea materialelor aparținând JL Custom Design în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.",
+        "Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție."
+      ],
+      "textLayout": "bottom",
+      "image": "/assets/offers/mobilier-dormitor/umu3w7utl-8.webp",
+      "imageOrient": "landscape",
+      "imageFocus": "65.9% 37.5%",
+      "fontScale": 0.8
+    }
+  ],
+  "coverImageOrient": "landscape",
+  "tags": [],
+  "coverImageFocus": "39.0% 32.1%",
+  "coverFit": "cover",
+  "coverLayout": "full",
+  "slug": "mobilier-dormitor"
+}
