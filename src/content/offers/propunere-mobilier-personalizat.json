@@ -1,0 +1,100 @@
+{
+  "clientName": "PROPUNERE MOBILIER PERSONALIZAT",
+  "category": "COMODA DIN PAL ALB",
+  "date": "2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": " ",
+  "coverImage": "/assets/offers/propunere-mobilier-personalizat/umuffve6x-0.webp",
+  "pages": [
+    {
+      "id": "a",
+      "type": "accessories",
+      "heading": "COMODA",
+      "paragraph": "Comoda cu design modern si minimalist, realizata din PAL alb, cu doua usi si 3 sau 4 polite interioare. Butonii negri si picioarele negre creeaza un contrast elegant, oferind piesei un aspect simplu, dar rafinat",
+      "items": [
+        {
+          "image": "/assets/offers/propunere-mobilier-personalizat/umuffve6x-1.webp",
+          "title": "PAL 18 mm EGGER",
+          "description": "Cant ABS 0.8 mm ",
+          "orient": "portrait"
+        },
+        {
+          "image": "/assets/offers/propunere-mobilier-personalizat/umuffve6x-2.webp",
+          "title": "3 sau 4 polite in interior",
+          "description": "",
+          "orient": "portrait",
+          "focus": "85.0% 95.7%"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Montaj simplu și structură rezistentă",
+          "desc": ""
+        }
+      ],
+      "fontScale": 1.1
+    },
+    {
+      "id": "accessories-f61u",
+      "type": "accessories",
+      "heading": "Accesorii",
+      "paragraph": "",
+      "items": [
+        {
+          "image": "/assets/offers/propunere-mobilier-personalizat/umuffve6x-3.webp",
+          "title": "Balamale BLUM",
+          "description": "Inchidere lenta",
+          "orient": "landscape"
+        },
+        {
+          "image": "/assets/offers/propunere-mobilier-personalizat/umuffve6x-4.webp",
+          "title": "Butoni aluminiu vopsit",
+          "description": "Negru mat",
+          "orient": "portrait"
+        },
+        {
+          "image": "/assets/offers/propunere-mobilier-personalizat/umuffve6x-5.webp",
+          "title": "Picioare din metal",
+          "description": "Picioare negre 100 mm inaltime.",
+          "orient": "portrait"
+        }
+      ],
+      "benefits": [
+        {
+          "label": "Configurații complet personalizabile",
+          "desc": ""
+        }
+      ]
+    },
+    {
+      "id": "text-f3vl",
+      "type": "text",
+      "heading": "Oferta include",
+      "paragraph": "PROIECTARE & CONSULTANȚĂ\nProiectare 3D • Randări fotorealiste • Consultanță materiale  și soluții tehnice\n\nPRODUCȚIE\nExecuție mobilier conform proiectului \n\nLIVRARE & MONTAJ\nTransport • Montaj • Reglaj și verificare finală\n\nMĂSURĂTORI\nVerificarea dimensiunilor finale înainte de intrarea în producție\n\n",
+      "image": "/assets/offers/propunere-mobilier-personalizat/umuffve6x-6.webp",
+      "imageOrient": "portrait",
+      "textLayout": "right",
+      "paragraphs": [
+        "\n\nINVESTITIE PROIECT : 495 €\n\nGarantie 24 luni\n\n"
+      ],
+      "headingBold": false
+    },
+    {
+      "id": "closing",
+      "type": "text",
+      "heading": "Vă mulțumim!",
+      "paragraph": "Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.",
+      "paragraphs": [
+        "© {{an}} JL Custom Design. Toate drepturile rezervate. Conținutul acestei oferte, inclusiv textele, imaginile, randările, desenele, soluțiile de design și materialele grafice, este proprietatea JL Custom Design și este destinat exclusiv evaluării proiectului prezentat. Copierea, reproducerea, distribuirea sau utilizarea acestuia în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.",
+        "Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție."
+      ],
+      "textLayout": "none"
+    }
+  ],
+  "coverImageOrient": "portrait",
+  "tags": [],
+  "coverImageFocus": "21.1% 55.4%",
+  "coverFit": "auto",
+  "slug": "propunere-mobilier-personalizat"
+}
