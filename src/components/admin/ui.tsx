@@ -1,5 +1,5 @@
 /** ui.tsx — small reusable form controls for the admin. */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { fileToDataUrl } from './api';
 
 export function Field({
@@ -70,59 +70,25 @@ export function ImageInput({
   onChange,
   small,
   aspect,
-  onMeta,
-  focus,
-  onFocusChange,
 }: {
   value?: string;
   onChange: (dataUrl: string) => void;
   small?: boolean;
   aspect?: string;
-  /** Reports natural image dimensions/orientation after a selection. */
-  onMeta?: (m: { w: number; h: number; orient: 'portrait' | 'landscape' }) => void;
-  focus?: string;
-  onFocusChange?: (focus: string) => void;
 }) {
   const ref = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [drag, setDrag] = useState(false);
   const [lib, setLib] = useState<string[] | null>(null); // null = closed
 
-  const reportMeta = (src: string) => {
-    if (!onMeta || !src) return;
-    const im = new Image();
-    im.onload = () => onMeta({ w: im.naturalWidth, h: im.naturalHeight, orient: im.naturalHeight > im.naturalWidth ? 'portrait' : 'landscape' });
-    im.src = src;
-  };
-  const emit = (src: string) => { onChange(src); reportMeta(src); };
-
   const pick = async (file?: File) => {
     if (!file) return;
     setBusy(true);
-    try { emit(await fileToDataUrl(file)); }
+    try { onChange(await fileToDataUrl(file)); }
     catch (e) { alert((e as Error).message); }
     finally { setBusy(false); }
   };
   const openLib = async () => { setLib([]); setLib(await loadLibrary()); };
-
-  const focusRef = useRef<HTMLDivElement>(null);
-  const parseFocus = (f?: string) => {
-    if (!f) return { x: 50, y: 50 };
-    const m = f.match(/(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%/);
-    if (m) return { x: Math.min(100, Math.max(0, parseFloat(m[1]))), y: Math.min(100, Math.max(0, parseFloat(m[2]))) };
-    return { x: 50, y: 50 };
-  };
-  const [focusPos, setFocusPos] = useState(parseFocus(focus));
-  useEffect(() => setFocusPos(parseFocus(focus)), [focus]);
-  const setPct = (clientX: number, clientY: number) => {
-    const el = focusRef.current; if (!el || !onFocusChange) return;
-    const r = el.getBoundingClientRect();
-    const x = Math.min(100, Math.max(0, ((clientX - r.left) / r.width) * 100));
-    const y = Math.min(100, Math.max(0, ((clientY - r.top) / r.height) * 100));
-    onFocusChange(`${x.toFixed(1)}% ${y.toFixed(1)}%`);
-  };
-  const onPointerDown = (e: React.PointerEvent) => { (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId); setPct(e.clientX, e.clientY); };
-  const onPointerMove = (e: React.PointerEvent) => { if (e.buttons) setPct(e.clientX, e.clientY); };
 
   return (
     <div
@@ -135,7 +101,7 @@ export function ImageInput({
       <button
         type="button"
         className="ai-thumb"
-        style={value ? { backgroundImage: `url("${value}")`, backgroundPosition: focus || 'center', ...(aspect ? { aspectRatio: aspect } : {}) } : undefined}
+        style={value ? { backgroundImage: `url("${value}")`, ...(aspect ? { aspectRatio: aspect } : {}) } : undefined}
         onClick={() => ref.current?.click()}
         title={value ? 'Schimbă imaginea' : 'Încarcă imagine'}
       >
@@ -147,19 +113,6 @@ export function ImageInput({
         {value && <button type="button" className="rm" onClick={() => onChange('')}>Elimină</button>}
       </div>
 
-      {value && onFocusChange && (
-        <div
-          ref={focusRef}
-          className="ai-focus"
-          title="Trage punctul pentru a alege ce zonă a imaginii să fie vizibilă"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          style={{ backgroundImage: `url("${value}")`, backgroundPosition: focus || 'center' }}
-        >
-          <span className="ai-focus-dot" style={{ left: `${focusPos.x}%`, top: `${focusPos.y}%` }} />
-        </div>
-      )}
-
       {lib !== null && (
         <div className="img-lib" onClick={() => setLib(null)}>
           <div className="img-lib-box" onClick={(e) => e.stopPropagation()}>
@@ -169,7 +122,7 @@ export function ImageInput({
                 <div className="img-lib-empty">Se încarcă…</div>
               ) : (
                 lib.map((src) => (
-                  <button key={src} type="button" className="img-lib-item" style={{ backgroundImage: `url("${src}")` }} title={src.split('/').pop()} onClick={() => { emit(src); setLib(null); }} />
+                  <button key={src} type="button" className="img-lib-item" style={{ backgroundImage: `url("${src}")` }} title={src.split('/').pop()} onClick={() => { onChange(src); setLib(null); }} />
                 ))
               )}
             </div>
@@ -180,51 +133,418 @@ export function ImageInput({
   );
 }
 
-/** Minimal markdown editor with a small toolbar. */
-export function MarkdownEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const ref = useRef<HTMLTextAreaElement>(null);
+/** Convert Markdown to semantic HTML for editing in the WYSIWYG surface. */
+function markdownToHtml(md: string): string {
+  if (!md || !md.trim()) return '<p><br /></p>';
 
-  const wrap = (before: string, after = before, placeholder = 'text') => {
-    const ta = ref.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const sel = value.slice(start, end) || placeholder;
-    const next = value.slice(0, start) + before + sel + after + value.slice(end);
-    onChange(next);
-    requestAnimationFrame(() => {
-      ta.focus();
-      ta.setSelectionRange(start + before.length, start + before.length + sel.length);
-    });
+  const lines = md.replace(/\r\n/g, '\n').split('\n');
+  const htmlParts: string[] = [];
+  let inUl = false;
+  let inOl = false;
+
+  const closeLists = () => {
+    if (inUl) { htmlParts.push('</ul>'); inUl = false; }
+    if (inOl) { htmlParts.push('</ol>'); inOl = false; }
   };
 
-  const prefixLine = (prefix: string) => {
-    const ta = ref.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-    onChange(value.slice(0, lineStart) + prefix + value.slice(lineStart));
+  const formatInline = (str: string) => {
+    let s = str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    s = s.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+    s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+    return s || '<br />';
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    const trimmed = raw.trim();
+
+    if (!trimmed) {
+      closeLists();
+      continue;
+    }
+
+    if (/^(?:---|\*\*\*|___)$/.test(trimmed)) {
+      closeLists();
+      htmlParts.push('<hr />');
+      continue;
+    }
+
+    if (trimmed.startsWith('### ')) {
+      closeLists();
+      htmlParts.push(`<h3>${formatInline(trimmed.slice(4))}</h3>`);
+      continue;
+    }
+
+    if (trimmed.startsWith('## ') || trimmed.startsWith('# ')) {
+      closeLists();
+      const content = trimmed.replace(/^#+\s*/, '');
+      htmlParts.push(`<h2>${formatInline(content)}</h2>`);
+      continue;
+    }
+
+    if (trimmed.startsWith('> ')) {
+      closeLists();
+      htmlParts.push(`<blockquote>${formatInline(trimmed.slice(2))}</blockquote>`);
+      continue;
+    }
+
+    // Bullet list item
+    const bulletMatch = raw.match(/^(\s*)[-*•]\s+(.*)$/);
+    if (bulletMatch) {
+      if (inOl) { htmlParts.push('</ol>'); inOl = false; }
+      if (!inUl) { htmlParts.push('<ul>'); inUl = true; }
+      htmlParts.push(`<li>${formatInline(bulletMatch[2])}</li>`);
+      continue;
+    }
+
+    // Numbered list item
+    const numMatch = raw.match(/^(\s*)\d+\.\s+(.*)$/);
+    if (numMatch) {
+      if (inUl) { htmlParts.push('</ul>'); inUl = false; }
+      if (!inOl) { htmlParts.push('<ol>'); inOl = true; }
+      htmlParts.push(`<li>${formatInline(numMatch[2])}</li>`);
+      continue;
+    }
+
+    // Normal paragraph line
+    closeLists();
+    htmlParts.push(`<p>${formatInline(raw)}</p>`);
+  }
+
+  closeLists();
+  return htmlParts.join('') || '<p><br /></p>';
+}
+
+/** Convert rendered HTML back to clean, standardized Markdown for saving to the repository. */
+function htmlToMarkdown(html: string): string {
+  if (typeof document === 'undefined') return html;
+
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+
+  function walk(node: Node): string {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent || '';
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
+    const el = node as HTMLElement;
+    const tag = el.tagName.toLowerCase();
+    const children = Array.from(el.childNodes).map(walk).join('');
+
+    switch (tag) {
+      case 'h1':
+      case 'h2':
+        return `\n\n## ${children.trim()}\n\n`;
+      case 'h3':
+      case 'h4':
+        return `\n\n### ${children.trim()}\n\n`;
+      case 'strong':
+      case 'b':
+        return children ? `**${children}**` : '';
+      case 'em':
+      case 'i':
+        return children ? `*${children}*` : '';
+      case 'a':
+        return `[${children}](${el.getAttribute('href') || '#'})`;
+      case 'blockquote':
+        return `\n\n> ${children.trim()}\n\n`;
+      case 'hr':
+        return '\n\n---\n\n';
+      case 'br':
+        return '\n';
+      case 'li': {
+        const parentTag = el.parentElement?.tagName.toLowerCase();
+        if (parentTag === 'ol') {
+          const idx = Array.from(el.parentElement?.children || []).indexOf(el) + 1;
+          return `${idx}. ${children.trim()}\n`;
+        }
+        return `- ${children.trim()}\n`;
+      }
+      case 'ul':
+      case 'ol':
+        return `\n\n${children.trim()}\n\n`;
+      case 'p': {
+        const trimmed = children.trim();
+        return trimmed ? `\n\n${trimmed}\n\n` : '';
+      }
+      case 'div': {
+        const trimmed = children.trim();
+        return trimmed ? `\n${trimmed}` : '';
+      }
+      default:
+        return children;
+    }
+  }
+
+  const rawMd = walk(temp);
+  return rawMd
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+/** True WYSIWYG Visual Editor with localized list toggling and predictable Enter behavior. */
+export function MarkdownEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const editorRef = useRef<HTMLDivElement>(null);
+  const isInternalChangeRef = useRef(false);
+
+  // Initialize and synchronize HTML when value updates from outside
+  useEffect(() => {
+    if (!editorRef.current) return;
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      return;
+    }
+    const targetHtml = markdownToHtml(value);
+    if (editorRef.current.innerHTML !== targetHtml) {
+      editorRef.current.innerHTML = targetHtml;
+    }
+  }, [value]);
+
+  const emitChange = () => {
+    if (!editorRef.current) return;
+    isInternalChangeRef.current = true;
+    const currentHtml = editorRef.current.innerHTML;
+    const md = htmlToMarkdown(currentHtml);
+    onChange(md);
+  };
+
+  const exec = (command: string, val: string | undefined = undefined) => {
+    if (!editorRef.current) return;
+    editorRef.current.focus();
+    document.execCommand(command, false, val);
+    emitChange();
+  };
+
+  const formatBlock = (tag: string) => {
+    if (!editorRef.current) return;
+    editorRef.current.focus();
+    // If inside a list item, first convert out of list
+    const sel = window.getSelection();
+    if (sel && sel.anchorNode) {
+      let cur: Node | null = sel.anchorNode;
+      while (cur && cur !== editorRef.current) {
+        if (cur.nodeName === 'LI') {
+          document.execCommand('insertUnorderedList', false);
+          break;
+        }
+        cur = cur.parentNode;
+      }
+    }
+    document.execCommand('formatBlock', false, tag);
+    emitChange();
+  };
+
+  const toggleList = (ordered: boolean) => {
+    if (!editorRef.current) return;
+    editorRef.current.focus();
+    const command = ordered ? 'insertOrderedList' : 'insertUnorderedList';
+    document.execCommand(command, false);
+    emitChange();
+  };
+
+  const [activeStyles, setActiveStyles] = useState({
+    bold: false,
+    italic: false,
+    h2: false,
+    h3: false,
+    ul: false,
+    ol: false,
+    blockquote: false,
+  });
+
+  const updateActiveStyles = () => {
+    if (!editorRef.current) return;
+    try {
+      const isBold = document.queryCommandState('bold');
+      const isItalic = document.queryCommandState('italic');
+      const isUl = document.queryCommandState('insertUnorderedList');
+      const isOl = document.queryCommandState('insertOrderedList');
+
+      const sel = window.getSelection();
+      let isH2 = false;
+      let isH3 = false;
+      let isQuote = false;
+
+      if (sel && sel.anchorNode) {
+        let cur: Node | null = sel.anchorNode;
+        while (cur && cur !== editorRef.current) {
+          if (cur.nodeName === 'H2') isH2 = true;
+          if (cur.nodeName === 'H3') isH3 = true;
+          if (cur.nodeName === 'BLOCKQUOTE') isQuote = true;
+          cur = cur.parentNode;
+        }
+      }
+
+      setActiveStyles({
+        bold: isBold,
+        italic: isItalic,
+        h2: isH2,
+        h3: isH3,
+        ul: isUl,
+        ol: isOl,
+        blockquote: isQuote,
+      });
+    } catch {
+      // Ignore queryCommandState issues if unfocused
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const range = sel.getRangeAt(0);
+      let liNode: HTMLElement | null = null;
+      let cur: Node | null = range.startContainer;
+
+      while (cur && cur !== editorRef.current) {
+        if (cur.nodeName === 'LI') {
+          liNode = cur as HTMLElement;
+          break;
+        }
+        cur = cur.parentNode;
+      }
+
+      // If pressing Enter on an EMPTY list item, exit the list immediately and create a regular paragraph aligned to the left
+      if (liNode && !liNode.textContent?.trim()) {
+        e.preventDefault();
+        const listParent = liNode.parentElement;
+        liNode.remove();
+
+        const p = document.createElement('p');
+        p.innerHTML = '<br>';
+
+        if (listParent && listParent.parentNode) {
+          if (listParent.children.length === 0) {
+            listParent.parentNode.replaceChild(p, listParent);
+          } else {
+            listParent.parentNode.insertBefore(p, listParent.nextSibling);
+          }
+
+          // Move cursor to the new regular paragraph with standard zero-indent margin
+          const newRange = document.createRange();
+          newRange.setStart(p, 0);
+          newRange.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+
+          emitChange();
+          updateActiveStyles();
+        }
+      }
+    }
+  };
+
+  const handleInsertLink = () => {
+    const url = window.prompt('Introdu link-ul (ex: https://...):');
+    if (url) {
+      exec('createLink', url);
+    }
+  };
+
+  const handleInsertDivider = () => {
+    exec('insertHorizontalRule');
   };
 
   return (
-    <div>
-      <div className="adm-md-toolbar">
-        <button type="button" onClick={() => prefixLine('## ')}>H2</button>
-        <button type="button" onClick={() => prefixLine('### ')}>H3</button>
-        <button type="button" onClick={() => wrap('**')}><b>B</b></button>
-        <button type="button" onClick={() => wrap('*')}><i>I</i></button>
-        <button type="button" onClick={() => prefixLine('- ')}>• Listă</button>
-        <button type="button" onClick={() => wrap('[', '](https://)', 'link')}>🔗 Link</button>
-        <button type="button" onClick={() => wrap('> ', '', 'citat')}>❝ Citat</button>
+    <div className="adm-wysiwyg">
+      <div className="adm-wysiwyg-toolbar">
+        <button
+          type="button"
+          title="Titlu secțiune"
+          className={activeStyles.h2 ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); formatBlock('<h2>'); }}
+        >
+          H2 Titlu
+        </button>
+        <button
+          type="button"
+          title="Subtitlu secțiune"
+          className={activeStyles.h3 ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); formatBlock('<h3>'); }}
+        >
+          H3 Subtitlu
+        </button>
+        <button
+          type="button"
+          title="Paragraf text normal"
+          className={!activeStyles.h2 && !activeStyles.h3 && !activeStyles.ul && !activeStyles.ol && !activeStyles.blockquote ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); formatBlock('<p>'); }}
+        >
+          Text normal
+        </button>
+        <div className="sep" />
+        <button
+          type="button"
+          title="Îngroșat (Bold)"
+          className={activeStyles.bold ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); exec('bold'); }}
+        >
+          <b>B</b>
+        </button>
+        <button
+          type="button"
+          title="Cursiv (Italic)"
+          className={activeStyles.italic ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); exec('italic'); }}
+        >
+          <i>I</i>
+        </button>
+        <div className="sep" />
+        <button
+          type="button"
+          title="Listă cu buline (Puncte)"
+          className={activeStyles.ul ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); toggleList(false); }}
+        >
+          • Puncte
+        </button>
+        <button
+          type="button"
+          title="Listă numerotată (1, 2, 3)"
+          className={activeStyles.ol ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); toggleList(true); }}
+        >
+          1. Numerotată
+        </button>
+        <button
+          type="button"
+          title="Citat"
+          className={activeStyles.blockquote ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); formatBlock('<blockquote>'); }}
+        >
+          ❝ Citat
+        </button>
+        <div className="sep" />
+        <button type="button" title="Adaugă Link" onMouseDown={(e) => { e.preventDefault(); handleInsertLink(); }}>🔗 Link</button>
+        <button type="button" title="Linie despărțitoare" onMouseDown={(e) => { e.preventDefault(); handleInsertDivider(); }}>— Linie</button>
       </div>
-      <textarea
-        ref={ref}
-        className="adm-textarea"
-        style={{ minHeight: 220, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 13 }}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Scrie conținutul articolului în format Markdown…"
+
+      <div
+        ref={editorRef}
+        className="adm-wysiwyg-content"
+        contentEditable
+        suppressContentEditableWarning
+        onInput={() => { emitChange(); updateActiveStyles(); }}
+        onBlur={() => { emitChange(); updateActiveStyles(); }}
+        onKeyUp={updateActiveStyles}
+        onMouseUp={updateActiveStyles}
+        onKeyDown={handleKeyDown}
+        data-placeholder="Scrie articolul direct aici… Tastează liber, apasă Enter pentru un rând nou sau selectează textul pentru a-i aplica un stil."
       />
+
+      <div style={{ padding: '6px 14px', background: '#faf9f5', borderTop: '1px solid var(--line)', fontSize: 11, color: 'var(--muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>💡 Butoanele evidențiate cu negru indică stilul activ la poziția cursorului.</span>
+        <span>Apasă Enter pe un punct gol pentru a reveni la marginea normală</span>
+      </div>
     </div>
   );
 }
@@ -253,7 +573,6 @@ export function SectionHead({
     </div>
   );
 }
-
 
 /** Persistent island listing unpublished local drafts so the user can see
     and re-open them without guessing. */
@@ -322,3 +641,4 @@ export function SavePrompt({
     </div>
   );
 }
+

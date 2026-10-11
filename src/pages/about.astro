@@ -579,8 +579,8 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
           gsap.to(heroBg, {
             scale: 0.94, // Consistent scale
             opacity: 0,
-            filter: "blur(8px)",
             ease: "none",
+            force3D: true,
             scrollTrigger: {
               trigger: heroSection,
               start: "bottom bottom",

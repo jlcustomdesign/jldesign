@@ -74,9 +74,9 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
     <!-- Article JSON-LD -->
     <script type="application/ld+json" set:html={articleSchema} />
 
-    <article class="max-w-3xl mx-auto px-4 md:px-8 pt-32 pb-24">
+    <article class="max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 xl:px-12 pt-32 pb-24">
       <!-- Header -->
-      <header class="mb-10">
+      <header class="mb-10 max-w-4xl">
         <div class="flex items-center gap-3 mb-4">
           <a
             href="/blog"
@@ -101,7 +101,7 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
         >
           {post.data.title}
         </h1>
-        <p class="text-primary/60 text-lg mb-6">
+        <p class="text-primary/60 text-lg md:text-xl mb-6">
           {post.data.description}
         </p>
         <div class="flex items-center gap-4 text-sm text-primary/50">
@@ -121,7 +121,7 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
             <img
               src={coverImage}
               alt={post.data.coverImageAlt}
-              class="w-full rounded-2xl shadow-lg"
+              class="w-full max-h-[650px] object-cover rounded-2xl shadow-lg"
               loading="eager"
             />
             <figcaption class="mt-3 text-sm text-primary/40 text-center">
@@ -133,7 +133,7 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
 
       <!-- Markdoc Content -->
       <div
-        class="prose prose-lg prose-stone max-w-none
+        class="prose prose-lg md:prose-xl prose-stone max-w-none
         prose-headings:font-serif prose-headings:text-primary
         prose-p:text-primary/80 prose-p:leading-relaxed
         prose-a:text-accent prose-a:no-underline hover:prose-a:underline
@@ -156,3 +156,56 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
     </article>
   </main>
 </Layout>
+
+<style is:global>
+  /* Blog article markdown rendering styles */
+  .prose p {
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+  }
+  .prose ul {
+    list-style-type: disc !important;
+    padding-left: 1.75rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  .prose ol {
+    list-style-type: decimal !important;
+    padding-left: 1.75rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  .prose li {
+    margin-bottom: 0.5rem !important;
+    line-height: 1.7;
+    color: rgba(0, 0, 0, 0.85);
+  }
+  .prose hr {
+    margin: 2.5rem 0 !important;
+    border: 0 !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
+  }
+  .prose blockquote {
+    border-left: 3px solid var(--color-accent, #FFC800) !important;
+    padding-left: 1.25rem !important;
+    margin: 1.75rem 0 !important;
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.7);
+  }
+  .prose h2 {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-primary, #000000);
+  }
+  .prose h3 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-primary, #000000);
+  }
+</style>

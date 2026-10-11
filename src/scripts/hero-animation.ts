@@ -230,10 +230,9 @@ function runHeroExitAnimation() {
     }
 
     gsap.to(heroContent || heroSection, {
-      scale: 0.9,
-      filter: "blur(8px)",
-      opacity: 0.5,
-      ease: "none",
+      scale: 0.92,
+      opacity: 0.35,
+      ease: "power1.out",
       force3D: true,
       scrollTrigger: {
         trigger: heroSection,

@@ -39,8 +39,9 @@ portfolio.forEach((item, i) => {
                 <div class="w-full aspect-[3/4] overflow-hidden relative bg-gray-200">
                   <img
                     src={item.image}
-                    alt={`${item.name} — mobilier la comandă în Brașov | JL Custom Design`}
+                    alt={item.name}
                     loading="lazy"
+                    decoding="async"
                     class="w-full h-full object-cover portfolio-img transition-transform duration-500"
                   />
                   

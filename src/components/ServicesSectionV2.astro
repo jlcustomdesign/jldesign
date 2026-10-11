@@ -20,7 +20,7 @@ const services = SERVICES_SECTION.cards;
         <!-- Right: Buttons (Desktop) -->
         <div class="hidden md:flex gap-3 flex-shrink-0">
           <button
-            class="services-prev-btn services-nav-btn relative z-10 w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors duration-300 group"
+            class="services-prev-btn services-nav-btn relative z-10 w-9 h-9 md:w-10 md:h-10 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors duration-300 group"
             aria-label={SERVICES_SECTION.navPrevAria}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6 group-hover:-translate-x-0.5 transition-transform">
@@ -28,7 +28,7 @@ const services = SERVICES_SECTION.cards;
             </svg>
           </button>
           <button
-            class="services-next-btn services-nav-btn relative z-10 w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors duration-300 group"
+            class="services-next-btn services-nav-btn relative z-10 w-9 h-9 md:w-10 md:h-10 flex-shrink-0 rounded-full bg-white shadow-xl border border-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors duration-300 group"
             aria-label={SERVICES_SECTION.navNextAria}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-0.5 transition-transform">
@@ -53,14 +53,14 @@ const services = SERVICES_SECTION.cards;
       {
         services.map((service, i) => (
           <div
-            class="service-card w-[85vw] md:w-[45vw] lg:w-[27%] aspect-[3/4] h-auto rounded-2xl relative group flex-shrink-0 perspective-[1000px] bg-transparent shadow-none snap-start"
+            class="service-card w-[85vw] md:w-[45vw] lg:w-[27%] aspect-[3/4] h-auto rounded-[2.5rem] relative group flex-shrink-0 perspective-[1000px] bg-transparent shadow-none snap-start"
             data-index={i}
           >
             <!-- Inner Card (Flippable) -->
-            <div class="service-card-inner relative w-full h-full transition-transform duration-700 transform-style-3d shadow-xl rounded-2xl">
+            <div class="service-card-inner relative w-full h-full transition-transform duration-700 transform-style-3d shadow-xl rounded-[2.5rem]">
               
               <!-- Front Face -->
-              <div class="service-card-front absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden bg-white">
+              <div class="service-card-front absolute inset-0 w-full h-full backface-hidden rounded-[2.5rem] overflow-hidden bg-white">
                 <!-- Image -->
                 <div class="relative w-full h-full overflow-hidden">
                   <img
@@ -71,18 +71,13 @@ const services = SERVICES_SECTION.cards;
                   />
                   
                   <!-- Overlay Gradient -->
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
 
                   <!-- Top Elements -->
-                  <div class="absolute top-4 left-0 w-full px-4 flex justify-between items-start z-20 pointer-events-none">
-                    <!-- Title Pill -->
-                    <div class="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full shadow-md h-12 flex items-center">
-                      <span class="text-base font-bold text-primary tracking-wide">{service.title}</span>
-                    </div>
-
+                  <div class="absolute top-4 right-4 z-20 pointer-events-none">
                     <!-- Flip Trigger Button -->
                     <button
-                      class="service-flip-btn bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-accent hover:text-white transition-colors duration-300 pointer-events-auto cursor-pointer"
+                      class="service-flip-btn bg-white w-9 h-9 rounded-full flex items-center justify-center shadow-lg hover:bg-accent hover:text-white transition-colors duration-300 pointer-events-auto cursor-pointer"
                       aria-label={SERVICES_SECTION.flipCardAria}
                     >
                       <svg
@@ -91,7 +86,7 @@ const services = SERVICES_SECTION.cards;
                         viewBox="0 0 24 24"
                         stroke-width="2"
                         stroke="currentColor"
-                        class="w-5 h-5"
+                        class="w-4 h-4"
                       >
                         <path
                           stroke-linecap="round"
@@ -101,29 +96,36 @@ const services = SERVICES_SECTION.cards;
                       </svg>
                     </button>
                   </div>
+
+                  <!-- Bottom Title -->
+                  <div class="absolute bottom-6 left-6 right-6 z-20 pointer-events-none">
+                    <h3 class="font-serif text-2xl md:text-3xl text-white leading-tight drop-shadow-lg">
+                      {service.title}
+                    </h3>
+                  </div>
                 </div>
               </div>
 
               <!-- Back Face -->
-              <div class="service-card-back absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-[#1a1a1a] rounded-2xl p-8 flex flex-col justify-center items-center text-center border border-white/10">
+              <div class="service-card-back absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-[#1a1a1a] rounded-[2.5rem] p-6 md:p-8 flex flex-col justify-center items-center text-center border border-white/10">
                  <!-- Close/Flip Back Button -->
                  <button 
-                    class="service-flip-back-btn absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors pointer-events-auto cursor-pointer"
+                    class="service-flip-back-btn absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors pointer-events-auto cursor-pointer"
                     aria-label={SERVICES_SECTION.flipBackAria}
                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                  </button>
 
-                 <h3 class="font-serif text-2xl text-white mb-6">{service.title}</h3>
-                 <p class="text-white/80 text-base leading-relaxed mb-8">
+                 <h3 class="font-serif text-xl md:text-2xl text-white mb-4">{service.title}</h3>
+                 <p class="text-white/80 text-sm md:text-base leading-relaxed mb-6">
                    {service.desc}
                  </p>
                  
                   <a
                     href="/portfolio"
-                    class="inline-block px-8 py-4 bg-white text-primary font-bold rounded-full hover:bg-accent hover:text-white transition-colors duration-300 uppercase tracking-wider text-sm pointer-events-auto"
+                    class="inline-block px-6 py-3 bg-white text-primary font-bold rounded-full hover:bg-accent hover:text-white transition-colors duration-300 uppercase tracking-wider text-xs pointer-events-auto"
                  >
                    {SERVICES_SECTION.viewProjectLabel}
                  </a>
