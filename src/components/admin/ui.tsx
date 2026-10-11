@@ -340,22 +340,71 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
     updateActiveStyles();
   };
 
-  const formatBlock = (tag: string) => {
+  const applyPresetSize = (tagOrClass: 'h2' | 'h3' | 'large' | 'normal' | 'small') => {
     if (!editorRef.current) return;
     editorRef.current.focus();
-    // If inside a list item, first convert out of list
+
     const sel = window.getSelection();
-    if (sel && sel.anchorNode) {
-      let cur: Node | null = sel.anchorNode;
-      while (cur && cur !== editorRef.current) {
-        if (cur.nodeName === 'LI') {
-          document.execCommand('insertUnorderedList', false);
-          break;
-        }
-        cur = cur.parentNode;
+    if (!sel || !sel.rangeCount) return;
+
+    let cur: Node | null = sel.anchorNode;
+    let liNode: HTMLElement | null = null;
+
+    while (cur && cur !== editorRef.current) {
+      if (cur.nodeName === 'LI') {
+        liNode = cur as HTMLElement;
+        break;
+      }
+      cur = cur.parentNode;
+    }
+
+    // CASE 1: Inside a list item — change size of the text INSIDE the bullet without destroying the <li>!
+    if (liNode) {
+      // Clean existing size classes from liNode
+      liNode.classList.remove('text-title', 'text-subtitle', 'text-large', 'text-small');
+      if (tagOrClass === 'h2') {
+        liNode.classList.add('text-title');
+      } else if (tagOrClass === 'h3') {
+        liNode.classList.add('text-subtitle');
+      } else if (tagOrClass === 'large') {
+        liNode.classList.add('text-large');
+      } else if (tagOrClass === 'small') {
+        liNode.classList.add('text-small');
+      }
+      emitChange();
+      updateActiveStyles();
+      return;
+    }
+
+    // CASE 2: Regular block element
+    if (tagOrClass === 'h2') {
+      document.execCommand('formatBlock', false, '<h2>');
+    } else if (tagOrClass === 'h3') {
+      document.execCommand('formatBlock', false, '<h3>');
+    } else if (tagOrClass === 'large') {
+      // Large paragraph
+      document.execCommand('formatBlock', false, '<p>');
+      const currentBlock = sel.anchorNode?.parentElement?.closest('p');
+      if (currentBlock) {
+        currentBlock.classList.remove('text-small');
+        currentBlock.classList.add('text-large');
+      }
+    } else if (tagOrClass === 'small') {
+      document.execCommand('formatBlock', false, '<p>');
+      const currentBlock = sel.anchorNode?.parentElement?.closest('p');
+      if (currentBlock) {
+        currentBlock.classList.remove('text-large');
+        currentBlock.classList.add('text-small');
+      }
+    } else {
+      // Normal text
+      document.execCommand('formatBlock', false, '<p>');
+      const currentBlock = sel.anchorNode?.parentElement?.closest('p');
+      if (currentBlock) {
+        currentBlock.classList.remove('text-large', 'text-small', 'text-title', 'text-subtitle');
       }
     }
-    document.execCommand('formatBlock', false, tag);
+
     emitChange();
     updateActiveStyles();
   };
@@ -372,8 +421,7 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
   const [activeStyles, setActiveStyles] = useState({
     bold: false,
     italic: false,
-    h2: false,
-    h3: false,
+    size: 'normal',
     ul: false,
     ol: false,
     blockquote: false,
@@ -388,15 +436,16 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
       const isOl = document.queryCommandState('insertOrderedList');
 
       const sel = window.getSelection();
-      let isH2 = false;
-      let isH3 = false;
+      let detectedSize = 'normal';
       let isQuote = false;
 
       if (sel && sel.anchorNode) {
         let cur: Node | null = sel.anchorNode;
         while (cur && cur !== editorRef.current) {
-          if (cur.nodeName === 'H2') isH2 = true;
-          if (cur.nodeName === 'H3') isH3 = true;
+          if (cur.nodeName === 'H2' || (cur as HTMLElement).classList?.contains('text-title')) detectedSize = 'title';
+          else if (cur.nodeName === 'H3' || (cur as HTMLElement).classList?.contains('text-subtitle')) detectedSize = 'subtitle';
+          else if ((cur as HTMLElement).classList?.contains('text-large')) detectedSize = 'large';
+          else if ((cur as HTMLElement).classList?.contains('text-small')) detectedSize = 'small';
           if (cur.nodeName === 'BLOCKQUOTE') isQuote = true;
           cur = cur.parentNode;
         }
@@ -405,8 +454,7 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
       setActiveStyles({
         bold: isBold,
         italic: isItalic,
-        h2: isH2,
-        h3: isH3,
+        size: detectedSize,
         ul: isUl,
         ol: isOl,
         blockquote: isQuote,
@@ -506,29 +554,38 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
   return (
     <div className="adm-wysiwyg">
       <div className="adm-wysiwyg-toolbar">
+        {/* Romanian Friendly Presets */}
         <button
           type="button"
-          title="Titlu secțiune"
-          className={activeStyles.h2 ? 'is-active' : ''}
-          onMouseDown={(e) => { e.preventDefault(); formatBlock('<h2>'); }}
+          title="Titlu Mare"
+          className={activeStyles.size === 'title' ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); applyPresetSize('h2'); }}
         >
-          H2 Titlu
+          Titlu Mare
         </button>
         <button
           type="button"
-          title="Subtitlu secțiune"
-          className={activeStyles.h3 ? 'is-active' : ''}
-          onMouseDown={(e) => { e.preventDefault(); formatBlock('<h3>'); }}
+          title="Subtitlu Mediu"
+          className={activeStyles.size === 'subtitle' ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); applyPresetSize('h3'); }}
         >
-          H3 Subtitlu
+          Subtitlu
         </button>
         <button
           type="button"
-          title="Paragraf text normal"
-          className={!activeStyles.h2 && !activeStyles.h3 && !activeStyles.ul && !activeStyles.ol && !activeStyles.blockquote ? 'is-active' : ''}
-          onMouseDown={(e) => { e.preventDefault(); formatBlock('<p>'); }}
+          title="Text Ceva Mai Mare"
+          className={activeStyles.size === 'large' ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); applyPresetSize('large'); }}
         >
-          Text normal
+          Text Mare
+        </button>
+        <button
+          type="button"
+          title="Text Normal de Bază"
+          className={activeStyles.size === 'normal' && !activeStyles.ul && !activeStyles.ol && !activeStyles.blockquote ? 'is-active' : ''}
+          onMouseDown={(e) => { e.preventDefault(); applyPresetSize('normal'); }}
+        >
+          Text Normal
         </button>
         <div className="sep" />
         <button
@@ -568,7 +625,12 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
           type="button"
           title="Citat"
           className={activeStyles.blockquote ? 'is-active' : ''}
-          onMouseDown={(e) => { e.preventDefault(); formatBlock('<blockquote>'); }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            document.execCommand('formatBlock', false, '<blockquote>');
+            emitChange();
+            updateActiveStyles();
+          }}
         >
           ❝ Citat
         </button>
@@ -591,8 +653,8 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
       />
 
       <div style={{ padding: '6px 14px', background: '#faf9f5', borderTop: '1px solid var(--line)', fontSize: 11, color: 'var(--muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span>💡 Butoanele evidențiate cu negru indică stilul activ la poziția cursorului.</span>
-        <span>Apasă Enter pe un punct gol pentru a reveni la marginea normală</span>
+        <span>💡 Poți schimba mărimea oricărui rând sau punct direct din butoanele „Titlu Mare”, „Subtitlu”, „Text Mare”, „Text Normal”.</span>
+        <span>Apasă Enter pe un punct gol pentru a reveni la text normal</span>
       </div>
     </div>
   );

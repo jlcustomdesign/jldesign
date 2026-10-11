@@ -185,6 +185,33 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
     line-height: 1.7;
     color: rgba(0, 0, 0, 0.85);
   }
+  .prose .text-title,
+  .prose li.text-title {
+    font-family: var(--font-serif);
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    color: var(--color-primary, #000) !important;
+    line-height: 1.3 !important;
+  }
+  .prose .text-subtitle,
+  .prose li.text-subtitle {
+    font-family: var(--font-serif);
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+    color: var(--color-primary, #000) !important;
+    line-height: 1.35 !important;
+  }
+  .prose .text-large,
+  .prose li.text-large {
+    font-size: 1.2rem !important;
+    font-weight: 500 !important;
+    line-height: 1.7 !important;
+  }
+  .prose .text-small,
+  .prose li.text-small {
+    font-size: 0.95rem !important;
+    color: rgba(0, 0, 0, 0.65) !important;
+  }
   .prose hr {
     margin: 1.5rem 0 !important;
     border: 0 !important;
