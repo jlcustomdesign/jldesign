@@ -320,7 +320,7 @@
 .adm-wysiwyg-content hr {
   border: 0;
   border-top: 1px solid rgba(0,0,0,.15);
-  margin: 2em 0;
+  margin: 1.1em 0;
 }
 .adm-wysiwyg-content blockquote {
   border-left: 3px solid var(--gold);

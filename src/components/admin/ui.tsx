@@ -318,8 +318,13 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
   const exec = (command: string, val: string | undefined = undefined) => {
     if (!editorRef.current) return;
     editorRef.current.focus();
+    // Enable CSS styling for consistent inline element generation (<b>/<strong>)
+    try {
+      document.execCommand('styleWithCSS', false, 'false');
+    } catch {}
     document.execCommand(command, false, val);
     emitChange();
+    updateActiveStyles();
   };
 
   const formatBlock = (tag: string) => {
@@ -339,6 +344,7 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
     }
     document.execCommand('formatBlock', false, tag);
     emitChange();
+    updateActiveStyles();
   };
 
   const toggleList = (ordered: boolean) => {
@@ -347,6 +353,7 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
     const command = ordered ? 'insertOrderedList' : 'insertUnorderedList';
     document.execCommand(command, false);
     emitChange();
+    updateActiveStyles();
   };
 
   const [activeStyles, setActiveStyles] = useState({
@@ -451,7 +458,36 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
   };
 
   const handleInsertDivider = () => {
-    exec('insertHorizontalRule');
+    if (!editorRef.current) return;
+    editorRef.current.focus();
+
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+
+    // Create a container fragment: divider line + dedicated text paragraph
+    const fragment = document.createDocumentFragment();
+
+    const hr = document.createElement('hr');
+    const pBetween = document.createElement('p');
+    pBetween.innerHTML = '<br>'; // Placeholder for typing between or right after the line
+
+    fragment.appendChild(hr);
+    fragment.appendChild(pBetween);
+
+    range.deleteContents();
+    range.insertNode(fragment);
+
+    // Move cursor directly into the editable text area between/after the divider
+    const newRange = document.createRange();
+    newRange.setStart(pBetween, 0);
+    newRange.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+
+    emitChange();
+    updateActiveStyles();
   };
 
   return (
