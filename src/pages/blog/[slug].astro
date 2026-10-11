@@ -163,6 +163,11 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
     margin-bottom: 1.5rem;
     line-height: 1.8;
   }
+  .prose p:empty,
+  .prose p:has(> br:only-child) {
+    min-height: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
   .prose ul {
     list-style-type: disc !important;
     padding-left: 1.75rem !important;

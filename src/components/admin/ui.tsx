@@ -168,6 +168,12 @@ function markdownToHtml(md: string): string {
       continue;
     }
 
+    if (trimmed === '<br />' || trimmed === '<br>' || trimmed === '&nbsp;') {
+      closeLists();
+      htmlParts.push('<p><br /></p>');
+      continue;
+    }
+
     if (/^(?:---|\*\*\*|___)$/.test(trimmed)) {
       closeLists();
       htmlParts.push('<hr />');
@@ -272,11 +278,18 @@ function htmlToMarkdown(html: string): string {
         return `\n\n${children.trim()}\n\n`;
       case 'p': {
         const trimmed = children.trim();
-        return trimmed ? `\n\n${trimmed}\n\n` : '';
+        // If the paragraph is empty (e.g. an extra Enter line), preserve it with an explicit break
+        if (!trimmed || trimmed === '<br>' || el.innerHTML === '<br>' || el.innerHTML === '<br/>') {
+          return '\n\n<br />\n\n';
+        }
+        return `\n\n${trimmed}\n\n`;
       }
       case 'div': {
         const trimmed = children.trim();
-        return trimmed ? `\n${trimmed}` : '';
+        if (!trimmed || el.innerHTML === '<br>' || el.innerHTML === '<br/>') {
+          return '\n\n<br />\n\n';
+        }
+        return `\n${trimmed}`;
       }
       default:
         return children;
@@ -285,7 +298,7 @@ function htmlToMarkdown(html: string): string {
 
   const rawMd = walk(temp);
   return rawMd
-    .replace(/\n{3,}/g, '\n\n')
+    .replace(/\n{4,}/g, '\n\n\n')
     .trim();
 }
 
