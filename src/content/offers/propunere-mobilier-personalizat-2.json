@@ -1,0 +1,66 @@
+{
+  "clientName": "PROPUNERE MOBILIER PERSONALIZAT",
+  "category": "PAT TAPITAT COPII",
+  "date": "2026",
+  "style": "editorial",
+  "websiteUrl": "www.mobilapersonalizatabrasov.ro",
+  "coverSubtitle": " ",
+  "coverImage": "/assets/offers/propunere-mobilier-personalizat-2/umv4x7a71-0.webp",
+  "pages": [
+    {
+      "id": "description-f4cc",
+      "type": "description",
+      "heading": "Descriere proiect",
+      "paragraph": "Pat tapitat  cu material din catifea si culoare la alegere. Designul cu laterale inalte si spatar cu cusaturi verticale ofera sustinere si un aspect ordonat. Se realizeaza la comanda, in functie de dimensiunile dorite.",
+      "image": "/assets/offers/propunere-mobilier-personalizat-2/umv4x7a71-1.webp",
+      "specs": [
+        {
+          "label": "Structura",
+          "value": "PAL 18 mm+intarituri din lemn masiv"
+        },
+        {
+          "label": "Feronerie",
+          "value": "Coltare metalice "
+        },
+        {
+          "label": "Tapiterie",
+          "value": "Catifea + burete 2+1 cm."
+        },
+        {
+          "label": "Suport saltea",
+          "value": "Somiera metalica fixa."
+        }
+      ],
+      "imageOrient": "portrait"
+    },
+    {
+      "id": "text-f3vl",
+      "type": "text",
+      "heading": "Oferta include",
+      "paragraph": "\nPRODUCȚIE\nExecuție mobilier conform proiectului \n\nLIVRARE & MONTAJ\nTransport • Montaj • Reglaj și verificare finală\n\n\n",
+      "image": "/assets/offers/propunere-mobilier-personalizat-2/umv4x7a71-2.webp",
+      "imageOrient": "portrait",
+      "textLayout": "right",
+      "paragraphs": [
+        "\n\nINVESTITIE PROIECT : 590 € (TVA inclus)\n\nGarantie 24 luni\n\n"
+      ],
+      "headingBold": false
+    },
+    {
+      "id": "closing",
+      "type": "text",
+      "heading": "Vă mulțumim!",
+      "paragraph": "Vă mulțumim din partea echipei JL Custom Design pentru interesul acordat acestui proiect. Rămânem la dispoziția dvs. pentru orice întrebări sau ajustări.",
+      "paragraphs": [
+        "© {{an}}  JL Custom Design. Toate drepturile rezervate.\nMaterialele create de JL Custom Design și incluse în această ofertă — texte, randări, desene, soluții de design și materiale grafice — sunt proprietatea JL Custom Design și sunt destinate exclusiv evaluării proiectului prezentat.\n\nImaginile și materialele furnizate de client sau provenite din surse terțe rămân supuse drepturilor de autor ale titularilor acestora.\n\nCopierea, reproducerea, distribuirea sau utilizarea materialelor aparținând JL Custom Design în alte scopuri este permisă numai cu acordul prealabil al JL Custom Design.",
+        "Notă: Imaginile și randările prezentate au caracter orientativ și au rolul de a ilustra cât mai fidel posibil soluția de design propusă. Acestea pot prezenta diferențe față de rezultatul final, în funcție de materialele, texturile, nuanțele, iluminarea și condițiile reale de execuție."
+      ],
+      "textLayout": "none"
+    }
+  ],
+  "coverImageOrient": "portrait",
+  "tags": [],
+  "coverImageFocus": "21.1% 55.4%",
+  "coverFit": "auto",
+  "slug": "propunere-mobilier-personalizat-2"
+}
