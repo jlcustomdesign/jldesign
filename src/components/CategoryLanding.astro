@@ -1,5 +1,6 @@
 ---
 import type { CategoryPage } from "../config/categories";
+import { CATEGORIES } from "../config/categories";
 import { SITE } from "../config/site";
 
 interface Props {
@@ -7,6 +8,9 @@ interface Props {
 }
 
 const { cat } = Astro.props;
+
+// All other category pages, for contextual internal linking
+const related = Object.values(CATEGORIES).filter((c) => c.slug !== cat.slug);
 
 // Structured data: Service offered by the local business (LocalBusiness /
 // Organization / WebSite schemas are emitted globally by Layout).
@@ -148,6 +152,29 @@ const faqSchema = JSON.stringify({
           </details>
         ))}
       </div>
+    </div>
+  </section>
+
+  <!-- Related categories (internal linking between money pages) -->
+  <section class="pb-16 md:pb-24 px-4 md:px-8">
+    <div class="container mx-auto max-w-4xl">
+      <h2 class="font-serif text-3xl md:text-4xl text-primary mb-4">
+        Alte categorii de mobilă personalizată
+      </h2>
+      <p class="text-primary/70 leading-relaxed mb-8">
+        Fiecare proiect este mobilă personalizată la comandă, executată în
+        atelierul nostru din Brașov. Vezi ce mai realizăm:
+      </p>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+        {related.map((c) => (
+          <li class="flex items-start gap-3">
+            <span class="mt-2 w-2 h-2 rounded-full bg-accent shrink-0"></span>
+            <a href={`/${c.slug}`} class="text-primary/80 hover:text-accent underline-offset-4 hover:underline">
+              {c.h1}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 

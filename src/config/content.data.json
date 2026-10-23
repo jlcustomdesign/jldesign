@@ -364,8 +364,8 @@
     "topRightCta": "CONTACT"
   },
   "HOME": {
-    "title": "Mobilă la Comandă Brașov | JL Custom Design",
-    "description": "Mobilă la comandă Brașov și mobilă personalizată din lemn masiv, MDF și PAL. JL Custom Design — proiectare 3D, execuție și montaj profesional în Brașov.",
+    "title": "Mobilă Personalizată Brașov | JL Custom Design",
+    "description": "Mobilă personalizată și mobilă la comandă în Brașov, din lemn masiv, MDF vopsit și PAL Egger. Proiectare 3D, execuție în atelier propriu și montaj profesional.",
     "seoFabric": [
       "JL Mobilă — JL Design — JL Custom Design — producător de mobilă la comandă și mobilier personalizat în Brașov, România. Mobilier la comandă din lemn masiv, MDF vopsit, PAL melaminat Egger și Kronospan, furnir natural de stejar, fag și frasin.",
       "Servicii complete: mobilă la comandă Brașov, mobilier personalizat Brașov, mobilier custom, mobilier pe comandă, design interior 3D, proiectare mobilier, montaj profesional. Bucătării la comandă, dressinguri, biblioteci, rafturi, birouri, mobilier de baie, mobilier living, mobilier dormitor, mobilier comercial.",
@@ -538,7 +538,7 @@
     ]
   },
   "SERVICES_PAGE": {
-    "title": "Mobilier la Comandă Brașov | Servicii Mobilă Personalizată — JL Mobila",
+    "title": "Servicii Mobilă la Comandă Brașov | JL Mobila",
     "description": "Servicii premium de mobilier la comandă și mobilă personalizată în Brașov. Consultanță, proiectare tehnică 3D, producție și montaj profesional de la JL Mobila.",
     "seoFabric": [
       "JL Mobila oferă servicii complete de mobilier la comandă în Brașov, Buzău, Sibiu și Sfântu Gheorghe: Consultanță & Design 3D, Producție Custom din lemn masiv cu materiale premium, și Montaj Profesional. Fiecare proiect include măsurători la fața locului, randări fotorealistice, și o garanție de 24 de luni.",
@@ -716,7 +716,8 @@
     "navNextAria": "Next",
     "flipCardAria": "Flip Card",
     "flipBackAria": "Flip Back",
-    "viewProjectLabel": "Vezi Proiect"
+    "viewProjectLabel": "Vezi Proiect",
+    "viewCategoryLabel": "Vezi Categoria"
   },
   "TEST_PAGE": {
     "title": "Test Simultaneous Reveal",

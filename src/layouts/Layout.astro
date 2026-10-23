@@ -52,8 +52,10 @@ const organizationSchema = JSON.stringify({
   "telephone": SITE.phone,
   "email": SITE.email,
   "knowsAbout": [
-    "mobilă la comandă",
+    "mobilă personalizată",
+    "mobilă personalizată Brașov",
     "mobilier personalizat",
+    "mobilă la comandă",
     "mobilă Brașov",
     "mobilă la comandă Brașov",
     "bucătării la comandă",
@@ -270,7 +272,8 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
       type="font/ttf"
       crossorigin
     />
-    <link rel="preload" as="image" href="/Poze JL Custom Design - Site/LP/Hero/Desktop.webp" />
+    <link rel="preload" as="image" href="/Poze JL Custom Design - Site/LP/Hero/Desktop.webp" media="(min-width: 1024px)" fetchpriority="high" />
+    <link rel="preload" as="image" href="/Poze JL Custom Design - Site/LP/Hero/Mobile.webp" media="(max-width: 1023px)" fetchpriority="high" />
     <script is:inline>
       // Prevent scroll restoration (glitch prevention)
       if (history.scrollRestoration) {
@@ -312,14 +315,21 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
           initSmoothScroll();
           initAutoTracking();
           
-          // Fail-safe: Heartbeat refresh to handle any late-loading assets
-          // that might "trap" the scroll height
+          // Fail-safe: refresh ONLY when the page height actually changed
+          // (late-loading assets). Unconditional ScrollTrigger.refresh()
+          // every 500ms forced a full layout recalc of all triggers — a major
+          // forced-reflow source on mobile.
           import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+            let lastHeight = document.documentElement.scrollHeight;
             let refreshCount = 0;
             const heartbeat = setInterval(() => {
-              ScrollTrigger.refresh();
+              const h = document.documentElement.scrollHeight;
+              if (h !== lastHeight) {
+                lastHeight = h;
+                ScrollTrigger.refresh();
+              }
               refreshCount++;
-              if (refreshCount > 5) clearInterval(heartbeat);
+              if (refreshCount > 10) clearInterval(heartbeat);
             }, 500);
           });
         });

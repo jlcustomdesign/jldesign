@@ -40,7 +40,7 @@ export const CATEGORIES: Record<string, CategoryPage> = {
     name: "Bucătării",
     slug: "bucatarii-la-comanda-brasov",
     h1: "Bucătării la comandă în Brașov",
-    title: "Bucătării la Comandă Brașov | Bucătărie Personalizată — JL Custom Design",
+    title: "Bucătării la Comandă Brașov | JL Custom Design",
     description:
       "Bucătării la comandă în Brașov, proiectate milimetric pentru spațiul tău: MDF vopsit, PAL Egger, lemn masiv, feronerie Blum. Proiectare 3D, execuție și montaj.",
     serviceName: "Bucătării la comandă în Brașov",
@@ -87,7 +87,7 @@ export const CATEGORIES: Record<string, CategoryPage> = {
     name: "Dressinguri",
     slug: "dressinguri-la-comanda-brasov",
     h1: "Dressinguri la comandă în Brașov",
-    title: "Dressing la Comandă Brașov | Dulapuri și Dressinguri Personalizate — JL Custom Design",
+    title: "Dressinguri la Comandă Brașov | JL Custom Design",
     description:
       "Dressinguri și dulapuri la comandă în Brașov, cu compartimentare adaptată garderobei tale: uși glisante, MDF vopsit, oglindă, iluminare LED. Proiectare 3D și montaj.",
     serviceName: "Dressinguri la comandă în Brașov",
@@ -133,7 +133,7 @@ export const CATEGORIES: Record<string, CategoryPage> = {
     name: "Dormitor",
     slug: "mobila-dormitor-brasov",
     h1: "Mobilă de dormitor la comandă în Brașov",
-    title: "Mobilă Dormitor la Comandă Brașov | Paturi, Dulapuri, Noptiere — JL Custom Design",
+    title: "Mobilă Dormitor la Comandă Brașov | JL Custom Design",
     description:
       "Mobilier de dormitor la comandă în Brașov: paturi, dulapuri, noptiere și comode, proiectate pe dimensiunile camerei tale. Materiale premium, proiectare 3D, montaj inclus.",
     serviceName: "Mobilier de dormitor la comandă în Brașov",
@@ -179,7 +179,7 @@ export const CATEGORIES: Record<string, CategoryPage> = {
     name: "Living",
     slug: "mobilier-living-brasov",
     h1: "Mobilier de living și biblioteci la comandă în Brașov",
-    title: "Mobilier Living la Comandă Brașov | Biblioteci și Comode TV — JL Custom Design",
+    title: "Mobilier Living la Comandă Brașov | JL Custom Design",
     description:
       "Mobilier de living la comandă în Brașov: biblioteci, comode TV, rafturi și sisteme de depozitare proiectate milimetric. Integrare echipamente media, proiectare 3D, montaj.",
     serviceName: "Mobilier de living la comandă în Brașov",
@@ -225,7 +225,7 @@ export const CATEGORIES: Record<string, CategoryPage> = {
     name: "Baie",
     slug: "mobila-baie-brasov",
     h1: "Mobilă de baie la comandă în Brașov",
-    title: "Mobilă Baie la Comandă Brașov | Mobilier Rezistent la Umiditate — JL Custom Design",
+    title: "Mobilă Baie la Comandă Brașov | JL Custom Design",
     description:
       "Mobilier de baie la comandă în Brașov: baze lavoar, dulapuri și corpuri suspendate din materiale rezistente la umiditate. Proiectare pe instalațiile tale, montaj profesional.",
     serviceName: "Mobilier de baie la comandă în Brașov",
@@ -271,7 +271,7 @@ export const CATEGORIES: Record<string, CategoryPage> = {
     name: "Birouri & Comercial",
     slug: "mobilier-birouri-brasov",
     h1: "Mobilier pentru birouri și spații comerciale la comandă în Brașov",
-    title: "Mobilier Birouri și Spații Comerciale Brașov | HoReCa — JL Custom Design",
+    title: "Mobilier Birouri și HoReCa Brașov | JL Custom Design",
     description:
       "Mobilier la comandă pentru birouri, recepții, cabinete și spații HoReCa în Brașov: birouri executive, open-space, amenajări cafenele și pensiuni. Proiecte complete, montaj inclus.",
     serviceName: "Mobilier pentru birouri și spații comerciale în Brașov",

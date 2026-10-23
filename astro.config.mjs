@@ -19,6 +19,12 @@ export default defineConfig({
     sitemap({
       // Keep private admin tooling and client offers out of the sitemap.
       filter: (page) => !/\/(admin|oferta|test-simultaneous|brandbook)(\/|$)/.test(page),
+      // Blog posts are server-rendered ([slug].astro), so the integration
+      // can't discover them — list the published slugs explicitly.
+      customPages: [
+        'https://www.mobilapersonalizatabrasov.ro/blog/ghid-de-ergonomie-si-organizare',
+        'https://www.mobilapersonalizatabrasov.ro/blog/regula-triunghiului-in-bucatarie',
+      ],
     })
   ].filter(Boolean),
   vite: {

@@ -2,8 +2,6 @@
 import BubbleButton from "./ui/BubbleButton.astro";
 import { HERO } from "../config/content";
 
-const heroImage = "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp";
-
 // Server-side text splitting to avoid JS overhead and forced reflows
 const splitTitle = HERO.title.split('<br />').map(part => {
   return part.trim().split(/\s+/).map(word => {
@@ -23,8 +21,7 @@ const splitTitle = HERO.title.split('<br />').map(part => {
        to Lighthouse but effectively invisible to users. This ensures LCP is identified 
        at the very first paint and never shifts. -->
   <div 
-    class="absolute inset-0 z-[-1] pointer-events-none opacity-[0.02]" 
-    style={`background-image: url(${heroImage}); background-size: cover; background-position: center;`}
+    class="hero-lcp-layer absolute inset-0 z-[-1] pointer-events-none opacity-[0.02]" 
     aria-hidden="true"
   ></div>
 
@@ -52,10 +49,11 @@ const splitTitle = HERO.title.split('<br />').map(part => {
             <path id="heroPath" fill="white"></path>
           </clipPath>
         </defs>
-        <!-- Standard SVG Image (Lighthouse friendly if correctly sized) -->
+        <!-- Standard SVG Image (Lighthouse friendly if correctly sized).
+             href is set by the inline script below so only the matching
+             viewport variant (42KB mobile / 253KB desktop) is downloaded. -->
         <image
           id="hero-image-svg"
-          href={heroImage}
           width="100%"
           height="100%"
           preserveAspectRatio="xMidYMid slice"
@@ -168,6 +166,16 @@ const splitTitle = HERO.title.split('<br />').map(part => {
     <!-- Decorative Elements -->
     <!-- Scroll indicator removed -->
   </div><!-- End hero-content-wrapper -->
+  <script is:inline>
+    // Set the hero image per viewport before first paint so mobile doesn't
+    // download the 253KB desktop asset (see hero-lcp-layer CSS below too).
+    document.getElementById("hero-image-svg")?.setAttribute(
+      "href",
+      window.matchMedia("(min-width: 1024px)").matches
+        ? "/Poze JL Custom Design - Site/LP/Hero/Desktop.webp"
+        : "/Poze JL Custom Design - Site/LP/Hero/Mobile.webp"
+    );
+  </script>
 </section>
 
 <style>
@@ -179,6 +187,19 @@ const splitTitle = HERO.title.split('<br />').map(part => {
   @media (min-width: 1024px) {
     .initial-hero-state {
       transform: scale(1.5); /* Desktop start */
+    }
+  }
+
+  /* LCP background layer: media-scoped URL so each viewport only fetches
+     its own hero variant. */
+  .hero-lcp-layer {
+    background-size: cover;
+    background-position: center;
+    background-image: url("/Poze JL Custom Design - Site/LP/Hero/Mobile.webp");
+  }
+  @media (min-width: 1024px) {
+    .hero-lcp-layer {
+      background-image: url("/Poze JL Custom Design - Site/LP/Hero/Desktop.webp");
     }
   }
   
