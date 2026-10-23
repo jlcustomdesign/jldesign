@@ -73,56 +73,58 @@ const placeholderImage = "/Images/placeholder-vertical.jpg"; // Using a placehol
             </div>
           </div>
 
-          <!-- Right: 4 Slices Image (Continuous) -->
+          <!-- Right: 6-Card Carousel with 3 Pairs (ONE Image Spanning Each Pair) -->
           <div
-            class="order-1 lg:order-2 lg:col-span-7 h-[50vh] lg:h-full grid grid-cols-4 gap-3 md:gap-4 z-10"
+            class="order-1 lg:order-2 lg:col-span-7 h-[50vh] lg:h-full grid grid-cols-6 gap-3 md:gap-4 z-10 relative"
           >
-            <!-- Slice 1 (Left) -->
-            <div
-              class="relative overflow-hidden h-full lg:h-[70%] w-full reveal-roll rounded-xl lg:rounded-2xl"
-              data-delay="0.1"
-              style="clip-path: inset(0 0 100% 0);"
-            >
+            <!-- Pair 1 Container (Cards 0-1) -->
+            <div class="relative col-span-2 rounded-xl lg:rounded-2xl overflow-hidden h-full lg:h-[70%]">
+              <div class="grid grid-cols-2 gap-3 md:gap-4 h-full">
+                <div class="relative">
+                  <div class="absolute inset-0 reveal-roll" data-delay="0.1" style="clip-path: inset(0 0 100% 0);"></div>
+                </div>
+                <div class="relative">
+                  <div class="absolute inset-0 reveal-roll" data-delay="0.1" style="clip-path: inset(0 0 100% 0);"></div>
+                </div>
+              </div>
               <img
                 src="/Poze JL Custom Design - Site/About/Hero.webp"
-                class="absolute inset-x-0 w-[400%] max-w-none h-full lg:h-[142.86%] object-cover top-0 left-0"
-                alt="Atelier JL Mobila — detaliu mobilier din lemn masiv"
+                class="absolute inset-0 w-full h-full lg:h-[142.86%] object-cover"
+                alt="Atelier JL Mobila"
               />
             </div>
-            <!-- Slice 2 (Center Left) -->
-            <div
-              class="relative overflow-hidden h-full lg:h-[70%] w-full reveal-roll rounded-xl lg:rounded-2xl"
-              data-delay="0.3"
-              style="clip-path: inset(0 0 100% 0);"
-            >
+            
+            <!-- Pair 2 Container (Cards 2-3) -->
+            <div class="relative col-span-2 rounded-xl lg:rounded-2xl overflow-hidden h-full">
+              <div class="grid grid-cols-2 gap-3 md:gap-4 h-full">
+                <div class="relative">
+                  <div class="absolute inset-0 reveal-roll" data-delay="0.3" style="clip-path: inset(0 0 100% 0);"></div>
+                </div>
+                <div class="relative">
+                  <div class="absolute inset-0 reveal-roll" data-delay="0.3" style="clip-path: inset(0 0 100% 0);"></div>
+                </div>
+              </div>
               <img
-                src="/Poze JL Custom Design - Site/About/Hero.webp"
-                class="absolute inset-x-0 w-[400%] max-w-none h-full lg:h-[142.86%] object-cover top-0 -left-[100%]"
-                alt="Design interior premium — bucătărie la comandă JL Mobila"
+                src="/Poze JL Custom Design - Site/LP/About/About-LP.webp"
+                class="absolute inset-0 w-full h-full object-cover"
+                alt="Mobilier personalizat"
               />
             </div>
-            <!-- Slice 3 (Center Right) -->
-            <div
-              class="relative overflow-hidden h-full w-full reveal-roll rounded-xl lg:rounded-2xl"
-              data-delay="0.5"
-              style="clip-path: inset(0 0 100% 0);"
-            >
+            
+            <!-- Pair 3 Container (Cards 4-5) -->
+            <div class="relative col-span-2 rounded-xl lg:rounded-2xl overflow-hidden h-full lg:h-[70%]">
+              <div class="grid grid-cols-2 gap-3 md:gap-4 h-full">
+                <div class="relative">
+                  <div class="absolute inset-0 reveal-roll" data-delay="0.5" style="clip-path: inset(0 0 100% 0);"></div>
+                </div>
+                <div class="relative">
+                  <div class="absolute inset-0 reveal-roll" data-delay="0.5" style="clip-path: inset(0 0 100% 0);"></div>
+                </div>
+              </div>
               <img
-                src="/Poze JL Custom Design - Site/About/Hero.webp"
-                class="absolute inset-x-0 w-[400%] max-w-none h-full object-cover top-0 -left-[200%]"
-                alt="Producție mobilier personalizat — finisaje lemn natural"
-              />
-            </div>
-            <!-- Slice 4 (Right) -->
-            <div
-              class="relative overflow-hidden h-full w-full reveal-roll rounded-xl lg:rounded-2xl"
-              data-delay="0.7"
-              style="clip-path: inset(0 0 100% 0);"
-            >
-              <img
-                src="/Poze JL Custom Design - Site/About/Hero.webp"
-                class="absolute inset-x-0 w-[400%] max-w-none h-full object-cover top-0 -left-[300%]"
-                alt="Montaj profesional mobilier la comandă Brașov"
+                src="/Poze JL Custom Design - Site/About/Image 1.webp"
+                class="absolute inset-0 w-full h-full lg:h-[142.86%] object-cover"
+                alt="Design interior"
               />
             </div>
           </div>

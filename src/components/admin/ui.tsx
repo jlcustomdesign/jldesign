@@ -199,12 +199,27 @@ function markdownToHtml(md: string): string {
       continue;
     }
 
+    // Explicit styled paragraphs (Text Mare / Text Mic)
+    const pStyledMatch = trimmed.match(/^<p\s+class="(text-large|text-small)">([\s\S]*?)<\/p>$/);
+    if (pStyledMatch) {
+      closeLists();
+      htmlParts.push(`<p class="${pStyledMatch[1]}">${formatInline(pStyledMatch[2])}</p>`);
+      continue;
+    }
+
     // Bullet list item
     const bulletMatch = raw.match(/^(\s*)[-*•]\s+(.*)$/);
     if (bulletMatch) {
       if (inOl) { htmlParts.push('</ol>'); inOl = false; }
       if (!inUl) { htmlParts.push('<ul>'); inUl = true; }
-      htmlParts.push(`<li>${formatInline(bulletMatch[2])}</li>`);
+      let content = bulletMatch[2];
+      let cls = '';
+      if (content.includes('class="text-title"')) cls = 'text-title';
+      else if (content.includes('class="text-subtitle"')) cls = 'text-subtitle';
+      else if (content.includes('class="text-large"')) cls = 'text-large';
+      else if (content.includes('class="text-small"')) cls = 'text-small';
+      content = content.replace(/<\/?span[^>]*>/g, '');
+      htmlParts.push(`<li${cls ? ` class="${cls}"` : ''}>${formatInline(content)}</li>`);
       continue;
     }
 
@@ -213,7 +228,14 @@ function markdownToHtml(md: string): string {
     if (numMatch) {
       if (inUl) { htmlParts.push('</ul>'); inUl = false; }
       if (!inOl) { htmlParts.push('<ol>'); inOl = true; }
-      htmlParts.push(`<li>${formatInline(numMatch[2])}</li>`);
+      let content = numMatch[2];
+      let cls = '';
+      if (content.includes('class="text-title"')) cls = 'text-title';
+      else if (content.includes('class="text-subtitle"')) cls = 'text-subtitle';
+      else if (content.includes('class="text-large"')) cls = 'text-large';
+      else if (content.includes('class="text-small"')) cls = 'text-small';
+      content = content.replace(/<\/?span[^>]*>/g, '');
+      htmlParts.push(`<li${cls ? ` class="${cls}"` : ''}>${formatInline(content)}</li>`);
       continue;
     }
 
@@ -267,11 +289,22 @@ function htmlToMarkdown(html: string): string {
         return '\n';
       case 'li': {
         const parentTag = el.parentElement?.tagName.toLowerCase();
-        if (parentTag === 'ol') {
-          const idx = Array.from(el.parentElement?.children || []).indexOf(el) + 1;
-          return `${idx}. ${children.trim()}\n`;
+        const prefix = parentTag === 'ol'
+          ? `${Array.from(el.parentElement?.children || []).indexOf(el) + 1}. `
+          : '- ';
+        if (el.classList.contains('text-title')) {
+          return `${prefix}<span class="text-title">${children.trim()}</span>\n`;
         }
-        return `- ${children.trim()}\n`;
+        if (el.classList.contains('text-subtitle')) {
+          return `${prefix}<span class="text-subtitle">${children.trim()}</span>\n`;
+        }
+        if (el.classList.contains('text-large')) {
+          return `${prefix}<span class="text-large">${children.trim()}</span>\n`;
+        }
+        if (el.classList.contains('text-small')) {
+          return `${prefix}<span class="text-small">${children.trim()}</span>\n`;
+        }
+        return `${prefix}${children.trim()}\n`;
       }
       case 'ul':
       case 'ol':
@@ -281,6 +314,12 @@ function htmlToMarkdown(html: string): string {
         // If the paragraph is empty (e.g. an extra Enter line), preserve it with an explicit break
         if (!trimmed || trimmed === '<br>' || el.innerHTML === '<br>' || el.innerHTML === '<br/>') {
           return '\n\n<br />\n\n';
+        }
+        if (el.classList.contains('text-large')) {
+          return `\n\n<p class="text-large">${trimmed}</p>\n\n`;
+        }
+        if (el.classList.contains('text-small')) {
+          return `\n\n<p class="text-small">${trimmed}</p>\n\n`;
         }
         return `\n\n${trimmed}\n\n`;
       }
@@ -398,10 +437,32 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
       }
     } else {
       // Normal text
-      document.execCommand('formatBlock', false, '<p>');
-      const currentBlock = sel.anchorNode?.parentElement?.closest('p');
-      if (currentBlock) {
-        currentBlock.classList.remove('text-large', 'text-small', 'text-title', 'text-subtitle');
+      // If inside a blockquote, unwrap it so it doesn't stay stuck in quote
+      let checkCur: Node | null = sel.anchorNode;
+      let quoteNode: HTMLElement | null = null;
+      while (checkCur && checkCur !== editorRef.current) {
+        if (checkCur.nodeName === 'BLOCKQUOTE') {
+          quoteNode = checkCur as HTMLElement;
+          break;
+        }
+        checkCur = checkCur.parentNode;
+      }
+
+      if (quoteNode && quoteNode.parentNode) {
+        const p = document.createElement('p');
+        p.innerHTML = quoteNode.innerHTML || '<br>';
+        quoteNode.parentNode.replaceChild(p, quoteNode);
+        const newRange = document.createRange();
+        newRange.selectNodeContents(p);
+        newRange.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      } else {
+        document.execCommand('formatBlock', false, '<p>');
+        const currentBlock = sel.anchorNode?.parentElement?.closest('p');
+        if (currentBlock) {
+          currentBlock.classList.remove('text-large', 'text-small', 'text-title', 'text-subtitle');
+        }
       }
     }
 
@@ -414,6 +475,65 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
     editorRef.current.focus();
     const command = ordered ? 'insertOrderedList' : 'insertUnorderedList';
     document.execCommand(command, false);
+    emitChange();
+    updateActiveStyles();
+  };
+
+  const toggleQuote = () => {
+    if (!editorRef.current) return;
+    editorRef.current.focus();
+
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+
+    let cur: Node | null = sel.anchorNode;
+    let quoteNode: HTMLElement | null = null;
+
+    while (cur && cur !== editorRef.current) {
+      if (cur.nodeName === 'BLOCKQUOTE') {
+        quoteNode = cur as HTMLElement;
+        break;
+      }
+      cur = cur.parentNode;
+    }
+
+    if (quoteNode && quoteNode.parentNode) {
+      // Deactivate quote: turn back into standard paragraph(s)
+      const parent = quoteNode.parentNode;
+      const frag = document.createDocumentFragment();
+
+      const children = Array.from(quoteNode.childNodes);
+      if (children.length === 0 || !quoteNode.textContent?.trim()) {
+        const p = document.createElement('p');
+        p.innerHTML = '<br>';
+        frag.appendChild(p);
+      } else {
+        const hasBlockChildren = children.some((c) =>
+          ['P', 'DIV', 'H1', 'H2', 'H3', 'UL', 'OL'].includes(c.nodeName)
+        );
+        if (hasBlockChildren) {
+          children.forEach((c) => frag.appendChild(c));
+        } else {
+          const p = document.createElement('p');
+          p.innerHTML = quoteNode.innerHTML || '<br>';
+          frag.appendChild(p);
+        }
+      }
+
+      const focusTarget = frag.firstChild;
+      parent.replaceChild(frag, quoteNode);
+
+      if (focusTarget) {
+        const newRange = document.createRange();
+        newRange.selectNodeContents(focusTarget);
+        newRange.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      }
+    } else {
+      document.execCommand('formatBlock', false, '<blockquote>');
+    }
+
     emitChange();
     updateActiveStyles();
   };
@@ -506,6 +626,67 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
 
           emitChange();
           updateActiveStyles();
+          return;
+        }
+      }
+
+      // Check if pressing Enter inside a BLOCKQUOTE
+      let bqNode: HTMLElement | null = null;
+      let curBq: Node | null = range.startContainer;
+      while (curBq && curBq !== editorRef.current) {
+        if (curBq.nodeName === 'BLOCKQUOTE') {
+          bqNode = curBq as HTMLElement;
+          break;
+        }
+        curBq = curBq.parentNode;
+      }
+
+      if (bqNode && bqNode.parentNode) {
+        // If the entire blockquote is empty or just whitespace: replace with regular paragraph
+        if (!bqNode.textContent?.trim()) {
+          e.preventDefault();
+          const p = document.createElement('p');
+          p.innerHTML = '<br>';
+          bqNode.parentNode.replaceChild(p, bqNode);
+
+          const newRange = document.createRange();
+          newRange.setStart(p, 0);
+          newRange.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+
+          emitChange();
+          updateActiveStyles();
+          return;
+        }
+
+        // If cursor is on an empty child block inside the quote (e.g. empty line after Enter): exit the quote
+        let blockInQuote: HTMLElement | null = null;
+        let curChild: Node | null = range.startContainer;
+        while (curChild && curChild.parentNode && curChild.parentNode !== editorRef.current) {
+          if (curChild.parentNode === bqNode) {
+            blockInQuote = curChild as HTMLElement;
+            break;
+          }
+          curChild = curChild.parentNode;
+        }
+
+        if (blockInQuote && !blockInQuote.textContent?.trim()) {
+          e.preventDefault();
+          blockInQuote.remove();
+          const p = document.createElement('p');
+          p.innerHTML = '<br>';
+          bqNode.parentNode.insertBefore(p, bqNode.nextSibling);
+
+          const newRange = document.createRange();
+          newRange.setStart(p, 0);
+          newRange.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+
+          emitChange();
+          updateActiveStyles();
+          return;
         }
       }
     }
@@ -627,9 +808,7 @@ export function MarkdownEditor({ value, onChange }: { value: string; onChange: (
           className={activeStyles.blockquote ? 'is-active' : ''}
           onMouseDown={(e) => {
             e.preventDefault();
-            document.execCommand('formatBlock', false, '<blockquote>');
-            emitChange();
-            updateActiveStyles();
+            toggleQuote();
           }}
         >
           ❝ Citat

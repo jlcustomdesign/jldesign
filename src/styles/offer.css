@@ -162,6 +162,9 @@
 .offer-doc .s-heading.xb { font-weight: 800; }
 .s-para { font-size: calc(1.45cqw * var(--fs, 1)); line-height: 1.55; color: var(--ink-soft); max-width: 92%; margin: 1.2cqw 0 0; }
 .s-para.wide { max-width: 100%; }
+.s-para p { margin: 0 0 0.6cqw 0; }
+.s-para p:last-child { margin-bottom: 0; }
+.s-para .empty-row { min-height: 1.2em; line-height: 1.2; margin: 0 0 0.6cqw 0; }
 
 .side-media { max-height: 100%; }
 .sheet-body.row .side-media.mat-side { align-self: flex-start; }
@@ -209,7 +212,7 @@
 .acc-body { padding: .35cqw .5cqw .5cqw; }
 .acc-grid + .block-label { margin: .5cqw 0 .3cqw; }
 .acc-title { font-size: calc(1.25cqw * var(--fs, 1)); font-weight: 700; }
-.acc-desc { font-size: calc(1.05cqw * var(--fs, 1)); color: var(--ink-soft); margin-top: .2cqw; line-height: 1.35; }
+.acc-desc { font-size: calc(1.05cqw * var(--fs, 1)); color: var(--ink-soft); margin-top: .2cqw; line-height: 1.35; white-space: pre-line; }
 
 .sketch-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; margin: 1.8cqw 0 1cqw; align-items: start; }
 .sketch { margin: 0; min-width: 0; }
@@ -221,6 +224,7 @@
 .dims { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6cqw; }
 .dim-title { font-size: calc(1.1cqw * var(--fs, 1)); font-weight: 700; letter-spacing: .1em; color: var(--gold); margin-bottom: .6cqw; }
 .dim-line { font-size: calc(1.15cqw * var(--fs, 1)); color: var(--ink-soft); line-height: 1.5; }
+.dim-line.empty-row { min-height: 1.2em; }
 
 /* Gallery — full-bleed fill: the block always covers the entire body area
    (full width × full height). Rows get height shares from fillArrangement;
@@ -251,6 +255,7 @@
 .text-body { max-width: 100%; }
 .text-body p { font-size: calc(1.7cqw * var(--fs, 1)); line-height: 1.55; color: var(--ink-soft); margin: 0 0 1cqw; overflow-wrap: anywhere; }
 .text-body p:last-child { margin-bottom: 0; }
+.text-body .empty-row { min-height: 1.2em; line-height: 1.2; margin: 0 0 1cqw; }
 .text-image { min-width: 0; flex: 0 0 auto; border-radius: 1cqw; }
 .text-image .text-img-frame { width: 100%; height: 100%; border-radius: 1cqw; }
 .text-image .text-img-frame .img-fg { object-fit: cover; }

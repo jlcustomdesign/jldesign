@@ -17,13 +17,13 @@ const portfolio = defineCollection({
 
 const blog = defineCollection({
   schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    coverImage: z.string(),
-    coverImageAlt: z.string(),
+    title: z.string().default('Articol nou'),
+    description: z.string().default(''),
+    coverImage: z.string().default('/Images/placeholder-vertical.jpg'),
+    coverImageAlt: z.string().default(''),
     category: z.string().default('inspiratie'),
-    author: z.string().default('JL Mobila'),
-    publishedDate: z.union([z.string(), z.date()]),
+    author: z.string().default('JL Custom Design'),
+    publishedDate: z.union([z.string(), z.date()]).default(() => new Date().toISOString().slice(0, 10)),
   }),
 });
 

@@ -382,7 +382,21 @@ function Page({ s, num, F, editable, logoSrc }: { s: Section; num: string; F: (f
   // {{an}} in any text expands to the CURRENT year at render time, so the
   // copyright line stays correct forever without editing the offer.
   const sub = (t?: string) => (t || '').replaceAll('{{an}}', String(new Date().getFullYear()));
-  const para = (cls = '') => <p className={`s-para ${cls}`} {...F(`${s.id}:paragraph`)}>{sub(s.paragraph)}</p>;
+  const para = (cls = '') => {
+    const rawText = sub(s.paragraph);
+    if (!rawText.trim() && !editable) return null;
+    const lines = rawText ? rawText.split('\n') : [''];
+    return (
+      <div className={`s-para ${cls}`} {...F(`${s.id}:paragraph`)}>
+        {lines.map((line, idx) => {
+          if (!line.trim()) {
+            return <div key={idx} className="empty-row" style={{ minHeight: '1.2em' }}><br /></div>;
+          }
+          return <p key={idx}>{line}</p>;
+        })}
+      </div>
+    );
+  };
 
   let textContent: React.ReactNode = null;
   let mediaContent: React.ReactNode = null;
@@ -475,7 +489,16 @@ function Page({ s, num, F, editable, logoSrc }: { s: Section; num: string; F: (f
         <div className="block-label">Date tehnice</div>
         <div className="dims">
           {(s.dims || []).filter((d) => d.title || d.lines).map((d, i) => (
-            <div className="dim" key={i} {...F(`${s.id}:dim:${i}`)}><div className="dim-title">{d.title}</div>{d.lines.split('\n').filter(Boolean).map((l, j) => <div className="dim-line" key={j}>{l}</div>)}</div>
+            <div className="dim" key={i} {...F(`${s.id}:dim:${i}`)}>
+              <div className="dim-title">{d.title}</div>
+              {d.lines.split('\n').map((l, j) =>
+                !l.trim() ? (
+                  <div className="dim-line empty-row" key={j} style={{ minHeight: '1.2em' }}><br /></div>
+                ) : (
+                  <div className="dim-line" key={j}>{l}</div>
+                )
+              )}
+            </div>
           ))}
         </div>
       </>
@@ -499,19 +522,48 @@ function Page({ s, num, F, editable, logoSrc }: { s: Section; num: string; F: (f
     // Combine the main paragraph with optional extra text blocks.
     const blocks = [s.paragraph, ...(s.paragraphs || [])].filter((b): b is string => !!b);
     const blockEls = blocks.map((block, bidx) => {
-      const lines = (typeof block === 'string' ? sub(block) : '').split('\n').filter(Boolean);
-      const paras = lines.filter((l) => !l.trimStart().startsWith('- '));
-      const items = lines.filter((l) => l.trimStart().startsWith('- ')).map((l) => l.trimStart().slice(2));
+      const rawLines = (typeof block === 'string' ? sub(block) : '').split('\n');
+      const elements: React.ReactNode[] = [];
+      let currentList: string[] = [];
+
+      const flushList = () => {
+        if (currentList.length > 0) {
+          const listItems = [...currentList];
+          elements.push(
+            <ul className="text-list" key={`list-${elements.length}`}>
+              {listItems.map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
+            </ul>
+          );
+          currentList = [];
+        }
+      };
+
+      rawLines.forEach((line, idx) => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('- ')) {
+          currentList.push(trimmed.slice(2));
+        } else {
+          flushList();
+          if (!trimmed) {
+            elements.push(
+              <p key={`p-${idx}`} className="empty-row" style={{ minHeight: '1.2em' }}>
+                <br />
+              </p>
+            );
+          } else {
+            elements.push(<p key={`p-${idx}`}>{line}</p>);
+          }
+        }
+      });
+      flushList();
+
       return (
         <div className="text-block" key={bidx}>
           <div className="text-body" {...F(bidx === 0 ? `${s.id}:paragraph` : `${s.id}:paragraph:${bidx - 1}`)}>
-            {paras.map((l, j) => <p key={j}>{l}</p>)}
+            {elements}
           </div>
-          {items.length > 0 && (
-            <ul className="text-list">
-              {items.map((l, j) => <li key={j}>{l}</li>)}
-            </ul>
-          )}
         </div>
       );
     });
