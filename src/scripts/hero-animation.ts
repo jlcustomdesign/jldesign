@@ -206,8 +206,9 @@ function runHeroEnterAnimation(section: Element) {
 function runSvgAnim(path: Element, width: number, height: number) {
   const tl = gsap.timeline();
 
-  // Use .to because the START scale is now defined in CSS (.initial-hero-state)
-  tl.to("#mySVG", {
+  // Use .to because the START scale is now defined in CSS (.initial-hero-state).
+  // The LCP layer (same photo) mirrors the SVG scale so they stay pixel-aligned.
+  tl.to(["#mySVG", ".hero-lcp-layer"], {
     scale: 1,
     duration: 1,
     ease: "power4.out",

@@ -17,21 +17,20 @@ const splitTitle = HERO.title.split('<br />').map(part => {
   data-theme="dark"
   style="z-index: 1;"
 >
-  <!-- LCP anchor: same hero photo as the SVG above it (identical cover/center
-       alignment), so a real, fully-visible LCP candidate paints at ~first paint.
-       Chrome ignores the opacity-0.02 "invisible" trick — it produces zero LCP
-       candidates and Lantern reports NO_LCP. -->
-  <div
-    class="hero-lcp-layer absolute inset-0 z-[-1] pointer-events-none"
-    aria-hidden="true"
-  ></div>
-
   <!-- Hero Content Wrapper (for scale/blur animation) -->
   <div
     id="hero-content-wrapper"
     class="absolute inset-0 flex items-center gpu-accelerated"
     style="transform-origin: center center;"
   >
+    <!-- LCP anchor: same hero photo as the SVG below it (identical cover/center
+         alignment), inside the wrapper so it scales in sync with the SVG. Fully
+         visible — Chrome ignores the opacity-0.02 "invisible" trick and reports
+         NO_LCP with zero candidates. -->
+    <div
+      class="hero-lcp-layer initial-hero-state absolute inset-0 z-0 pointer-events-none"
+      aria-hidden="true"
+    ></div>
     <!-- Background SVG Container -->
     <div
       class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none"
