@@ -17,20 +17,33 @@ const splitTitle = HERO.title.split('<br />').map(part => {
   data-theme="dark"
   style="z-index: 1;"
 >
+  <!-- LCP anchor: real (near-invisible) <img> of the same hero photo. Required
+       because the SVG <image> hero never produces an LCP candidate in Chrome,
+       which poisons the whole LCP pipeline (NO_LCP, PSI "Error!" audits).
+       opacity-0.02 <img> still counts; visually invisible, so no alignment
+       constraints with the morphing SVG. -->
+  <picture class="absolute inset-0 z-[-1] pointer-events-none opacity-[0.02]" aria-hidden="true">
+    <source
+      media="(min-width: 1024px)"
+      srcset="/Poze JL Custom Design - Site/LP/Hero/Desktop.webp"
+    />
+    <img
+      src="/Poze JL Custom Design - Site/LP/Hero/Mobile.webp"
+      alt=""
+      width="2560"
+      height="1707"
+      fetchpriority="high"
+      decoding="async"
+      class="w-full h-full object-cover"
+    />
+  </picture>
+
   <!-- Hero Content Wrapper (for scale/blur animation) -->
   <div
     id="hero-content-wrapper"
     class="absolute inset-0 flex items-center gpu-accelerated"
     style="transform-origin: center center;"
   >
-    <!-- LCP anchor: same hero photo as the SVG below it (identical cover/center
-         alignment), inside the wrapper so it scales in sync with the SVG. Fully
-         visible — Chrome ignores the opacity-0.02 "invisible" trick and reports
-         NO_LCP with zero candidates. -->
-    <div
-      class="hero-lcp-layer initial-hero-state absolute inset-0 z-0 pointer-events-none"
-      aria-hidden="true"
-    ></div>
     <!-- Background SVG Container -->
     <div
       class="absolute inset-0 z-0 overflow-hidden flex justify-center items-center pointer-events-none"
@@ -190,19 +203,6 @@ const splitTitle = HERO.title.split('<br />').map(part => {
     }
   }
 
-  /* LCP background layer: media-scoped URL so each viewport only fetches
-     its own hero variant. */
-  .hero-lcp-layer {
-    background-size: cover;
-    background-position: center;
-    background-image: url("/Poze JL Custom Design - Site/LP/Hero/Mobile.webp");
-  }
-  @media (min-width: 1024px) {
-    .hero-lcp-layer {
-      background-image: url("/Poze JL Custom Design - Site/LP/Hero/Desktop.webp");
-    }
-  }
-  
   /* Initial state for hero words (server-side split) */
   .hero-word {
     transform: translateY(110%);
