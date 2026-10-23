@@ -14,13 +14,16 @@ let heroAnimInitialized = false;
 let heroExitInitialized = false;
 
 export function initHeroAnimations() {
-  if (document.readyState === "complete") {
-    requestAnimationFrame(() => {
-        safeInitHeroAnim();
-        safeInitHeroExitAnimation();
-    });
+  // Start as soon as the DOM is parsed — waiting for full `load` delays the
+  // text reveal by several seconds on mobile (LCP killer). The image set by
+  // the inline script loads independently; no need to block on it.
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      safeInitHeroAnim();
+      safeInitHeroExitAnimation();
+    }, { once: true });
   } else {
-    window.addEventListener("load", () => {
+    requestAnimationFrame(() => {
         safeInitHeroAnim();
         safeInitHeroExitAnimation();
     });
