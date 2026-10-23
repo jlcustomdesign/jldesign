@@ -9,7 +9,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://mobilapersonalizatabrasov.ro/', // Updated to custom domain
+  site: 'https://www.mobilapersonalizatabrasov.ro/', // www is the canonical variant (all non-www URLs 301 here)
   output: 'server',
   trailingSlash: 'ignore',
   adapter: vercel(),
@@ -18,7 +18,7 @@ export default defineConfig({
     markdoc(),
     sitemap({
       // Keep private admin tooling and client offers out of the sitemap.
-      filter: (page) => !/\/(admin|oferta)(\/|$)/.test(page),
+      filter: (page) => !/\/(admin|oferta|test-simultaneous|brandbook)(\/|$)/.test(page),
     })
   ].filter(Boolean),
   vite: {

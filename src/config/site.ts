@@ -10,7 +10,7 @@ export const SITE = {
   name: "JL Mobila",
   legalName: "JL Mobila S.R.L.",
   tagline: "Mobilă la comandă și mobilier personalizat din lemn masiv",
-  url: "https://mobilapersonalizatabrasov.ro",
+  url: "https://www.mobilapersonalizatabrasov.ro",
 
   /** Contact */
   phone: "+40773504248",

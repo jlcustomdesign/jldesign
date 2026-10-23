@@ -32,8 +32,8 @@ Allow: /Fonts/
 Allow: /Images/
 
 # Sitemap locations
-Sitemap: https://mobilapersonalizatabrasov.ro/sitemap-index.xml
-Sitemap: https://mobilapersonalizatabrasov.ro/sitemap-images.xml
+Sitemap: https://www.mobilapersonalizatabrasov.ro/sitemap-index.xml
+Sitemap: https://www.mobilapersonalizatabrasov.ro/sitemap-images.xml
 
 # Crawl-delay (optional, helps prevent server overload)
 Crawl-delay: 1
