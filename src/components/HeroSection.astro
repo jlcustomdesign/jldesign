@@ -17,11 +17,12 @@ const splitTitle = HERO.title.split('<br />').map(part => {
   data-theme="dark"
   style="z-index: 1;"
 >
-  <!-- Ultra-Stable LCP Target: A background image layer that is technically visible 
-       to Lighthouse but effectively invisible to users. This ensures LCP is identified 
-       at the very first paint and never shifts. -->
-  <div 
-    class="hero-lcp-layer absolute inset-0 z-[-1] pointer-events-none opacity-[0.02]" 
+  <!-- LCP anchor: same hero photo as the SVG above it (identical cover/center
+       alignment), so a real, fully-visible LCP candidate paints at ~first paint.
+       Chrome ignores the opacity-0.02 "invisible" trick — it produces zero LCP
+       candidates and Lantern reports NO_LCP. -->
+  <div
+    class="hero-lcp-layer absolute inset-0 z-[-1] pointer-events-none"
     aria-hidden="true"
   ></div>
 
