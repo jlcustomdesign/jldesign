@@ -227,13 +227,22 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
       <meta name="msvalidate.01" content={SITE.bingVerification} />
     )}
 
-    {/* Google Analytics (gtag.js) */}
-    <script async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.gaId}`}></script>
+    {/* Google Analytics (gtag.js) — deferred until after load: it transfers
+        ~180KB and must not compete with the LCP image on slow connections. */}
     <script is:inline define:vars={{ GA_ID: SITE.gaId }}>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', GA_ID);
+      // Inject the gtag script only after the page has fully loaded
+      const loadGtag = () => {
+        const s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_ID;
+        document.head.appendChild(s);
+      };
+      if (document.readyState === "complete") setTimeout(loadGtag, 0);
+      else window.addEventListener("load", () => setTimeout(loadGtag, 0), { once: true });
     </script>
 
     <!-- Primary Meta Tags -->
@@ -267,9 +276,9 @@ const breadcrumbSchema = breadcrumbs ? JSON.stringify({
 
     <link
       rel="preload"
-      href="/Fonts/grift-2025-04-02-02-51-35-utc/Variable-TT/Grift Variable-VF.ttf"
+      href="/Fonts/grift-2025-04-02-02-51-35-utc/Variable-TT/Grift Variable-VF.woff2"
       as="font"
-      type="font/ttf"
+      type="font/woff2"
       crossorigin
     />
     <link rel="preload" as="image" href="/Poze JL Custom Design - Site/LP/Hero/Desktop.webp" media="(min-width: 1024px)" fetchpriority="high" />
