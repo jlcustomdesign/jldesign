@@ -12,7 +12,7 @@ const posts = await getCollection("blog");
 const post = posts.find((p) => p.slug === slug);
 
 if (!post) {
-  return Astro.redirect("/blog");
+  return Astro.redirect("/blog/");
 }
 
 const { Content } = await post.render();
@@ -44,7 +44,7 @@ const articleSchema = JSON.stringify({
   dateModified: post.data.publishedDate,
   mainEntityOfPage: {
     "@type": "WebPage",
-    "@id": absoluteUrl(`/blog/${post.slug}`),
+    "@id": absoluteUrl(`/blog/${post.slug}/`),
   },
 });
 
@@ -66,8 +66,8 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
   type="article"
   breadcrumbs={[
     { name: BREADCRUMBS.home, url: "/" },
-    { name: BREADCRUMBS.blog, url: "/blog" },
-    { name: post.data.title, url: `/blog/${post.slug}` },
+    { name: BREADCRUMBS.blog, url: "/blog/" },
+    { name: post.data.title, url: `/blog/${post.slug}/` },
   ]}
 >
   <main class="bg-secondary min-h-screen">
@@ -79,7 +79,7 @@ const publishDateString = new Date(post.data.publishedDate).toISOString();
       <header class="mb-10 max-w-4xl">
         <div class="flex items-center gap-3 mb-4">
           <a
-            href="/blog"
+            href="/blog/"
             class="text-xs font-bold uppercase tracking-widest text-accent hover:text-primary transition-colors"
           >
             {BLOG_PAGE.backLink}

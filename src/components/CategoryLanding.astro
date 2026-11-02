@@ -65,13 +65,13 @@ const faqSchema = JSON.stringify({
         </p>
         <div class="flex flex-wrap gap-4">
           <a
-            href="/contact"
+            href="/contact/"
             class="inline-block bg-primary text-white px-8 py-4 rounded-full font-medium hover:bg-accent transition-colors duration-300"
           >
             Cere o ofertă
           </a>
           <a
-            href="/portfolio"
+            href="/portfolio/"
             class="inline-block border border-primary text-primary px-8 py-4 rounded-full font-medium hover:bg-primary hover:text-white transition-colors duration-300"
           >
             Vezi proiecte
@@ -169,7 +169,7 @@ const faqSchema = JSON.stringify({
         {related.map((c) => (
           <li class="flex items-start gap-3">
             <span class="mt-2 w-2 h-2 rounded-full bg-accent shrink-0"></span>
-            <a href={`/${c.slug}`} class="text-primary/80 hover:text-accent underline-offset-4 hover:underline">
+            <a href={`/${c.slug}/`} class="text-primary/80 hover:text-accent underline-offset-4 hover:underline">
               {c.h1}
             </a>
           </li>
@@ -190,7 +190,7 @@ const faqSchema = JSON.stringify({
       </p>
       <div class="flex flex-wrap justify-center gap-4">
         <a
-          href="/contact"
+          href="/contact/"
           class="inline-block bg-accent text-primary px-8 py-4 rounded-full font-medium hover:bg-white transition-colors duration-300"
         >
           Programează o consultanță

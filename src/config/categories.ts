@@ -309,7 +309,99 @@ export const CATEGORIES: Record<string, CategoryPage> = {
         a: "Da, amenajăm camere de cazare, recepții și zone de servire pentru pensiuni și hoteluri, cu mobilier gândit pentru utilizare frecventă.",
       },
     ],
+    image: "/Poze JL Custom Design - Site/Services/Birou director.webp",
+    imageAlt: "Mobilier pentru birouri și spații de lucru la comandă realizat de JL Custom Design în Brașov",
+  },
+
+  hol: {
+    name: "Hol & Riflaje",
+    slug: "mobilier-hol-riflaje-brasov",
+    h1: "Mobilier de hol și riflaje decorative la comandă în Brașov",
+    title: "Mobilier Hol și Riflaje la Comandă Brașov | JL Custom Design",
+    description:
+      "Mobilier de hol la comandă în Brașov: dulapuri de intrare până în tavan, pantofare ventilate, băncuțe tapițate și riflaje decorative din lemn masiv sau MDF. Proiectare 3D și montaj.",
+    serviceName: "Mobilier de hol și riflaje decorative la comandă în Brașov",
+    lead: "Transformăm holul de intrare într-un spațiu aerisit, elegant și impecabil organizat, cu mobilier la comandă adaptat milimetric dimensiunilor reale ale casei tale.",
+    paragraphs: [
+      "Holul este prima încăpere care te întâmpină și creează prima impresie a locuinței, dar este adesea cel mai dificil de amenajat: spațiu îngust, uși multiple, tablouri electrice sau zone de trecere aglomerate. Mobilierul realizat pe comandă rezolvă aceste provocări prin optimizarea fiecărui centimetru pe înălțime și adâncime.",
+      "Proiectăm și executăm ansambluri integrate pentru hol: dulapuri până în tavan pentru haine de sezon, pantofare ventilate cu rafturi înclinate, băncuțe comode pentru încălțat (cu șezut tapițat sau din lemn masiv), cuiere ascunse și placări decorative de perete cu riflaje din lemn sau MDF vopsit. Integrăm iluminare LED liniară cu senzori de mișcare și oglinzi generoase cu ramă discretă.",
+    ],
+    highlights: [
+      { title: "Dulapuri până în tavan", desc: "Depozitare maximă pentru haine lungi, paltoane și bagaje, fără spații moarte." },
+      { title: "Pantofare inteligente", desc: "Sisteme rabatabile sau sertare glisante cu aerisire integrată, adaptate oricărui număr de pantofi." },
+      { title: "Riflaje decorative", desc: "Panouri cu riflaje verticale din stejar, frasin sau MDF vopsit pentru separarea vizuală a zonelor." },
+      { title: "Băncuțe tapițate", desc: "Zonă confortabilă de șezut cu spații de depozitare ascunse dedesubt." },
+      { title: "Iluminare LED ambientală", desc: "Benzi LED ascunse cu senzor de mișcare pentru confort maxim la intrarea în casă." },
+    ],
+    materials: [
+      "MDF vopsit mat / texturat în orice cod RAL",
+      "PAL melaminat Egger și Kronospan",
+      "Riflaje din lemn masiv (stejar, frasin) sau furnir natural",
+      "Oglinzi float clare / fumurii cu iluminare perimetrală",
+      "Tapițerii rezistente la uzură pentru băncuțe",
+      "Feronerie Blum și Hafele cu amortizare",
+    ],
+    faqs: [
+      {
+        q: "Cum pot amenaja un hol lung și îngust fără să pară sufocat?",
+        a: "Pentru holurile înguste proiectăm dulapuri cu adâncime redusă (35–45 cm) cu uși glisante sau push-to-open, băncuțe suspendate și oglinzi mari care reflectă lumina și dublează vizual spațiul.",
+      },
+      {
+        q: "Realizați riflaje din lemn sau doar din MDF?",
+        a: "Executăm riflaje decorative atât din lemn masiv (stejar, frasin, fag), cât și din MDF vopsit în orice nuanță RAL sau înfoliat cu textură naturală, în funcție de buget și concept.",
+      },
+      {
+        q: "Puteți masca tabloul electric sau contoarele în mobilierul de hol?",
+        a: "Da, integrăm uși secrete de vizitare sau panouri decorative detașabile care ascund perfect tabloul electric, routerul WiFi sau contoarele, păstrând accesul tehnic facil.",
+      },
+    ],
+    image: "/Poze JL Custom Design - Site/Services/Hol.webp",
+    imageAlt: "Mobilier de hol la comandă cu riflaj decorativ realizat de JL Custom Design Brașov",
+  },
+
+  horeca: {
+    name: "HoReCa & Ospitalitate",
+    slug: "mobilier-horeca-brasov",
+    h1: "Mobilier HoReCa, pensiuni și restaurante la comandă în Brașov",
+    title: "Mobilier HoReCa Brașov | Pensiuni, Restaurante, Hoteluri | JL Custom",
+    description:
+      "Mobilier comercial și HoReCa la comandă în Brașov: amenajări camere pensiuni și hoteluri, recepții, baruri, zone de dining și spații de relaxare. Materiale pentru trafic intens, proiectare 3D și montaj pe faze.",
+    serviceName: "Mobilier HoReCa și comercial la comandă în Brașov",
+    lead: "Realizăm mobilier profesional pentru industria ospitalității în Brașov, Sibiu, Buzău și Valea Prahovei — proiecte durabile, proiectate pentru trafic intens și o experiență memorabilă oferită oaspeților.",
+    paragraphs: [
+      "Amenajarea unui spațiu HoReCa (hotel, pensiune turistică, restaurant, cafenea sau recepție) cere un echilibru perfect între estetică exclusivistă și rezistență extremă la uzură zilnică. În atelierul nostru din Brașov colaborăm strâns cu proprietari și designeri de interior pentru a livra mobilier conform standardelor hoteliere riguroase.",
+      "Producem mobilier complet pentru camere de cazare (paturi tapițate cu somiere ranforsate, noptiere, dulapuri deschise sau închise, birouri de lucru și suporturi de valize), recepții impunătoare, zone de bar, placări murale acustice și mese de restaurant cu blaturi rezistente la zgârieturi și lichide. Planificăm producția și montajul pe etape pentru a respecta termenele de deschidere.",
+    ],
+    highlights: [
+      { title: "Rezistență la trafic intens", desc: "Utilizăm PAL compact, HPL, MDF hidrofugat și canturi poliuretanice rezistente la șocuri mecanice." },
+      { title: "Dotări complete pentru cazare", desc: "Pachete integrate: paturi, noptiere, comode TV, minibar încorporat, dulapuri și birouri." },
+      { title: "Recepții și baruri personalizate", desc: "Elemente arhitecturale centrale cu iluminare LED, riflaje, piatră/compozit și finisaje premium." },
+      { title: "Respectarea calendarului de deschidere", desc: "Planificare strictă pe etape de execuție și montaj rapid fără blocarea activității." },
+      { title: "Garanție comercială și mentenanță", desc: "Suport tehnic dedicat și piese de schimb pentru feronerie și componente uzuale." },
+    ],
+    materials: [
+      "HPL și PAL compact (rezistență superioară la apă și zgârieturi)",
+      "PAL melaminat clasa comercială Egger / Kronospan",
+      "Lemn masiv tratat și finisat pentru uz public",
+      "Blaturi din compozit, marmură sau quartz compozit",
+      "Feronerie industrială de anduranță Blum și Hettich",
+      "Materiale tapițerie ignifugate și hidrorepelente",
+    ],
+    faqs: [
+      {
+        q: "Ce experiență aveți în proiecte pentru pensiuni și hoteluri?",
+        a: "Avem o experiență de peste 20 de ani în producția de mobilier personalizat și am echipat camere de hotel, pensiuni din zona montană (Brașov, Bran, Râșnov) și spații HoReCa din Sibiu și Buzău.",
+      },
+      {
+        q: "Cum asigurați durabilitatea mobilierului într-o unitate de cazare?",
+        a: "Aplicăm canturi poliuretanice cu aderență termică ridicată, balamale cu deschidere la 110-155 grade cu amortizare dublă, funduri duble de sertar și blaturi HPL compact care rezistă la pete, umezeală și dezinfectanți.",
+      },
+      {
+        q: "Puteți lucra pe bază de proiect tehnic de la arhitect?",
+        a: "Da, preluăm randările și planurile de la arhitectul sau designerul tău, realizăm proiectarea tehnică de execuție în atelier și optimizăm detaliile pentru durabilitate și buget.",
+      },
+    ],
     image: "/Poze JL Custom Design - Site/Services/Horeca.webp",
-    imageAlt: "Mobilier comercial și HoReCa la comandă realizat de JL Custom Design în Brașov",
+    imageAlt: "Mobilier HoReCa pentru pensiuni și camere de hotel realizat de JL Custom Design Brașov",
   },
 };

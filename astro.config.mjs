@@ -11,7 +11,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://www.mobilapersonalizatabrasov.ro/', // www is the canonical variant (all non-www URLs 301 here)
   output: 'server',
-  trailingSlash: 'ignore',
+  trailingSlash: 'always',
   adapter: vercel(),
   integrations: [
     react(),
@@ -22,8 +22,10 @@ export default defineConfig({
       // Blog posts are server-rendered ([slug].astro), so the integration
       // can't discover them — list the published slugs explicitly.
       customPages: [
-        'https://www.mobilapersonalizatabrasov.ro/blog/ghid-de-ergonomie-si-organizare',
-        'https://www.mobilapersonalizatabrasov.ro/blog/regula-triunghiului-in-bucatarie',
+        'https://www.mobilapersonalizatabrasov.ro/blog/ghid-de-ergonomie-si-organizare/',
+        'https://www.mobilapersonalizatabrasov.ro/blog/regula-triunghiului-in-bucatarie/',
+        'https://www.mobilapersonalizatabrasov.ro/blog/mdf-vopsit-vs-pal-melaminat/',
+        'https://www.mobilapersonalizatabrasov.ro/blog/cat-costa-o-bucatarie-la-comanda/',
       ],
     })
   ].filter(Boolean),

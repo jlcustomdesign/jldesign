@@ -327,19 +327,19 @@
       },
       {
         "name": "Portofoliu",
-        "href": "/portfolio"
+        "href": "/portfolio/"
       },
       {
         "name": "Servicii",
-        "href": "/services"
+        "href": "/services/"
       },
       {
         "name": "Despre Noi",
-        "href": "/about"
+        "href": "/about/"
       },
       {
         "name": "Blog",
-        "href": "/blog"
+        "href": "/blog/"
       }
     ],
     "contactTitle": "Contact",
@@ -382,19 +382,19 @@
       },
       {
         "name": "Despre",
-        "href": "/about"
+        "href": "/about/"
       },
       {
         "name": "Servicii",
-        "href": "/services"
+        "href": "/services/"
       },
       {
         "name": "Portofoliu",
-        "href": "/portfolio"
+        "href": "/portfolio/"
       },
       {
         "name": "Blog",
-        "href": "/blog"
+        "href": "/blog/"
       }
     ],
     "ctaLabel": "CONTACT",

@@ -23,11 +23,15 @@ interface Props {
   hideContact?: boolean;
 }
 
+const rawPath = Astro.url.pathname;
+const hasExt = /\.[a-z0-9]+$/i.test(rawPath);
+const normalizedPath = hasExt || rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
+
 const {
   title,
   description = `${SITE.tagline} — design interior, mobilier la comandă, mobilă personalizată și soluții premium de la ${SITE.name} în ${targetCitiesString()}.`,
   image = SITE.defaultOgImage,
-  canonicalURL = new URL(Astro.url.pathname, SITE.url),
+  canonicalURL = new URL(normalizedPath, SITE.url),
   type = "website",
   breadcrumbs,
   hideNavbar = false,

@@ -50,16 +50,24 @@ Brașov, Buzău, Sibiu, Sfântu Gheorghe, Făgăraș, Săcele, Codlea, Râșnov,
 
 ## Pagini principale
 - [Pagina principală (mobilă la comandă Brașov, mobilă personalizată Brașov)](https://www.mobilapersonalizatabrasov.ro/)
-- [Servicii: design 3D, producție și montaj mobilier](https://www.mobilapersonalizatabrasov.ro/services)
-- [Portofoliu lucrări finalizate](https://www.mobilapersonalizatabrasov.ro/portfolio)
-- [Despre JL Custom Design, echipă și atelier](https://www.mobilapersonalizatabrasov.ro/about)
-- [Blog cu inspirație, ghiduri și noutăți](https://www.mobilapersonalizatabrasov.ro/blog)
-- [Formular de contact și detalii](https://www.mobilapersonalizatabrasov.ro/contact)
+- [Servicii: design 3D, producție și montaj mobilier](https://www.mobilapersonalizatabrasov.ro/services/)
+- [Portofoliu lucrări finalizate](https://www.mobilapersonalizatabrasov.ro/portfolio/)
+- [Despre JL Custom Design, echipă și atelier](https://www.mobilapersonalizatabrasov.ro/about/)
+- [Blog cu inspirație, ghiduri și noutăți](https://www.mobilapersonalizatabrasov.ro/blog/)
+- [Formular de contact și detalii](https://www.mobilapersonalizatabrasov.ro/contact/)
 
 ## Pagini pe categorii de mobilier
-- [Bucătării la comandă în Brașov (MDF vopsit, PAL Egger, lemn masiv)](https://www.mobilapersonalizatabrasov.ro/bucatarii-la-comanda-brasov)
-- [Dressinguri și dulapuri la comandă, cu compartimentare personalizată](https://www.mobilapersonalizatabrasov.ro/dressinguri-la-comanda-brasov)
-- [Mobilier de dormitor: paturi, dulapuri, noptiere, comode](https://www.mobilapersonalizatabrasov.ro/mobila-dormitor-brasov)
-- [Mobilier de living, biblioteci și comode TV](https://www.mobilapersonalizatabrasov.ro/mobilier-living-brasov)
-- [Mobilier de baie rezistent la umiditate](https://www.mobilapersonalizatabrasov.ro/mobila-baie-brasov)
-- [Mobilier pentru birouri, spații comerciale și HoReCa](https://www.mobilapersonalizatabrasov.ro/mobilier-birouri-brasov)
+- [Bucătării la comandă în Brașov (MDF vopsit, PAL Egger, lemn masiv)](https://www.mobilapersonalizatabrasov.ro/bucatarii-la-comanda-brasov/)
+- [Dressinguri și dulapuri la comandă, cu compartimentare personalizată](https://www.mobilapersonalizatabrasov.ro/dressinguri-la-comanda-brasov/)
+- [Mobilier de dormitor: paturi, dulapuri, noptiere, comode](https://www.mobilapersonalizatabrasov.ro/mobila-dormitor-brasov/)
+- [Mobilier de living, biblioteci și comode TV](https://www.mobilapersonalizatabrasov.ro/mobilier-living-brasov/)
+- [Mobilier de baie rezistent la umiditate](https://www.mobilapersonalizatabrasov.ro/mobila-baie-brasov/)
+- [Mobilier pentru birouri și spații de lucru](https://www.mobilapersonalizatabrasov.ro/mobilier-birouri-brasov/)
+- [Mobilier de hol și riflaje decorative](https://www.mobilapersonalizatabrasov.ro/mobilier-hol-riflaje-brasov/)
+- [Mobilier HoReCa, pensiuni și restaurante](https://www.mobilapersonalizatabrasov.ro/mobilier-horeca-brasov/)
+
+## Articole de blog și ghiduri de decizie
+- [MDF vopsit vs. PAL melaminat: Ghid de alegere](https://www.mobilapersonalizatabrasov.ro/blog/mdf-vopsit-vs-pal-melaminat/)
+- [Cât costă o bucătărie la comandă în 2026?](https://www.mobilapersonalizatabrasov.ro/blog/cat-costa-o-bucatarie-la-comanda/)
+- [Regula triunghiului de lucru în bucătărie](https://www.mobilapersonalizatabrasov.ro/blog/regula-triunghiului-in-bucatarie/)
+- [Ghid de ergonomie și organizare interioară](https://www.mobilapersonalizatabrasov.ro/blog/ghid-de-ergonomie-si-organizare/)

@@ -47,7 +47,7 @@ const categoryLabels = BLOG_PREVIEW.categoryLabels;
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {latestPosts.map((post) => (
             <a
-              href={`/blog/${post.slug}`}
+              href={`/blog/${post.slug}/`}
               class="blog-preview-card flex flex-col bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 hover:-translate-y-2 group"
             >
               <div class="aspect-[16/10] overflow-hidden relative">
@@ -94,7 +94,7 @@ const categoryLabels = BLOG_PREVIEW.categoryLabels;
         </div>
 
         <div class="flex justify-center mt-8">
-          <BubbleButton href="/blog" variant="outline-white">
+          <BubbleButton href="/blog/" variant="outline-white">
             {BLOG_PREVIEW.ctaButton}
           </BubbleButton>
         </div>

@@ -11,7 +11,8 @@ const CATEGORY_SLUGS: Record<string, string> = {
   living: "mobilier-living-brasov",
   baie: "mobila-baie-brasov",
   office: "mobilier-birouri-brasov",
-  horeca: "mobilier-birouri-brasov",
+  hol: "mobilier-hol-riflaje-brasov",
+  horeca: "mobilier-horeca-brasov",
 };
 ---
 
@@ -135,7 +136,7 @@ const CATEGORY_SLUGS: Record<string, string> = {
                  </p>
                  
                   <a
-                    href={CATEGORY_SLUGS[service.id] ? `/${CATEGORY_SLUGS[service.id]}` : "/portfolio"}
+                    href={CATEGORY_SLUGS[service.id] ? `/${CATEGORY_SLUGS[service.id]}/` : "/portfolio/"}
                     class="inline-block px-6 py-3 bg-white text-primary font-bold rounded-full hover:bg-accent hover:text-white transition-colors duration-300 uppercase tracking-wider text-xs pointer-events-auto"
                  >
                    {CATEGORY_SLUGS[service.id] ? SERVICES_SECTION.viewCategoryLabel : SERVICES_SECTION.viewProjectLabel}

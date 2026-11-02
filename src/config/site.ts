@@ -95,9 +95,12 @@ export const SITE = {
   logo: "/favicon_nou.png",
 } as const;
 
-/** Helper: full absolute URL */
+/** Helper: full absolute URL (normalizes trailing slash on route URLs) */
 export function absoluteUrl(path: string): string {
-  return `${SITE.url}${path.startsWith("/") ? path : `/${path}`}`;
+  const p = path.startsWith("/") ? path : `/${path}`;
+  const hasExt = /\.[a-z0-9]+$/i.test(p);
+  const normalized = hasExt || p.endsWith("/") ? p : `${p}/`;
+  return `${SITE.url}${normalized}`;
 }
 
 /** Helper: comma-separated target cities for meta descriptions */
