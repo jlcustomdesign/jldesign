@@ -50,7 +50,6 @@ export function initThemeTransition() {
                 "#process-section-v2 h2", "#process-section-v2 p", "#process-section-v2 h3",
                 "#blog-preview h2", "#blog-preview h3", "#blog-preview p", "#blog-preview span",
                 "#faq-section-v2 h2", "#faq-section-v2 button", "#faq-section-v2 span", "#faq-section-v2 p", "#faq-section-v2 svg",
-                ".nav-text", // Added back
                 ".fab-text", // FAB Ring Text
                 ".fab-bg"    // FAB Circle Background
             ].join(", ");
@@ -116,12 +115,23 @@ export function initThemeTransition() {
 
         // --- D. Triggers ---
 
+        // Navbar follows the theme via its own nav-dark/nav-light classes (CSS handles
+        // the color + transition). It must NOT receive inline GSAP colors: inline
+        // values stick after the timeline reverses and override the class-based
+        // hero theming, leaving the logo/links frozen in one color.
+        const navbarContainer = document.querySelector("#navbar-container");
+        const setNavTheme = (dark: boolean) => {
+            if (!navbarContainer) return;
+            navbarContainer.classList.toggle("nav-dark", dark);
+            navbarContainer.classList.toggle("nav-light", !dark);
+        };
+
         // Trigger 1: Enter Dark Mode (at Process Section)
         ScrollTrigger.create({
             trigger: processSection || aboutSection || portfolioSection,
             start: "top 80%", // Adjusted trigger point: Early switch
-            onEnter: () => tl.play(),
-            onLeaveBack: () => tl.reverse(),
+            onEnter: () => { tl.play(); setNavTheme(true); },
+            onLeaveBack: () => { tl.reverse(); setNavTheme(false); },
             id: "theme-enter"
         });
 
@@ -137,8 +147,8 @@ export function initThemeTransition() {
             ScrollTrigger.create({
                 trigger: faqSection,
                 start: "bottom bottom", 
-                onEnter: () => tl.reverse(), // Go Light (White)
-                onLeaveBack: () => tl.play(), // Go Dark (Back to FAQ)
+                onEnter: () => { tl.reverse(); setNavTheme(false); }, // Go Light (White)
+                onLeaveBack: () => { tl.play(); setNavTheme(true); }, // Go Dark (Back to FAQ)
                 id: "theme-footer-light"
             });
         } else {
@@ -146,8 +156,8 @@ export function initThemeTransition() {
              ScrollTrigger.create({
                 trigger: "main",
                 start: "bottom bottom",
-                onEnter: () => tl.play(),
-                onLeaveBack: () => tl.reverse(),
+                onEnter: () => { tl.play(); setNavTheme(true); },
+                onLeaveBack: () => { tl.reverse(); setNavTheme(false); },
                 id: "theme-footer-dark-fallback"
             });
         }
